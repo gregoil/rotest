@@ -1,0 +1,5 @@
+<testsuite failures="0" tests="1" errors="0" name="MockCase2">
+  <testcase classname="MockCase2" name="test">
+    <skipped>Skip</skipped>
+  </testcase>
+</testsuite>

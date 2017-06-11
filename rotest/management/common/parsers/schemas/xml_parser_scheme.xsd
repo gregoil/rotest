@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by www.serials.ws (www.serials.ws) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:group name="root">
+		<xs:all>
+			<xs:element ref="ParsingFailure"/>
+			<xs:element ref="SuccessReply"/>
+			<xs:element ref="ShouldSkip"/>
+			<xs:element ref="ShouldSkipReply"/>
+			<xs:element ref="ErrorReply"/>
+			<xs:element ref="ResourcesReply"/>
+			<xs:element ref="LockResources"/>
+			<xs:element ref="ReleaseResources"/>
+			<xs:element ref="StartTestRun"/>
+			<xs:element ref="AddResult"/>
+			<xs:element ref="StartTest"/>
+			<xs:element ref="UpdateRunData"/>
+			<xs:element ref="UpdateFields"/>
+			<xs:element ref="StopTest"/>
+			<xs:element ref="UpdateResources"/>
+			<xs:element ref="StartComposite"/>
+			<xs:element ref="StopComposite"/>
+			<xs:element ref="RunFinished"/>
+		</xs:all>
+	</xs:group>
+	<xs:simpleType name="ID">
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+	<xs:simpleType name="MessageString">
+		<xs:restriction base="xs:string">
+			<xs:pattern value='"(.|\n|\r)*"'/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NullMessageString">
+		<xs:restriction base="xs:string">
+			<xs:pattern value='("(.|\n|\r)*")|None'/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageBoolean">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="true"/>
+			<xs:enumeration value="false"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PropertiesDict">
+		<xs:sequence>
+			<xs:element name="Dictionary"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ClassPath">
+		<xs:sequence>
+			<xs:element name="type" type="MessageString"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Class" type="ClassPath"/>
+	<xs:element name="ResourceData">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="type" type="MessageString"/>
+				<xs:element name="properties" type="PropertiesDict"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Resource">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="type" type="MessageString"/>
+				<xs:element name="data">
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="ResourceData"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Descriptor">
+		<xs:sequence>
+			<xs:element name="Dictionary">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="type" type="MessageString"/>
+						<xs:element name="properties" type="PropertiesDict"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReleaseRequest">
+		<xs:sequence>
+			<xs:element name="Dictionary">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="name" type="MessageString"/>
+						<xs:element name="dirty" type="MessageBoolean"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestsList">
+		<xs:sequence>
+			<xs:element name="List">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Item" type="ReleaseRequest" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResourcesList">
+		<xs:sequence>
+			<xs:element name="List">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Item" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="ResourceData"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DescriptorsList">
+		<xs:sequence>
+			<xs:element name="List">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Item" type="Descriptor" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+    <xs:complexType name="AbstractMessage" abstract="true">
+        <xs:sequence>
+            <xs:element name="msg_id" type="ID"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AbstractTestEventMessage" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="AbstractMessage">
+                <xs:sequence>
+                    <xs:element name="test_id" type="ID"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+	<xs:complexType name="AbstractReply" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="AbstractMessage">
+				<xs:sequence>
+					<xs:element name="request_id" type="ID"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ParsingFailure">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractMessage">
+					<xs:sequence>
+						<xs:element name="reason" type="MessageString"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SuccessReply">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractReply"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShouldSkipReply">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractReply">
+					<xs:sequence>
+						<xs:element name="should_skip" type="NullMessageString"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ErrorReply">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractReply">
+					<xs:sequence>
+						<xs:element name="code" type="MessageString"/>
+						<xs:element name="content"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ResourcesReply">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractReply">
+					<xs:sequence>
+						<xs:element name="resources" type="ResourcesList"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="QueryResources">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractMessage">
+					<xs:sequence>
+						<xs:element name="descriptors" type="Descriptor"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LockResources">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AbstractMessage">
+					<xs:sequence>
+						<xs:element name="descriptors" type="DescriptorsList"/>
+						<xs:element name="timeout" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+    <xs:element name="ReleaseResources">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractMessage">
+                    <xs:sequence>
+                        <xs:element name="requests" type="RequestsList"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StartTestRun">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractMessage">
+                    <xs:sequence>
+                        <xs:element name="tests" type="PropertiesDict"/>
+                        <xs:element name="run_data" type="PropertiesDict"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="UpdateRunData">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractMessage">
+                    <xs:sequence>
+                        <xs:element name="run_data" type="PropertiesDict"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="UpdateFields">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractMessage">
+                    <xs:sequence>
+                        <xs:element name="model">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element ref="Class"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="filter" type="PropertiesDict"/>
+                        <xs:element name="kwargs" type="PropertiesDict"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RunFinished">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AddResult">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage">
+                    <xs:sequence>
+                        <xs:element name="code" type="xs:nonNegativeInteger"/>
+                        <xs:element name="info" type="NullMessageString"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StartTest">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ShouldSkip">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StopTest">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="UpdateResources">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage">
+                    <xs:sequence>
+                        <xs:element name="resources" type="DescriptorsList"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CloneResources">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage">
+                    <xs:sequence>
+                        <xs:element name="resources" type="PropertiesDict"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StartComposite">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StopComposite">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

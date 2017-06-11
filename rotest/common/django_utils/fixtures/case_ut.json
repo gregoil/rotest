@@ -1,0 +1,8 @@
+[{"pk": 1, "model": "management.resourcedata", "fields": {"name": "test_res1"}},
+ {"pk": 2, "model": "management.resourcedata", "fields": {"name": "test_res2"}},
+ {"pk": 3, "model": "management.resourcedata", "fields": {"name": "test_complex_res"}},
+ {"pk": 4, "model": "management.resourcedata", "fields": {"name": "test_initialize_timeout"}},
+ {"pk": 5, "model": "management.resourcedata", "fields": {"name": "test_finalize_timeout"}},
+ {"pk": 1, "model": "management.demoresourcedata", "fields": {"version": 3, "ip_address": "1.1.1.1", "reset_flag": false}},
+ {"pk": 2, "model": "management.demoresourcedata", "fields": {"version": 2, "ip_address": "2.2.2.2", "reset_flag": false}},
+ {"pk": 3, "model": "management.democomplexresourcedata", "fields": {"demo1": 1, "demo2": 2}}]

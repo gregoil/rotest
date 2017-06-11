@@ -1,0 +1,54 @@
+{
+    "description": "the outer scope",
+    "type": "object",
+    "properties": {
+        "save_state": {
+            "description": "Enable save state",
+            "type": "boolean"
+        },
+        "delta_iterations": {
+            "description": "Enable run of failed tests only, enter the number of times the failed tests should run",
+            "type": "number",
+            "minimum": 0
+        },
+        "processes": {
+            "description": "Use multiprocess test runner",
+            "type": ["number", "null"],
+            "minimum": 0
+        },
+        "outputs": {
+            "description": "List of output handler names",
+            "type": "array",
+            "minItems":0
+        },
+        "filter": {
+            "description": "Run only tests that match the filter expression",
+            "type": ["string", "null"]
+        },
+        "run_name": {
+            "description": "Assign run name",
+            "type": ["string", "null"]
+        },
+        "list": {
+            "description": "Print the tests hierarchy and quit",
+            "type": "boolean"
+        },
+        "fail_fast": {
+            "description": "Stop the run on first failure",
+            "type": "boolean"
+        },
+        "debug": {
+            "description": "Specify resources to request by name",
+            "type": "boolean"
+        },
+        "resources": {
+            "description": "Enter ipdb debug mode upon any test exception",
+            "type": "string"
+        },
+        "setup_mode": {
+            "description": "Force tests' setup's mode",
+            "type": "string",
+            "enum": ["direct", "partial", "simulating"]
+        }
+    }
+}

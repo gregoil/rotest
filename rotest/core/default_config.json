@@ -1,0 +1,12 @@
+{
+  "save_state": false,
+  "delta_iterations": 0,
+  "processes": null,
+  "outputs": ["logdebug", "excel"],
+  "filter": null,
+  "run_name": null,
+  "list": false,
+  "fail_fast": false,
+  "debug": false,
+  "skip_init": false
+}

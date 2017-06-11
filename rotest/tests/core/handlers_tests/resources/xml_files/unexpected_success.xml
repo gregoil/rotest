@@ -1,0 +1,5 @@
+<testsuite failures="1" tests="1" errors="0" name="MockCase1">
+  <testcase classname="MockCase1" name="test">
+    <failure>Unexpected Success</failure>
+  </testcase>
+</testsuite>

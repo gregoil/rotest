@@ -1,0 +1,3 @@
+[{"pk": 1, "model": "core.signaturedata", "fields": {"name": "test_res1", "link": "blab.com", "pattern": ".*Fail.*"}},
+ {"pk": 2, "model": "core.signaturedata", "fields": {"name": "test_res2", "link": "yahoo.com", "pattern": ".*Error.*"}},
+ {"pk": 3, "model": "core.signaturedata", "fields": {"name": "test_res3", "link": "google.com", "pattern": "#!$#$@#$^^@@$$@#@"}}]

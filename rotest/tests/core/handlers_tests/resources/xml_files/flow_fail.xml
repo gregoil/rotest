@@ -1,0 +1,5 @@
+<testsuite failures="1" tests="1" errors="0" name="MockFlow2">
+  <testcase classname="MockFlow2" name="test_run_blocks">
+    <failure>Fail</failure>
+  </testcase>
+</testsuite>

@@ -1,0 +1,300 @@
+"""Tests results handling interface."""
+# pylint: disable=invalid-name,too-few-public-methods,arguments-differ
+# pylint: disable=too-many-arguments,dangerous-default-value
+from unittest.result import TestResult
+
+from rotest.common import core_log
+from handlers.db_handler import DBHandler
+from handlers.xml_handler import XMLHandler
+from handlers.tags_handler import TagsHandler
+from handlers.excel_handler import ExcelHandler
+from handlers.stream.dots_handler import DotsHandler
+from handlers.stream.tree_handler import TreeHandler
+from rotest.core.models.case_data import TestOutcome
+from handlers.artifact_handler import ArtifactHandler
+from handlers.remote_db_handler import RemoteDBHandler
+from handlers.signature_handler import SignatureHandler
+from rotest.core.flow_component import AbstractFlowComponent
+from handlers.stream.stream_handler import EventStreamHandler
+from handlers.stream.log_handler import LogInfoHandler, LogDebugHandler
+
+
+class Result(TestResult):
+    """Manager class for handling tests' run information.
+
+    Attributes:
+        DEFAULT_OUTPUTS (tuple): default output handlers' names.
+        OUTPUTS_HANDLERS (dict): converts from an output handler's name to
+            its class.
+        result_handlers (list): the run's output handler instances.
+        main_test (object): the main test instance (e.g. TestSuite instance
+            or TestFlow instance).
+    """
+    DEFAULT_OUTPUTS = (DBHandler.NAME, TreeHandler.NAME, ExcelHandler.NAME)
+    OUTPUTS_HANDLERS = {handler.NAME: handler for handler in
+                        (DBHandler, DotsHandler, TreeHandler, XMLHandler,
+                         EventStreamHandler, ExcelHandler, RemoteDBHandler,
+                         TagsHandler, ArtifactHandler, LogInfoHandler,
+                         LogDebugHandler, SignatureHandler)}
+
+    def __init__(self, stream=None, descriptions=None,
+                 outputs=DEFAULT_OUTPUTS, main_test=None):
+
+        TestResult.__init__(self, stream, descriptions)
+
+        self.main_test = main_test
+
+        self.result_handlers = [
+            self.OUTPUTS_HANDLERS[handler_name](stream=stream,
+                                                main_test=main_test,
+                                                descriptions=descriptions)
+            for handler_name in outputs]
+
+    def startTestRun(self):
+        """Called once before any tests are executed."""
+        super(Result, self).startTestRun()
+
+        core_log.info("Test run has started")
+
+        for result_handler in self.result_handlers:
+            result_handler.start_test_run()
+
+    def startTest(self, test):
+        """Called when the given test is about to be run.
+
+        Args:
+            test (object): test item instance.
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).startTest(test)
+
+        test.logger.info("Test %r has started running", test.data)
+        test.start()
+
+        for result_handler in self.result_handlers:
+            result_handler.start_test(test)
+
+    def shouldSkip(self, test):
+        """Check if the test should be skipped.
+
+        The result is based on querying all the test handlers. If any of the
+        handler answers the query positively, the test skips.
+
+        Args:
+            test (object): test item instance.
+
+        Returns:
+            str. Skip reason if the test should be skipped, None otherwise.
+        """
+        for test_handler in self.result_handlers:
+            query_result = test_handler.should_skip(test)
+            if query_result is not None:
+                test.logger.debug("Skipping test %r according to handler %r",
+                                  test.data.name, test_handler.NAME)
+                return query_result
+
+        return None
+
+    def updateResources(self, test):
+        """Called once after locking the tests resources.
+
+        Args:
+            test (object): test item instance.
+        """
+        test.logger.debug("Saving %r's resources", test.data)
+
+        for result_handler in self.result_handlers:
+            result_handler.update_resources(test)
+
+    def stopTest(self, test):
+        """Called when the given test has been run.
+
+        Args:
+            test (object): test item instance.
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).stopTest(test)
+
+        test.logger.debug("Test %r has stopped running", test.data)
+
+        for result_handler in self.result_handlers:
+            result_handler.stop_test(test)
+
+    def startComposite(self, test):
+        """Called when the given TestSuite is about to be run.
+
+        This method, unlike 'startTest', does not call unittest TestResult's
+        'startTest', in order to avoid wrong test counting and treating
+        TestSuites as the actual tests.
+
+        Args:
+            test (rotest.core.suite.TestSuite): test item instance.
+        """
+        core_log.info("Test %r has started running", test.data)
+        test.start()
+
+        for result_handler in self.result_handlers:
+            result_handler.start_composite(test)
+
+    def stopComposite(self, test):
+        """Called when the given TestSuite has been run.
+
+        This method, unlike 'stopTest', does not call unittest TestResult's
+        'stopTest', in order to avoid output redirections and treating
+        TestSuites as the actual tests.
+
+        Args:
+            test (rotest.core.suite.TestSuite): test item instance.
+        """
+        core_log.debug("Test %r has stopped running", test.data)
+        has_succeeded = None
+        sub_values = [sub_test.data.success for sub_test in test
+                      if sub_test.data.success is not None]
+
+        if len(sub_values) > 0:
+            has_succeeded = all(sub_values)
+
+        test.end(has_succeeded=has_succeeded)
+
+        for result_handler in self.result_handlers:
+            result_handler.stop_composite(test)
+
+    def stopTestRun(self):
+        """Called once after all tests are executed."""
+        super(Result, self).stopTestRun()
+
+        core_log.info("Test run has finished")
+
+        for result_handler in self.result_handlers:
+            result_handler.stop_test_run()
+
+    def addSuccess(self, test):
+        """Called when a test has completed successfully.
+
+        Args:
+            test (object): test item instance.
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).addSuccess(test)
+
+        test.logger.info("Test %r ended successfully", test.data)
+        test.end(test_outcome=TestOutcome.SUCCESS)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_success(test)
+
+    def addSkip(self, test, reason):
+        """Called when a test is skipped.
+
+        Args:
+            test (object): test item instance.
+            reason (str): skip reason description.
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).addSkip(test, reason)
+
+        test.logger.warning("Test %r skipped, reason %r", test.data, reason)
+        test.end(test_outcome=TestOutcome.SKIPPED, details=reason)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_skip(test, reason)
+
+    def addFailure(self, test, err):
+        """Called when an error has occurred.
+
+        Args:
+            test (object): test item instance.
+            err (tuple): tuple of values as returned by sys.exc_info().
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).addFailure(test, err)
+
+        exception_string = self._exc_info_to_string(err, test)
+
+        test.logger.error("Test %r ended in failure: %r",
+                          test.data, exception_string)
+        test.end(test_outcome=TestOutcome.FAILED, details=exception_string)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_failure(test, exception_string)
+
+    def addError(self, test, err):
+        """Called when an error has occurred.
+
+        Args:
+            test (object): test item instance.
+            err (tuple): tuple of values as returned by sys.exc_info().
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).addError(test, err)
+
+        exception_string = self._exc_info_to_string(err, test)
+
+        test.logger.critical("Test %r ended in error: %r",
+                             test.data, exception_string)
+        test.end(test_outcome=TestOutcome.ERROR, details=exception_string)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_error(test, exception_string)
+
+    def addExpectedFailure(self, test, err):
+        """Called when an expected failure/error occurred.
+
+        Args:
+            test (object): test item instance.
+            err (tuple): tuple of values as returned by sys.exc_info().
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).addExpectedFailure(test, err)
+
+        exception_string = self._exc_info_to_string(err, test)
+
+        test.logger.info("Test %r ended in an expected failure: %r",
+                         test.data, exception_string)
+        test.end(test_outcome=TestOutcome.EXPECTED_FAILURE,
+                 details=exception_string)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_expected_failure(test, exception_string)
+
+    def addUnexpectedSuccess(self, test):
+        """Called when a test was expected to fail, but succeed.
+
+        Args:
+            test (object): test item instance.
+            err (tuple): tuple of values as returned by sys.exc_info().
+        """
+        if (isinstance(test, AbstractFlowComponent) is False or
+            test.is_main is True):
+
+            super(Result, self).addUnexpectedSuccess(test)
+
+        test.logger.warn("Test %r ended in an unexpected success", test.data)
+        test.end(test_outcome=TestOutcome.UNEXPECTED_SUCCESS)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_unexpected_success(test)
+
+    def printErrors(self):
+        """Called by TestRunner after test run."""
+        super(Result, self).printErrors()
+
+        for result_handler in self.result_handlers:
+            result_handler.print_errors(self.testsRun, self.errors,
+                                        self.skipped, self.failures,
+                                        self.expectedFailures,
+                                        self.unexpectedSuccesses)

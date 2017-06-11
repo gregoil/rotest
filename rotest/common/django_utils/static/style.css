@@ -1,0 +1,246 @@
+body {
+	margin: 0;
+	padding: 0;
+	background: #FFFDEA url(images/img01.jpg) repeat-x left top;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #464032;
+}
+
+h1, h2, h3 {
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+	color: #333333;
+}
+
+h1 {
+	font-size: 2em;
+}
+
+h2 {
+	font-size: 2.4em;
+}
+
+h3 {
+	font-size: 1.6em;
+}
+
+p, ul, ol {
+	margin-top: 0;
+	line-height: 180%;
+}
+
+ul, ol {
+}
+
+a {
+	text-decoration: none;
+	color: #464032;
+}
+
+a:hover {
+}
+
+#wrapper {
+	width: 70%;
+	margin: 0 auto;
+	padding: 0;
+}
+
+/* Header */
+
+#header {
+	width: 940px;
+	height: 148px;
+	margin: 0 auto;
+}
+
+/* Logo */
+
+#logo {
+	float: left;
+	height: 115px;
+	margin: 0;
+	background: url(images/img04.jpg) no-repeat left top;
+	padding-top: 10px;
+}
+
+#logotitle h1, #logoslogen p {
+	margin: 0;
+	padding: 0;
+}
+
+#logotitle {
+	height: 73px;
+}
+
+#logoslogen{
+	height: 20px;
+}
+
+#logotitle h1 {
+	float: left;
+	padding-left: 120px;
+	font-family: Imprint MT Shadow, JasmineUPC;
+	font-size: 5em;
+	color: #0a2d5b;
+}
+
+#logoslogen p {
+	float: left;
+	margin: -10px 0px 0px 0px;
+	padding: 0px 0px 0px 250px;
+	font: normal 14px Georgia, "Times New Roman", Times, serif;
+	font-style: italic;
+	color: #5E4E38;
+} 
+
+#logo a {
+	border: none;
+	background: none;
+	text-decoration: none;
+	color: #A83A01;
+}
+
+/* Menu */
+
+#menu {
+	width: 940px;
+	height: 36px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+#menu ul {
+	margin: 0px 0px 0px 10px;
+	padding: 0;
+	list-style: none;
+	line-height: normal;
+}
+
+#menu li {
+	float: left;
+}
+
+#menu a {
+	display: block;
+	height: 26px;
+	margin-right: 2px;
+	margin-bottom: 0px;
+	padding: 10px 20px 0px 20px;
+	text-decoration: none;
+	text-align: center;
+	text-transform: uppercase;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: #FFFFFF;
+	border: none;
+}
+
+#menu a:hover, #menu .current_page_item a {
+	background: #FFFFFF;
+	text-decoration: none;
+	color: #333333;
+}
+
+#menu .current_page_item a {
+	background: #FFFFFF;
+	color: #333333;
+}
+
+/* Page */
+
+#page {
+	border: 1px solid black;
+	margin: 0;
+	padding: 0;
+}
+/* Content */
+
+#content {
+	float:right;
+	width: 100%;
+	padding:0;
+	margin:0;
+	height: auto;
+}
+
+#sliderWrapper {
+	float:left;
+	width: 25%;
+	height:100%;
+}
+
+#slider {
+	float:left;
+	padding-top: 20px;
+	padding-left: 10%;
+	width: 90%;
+	height:100%;
+}
+
+#slider li {
+	padding-top:12px;
+	line-height: 14px;
+}
+
+#sliderContent {
+	float:left;
+	width: 74%;
+	height: auto;
+	border-left: 1px solid #555;
+	
+}
+
+#sliderContentWrapper {
+	float:left;
+	width: auto;
+}
+
+/* Calendar */
+
+#calendar {
+}
+
+#calendar_wrap {
+	padding: 20px;
+}
+
+#calendar table {
+	width: 100%;
+}
+
+#calendar tbody td {
+	text-align: center;
+}
+
+#calendar #next {
+	text-align: right;
+}
+
+/* Footer */
+
+#footer {
+	width: 940px;
+	height: 50px;
+	margin: 0 auto;
+	padding: 0px 0 15px 0;
+	border-top: 4px solid #EBE6D1;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#footer p {
+	margin: 0;
+	padding-top: 20px;
+	line-height: normal;
+	font-size: 10px;
+	text-transform: uppercase;
+	text-align: center;
+	color: #444444;
+}
+
+#footer a {
+	color: #464032;
+}
