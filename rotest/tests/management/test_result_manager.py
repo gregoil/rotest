@@ -10,9 +10,11 @@ from rotest.common.django_utils.common import get_sub_model
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.client.result_client import ClientResultManager
 from rotest.management.models.ut_models import DemoResource, DemoResourceData
-from tests.management.resource_base_test import BaseResourceManagementTest
-from tests.core.utils import (MockTestSuite, MockSuite1, MockSuite2, MockCase,
-                              MockCase1, MockCase2, SuccessCase)
+from rotest.tests.management.resource_base_test import \
+                                                 BaseResourceManagementTest
+from rotest.tests.core.utils import (MockTestSuite, MockSuite1, MockSuite2,
+                                     MockCase, MockCase1, MockCase2,
+                                     SuccessCase)
 
 
 class TestResultManagement(BaseResourceManagementTest):

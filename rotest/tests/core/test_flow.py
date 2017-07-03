@@ -8,7 +8,7 @@ from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
                                                 InitializeErrorResource)
-from tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock,
+from rotest.tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock,
                               MockFlow, SkipBlock, ExpectedFailureBlock,
                               UnexpectedSuccessBlock, NoMethodsBlock,
                               InputsValidationBlock, WriteToCommonBlock,

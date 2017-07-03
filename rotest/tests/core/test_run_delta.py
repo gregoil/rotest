@@ -4,8 +4,8 @@ import django
 
 from rotest.core.runner import run
 from rotest.core.models.run_data import RunData
-from tests.core.utils import BasicRotestUnitTest
 from rotest.core.models.case_data import TestOutcome
+from rotest.tests.core.utils import BasicRotestUnitTest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.db_handler import DBHandler
 from utils import (ErrorCase, SuccessCase, FailureCase, SkipCase,

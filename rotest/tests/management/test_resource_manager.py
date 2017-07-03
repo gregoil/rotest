@@ -21,7 +21,8 @@ from rotest.common.colored_test_runner import colored_main
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
-from tests.management.resource_base_test import BaseResourceManagementTest
+from rotest.tests.management.resource_base_test import \
+                                            BaseResourceManagementTest
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
 from rotest.management.models.ut_models import (DemoResource,

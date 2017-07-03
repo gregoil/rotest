@@ -12,11 +12,10 @@ from multiprocessing import Queue, Event
 import django
 
 from rotest.common.colored_test_runner import colored_main
-from tests.core.utils import MockSuite1, BasicRotestUnitTest
+from rotest.tests.core.utils import MockSuite1, BasicRotestUnitTest
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 from utils import (BasicMultiprocessCase, SubprocessCreationCase,
-                   RegisterPidBlock, ResourceIdRegistrationCase,
-                   RegisterInSetupFlow)
+                   ResourceIdRegistrationCase, RegisterInSetupFlow)
 
 
 class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):

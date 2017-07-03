@@ -7,7 +7,7 @@ import django
 
 from test_runner import AbstractMultiprocessRunnerTest
 from rotest.common.colored_test_runner import colored_main
-from tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
+from rotest.tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
 from utils import (BasicMultiprocessCase, TimeoutCase, SetupTimeoutCase,
                    TearDownTimeoutCase, TimeoutWithSubprocessCase)
 

@@ -74,7 +74,7 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
         print_test_instance(test_name, depth, tag_filter,
                             actual_test.TAGS, tags)
 
-    tags.append(test.__class__.__name__)
+    tags.append(actual_test.__name__)
 
     if issubclass(actual_test, TestSuite) is True:
         sub_tests = test.components

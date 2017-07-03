@@ -199,7 +199,7 @@ class TestFlow(AbstractFlowComponent):
         Returns:
             str. test name.
         """
-        return cls.__name__
+        return parameters.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
     def _set_parameters(self, **parameters):
         """Inject parameters into the component and sub-components."""
@@ -279,23 +279,6 @@ class TestFlow(AbstractFlowComponent):
 
 def create_flow(blocks, name="AnonymousFlow", mode=MODE_CRITICAL, common={}):
     """Auxiliary function to create test flows on the spot."""
-    flow_name = name
-    flow_mode = mode
-    flow_common = common
-    flow_blocks = blocks
-
-    class AnonymousFlow(TestFlow):
-        mode = flow_mode
-        common = flow_common
-        blocks = flow_blocks
-
-        @classmethod
-        def get_name(cls, **parameters):
-            """Return test name.
-
-            Returns:
-                str. test name.
-            """
-            return flow_name
-
-    return AnonymousFlow
+    return type(name, (TestFlow,), {'mode': mode,
+                                    'common': common,
+                                    'blocks': blocks})

@@ -15,8 +15,9 @@ from rotest.management.common.utils import LOCALHOST
 from rotest.management.common.errors import ServerError
 from rotest.common.colored_test_runner import colored_main
 from rotest.management.client.manager import ClientResourceManager
-from tests.management.resource_base_test import BaseResourceManagementTest
 from rotest.management.models.ut_models import DemoResource, DemoResourceData
+from rotest.tests.management.resource_base_test import \
+                                            BaseResourceManagementTest
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
 

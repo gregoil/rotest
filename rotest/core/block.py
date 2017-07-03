@@ -118,8 +118,11 @@ class TestBlock(AbstractFlowComponent):
         Returns:
             str. test name.
         """
+        class_name = parameters.get(cls.COMPONENT_NAME_PARAMETER,
+                                    cls.__name__)
+
         method_name = cls.get_test_method_name()
-        return '.'.join((cls.__name__, method_name))
+        return '.'.join((class_name, method_name))
 
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.

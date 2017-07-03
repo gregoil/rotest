@@ -8,10 +8,10 @@ import django
 import psutil
 
 from rotest.common import core_log
-from tests.core.multiprocess.utils import TimeoutCase
 from rotest.common.colored_test_runner import colored_main
-from tests.core.utils import MockTestSuite, override_client_creator
+from rotest.tests.core.multiprocess.utils import TimeoutCase
 from rotest.core.runners.multiprocess.common import kill_process_tree
+from rotest.tests.core.utils import MockTestSuite, override_client_creator
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 from rotest.management.common.utils import \
                                     set_resource_manager_hostname, LOCALHOST

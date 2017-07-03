@@ -103,6 +103,7 @@ class AbstractFlowComponent(unittest.TestCase):
     """
     SETUP_METHOD_NAME = 'setUp'
     TEARDOWN_METHOD_NAME = 'tearDown'
+    COMPONENT_NAME_PARAMETER = 'name'
     NO_RESOURCES_MESSAGE = 'Failed to request resources'
     PREVIOUS_FAILED_MESSAGE = 'Previous component failed'
 
@@ -276,12 +277,14 @@ class AbstractFlowComponent(unittest.TestCase):
             if self.result is not None:
                 self.result.updateResources(self)
 
-    def release_resources(self, resources, dirty=False):
+    def release_resources(self, resources, dirty=False, force_release=True):
         """Release resources and mark them as 'dirty' or 'clean'.
 
         Args:
             resources (dict): resources to release.
             dirty (bool): dirty state to set to the resources.
+            force_release (bool): whether to always release to resources
+                or enable saving them for next tests.
         """
         if len(resources) == 0:
             # No resources were locked
@@ -289,7 +292,7 @@ class AbstractFlowComponent(unittest.TestCase):
 
         self.resource_manager.release_resources(resources,
                                                 dirty=dirty,
-                                                force_release=True)
+                                                force_release=force_release)
 
         # Remove the resources from the test's resource to avoid double release
         for key in resources.keys():
@@ -379,7 +382,8 @@ class AbstractFlowComponent(unittest.TestCase):
 
             finally:
                 self.release_resources(self.locked_resources,
-                        dirty=self.data.exception_type == TestOutcome.ERROR)
+                        dirty=self.data.exception_type == TestOutcome.ERROR,
+                        force_release=True)
 
                 if self._is_client_local is True:
                     self.resource_manager.disconnect()
