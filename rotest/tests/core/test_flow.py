@@ -9,14 +9,14 @@ from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
                                                 InitializeErrorResource)
 from rotest.tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock,
-                              MockFlow, SkipBlock, ExpectedFailureBlock,
-                              UnexpectedSuccessBlock, NoMethodsBlock,
-                              InputsValidationBlock, WriteToCommonBlock,
-                              MultipleMethodsBlock, ReadFromCommonBlock,
-                              BasicRotestUnitTest, MockSubFlow,
-                              AttributeCheckingBlock, MockBlock,
-                              DynamicResourceLockingBlock,
-                                     PretendToWriteToCommonBlock)
+                                     MockFlow, SkipBlock, ExpectedFailureBlock,
+                                     UnexpectedSuccessBlock, NoMethodsBlock,
+                                     InputsValidationBlock, WriteToCommonBlock,
+                                     MultipleMethodsBlock, ReadFromCommonBlock,
+                                     BasicRotestUnitTest, MockSubFlow,
+                                     AttributeCheckingBlock, MockBlock,
+                                     DynamicResourceLockingBlock,
+                                     PretendToShareDataBlock)
 
 
 class TestTestFlow(BasicRotestUnitTest):
@@ -353,21 +353,21 @@ class TestTestFlow(BasicRotestUnitTest):
             MockFlow()
 
     def test_inputs_dynamic_check(self):
-        """Test dynamic check of inputs validation of blocks.
+        """Test runtime validation of inputs of blocks.
 
-            Before running a block, check expected block's input is satisfied,
-            otherwise expect to have an error.
+        Run a flow with block that pretend to share data and block that
+        need this data as an input
         """
         pass_value = 'not_exist_value'
-        PretendToWriteToCommonBlock.outputs = (pass_value, )
+        PretendToShareDataBlock.outputs = (pass_value,)
         InputsValidationBlock.inputs = (pass_value, )
 
-        MockFlow.blocks = (PretendToWriteToCommonBlock, InputsValidationBlock)
+        MockFlow.blocks = (PretendToShareDataBlock, InputsValidationBlock)
         test_flow = MockFlow()
 
         self.run_test(test_flow)
         self.assertEqual(len(self.result.errors), 1,
-                         "Result didn't fail the correct number of tests")
+                         "Result didn't had the correct number of errors")
 
 
 
@@ -696,7 +696,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          "Result didn't run the correct number of tests")
 
         self.assertEqual(len(self.result.errors), 1,
-                         "Result didn't fail the correct number of tests")
+                         "Result didn't had the correct number of errors")
 
         self.validate_blocks(test_flow, successes=2, failures=1, errors=1,
                              skips=1)
@@ -940,7 +940,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          "Result didn't run the correct number of tests")
 
         self.assertEqual(len(self.result.errors), 1,
-                         "Result didn't fail the correct number of tests")
+                         "Result didn't had the correct number of errors")
 
         self.validate_blocks(test_flow, successes=2, failures=1, errors=1,
                              skips=1)

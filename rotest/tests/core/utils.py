@@ -579,7 +579,7 @@ class InputsValidationBlock(SuccessBlock):
     pass
 
 
-class PretendToWriteToCommonBlock(SuccessBlock):
+class PretendToShareDataBlock(SuccessBlock):
     """Mock test, pretend to inject data into the common object."""
     pass
 
