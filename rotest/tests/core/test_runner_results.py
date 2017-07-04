@@ -24,7 +24,7 @@ from rotest.tests.core.multiprocess.utils import (TimeoutCase,
 from utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
                    UnexpectedSuccessCase, ExpectedFailureCase, MockSuite1,
                    MockSuite2, MockTestSuite, StoreMultipleFailuresCase,
-                   StoreFailureErrorCase)
+                   StoreFailureErrorCase, TwoTestsCase)
 
 
 class AbstractTestRunnerResult(BasicRotestUnitTest):
@@ -79,6 +79,15 @@ class AbstractTestRunnerResult(BasicRotestUnitTest):
 
         self.validate_all_finished(test)
         self.validate_result(result, True, successes=3)
+
+    def test_standalone_case(self):
+        """Validate that a TestCase can run on its own."""
+        self.runner.run(TwoTestsCase)
+        test = self.runner.test_item
+        result = self.runner.result
+
+        self.validate_all_finished(test)
+        self.validate_result(result, True, successes=2)
 
     def test_fail(self):
         """Validate the result of a simple case of failure."""
