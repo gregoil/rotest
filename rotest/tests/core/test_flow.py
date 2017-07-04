@@ -355,8 +355,8 @@ class TestTestFlow(BasicRotestUnitTest):
     def test_inputs_dynamic_check(self):
         """Test runtime validation of inputs of blocks.
 
-        Run a flow with block that pretend to share data and block that
-        need this data as an input
+        Run a flow with a block that pretends to share data and a block that
+        needs this data as an input.
         """
         pass_value = 'not_exist_value'
         PretendToShareDataBlock.outputs = (pass_value,)
@@ -368,8 +368,6 @@ class TestTestFlow(BasicRotestUnitTest):
         self.run_test(test_flow)
         self.assertEqual(len(self.result.errors), 1,
                          "Result didn't had the correct number of errors")
-
-
 
     def test_parametrize(self):
         """Validate parametrize behavior.
