@@ -579,6 +579,11 @@ class InputsValidationBlock(SuccessBlock):
     pass
 
 
+class PretendToWriteToCommonBlock(SuccessBlock):
+    """Mock test, pretend to inject data into the common object."""
+    pass
+
+
 class WriteToCommonBlock(MockBlock):
     """Mock test, injects data into the common object."""
     INJECT_NAME = 'some_name'

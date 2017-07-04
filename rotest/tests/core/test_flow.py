@@ -15,7 +15,8 @@ from rotest.tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock,
                               MultipleMethodsBlock, ReadFromCommonBlock,
                               BasicRotestUnitTest, MockSubFlow,
                               AttributeCheckingBlock, MockBlock,
-                              DynamicResourceLockingBlock)
+                              DynamicResourceLockingBlock,
+                                     PretendToWriteToCommonBlock)
 
 
 class TestTestFlow(BasicRotestUnitTest):
@@ -350,6 +351,25 @@ class TestTestFlow(BasicRotestUnitTest):
 
         with self.assertRaises(AttributeError):
             MockFlow()
+
+    def test_inputs_dynamic_check(self):
+        """Test dynamic check of inputs validation of blocks.
+
+            Before running a block, check expected block's input is satisfied,
+            otherwise expect to have an error.
+        """
+        pass_value = 'not_exist_value'
+        PretendToWriteToCommonBlock.outputs = (pass_value, )
+        InputsValidationBlock.inputs = (pass_value, )
+
+        MockFlow.blocks = (PretendToWriteToCommonBlock, InputsValidationBlock)
+        test_flow = MockFlow()
+
+        self.run_test(test_flow)
+        self.assertEqual(len(self.result.errors), 1,
+                         "Result didn't fail the correct number of tests")
+
+
 
     def test_parametrize(self):
         """Validate parametrize behavior.
