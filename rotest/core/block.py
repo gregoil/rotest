@@ -144,3 +144,8 @@ class TestBlock(AbstractFlowComponent):
         if len(missing_inputs) > 0:
             raise AttributeError("Block %r is missing mandatory inputs %s" %
                                  (self.data.name, missing_inputs))
+
+    def run(self, result=None):
+        # Validate all required inputs were passed
+        self._validate_inputs()
+        super(TestBlock, self).run(result)
