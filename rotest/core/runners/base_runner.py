@@ -5,6 +5,8 @@
 from unittest.runner import TextTestRunner
 
 from rotest.common import core_log
+from rotest.core.case import TestCase
+from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.core.models.run_data import RunData
 from rotest.management.client.manager import ClientResourceManager
@@ -134,6 +136,10 @@ class BaseTestRunner(TextTestRunner):
         Returns:
             rotest.core.models.run_data.RunData. test's run data.
         """
+        if issubclass(test_class, TestCase):
+            test_class = type(test_class.__name__, (TestSuite,),
+                              {'components': (test_class,)})
+
         test_name = test_class.get_name()
 
         core_log.debug('Initializing %r test runner', test_name)
