@@ -12,6 +12,11 @@ from rotest.core.models.run_data import RunData
 from rotest.management.client.manager import ClientResourceManager
 
 
+class AnonymousSuite(TestSuite):
+    """Temporary TestSuite for running TestCases."""
+    pass
+
+
 class BaseTestRunner(TextTestRunner):
     """Handle Rotest's basic test runner.
 
@@ -137,8 +142,8 @@ class BaseTestRunner(TextTestRunner):
             rotest.core.models.run_data.RunData. test's run data.
         """
         if issubclass(test_class, TestCase):
-            test_class = type(test_class.__name__, (TestSuite,),
-                              {'components': (test_class,)})
+            AnonymousSuite.components = (test_class,)
+            test_class = AnonymousSuite
 
         test_name = test_class.get_name()
 
