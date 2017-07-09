@@ -120,8 +120,6 @@ class WorkerProcess(Process):
                               results_queue=self.results_queue)
 
         runner.resource_manager = self.resource_manager
-        if runner.resource_manager is not None:
-            runner.resource_manager.connect()
 
         try:
             for test_id in iter(self._get_tests, None):
@@ -139,5 +137,7 @@ class WorkerProcess(Process):
             runner.queue_handler.finish_run()
 
         finally:
-            if runner.resource_manager is not None:
+            if (self.resource_manager is not None and
+                    self.resource_manager.is_connected()):
+
                 runner.resource_manager.disconnect()
