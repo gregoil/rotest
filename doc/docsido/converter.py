@@ -6,63 +6,12 @@ headlines and indentation. Each node is parsed according to it's type.
 # pylint: disable=unused-argument,protected-access
 import re
 
-from itertools import izip, chain
+from basicstruct import BasicStruct
 
 from parser import (ParamNodeParser, OutputNodeParser, ExceptNodeParser,
                     DocsidoError)
 from nodes import (Node, SimpleTitle, Arg, Output, Except, Attribute,
                    ensure_blank_line_ending)
-
-
-class BasicStruct(object):
-    """Struct-like object.
-
-    example:
-    >>> class MyStruct(BasicStruct):
-    ...     __slots__ = ('attr_a', 'attr_b')
-    >>> MyStruct(5, attr_b=6)
-    MyStruct(attr_a=5, attr_b=6)
-    """
-
-    __slots__ = ()  # should be extended by deriving classes
-
-    def __init__(self, *args, **kwargs):
-        for key, value in chain(izip(self.__slots__, args),
-                                kwargs.iteritems()):
-            setattr(self, key, value)
-
-        for key in self.__slots__:
-            if not hasattr(self, key):
-                setattr(self, key, None)
-
-    def __repr__(self):
-        attrs_str = ', '.join('%s=%r' % (key, getattr(self, key))
-                              for key in self.__slots__)
-        return '%s(%s)' % (self.__class__.__name__, attrs_str)
-
-    def __cmp__(self, other):
-        if not isinstance(other, type(self)):
-            # if the types are different we want to make sure the comparison
-            # result is not 0, but remain consistent, so we compare the types
-            return cmp(type(self), type(other))
-
-        return cmp(self._to_tuple(), other._to_tuple())
-
-    def __hash__(self):
-        return hash(self._to_tuple())
-
-    def _to_tuple(self):
-        return tuple(getattr(self, key) for key in self.__slots__)
-
-    def __getstate__(self):
-        return self._to_tuple()
-
-    def __setstate__(self, state):
-        for key, value in izip(self.__slots__, state):
-            setattr(self, key, value)
-
-    def _to_dict(self):
-        return {key: getattr(self, key) for key in self.__slots__}
 
 
 class IndentLine(BasicStruct):

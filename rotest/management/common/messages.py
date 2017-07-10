@@ -1,7 +1,7 @@
 """Holds the common resource management messages."""
 from abc import ABCMeta
 
-from rotest.common.basic_struct import BasicStruct
+from basicstruct import BasicStruct
 
 
 def slots_extender(new_slots):

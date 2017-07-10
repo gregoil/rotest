@@ -14,7 +14,8 @@ setup(
                       'psutil',
                       'colorama',
                       'termcolor',
-                      'xmltodict'],
+                      'xmltodict',
+                      'basicstruct'],
     packages=find_packages(exclude=['doc']),
     package_data={'': ['*.xls', '*.xsd', '*.json', '*.css', '*.xml', '*.rst']},
     zip_safe=False
