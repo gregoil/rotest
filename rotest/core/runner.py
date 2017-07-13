@@ -4,13 +4,12 @@
 # pylint: disable=invalid-name,too-few-public-methods,no-member,unused-argument
 import os
 import sys
+from collections import defaultdict
 
 import django
 import optparse
 
 from rotest.common import core_log
-from collections import defaultdict
-
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite
@@ -20,7 +19,6 @@ from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
-
 
 LAST_RUN_INDEX = -1
 MINIMUM_TIMES_TO_RUN = 1
@@ -232,7 +230,11 @@ def parse_resource_identifiers(resources_str):
     Args:
         resources_str (str): string representation of the required resources.
 
-         Returns:
+    Example:
+        input: 'resource=demo_resource1'
+        output: {'resource': {'name': 'demo_resource1'}}
+
+    Returns:
              dict. the parsed resource identifiers.
     """
     if resources_str is None or len(resources_str) == 0:
@@ -258,8 +260,7 @@ def parse_resource_identifiers(resources_str):
     return requests_dict
 
 
-def _update_test_resources(test_element, identifiers_dict,
-                           requests_found=set()):
+def _update_test_resources(test_element, identifiers_dict):
     """Update resource requests for a specific test.
 
     Args:
@@ -268,8 +269,9 @@ def _update_test_resources(test_element, identifiers_dict,
             :class:`rotest.core.Suite.TestSuite.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
-        requests_found (set): stores which name constraints were fulfilled.
     """
+    requests_found = set()
+
     for resource_request in test_element.resources:
 
         if resource_request.name in identifiers_dict:
@@ -277,8 +279,10 @@ def _update_test_resources(test_element, identifiers_dict,
                 identifiers_dict[resource_request.name])
             requests_found.add(resource_request.name)
 
+    return requests_found
 
-def update_requests(test_element, identifiers_dict, requests_found=set()):
+
+def update_requests(test_element, identifiers_dict):
     """Recursively update resources requests.
 
     Update requests to use specific resources according to the identifiers.
@@ -289,22 +293,25 @@ def update_requests(test_element, identifiers_dict, requests_found=set()):
             :class:`rotest.core.Suite.TestSuite.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
-        requests_found (set): stores which name constraints were fulfilled.
 
         Returns:
             set. the 'specific' constraints that were found and fulfilled.
     """
+    requests_found = set()
+
     if issubclass(test_element, TestSuite):
         for component in test_element.components:
-            update_requests(component, identifiers_dict, requests_found)
+            requests_found.update(
+                update_requests(component, identifiers_dict))
 
     elif issubclass(test_element, (TestCase, TestFlow)):
-        _update_test_resources(test_element, identifiers_dict, requests_found)
+        requests_found.update(
+            _update_test_resources(test_element, identifiers_dict))
 
     return requests_found
 
 
-def update_resource_requests(test_class, resource_identifiers={}):
+def update_resource_requests(test_class, resource_identifiers):
     """Update the resources requests according to the parameters.
 
     Args:
@@ -357,8 +364,9 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-d", "--delta-iterations", action="store", type="int",
                       default=delta_iterations, help="Enable run of failed "
-                      "tests only, enter the number of times the failed tests "
-                      "should run", dest="delta_iterations")
+                                                     "tests only, enter the number of times the failed tests "
+                                                     "should run",
+                      dest="delta_iterations")
 
     parser.add_option("-p", "--processes", action="store", type='int',
                       default=processes, help="Use multiprocess test runner",
@@ -366,13 +374,14 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-o", "--outputs", type='string',
                       help="Output handlers separated by comma, "
-                      "options %r" % str(OUTPUTS_OPTIONS), action="callback",
+                           "options %r" % str(OUTPUTS_OPTIONS),
+                      action="callback",
                       callback=output_option_parser, dest="outputs",
                       default=outputs)
 
     parser.add_option("-f", "--filter", action="store", type="str",
                       default=test_filter, help='Run only tests that match '
-                      'the filter expression, e.g "Tag1* and not Tag13"',
+                                                'the filter expression, e.g "Tag1* and not Tag13"',
                       dest="filter")
 
     parser.add_option("-n", "--name", action="store", type='string',
@@ -390,7 +399,8 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-S", "--skip-init", action="store_true",
                       default=skip_init, help="Skip initialization and "
-                      "validation of resources", dest="skip_init")
+                                              "validation of resources",
+                      dest="skip_init")
 
     parser.add_option("-r", "--resources", action="store", type='str',
                       default=resources,
