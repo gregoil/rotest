@@ -231,11 +231,14 @@ def parse_resource_identifiers(resources_str):
         resources_str (str): string representation of the required resources.
 
     Example:
-        input: 'resource=demo_resource1'
-        output: {'resource': {'name': 'demo_resource1'}}
+        input:
+            'resource_a=demo_res1,resource_b.ip_address=10.0.0.1'
+        output:
+            {'resource_a': {'name': 'demo_res1'},
+            'resource_b': {'ip_address': '10.0.0.1'}}
 
     Returns:
-             dict. the parsed resource identifiers.
+        dict. the parsed resource identifiers.
     """
     if resources_str is None or len(resources_str) == 0:
         return {}
@@ -266,7 +269,9 @@ def _update_test_resources(test_element, identifiers_dict):
     Args:
         test_element (type): target test class inheriting from
             :class:`rotest.core.case.TestCase or
-            :class:`rotest.core.Suite.TestSuite.
+            :class:`rotest.core.Suite.TestSuite or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.case.TestCase`.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
     """
@@ -290,7 +295,9 @@ def update_requests(test_element, identifiers_dict):
     Args:
         test_element (type): target test class inheriting from
             :class:`rotest.core.case.TestCase or
-            :class:`rotest.core.Suite.TestSuite.
+            :class:`rotest.core.Suite.TestSuite or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.case.TestCase`.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
 
@@ -299,12 +306,12 @@ def update_requests(test_element, identifiers_dict):
     """
     requests_found = set()
 
-    if issubclass(test_element, TestSuite):
+    if issubclass(test_element, (TestSuite, TestFlow)):
         for component in test_element.components:
             requests_found.update(
                 update_requests(component, identifiers_dict))
 
-    elif issubclass(test_element, (TestCase, TestFlow)):
+    if issubclass(test_element, (TestCase, TestFlow)):
         requests_found.update(
             _update_test_resources(test_element, identifiers_dict))
 
@@ -317,7 +324,9 @@ def update_resource_requests(test_class, resource_identifiers):
     Args:
         test_class (type): test class to update its resources, inheriting form
             :class:`rotest.core.case.TestCase or
-            :class:`rotest.core.Suite.TestSuite.
+            :class:`rotest.core.Suite.TestSuite or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.case.TestCase`.
         resource_identifiers (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
     """
@@ -338,7 +347,9 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
     Args:
         test_class (type): test class inheriting from
             :class:`rotest.core.case.TestCase` or
-            :class:`rotest.core.suite.TestSuite`.
+            :class:`rotest.core.suite.TestSuite` or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.case.TestCase`.
         save_state (bool): enable save state.
         delta_iterations (number): enable run of failed tests only, enter the
             number of times the failed tests should run.
@@ -364,9 +375,8 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-d", "--delta-iterations", action="store", type="int",
                       default=delta_iterations, help="Enable run of failed "
-                                                     "tests only, enter the number of times the failed tests "
-                                                     "should run",
-                      dest="delta_iterations")
+                      "tests only, enter the number of times the failed tests "
+                      "should run", dest="delta_iterations")
 
     parser.add_option("-p", "--processes", action="store", type='int',
                       default=processes, help="Use multiprocess test runner",
@@ -381,7 +391,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-f", "--filter", action="store", type="str",
                       default=test_filter, help='Run only tests that match '
-                                                'the filter expression, e.g "Tag1* and not Tag13"',
+                      'the filter expression, e.g "Tag1* and not Tag13"',
                       dest="filter")
 
     parser.add_option("-n", "--name", action="store", type='string',
@@ -404,7 +414,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-r", "--resources", action="store", type='str',
                       default=resources,
-                      help="Specific resources to request by name.",
+                      help="Specific resources to request by name",
                       dest="resources")
 
     options, _ = parser.parse_args()
