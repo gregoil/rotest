@@ -12,6 +12,7 @@ import optparse
 from rotest.common import core_log
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
+from rotest.core.block import TestBlock
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.core.utils.json_parser import parse
@@ -92,7 +93,9 @@ def run(test_class, save_state=None, outputs=None, config=None,
     Args:
         test_class (type): test class inheriting from
             :class:`rotest.core.case.TestCase` or
-            :class:`rotest.core.suite.TestSuite`.
+            :class:`rotest.core.suite.TestSuite` or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.block.TestBlock`.
         save_state (bool): determine if storing resources state is required.
             The behavior can be overridden using resource's save_state flag.
         outputs (list): list of the required output handlers' names.
@@ -235,7 +238,7 @@ def parse_resource_identifiers(resources_str):
             'resource_a=demo_res1,resource_b.ip_address=10.0.0.1'
         output:
             {'resource_a': {'name': 'demo_res1'},
-            'resource_b': {'ip_address': '10.0.0.1'}}
+             'resource_b': {'ip_address': '10.0.0.1'}}
 
     Returns:
         dict. the parsed resource identifiers.
@@ -271,14 +274,13 @@ def _update_test_resources(test_element, identifiers_dict):
             :class:`rotest.core.case.TestCase or
             :class:`rotest.core.Suite.TestSuite or
             :class:`rotest.core.flow.TestFlow` or
-            :class:`rotest.core.case.TestCase`.
+            :class:`rotest.core.block.TestBlock`.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
     """
     requests_found = set()
 
     for resource_request in test_element.resources:
-
         if resource_request.name in identifiers_dict:
             resource_request.kwargs.update(
                 identifiers_dict[resource_request.name])
@@ -297,7 +299,7 @@ def update_requests(test_element, identifiers_dict):
             :class:`rotest.core.case.TestCase or
             :class:`rotest.core.Suite.TestSuite or
             :class:`rotest.core.flow.TestFlow` or
-            :class:`rotest.core.case.TestCase`.
+            :class:`rotest.core.block.TestBlock`.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
 
@@ -311,7 +313,7 @@ def update_requests(test_element, identifiers_dict):
             requests_found.update(
                 update_requests(component, identifiers_dict))
 
-    if issubclass(test_element, (TestCase, TestFlow)):
+    if issubclass(test_element, (TestCase, TestFlow, TestBlock)):
         requests_found.update(
             _update_test_resources(test_element, identifiers_dict))
 
@@ -326,7 +328,7 @@ def update_resource_requests(test_class, resource_identifiers):
             :class:`rotest.core.case.TestCase or
             :class:`rotest.core.Suite.TestSuite or
             :class:`rotest.core.flow.TestFlow` or
-            :class:`rotest.core.case.TestCase`.
+            :class:`rotest.core.block.TestBlock`.
         resource_identifiers (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
     """
@@ -349,7 +351,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
             :class:`rotest.core.case.TestCase` or
             :class:`rotest.core.suite.TestSuite` or
             :class:`rotest.core.flow.TestFlow` or
-            :class:`rotest.core.case.TestCase`.
+            :class:`rotest.core.block.TestBlock`.
         save_state (bool): enable save state.
         delta_iterations (number): enable run of failed tests only, enter the
             number of times the failed tests should run.
