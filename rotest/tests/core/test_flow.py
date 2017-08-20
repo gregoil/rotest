@@ -2,6 +2,7 @@
 import django
 
 from rotest.core.case import request
+from rotest.core.flow_component import PipeTo
 from rotest.core.models.case_data import TestOutcome
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
@@ -369,6 +370,28 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertEqual(len(self.result.errors), 1,
                          "Result didn't had the correct number of errors")
 
+    def test_inputs_static_check_with_pipe(self):
+        """Test static check of inputs validation of blocks when using pipes.
+
+        Run a flow with a block that expects an piped input it doesn't get,
+        then expect it to have an error.
+        """
+        missing_input_name = 'noinput'
+        InputsValidationBlock.inputs = (missing_input_name,)
+
+        MockFlow.blocks = (InputsValidationBlock.params(
+                            noinput=PipeTo(WriteToCommonBlock.INJECT_NAME)),)
+
+        with self.assertRaises(AttributeError):
+            MockFlow()
+
+        # Now give it the pipe's target and check that it succeeds
+        MockFlow.blocks = (WriteToCommonBlock,
+                           InputsValidationBlock.params(
+                              noinput=PipeTo(WriteToCommonBlock.INJECT_NAME)),)
+
+        MockFlow()
+
     def test_parametrize(self):
         """Validate parametrize behavior.
 
@@ -397,9 +420,32 @@ class TestTestFlow(BasicRotestUnitTest):
         # The third block should get an error since it wasn't injected with
         # the parameters and it tries to read them.
         self.assertFalse(self.result.wasSuccessful(),
-                         'Flow failed when it should have succeeded')
+                         'Flow succeeded when it should have succeeded')
 
         self.validate_blocks(test_flow, successes=2, errors=1)
+
+    def test_pipes_happy_flow(self):
+        """Validate parametrize behavior when using pipes."""
+        PIPE_PARAMETER_NAME = 'pipe_parameter'
+        PIPE_PARAMETER_VALUE = PipeTo(WriteToCommonBlock.INJECT_NAME)
+        parameters = {PIPE_PARAMETER_NAME: PIPE_PARAMETER_VALUE}
+
+        # Block to check that the correct value is injected into the block
+        ReadFromCommonBlock.READ_NAME = PIPE_PARAMETER_NAME
+        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
+
+        MockFlow.blocks = (WriteToCommonBlock,
+                           ReadFromCommonBlock.params(**parameters))
+
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        # The third block should get an error since it wasn't injected with
+        # the parameters and it tries to read them.
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
 
     def test_setup_flow(self):
         """Check that test-flows' setUp method is called before the blocks."""
@@ -981,9 +1027,9 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
 
 if __name__ == '__main__':
     django.setup()
-    colored_main(defaultTest='TestTestSuite')
+    colored_main(defaultTest='TestTestFlow')

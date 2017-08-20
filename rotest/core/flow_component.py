@@ -22,6 +22,12 @@ from rotest.management.client.manager import ClientResourceManager
 MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = xrange(1, 4)
 
 
+class PipeTo(object):
+    """Used as reference to another parameter when using blocks and flows."""
+    def __init__(self, parameter_name):
+        self.parameter_name = parameter_name
+
+
 class ClassInstantiator(object):
     """Container that holds instantiation parameters for a flow component."""
     def __init__(self, component_class, **parameters):
@@ -151,6 +157,7 @@ class AbstractFlowComponent(unittest.TestCase):
 
         super(AbstractFlowComponent, self).__init__(test_method_name)
 
+        self._pipes = {}
         self._tags = None
         self.result = None
         self.config = config
@@ -182,6 +189,14 @@ class AbstractFlowComponent(unittest.TestCase):
         if self.resource_manager is None:
             self.resource_manager = self.create_resource_manager()
             self._is_client_local = True
+
+    def __getattr__(self, name):
+        """Try to get attribute from a pipe if it's not found in self."""
+        if name in self._pipes:
+            return getattr(self, self._pipes[name])
+
+        raise AttributeError("'%s' object has no attribute '%s'" %
+                             (self.__class__.__name__, name))
 
     def create_resource_manager(self):
         """Create a new resource manager client instance.
@@ -496,7 +511,15 @@ class AbstractFlowComponent(unittest.TestCase):
     def _set_parameters(self, **parameters):
         """Inject parameters into the component."""
         for name, value in parameters.iteritems():
-            setattr(self, name, value)
+            if isinstance(value, PipeTo):
+                parameter_name = value.parameter_name
+                self._pipes[name] = parameter_name
+
+                if parameter_name not in self.inputs:
+                    self.inputs = list(self.inputs) + [parameter_name]
+
+            else:
+                setattr(self, name, value)
 
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.
