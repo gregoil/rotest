@@ -35,6 +35,9 @@ class BaseResource(object):
     """
     DATA_CLASS = NotImplemented
 
+    _CONTEXT_CLIENT = None
+    _CONTEXT_REQUEST_NAME = 'context_resource'
+
     def __init__(self, data=None):
         # We use core_log as default logger in case
         # that resource is used outside case.
@@ -250,3 +253,28 @@ class BaseResource(object):
         debug(self.store_state, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         for resource in self.get_sub_resources():
             resource.enable_debug()
+
+    @classmethod
+    def lock(cls, skip_init=False, **kwargs):
+        from rotest.management.client.manager import (ClientResourceManager,
+                                                      ResourceRequest)
+
+        if BaseResource._CONTEXT_CLIENT is None:
+            BaseResource._CONTEXT_CLIENT = ClientResourceManager()
+            BaseResource._CONTEXT_CLIENT.connect()
+
+        resource_request = ResourceRequest(BaseResource._CONTEXT_REQUEST_NAME,
+                                           cls,
+                                           **kwargs)
+
+        result = BaseResource._CONTEXT_CLIENT.request_resources(
+                                                        [resource_request],
+                                                        skip_init=skip_init)
+
+        return result[BaseResource._CONTEXT_REQUEST_NAME]
+
+    def release(self):
+        if BaseResource._CONTEXT_CLIENT is not None:
+            BaseResource._CONTEXT_CLIENT.release_resources(
+                {BaseResource._CONTEXT_CLIENT: self},
+                force_release=True)
