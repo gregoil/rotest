@@ -35,8 +35,8 @@ class BaseResource(object):
     """
     DATA_CLASS = NotImplemented
 
-    _CONTEXT_CLIENT = None
-    _CONTEXT_REQUEST_NAME = 'context_resource'
+    _SHELL_CLIENT = None
+    _SHELL_REQUEST_NAME = 'shell_resource'
 
     def __init__(self, data=None):
         # We use core_log as default logger in case
@@ -256,25 +256,36 @@ class BaseResource(object):
 
     @classmethod
     def lock(cls, skip_init=False, **kwargs):
+        """Lock an instance of this resource class.
+
+        Args:
+            skip_init (bool): whether to skip initialization or not.
+            kwargs (dict): additional query parameters for the request,
+                e.g. name or group.
+
+        Returns:
+            BaseResource. locked and initialized resource, ready for work.
+        """
         from rotest.management.client.manager import (ClientResourceManager,
                                                       ResourceRequest)
 
-        if BaseResource._CONTEXT_CLIENT is None:
-            BaseResource._CONTEXT_CLIENT = ClientResourceManager()
-            BaseResource._CONTEXT_CLIENT.connect()
+        if BaseResource._SHELL_CLIENT is None:
+            BaseResource._SHELL_CLIENT = ClientResourceManager()
+            BaseResource._SHELL_CLIENT.connect()
 
-        resource_request = ResourceRequest(BaseResource._CONTEXT_REQUEST_NAME,
+        resource_request = ResourceRequest(BaseResource._SHELL_REQUEST_NAME,
                                            cls,
                                            **kwargs)
 
-        result = BaseResource._CONTEXT_CLIENT.request_resources(
+        result = BaseResource._SHELL_CLIENT.request_resources(
                                                         [resource_request],
                                                         skip_init=skip_init)
 
-        return result[BaseResource._CONTEXT_REQUEST_NAME]
+        return result[BaseResource._SHELL_REQUEST_NAME]
 
     def release(self):
-        if BaseResource._CONTEXT_CLIENT is not None:
-            BaseResource._CONTEXT_CLIENT.release_resources(
-                {BaseResource._CONTEXT_CLIENT: self},
+        """Release the resource, assuming it was locked with a shell client."""
+        if BaseResource._SHELL_CLIENT is not None:
+            BaseResource._SHELL_CLIENT.release_resources(
+                {BaseResource._SHELL_CLIENT: self},
                 force_release=True)
