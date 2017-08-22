@@ -279,7 +279,8 @@ class BaseResource(object):
 
         result = BaseResource._SHELL_CLIENT.request_resources(
                                                         [resource_request],
-                                                        skip_init=skip_init)
+                                                        skip_init=skip_init,
+                                                        use_previous=False)
 
         return result[BaseResource._SHELL_REQUEST_NAME]
 
