@@ -400,7 +400,9 @@ class AbstractFlowComponent(unittest.TestCase):
                         dirty=self.data.exception_type == TestOutcome.ERROR,
                         force_release=True)
 
-                if self._is_client_local is True:
+                if (self._is_client_local is True and
+                        self.resource_manager.is_connected() is True):
+
                     self.resource_manager.disconnect()
 
         return teardown_method_wrapper
