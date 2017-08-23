@@ -192,7 +192,7 @@ class AbstractFlowComponent(unittest.TestCase):
 
     def __getattr__(self, name):
         """Try to get attribute from a pipe if it's not found in self."""
-        if name in self._pipes:
+        if '_pipes' in self.__dict__ and name in self.__dict__['_pipes']:
             return getattr(self, self._pipes[name])
 
         raise AttributeError("'%s' object has no attribute '%s'" %

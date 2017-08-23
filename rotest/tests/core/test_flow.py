@@ -385,13 +385,6 @@ class TestTestFlow(BasicRotestUnitTest):
         with self.assertRaises(AttributeError):
             MockFlow()
 
-        # Now give it the pipe's target and check that it succeeds
-        MockFlow.blocks = (WriteToCommonBlock,
-                           InputsValidationBlock.params(
-                              noinput=PipeTo(WriteToCommonBlock.INJECT_NAME)),)
-
-        MockFlow()
-
     def test_parametrize(self):
         """Validate parametrize behavior.
 
@@ -420,28 +413,23 @@ class TestTestFlow(BasicRotestUnitTest):
         # The third block should get an error since it wasn't injected with
         # the parameters and it tries to read them.
         self.assertFalse(self.result.wasSuccessful(),
-                         'Flow succeeded when it should have succeeded')
+                         'Flow succeeded when it should have failed')
 
         self.validate_blocks(test_flow, successes=2, errors=1)
 
     def test_pipes_happy_flow(self):
         """Validate parametrize behavior when using pipes."""
-        PIPE_PARAMETER_NAME = 'pipe_parameter'
-        PIPE_PARAMETER_VALUE = PipeTo(WriteToCommonBlock.INJECT_NAME)
-        parameters = {PIPE_PARAMETER_NAME: PIPE_PARAMETER_VALUE}
-
-        # Block to check that the correct value is injected into the block
-        ReadFromCommonBlock.READ_NAME = PIPE_PARAMETER_NAME
+        # Block to check that the correct value is wrote through the pipe
+        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
         ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
 
         MockFlow.blocks = (WriteToCommonBlock,
-                           ReadFromCommonBlock.params(**parameters))
+                           ReadFromCommonBlock.params(
+							   pipe_parameter=PipeTo(WriteToCommonBlock.INJECT_NAME)))
 
         test_flow = MockFlow()
         self.run_test(test_flow)
 
-        # The third block should get an error since it wasn't injected with
-        # the parameters and it tries to read them.
         self.assertTrue(self.result.wasSuccessful(),
                         'Flow failed when it should have succeeded')
 
