@@ -1,4 +1,5 @@
 """Define SignatureData model class."""
+# pylint: disable=no-init,old-style-class
 from django.db import models
 from rotest.common.django_utils.fields import NameField
 

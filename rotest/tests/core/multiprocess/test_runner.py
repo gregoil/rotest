@@ -4,12 +4,12 @@ This module contains tests for the multiprocess runner functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import os
-import psutil
 import unittest
 from Queue import Empty
 from multiprocessing import Queue, Event
 
 import django
+import psutil
 
 from rotest.common.colored_test_runner import colored_main
 from rotest.tests.core.utils import MockSuite1, BasicRotestUnitTest

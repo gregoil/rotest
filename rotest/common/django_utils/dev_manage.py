@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+# pylint: disable=protected-access
 import os
 import sys
-import django
 import platform
+
+import django
 
 
 def main():

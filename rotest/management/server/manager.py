@@ -1,5 +1,5 @@
 """Resource manager server."""
-# pylint: disable=no-self-use,protected-access
+# pylint: disable=no-self-use,protected-access,broad-except,too-many-locals
 import time
 from threading import Thread
 from datetime import datetime

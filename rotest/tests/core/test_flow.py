@@ -1,4 +1,6 @@
 """Test TestSuite behavior and common variables."""
+# pylint: disable=no-init,old-style-class,too-many-public-methods
+# pylint: disable=too-many-lines,too-many-arguments,too-many-locals
 import django
 
 from rotest.core.case import request

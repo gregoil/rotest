@@ -1,5 +1,8 @@
 """Describe TestBlock class."""
-# pylint: disable=dangerous-default-value
+# pylint: disable=attribute-defined-outside-init,unused-argument
+# pylint: disable=too-many-arguments,too-many-locals,broad-except
+# pylint: disable=dangerous-default-value,access-member-before-definition
+# pylint: disable=bare-except,protected-access,too-many-instance-attributes
 import sys
 import unittest
 from bdb import BdbQuit
@@ -7,6 +10,7 @@ from functools import wraps
 from itertools import count
 
 from ipdbugger import debug
+
 from rotest import ROTEST_WORK_DIR
 from rotest.common import core_log
 from rotest.common.log import get_test_logger
@@ -376,7 +380,7 @@ class AbstractFlowComponent(unittest.TestCase):
         """Decorate the tearDown method to handle resource release.
 
         Args:
-            test_method (method): the original tearDown method.
+            teardown_method (method): the original tearDown method.
             result (rotest.core.result.result.Result): test result information.
 
         Returns:
@@ -465,11 +469,11 @@ class AbstractFlowComponent(unittest.TestCase):
             bool. True if the flow failed, False otherwise.
         """
         if self.mode in (MODE_CRITICAL, MODE_FINALLY) and \
-            self.data.exception_type not in TestOutcome.NON_NEGATIVE_RESULTS:
+                self.data.exception_type not in TestOutcome.POSITIVE_RESULTS:
             return True
 
         elif self.mode in (MODE_OPTIONAL,) and \
-            self.data.exception_type not in TestOutcome.NON_CRITICAL_RESULTS:
+                self.data.exception_type not in TestOutcome.UNCRITICAL_RESULTS:
             return True
 
         return False

@@ -8,10 +8,10 @@ Note:
 """
 # pylint: disable=redefined-outer-name
 import sys
-import django
 import logging
 import argparse
 
+import django
 from twisted.internet.protocol import ServerFactory
 from twisted.internet.selectreactor import SelectReactor
 
@@ -102,6 +102,7 @@ def main():
     args = parser.parse_args()
 
     ResourceManagerServer(port=args.port).start()
+
 
 if __name__ == '__main__':
     main()

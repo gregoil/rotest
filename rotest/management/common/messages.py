@@ -117,8 +117,6 @@ class LockResources(AbstractMessage):
             {'type': resource_type_name, 'properties': {'key': value}}
         timeout (number): seconds to wait for resources if they're unavailable.
     """
-    # TODO: add timeout for using the resources so the worker will release them
-    # if needed.
     pass
 
 

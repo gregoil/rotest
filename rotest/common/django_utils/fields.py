@@ -57,7 +57,7 @@ class MACAddressField(models.CharField):
 
 
 class PathField(models.CharField):
-    """File-system path string field.
+    r"""File-system path string field.
 
     This field is limited to 200 characters and contains string path split by
     slashes or backslashes.

@@ -1,9 +1,10 @@
 """Rotest testing framework, based on Python unit-test and Django."""
 # pylint: disable=unused-import
 import os
-import colorama
 from unittest import skip, SkipTest
 from unittest import skipIf as skip_if
+
+import colorama
 
 # Enable color printing on screen.
 colorama.init()
