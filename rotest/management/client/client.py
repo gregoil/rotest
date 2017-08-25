@@ -1,7 +1,7 @@
 """Define an abstract client."""
+# pylint: disable=too-many-arguments
 import socket
 from itertools import count
-from socket import timeout as SocketTimeoutError
 
 from rotest.common import core_log
 from rotest import RESOURCE_REQUEST_TIMEOUT
@@ -152,7 +152,7 @@ class AbstractClient(object):
 
             reply_msg = self._parser.decode(encoded_reply)
 
-        except SocketTimeoutError:
+        except socket.timeout:
             raise RuntimeError("Server failed to respond to %r after %r "
                                "seconds" %
                                (request_msg, self._socket.gettimeout()))

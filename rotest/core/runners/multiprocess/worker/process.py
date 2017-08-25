@@ -1,8 +1,9 @@
 """Multiprocess worker process."""
 # pylint: disable=invalid-name,too-many-arguments,too-many-instance-attributes
-import psutil
 from Queue import Empty
 from multiprocessing import Process
+
+import psutil
 
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.worker.runner import WorkerRunner

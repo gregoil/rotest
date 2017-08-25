@@ -1,5 +1,5 @@
 """Define Rotest's TestSuite, composed from test suites or test cases."""
-# pylint: disable=method-hidden,bad-super-call
+# pylint: disable=method-hidden,bad-super-call,too-many-arguments
 import unittest
 from itertools import count
 

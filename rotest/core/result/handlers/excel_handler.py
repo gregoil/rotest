@@ -1,8 +1,10 @@
 """Excel result handler."""
+# pylint: disable=unused-argument
 import os
+from collections import OrderedDict
+
 import xlwt
 from xlwt.Style import easyxf
-from collections import OrderedDict
 
 from rotest.core.suite import TestSuite
 from abstract_handler import AbstractResultHandler

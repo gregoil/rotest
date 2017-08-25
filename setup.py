@@ -1,5 +1,4 @@
-import os
-
+"""Setup file for handling packaging and distribution."""
 from setuptools import setup, find_packages
 
 setup(

@@ -1,6 +1,6 @@
 """Define CaseData model class."""
 # pylint: disable=no-member,no-init,too-few-public-methods
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods,no-init,old-style-class
 from django.db import models
 
 from general_data import GeneralData
@@ -24,9 +24,9 @@ class TestOutcome(object):
                        FAILED: 4,
                        ERROR: 5}
 
-    NON_NEGATIVE_RESULTS = (SUCCESS, SKIPPED, EXPECTED_FAILURE)
-    NON_CRITICAL_RESULTS = (SUCCESS, SKIPPED, EXPECTED_FAILURE,
-                            UNEXPECTED_SUCCESS, FAILED)
+    POSITIVE_RESULTS = (SUCCESS, SKIPPED, EXPECTED_FAILURE)
+    UNCRITICAL_RESULTS = (SUCCESS, SKIPPED, EXPECTED_FAILURE,
+                          UNEXPECTED_SUCCESS, FAILED)
 
 
 class CaseData(GeneralData):

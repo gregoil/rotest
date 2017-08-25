@@ -93,6 +93,7 @@ class ResourceDataAdmin(admin.ModelAdmin):
         """Disable the addition of a base resource object."""
         return False
 
+
 # Register the Models & corresponding AdminModels to Django admin site
 admin.site.register(ResourceData, ResourceDataAdmin)
 

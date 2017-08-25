@@ -4,11 +4,12 @@ Note:
     Django works with Unicode therefore, we use here basestring which is the
     base class of unicode and str type.
 """
+# pylint: disable=too-many-return-statements,protected-access,too-many-locals
 import os
 from numbers import Number
-from lxml.builder import E
+
 from django.db import models
-from lxml import etree, objectify
+from lxml import etree, objectify, builder
 
 from rotest.management.common import messages
 from abstract_parser import ParsingError, AbstractParser
@@ -91,13 +92,13 @@ class XMLParser(AbstractParser):
         Returns:
             str. XML string that represent the encoded message.
         """
-        header = E(message.__class__.__name__)
+        header = builder.E(message.__class__.__name__)
 
         for slot in message.__slots__:
             slot_value = getattr(message, slot)
 
             # BasicStruct handle None slots.
-            slot_element = E(slot, self._encode(slot_value))
+            slot_element = builder.E(slot, self._encode(slot_value))
             header.append(slot_element)
 
         return etree.tostring(header)
@@ -164,7 +165,7 @@ class XMLParser(AbstractParser):
         if isinstance(data, dict):
             return self._encode_dict(data)
 
-        if isinstance(data, list) or isinstance(data, tuple):
+        if isinstance(data, (list, tuple)):
             return self._encode_list(data)
 
         if isinstance(data, type):
@@ -187,14 +188,14 @@ class XMLParser(AbstractParser):
         Returns:
             ElementTree. XML element represent a resource.
         """
-        resource_element = E(self._RESOURCE_TYPE)
+        resource_element = builder.E(self._RESOURCE_TYPE)
 
         type_name = extract_type_path(type(resource))
 
-        type_element = E(TYPE_NAME, self._encode(type_name))
+        type_element = builder.E(TYPE_NAME, self._encode(type_name))
         resource_element.append(type_element)
 
-        data_element = E(DATA_NAME, self._encode(resource.data))
+        data_element = builder.E(DATA_NAME, self._encode(resource.data))
         resource_element.append(data_element)
 
         return resource_element
@@ -208,15 +209,16 @@ class XMLParser(AbstractParser):
         Returns:
             ElementTree. XML element represent a resource.
         """
-        resource_element = E(self._RESOURCE_DATA_TYPE)
+        resource_element = builder.E(self._RESOURCE_DATA_TYPE)
 
         type_name = extract_type_path(type(resource_data))
 
-        type_element = E(TYPE_NAME, self._encode(type_name))
+        type_element = builder.E(TYPE_NAME, self._encode(type_name))
         resource_element.append(type_element)
 
-        properties_element = E(PROPERTIES,
-                               self._encode(resource_data.get_fields()))
+        properties_element = \
+            builder.E(PROPERTIES,
+                      self._encode(resource_data.get_fields()))
         resource_element.append(properties_element)
 
         return resource_element
@@ -230,9 +232,9 @@ class XMLParser(AbstractParser):
         Returns:
             ElementTree. XML element represent the class.
         """
-        class_element = E(self._CLASS_TYPE)
-        type_element = E(TYPE_NAME,
-                         self._encode(extract_type_path(data_type)))
+        class_element = builder.E(self._CLASS_TYPE)
+        type_element = builder.E(TYPE_NAME,
+                                 self._encode(extract_type_path(data_type)))
         class_element.append(type_element)
 
         return class_element
@@ -249,14 +251,14 @@ class XMLParser(AbstractParser):
         Raises:
             ParsingError: one of the keys is not of type str.
         """
-        dict_element = E(self._DICT_TYPE)
+        dict_element = builder.E(self._DICT_TYPE)
 
         for key, value in dict_data.iteritems():
             if not isinstance(key, basestring):
                 raise ParsingError("Failed to encode dictionary, "
                                    "key %r is not a string" % key)
 
-            element = E(key, self._encode(value))
+            element = builder.E(key, self._encode(value))
             dict_element.append(element)
 
         return dict_element
@@ -270,10 +272,10 @@ class XMLParser(AbstractParser):
         Returns:
             ElementTree. XML element represent a list.
         """
-        list_element = E(self._LIST_TYPE)
+        list_element = builder.E(self._LIST_TYPE)
 
         for item in list_data:
-            element = E(self._LIST_ITEM_TYPE, self._encode(item))
+            element = builder.E(self._LIST_ITEM_TYPE, self._encode(item))
             list_element.append(element)
 
         return list_element
@@ -304,7 +306,7 @@ class XMLParser(AbstractParser):
             if isinstance(value, basestring):
                 return value[1:-1]
 
-            if isinstance(value, bool) or isinstance(value, Number):
+            if isinstance(value, (bool, Number)):
                 return value
 
         # The XML parser's scheme allows only 1 child under each element

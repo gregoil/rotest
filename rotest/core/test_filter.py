@@ -1,5 +1,5 @@
 """Test trimming utilities by filtering of tags."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,eval-used
 from fnmatch import fnmatch
 
 from rotest.core.case import TestCase

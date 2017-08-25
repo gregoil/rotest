@@ -1,5 +1,5 @@
 """Describe TestBlock class."""
-# pylint: disable=dangerous-default-value
+# pylint: disable=dangerous-default-value,too-many-arguments
 from itertools import count
 
 from rotest import ROTEST_WORK_DIR

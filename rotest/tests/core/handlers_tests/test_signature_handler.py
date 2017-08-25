@@ -1,6 +1,7 @@
 """Test Rotest's Signatures handler."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,attribute-defined-outside-init
 import os
+
 import xlrd
 
 from base_result_handler_test import BaseResultHandlerTest

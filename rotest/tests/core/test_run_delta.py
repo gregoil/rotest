@@ -1,4 +1,5 @@
 """Test run delta feature."""
+# pylint: disable=too-many-arguments
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import django
 

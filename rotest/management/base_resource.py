@@ -3,13 +3,14 @@
 Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
-# pylint: disable=invalid-name,cell-var-from-loop
+# pylint: disable=invalid-name,cell-var-from-loop,broad-except
 # pylint: disable=access-member-before-definition,property-on-old-class
 # pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
 import os
 from bdb import BdbQuit
 
 from ipdbugger import debug
+
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
 from rotest.management.common.utils import HOST_PORT_SEPARATOR

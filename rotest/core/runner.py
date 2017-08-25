@@ -4,8 +4,9 @@
 # pylint: disable=invalid-name,too-few-public-methods,no-member,unused-argument
 import os
 import sys
-import django
 import optparse
+
+import django
 
 from rotest.common import core_log
 from rotest.core.result.result import Result
