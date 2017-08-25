@@ -1,5 +1,5 @@
 """Describe TestBlock class."""
-# pylint: disable=dangerous-default-value
+# pylint: disable=dangerous-default-value,too-many-arguments
 from itertools import count
 
 from rotest import ROTEST_WORK_DIR
@@ -139,7 +139,8 @@ class TestBlock(AbstractFlowComponent):
         """
         missing_inputs = [input_name for input_name in self.inputs
                           if (hasattr(self, input_name) is False and
-                              input_name not in extra_inputs)]
+                              input_name not in extra_inputs and
+                              input_name not in self._pipes)]
 
         if len(missing_inputs) > 0:
             raise AttributeError("Block %r is missing mandatory inputs %s" %

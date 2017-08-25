@@ -28,7 +28,7 @@ class AttrDict(dict):
     def __init__(self, *args):
         temp_dict = args
 
-        if temp_dict is not ():
+        if temp_dict != ():
             temp_dict, = temp_dict
 
             for key, value in temp_dict.items():

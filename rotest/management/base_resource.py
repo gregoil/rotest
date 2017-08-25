@@ -3,13 +3,14 @@
 Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
-# pylint: disable=invalid-name,cell-var-from-loop
+# pylint: disable=invalid-name,cell-var-from-loop,broad-except
 # pylint: disable=access-member-before-definition,property-on-old-class
 # pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
 import os
 from bdb import BdbQuit
 
 from ipdbugger import debug
+
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
@@ -34,6 +35,9 @@ class BaseResource(object):
         force_validate (bool): flag to indicate if the validation is mandatory.
     """
     DATA_CLASS = NotImplemented
+
+    _SHELL_CLIENT = None
+    _SHELL_REQUEST_NAME = 'shell_resource'
 
     def __init__(self, data=None):
         # We use core_log as default logger in case
@@ -250,3 +254,40 @@ class BaseResource(object):
         debug(self.store_state, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         for resource in self.get_sub_resources():
             resource.enable_debug()
+
+    @classmethod
+    def lock(cls, skip_init=False, **kwargs):
+        """Lock an instance of this resource class.
+
+        Args:
+            skip_init (bool): whether to skip initialization or not.
+            kwargs (dict): additional query parameters for the request,
+                e.g. name or group.
+
+        Returns:
+            BaseResource. locked and initialized resource, ready for work.
+        """
+        from rotest.management.client.manager import (ClientResourceManager,
+                                                      ResourceRequest)
+
+        if BaseResource._SHELL_CLIENT is None:
+            BaseResource._SHELL_CLIENT = ClientResourceManager()
+            BaseResource._SHELL_CLIENT.connect()
+
+        resource_request = ResourceRequest(BaseResource._SHELL_REQUEST_NAME,
+                                           cls,
+                                           **kwargs)
+
+        result = BaseResource._SHELL_CLIENT.request_resources(
+                                                        [resource_request],
+                                                        skip_init=skip_init,
+                                                        use_previous=False)
+
+        return result[BaseResource._SHELL_REQUEST_NAME]
+
+    def release(self):
+        """Release the resource, assuming it was locked with a shell client."""
+        if BaseResource._SHELL_CLIENT is not None:
+            BaseResource._SHELL_CLIENT.release_resources(
+                {BaseResource._SHELL_CLIENT: self},
+                force_release=True)

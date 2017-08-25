@@ -1,6 +1,7 @@
 """Json parser and validator."""
 # pylint: disable=multiple-statements
 import json
+
 from jsonschema import validate
 
 from rotest.common.utils import AttrDict

@@ -1,5 +1,5 @@
 """Test utils for Rotest UT."""
-# pylint: disable=expression-not-assigned,bad-builtin
+# pylint: disable=expression-not-assigned,too-many-arguments
 # pylint: disable=no-self-use,too-many-public-methods,unused-argument
 import unittest
 
@@ -311,7 +311,7 @@ class StoreFailureCase(MockCase):
     def test_store_failure(self):
         """Mock test function - stores failures."""
         self.expect(False, self.FAILURE_MESSAGE)
-        self.assertTrue(True, self.ASSERTION_MESSAGE)
+        self.assertTrue(self.ASSERTION_MESSAGE)
 
 
 class StoreMultipleFailuresCase(MockCase):

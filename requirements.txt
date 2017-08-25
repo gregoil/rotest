@@ -1,0 +1,16 @@
+tox
+django>=1.7,<1.8
+ipdb
+ipdbugger>=1.1.0
+lxml
+xlwt
+twisted
+psutil
+colorama
+termcolor
+xmltodict
+basicstruct
+flake8
+pylint
+jsonschema
+xlrd

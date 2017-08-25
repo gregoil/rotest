@@ -9,30 +9,33 @@ from constants import GREEN, RED, YELLOW
 
 
 DEFAULT = 0
-TEMPLATE = lambda x: '\33[%dm' % x
+
+
+def template(text):
+    return '\33[%dm' % text
 
 
 class ColorTextTestResult(unittest._TextTestResult):
     """Unittest's text result object, with colored printing."""
     def addSuccess(self, test):
-        self.stream.write(TEMPLATE(COLORS[GREEN]))
+        self.stream.write(template(COLORS[GREEN]))
         super(ColorTextTestResult, self).addSuccess(test)
-        self.stream.write(TEMPLATE(DEFAULT))
+        self.stream.write(template(DEFAULT))
 
     def addError(self, test, err):
-        self.stream.write(TEMPLATE(COLORS[RED]))
+        self.stream.write(template(COLORS[RED]))
         super(ColorTextTestResult, self).addError(test, err)
-        self.stream.write(TEMPLATE(DEFAULT))
+        self.stream.write(template(DEFAULT))
 
     def addFailure(self, test, err):
-        self.stream.write(TEMPLATE(COLORS[RED]))
+        self.stream.write(template(COLORS[RED]))
         super(ColorTextTestResult, self).addFailure(test, err)
-        self.stream.write(TEMPLATE(DEFAULT))
+        self.stream.write(template(DEFAULT))
 
     def addSkip(self, test, reason):
-        self.stream.write(TEMPLATE(COLORS[YELLOW]))
+        self.stream.write(template(COLORS[YELLOW]))
         super(ColorTextTestResult, self).addSkip(test, reason)
-        self.stream.write(TEMPLATE(DEFAULT))
+        self.stream.write(template(DEFAULT))
 
 
 class ColorTextTestRunner(unittest.TextTestRunner):
@@ -44,5 +47,6 @@ class ColorTextTestRunner(unittest.TextTestRunner):
     def _makeResult(self):
         return ColorTextTestResult(self.stream, self.descriptions,
                                    self.verbosity)
+
 
 colored_main = partial(unittest.main, testRunner=ColorTextTestRunner)

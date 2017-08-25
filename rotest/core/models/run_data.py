@@ -1,5 +1,5 @@
 """Define RunData model class."""
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods,no-init,old-style-class
 from django.db import models
 
 from general_data import GeneralData

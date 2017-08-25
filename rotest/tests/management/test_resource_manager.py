@@ -7,6 +7,7 @@ TODO: add tests for complex resources.
 7. Cleaned Up a complex resource.
 8. Dirty tests
 """
+# pylint: disable=too-many-lines
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
 import time
 from itertools import izip
@@ -233,7 +234,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                                      resource.__class__.__name__))
 
             resources_num = descriptor.type.DATA_CLASS.objects.filter(
- ~Q(owner=""), name=expected_name).count()
+                ~Q(owner=""), name=expected_name).count()
 
             self.assertEquals(resources_num, 1, "Expected 1 locked "
                               "resource with name %r in DB, found %d"

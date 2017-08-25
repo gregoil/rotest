@@ -46,6 +46,7 @@ class Worker(LineReceiver):
         self.run_data = None
         self.is_alive = False
         self.main_test = None
+        self.user_name = None
 
         self._messages_counter = count()
 

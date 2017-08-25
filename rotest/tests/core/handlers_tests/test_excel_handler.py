@@ -1,8 +1,9 @@
 """Test Rotest's Excel handler."""
 # pylint: disable=protected-access
 import os
+import itertools
+
 import xlrd
-import filecmp
 
 from rotest.core.block import TestBlock
 from base_result_handler_test import BaseResultHandlerTest
@@ -85,7 +86,7 @@ class TestExcelHandler(BaseResultHandlerTest):
         expected_test_row = level * ExcelHandler.SPACES + test_name
         self.assertEqual(expected_test_row, actual_test_row,
                          "In row %d expected %r. Got %r" %
-                         ((row), expected_test_row, actual_test_row))
+                         (row, expected_test_row, actual_test_row))
 
     def validate_tests_indentation(self, test, level=0):
         """Validate the given test indentation.
@@ -211,13 +212,21 @@ class TestExcelHandler(BaseResultHandlerTest):
         """Make a binary comparison.
 
         Raises:
-            AsserationError. the result file differs from the expected file.
+            AssertionError. the result file differs from the expected file.
         """
-        self.assertTrue(filecmp.cmp(self.EXPECTED_FILE_PATH,
-                                    self.handler.output_file_path),
-                        "The file %r differs from %r" %
-                        (self.handler.output_file_path,
-                         self.EXPECTED_FILE_PATH))
+        expected_sheet = \
+            xlrd.open_workbook(self.EXPECTED_FILE_PATH).sheet_by_index(0)
+        actual_sheet = \
+            xlrd.open_workbook(self.handler.output_file_path).sheet_by_index(0)
+
+        self.assertEqual(actual_sheet.nrows, expected_sheet.nrows)
+        self.assertEqual(actual_sheet.ncols, expected_sheet.ncols)
+
+        for row, col in itertools.product(range(actual_sheet.nrows,
+                                                actual_sheet.ncols)):
+            actual_cell = actual_sheet.cell(row, col)
+            expected_cell = expected_sheet.cell(row, col)
+            self.assertEqual(actual_cell, expected_cell)
 
 
 if __name__ == '__main__':

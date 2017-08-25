@@ -5,9 +5,9 @@
 import os
 import sys
 from collections import defaultdict
+import optparse
 
 import django
-import optparse
 
 from rotest.common import core_log
 from rotest.core.case import TestCase

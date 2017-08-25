@@ -1,4 +1,5 @@
 """Define SuiteData model class."""
+# pylint: disable=no-init,old-style-class
 from general_data import GeneralData
 
 

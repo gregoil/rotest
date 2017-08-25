@@ -1,5 +1,8 @@
 """Describe TestBlock class."""
-# pylint: disable=dangerous-default-value
+# pylint: disable=attribute-defined-outside-init,unused-argument
+# pylint: disable=too-many-arguments,too-many-locals,broad-except
+# pylint: disable=dangerous-default-value,access-member-before-definition
+# pylint: disable=bare-except,protected-access,too-many-instance-attributes
 import sys
 import unittest
 from bdb import BdbQuit
@@ -7,6 +10,7 @@ from functools import wraps
 from itertools import count
 
 from ipdbugger import debug
+
 from rotest import ROTEST_WORK_DIR
 from rotest.common import core_log
 from rotest.common.log import get_test_logger
@@ -20,6 +24,12 @@ from rotest.management.client.manager import ClientResourceManager
 # FINALLY: always run test, unskippable
 # OPTIONAL: don't stop test on failure (but do so on error)
 MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = xrange(1, 4)
+
+
+class PipeTo(object):
+    """Used as reference to another parameter when using blocks and flows."""
+    def __init__(self, parameter_name):
+        self.parameter_name = parameter_name
 
 
 class ClassInstantiator(object):
@@ -151,6 +161,7 @@ class AbstractFlowComponent(unittest.TestCase):
 
         super(AbstractFlowComponent, self).__init__(test_method_name)
 
+        self._pipes = {}
         self._tags = None
         self.result = None
         self.config = config
@@ -182,6 +193,14 @@ class AbstractFlowComponent(unittest.TestCase):
         if self.resource_manager is None:
             self.resource_manager = self.create_resource_manager()
             self._is_client_local = True
+
+    def __getattr__(self, name):
+        """Try to get attribute from a pipe if it's not found in self."""
+        if '_pipes' in self.__dict__ and name in self.__dict__['_pipes']:
+            return getattr(self, self._pipes[name])
+
+        raise AttributeError("'%s' object has no attribute '%s'" %
+                             (self.__class__.__name__, name))
 
     def create_resource_manager(self):
         """Create a new resource manager client instance.
@@ -361,7 +380,7 @@ class AbstractFlowComponent(unittest.TestCase):
         """Decorate the tearDown method to handle resource release.
 
         Args:
-            test_method (method): the original tearDown method.
+            teardown_method (method): the original tearDown method.
             result (rotest.core.result.result.Result): test result information.
 
         Returns:
@@ -385,7 +404,9 @@ class AbstractFlowComponent(unittest.TestCase):
                         dirty=self.data.exception_type == TestOutcome.ERROR,
                         force_release=True)
 
-                if self._is_client_local is True:
+                if (self._is_client_local is True and
+                        self.resource_manager.is_connected() is True):
+
                     self.resource_manager.disconnect()
 
         return teardown_method_wrapper
@@ -448,11 +469,11 @@ class AbstractFlowComponent(unittest.TestCase):
             bool. True if the flow failed, False otherwise.
         """
         if self.mode in (MODE_CRITICAL, MODE_FINALLY) and \
-            self.data.exception_type not in TestOutcome.NON_NEGATIVE_RESULTS:
+                self.data.exception_type not in TestOutcome.POSITIVE_RESULTS:
             return True
 
         elif self.mode in (MODE_OPTIONAL,) and \
-            self.data.exception_type not in TestOutcome.NON_CRITICAL_RESULTS:
+                self.data.exception_type not in TestOutcome.UNCRITICAL_RESULTS:
             return True
 
         return False
@@ -496,7 +517,15 @@ class AbstractFlowComponent(unittest.TestCase):
     def _set_parameters(self, **parameters):
         """Inject parameters into the component."""
         for name, value in parameters.iteritems():
-            setattr(self, name, value)
+            if isinstance(value, PipeTo):
+                parameter_name = value.parameter_name
+                self._pipes[name] = parameter_name
+
+                if parameter_name not in self.inputs:
+                    self.inputs = list(self.inputs) + [parameter_name]
+
+            else:
+                setattr(self, name, value)
 
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.

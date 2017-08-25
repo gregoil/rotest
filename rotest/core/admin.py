@@ -67,6 +67,7 @@ class RunDataAdmin(admin.ModelAdmin):
     list_display = ['main_test', 'run_name', 'user_name', 'artifact_path',
                     'main_test_link']
 
+
 # Register the Models & corresponding AdminModels to Django admin site
 admin.site.register(SignatureData, SignatureDataAdmin)
 admin.site.register(SuiteData, SuiteDataAdmin)

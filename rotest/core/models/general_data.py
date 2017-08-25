@@ -1,6 +1,8 @@
 """Define GeneralData model class."""
-from django.db import models
+# pylint: disable=no-init,old-style-class,unused-argument
 from datetime import datetime
+
+from django.db import models
 
 from rotest.common.django_utils import linked_unicode
 from rotest.common.django_utils.fields import NameField
