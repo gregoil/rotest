@@ -12,6 +12,8 @@ from rotest.core.result.handlers.xml_handler import XMLHandler
 
 class TestXMLHandler(BaseResultHandlerTest):
     """Test XML handler's functionality."""
+    __test__ = True
+
     XML_FILES_PATH = os.path.join(os.path.dirname(__file__),
                                   'resources', 'xml_files')
     EXPECTED_XML_FILES = [os.path.join(XML_FILES_PATH, 'flow_success.xml'),

@@ -24,6 +24,8 @@ class BasicMultiprocessCase(MockCase):
         TIMEOUT (number): timeout for the test to run. If the timeout elapses,
             the test should be killed.
     """
+    __test__ = False
+
     TIMEOUT = 1.5  # Seconds.
     EXTRA_TIME = 0.25  # Seconds.
 
@@ -85,6 +87,7 @@ class ResourceIdRegistrationCase(BasicMultiprocessCase):
     def test_method(self):
         """Register the resource's ID to the shared queue."""
         self.register_id(id(self.res1))
+        time.sleep(1)  # Make sure the case won't be taken by the same worker
 
 
 class TimeoutWithSubprocessCase(SubprocessCreationCase):
@@ -127,6 +130,7 @@ class TearDownTimeoutCase(TimeoutCase):
 
 class SuicideCase(MockCase):
     """Kill the current process."""
+    __test__ = False
 
     def test_method(self):
         """Kill the current process."""

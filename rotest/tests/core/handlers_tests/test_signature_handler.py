@@ -11,6 +11,8 @@ from rotest.core.result.handlers.signature_handler import SignatureHandler
 
 class TestSignatureHandler(BaseResultHandlerTest):
     """Test issues signatures handler's functionality."""
+    __test__ = True
+
     fixtures = ['signature_ut.json']
 
     SIG_DICT = {"Error": "test_res2",

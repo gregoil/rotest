@@ -25,6 +25,7 @@ class AbstractTestParser(TransactionTestCase):
         PARSER (AbstractParser): the parser to be tested.
             Should be initiated under setUpClass method in any derived class.
     """
+    __test__ = False
     __metaclass__ = ABCMeta
 
     PARSER = NotImplemented
@@ -121,6 +122,7 @@ class AbstractTestParser(TransactionTestCase):
 
 class TestXMLParser(AbstractTestParser):
     """Test the XML parser module."""
+    __test__ = True
 
     @classmethod
     def setUpClass(cls):

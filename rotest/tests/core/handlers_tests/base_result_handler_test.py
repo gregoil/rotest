@@ -35,6 +35,7 @@ def get_tests(test):
 
 class BaseResultHandlerTest(TransactionTestCase):
     """Base class for testing result handlers."""
+    __test__ = False
     __metaclass__ = ABCMeta
 
     fixtures = ['resource_ut.json']

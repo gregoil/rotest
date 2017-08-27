@@ -51,11 +51,11 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
     def validate_test_processes(self, expected_processes_num):
         """Validate that case's processes ran and were killed.
 
-         * Validate that expected number of processes ran.
-         * Validate that all processes got killed.
+        * Validate that expected number of processes ran.
+        * Validate that all processes got killed.
 
         Args:
-            expected_processes (number): expected number of processes to
+            expected_processes_num (number): expected number of processes to
                 validate.
 
         Raises:
@@ -64,7 +64,7 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
         for _ in xrange(expected_processes_num):
             pid = self.pid_queue.get_nowait()
             self.assertFalse(psutil.pid_exists(pid),
-                            "Process %s wasn't killed" % pid)
+                             "Process %s wasn't killed" % pid)
 
     def get_pids(self):
         """Return all available IDs in the queue.

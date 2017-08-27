@@ -26,6 +26,8 @@ class TestExcelHandler(BaseResultHandlerTest):
         worksheet (xlrd.sheet.Sheet): the worksheet of the result file.
         current_row (number): the current tested row.
     """
+    __test__ = True
+
     HEADERS_ROW = 0
     TESTS_COLUMN = 0
     RESULT_COLUMN = 1
