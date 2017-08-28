@@ -24,60 +24,80 @@ RESOURCE_NAME = 'available_resource1'
 
 class TempSuccessCase(SuccessCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempDynamicResourceLockingCase(DynamicResourceLockingCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempFailureCase(FailureCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempStoreFailureCase(StoreFailureCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempErrorCase(ErrorCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempStoreFailureErrorCase(StoreFailureErrorCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempErrorInSetupCase(ErrorInSetupCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempExpectedFailureCase(ExpectedFailureCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempUnexpectedSuccessCase(UnexpectedSuccessCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 
 
 class TempStoreMultipleFailuresCase(StoreMultipleFailuresCase):
     """Inherit class and override resources requests."""
+    __test__ = False
+
     resources = (request('test_resource', DemoResource,
                          name=RESOURCE_NAME, dirty=False,),)
 

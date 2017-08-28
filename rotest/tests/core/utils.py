@@ -298,6 +298,8 @@ class MockCase(TestCase):
 
 class FailureCase(MockCase):
     """Mock case, always fails."""
+    __test__ = False
+
     def test_failure(self):
         """Mock test function - always fails."""
         self.fail()
@@ -305,6 +307,8 @@ class FailureCase(MockCase):
 
 class StoreFailureCase(MockCase):
     """Mock case, store failures."""
+    __test__ = False
+
     FAILURE_MESSAGE = "Stored failure"
     ASSERTION_MESSAGE = "Assertion failed"
 
@@ -316,6 +320,8 @@ class StoreFailureCase(MockCase):
 
 class StoreMultipleFailuresCase(MockCase):
     """Mock case, store failures."""
+    __test__ = False
+
     FAILURE_MESSAGE1 = "Stored failure"
     FAILURE_MESSAGE2 = "Stored failure 2"
 
@@ -327,6 +333,8 @@ class StoreMultipleFailuresCase(MockCase):
 
 class StoreFailureErrorCase(MockCase):
     """Mock case, store a failure and raise exception."""
+    __test__ = False
+
     ERROR_MESSAGE = "Error"
     FAILURE_MESSAGE = "Stored failure"
 
@@ -338,6 +346,8 @@ class StoreFailureErrorCase(MockCase):
 
 class ErrorCase(MockCase):
     """Mock case, raise exception."""
+    __test__ = False
+
     def test_run(self):
         """Mock test function - raise exception."""
         raise RuntimeError()
@@ -345,6 +355,8 @@ class ErrorCase(MockCase):
 
 class SuccessCase(MockCase):
     """Mock case, given the required resources always succeed."""
+    __test__ = False
+
     def test_success(self):
         """Mock test function - always succeed."""
         pass
@@ -352,6 +364,8 @@ class SuccessCase(MockCase):
 
 class DynamicResourceLockingCase(MockCase):
     """Mock case, requests a resource and validates the attributes."""
+    __test__ = False
+
     dynamic_resources = ()
 
     def test_dynamic_lock(self):
@@ -366,6 +380,8 @@ class DynamicResourceLockingCase(MockCase):
 
 class MockRequestsCase(MockCase):
     """Mock test case, change its requests before running it."""
+    __test__ = False
+
     def test_success(self):
         """Mock test function - always succeed."""
         pass
@@ -373,6 +389,8 @@ class MockRequestsCase(MockCase):
 
 class ModifyResourceCase(MockCase):
     """Mock case, changes the version of its locked resource."""
+    __test__ = False
+
     resources = (request('res', DemoResource, version=VERSION1),)
 
     FIELD_TO_CHANGE = NotImplemented
@@ -386,6 +404,8 @@ class ModifyResourceCase(MockCase):
 
 class CheckResourceCase(MockCase):
     """Mock case, checks the version of its locked resource."""
+    __test__ = False
+
     resources = (request('res', DemoResource, version=VERSION1),)
 
     EXPECTED_VERSION = VERSION1
@@ -397,6 +417,8 @@ class CheckResourceCase(MockCase):
 
 class SkipCase(MockCase):
     """Mock case, contains one test that should be skipped."""
+    __test__ = False
+
     SKIP_MESSAGE = "Test skipped"
 
     def test_skip(self):
@@ -406,6 +428,8 @@ class SkipCase(MockCase):
 
 class ExpectedFailureCase(MockCase):
     """Mock case, given the required resources will fail as expected."""
+    __test__ = False
+
     @unittest.case.expectedFailure
     def test_expected_failure(self):
         """Mock test function, fail as expected."""
@@ -414,6 +438,8 @@ class ExpectedFailureCase(MockCase):
 
 class UnexpectedSuccessCase(MockCase):
     """Mock case, contains one test that should fail but succeeds."""
+    __test__ = False
+
     @unittest.case.expectedFailure
     def test_unexpected_success(self):
         """Mock test function - should fail but succeeds."""
@@ -422,6 +448,8 @@ class UnexpectedSuccessCase(MockCase):
 
 class ErrorInSetupCase(SuccessCase):
     """Mock case, raise exception after locking resources."""
+    __test__ = False
+
     def setUp(self):
         """Mock test setup - raise exception."""
         raise RuntimeError()
@@ -435,6 +463,8 @@ class FailTwiceCase(MockCase):
             it succeeds.
         times_run (number): number of times that the test has been run.
     """
+    __test__ = False
+
     TIMES_TO_FAIL = 2
 
     times_run = 0
@@ -448,6 +478,8 @@ class FailTwiceCase(MockCase):
 
 class PartialCase(FailureCase):
     """Mock case, contains one successful & one failed test method."""
+    __test__ = False
+
     def test_success(self):
         """Success test function."""
         pass
@@ -455,12 +487,16 @@ class PartialCase(FailureCase):
 
 class MockCase1(MockCase):
     """Mock test case, will contain a test."""
+    __test__ = False
+
     def test(self):
         pass
 
 
 class TwoTestsCase(MockCase):
     """Mock case, contains two test methods."""
+    __test__ = False
+
     def test_1(self):
         "First test method."
         pass
@@ -472,37 +508,41 @@ class TwoTestsCase(MockCase):
 
 class MockCase2(MockCase):
     """Mock test case, will contain a test."""
+    __test__ = False
+
     def test(self):
         pass
 
 
 class MockTestSuite(TestSuite):
     """Mock test suite, will contain a sequence of tests."""
-    pass
+    __test__ = False
 
 
 class MockSuite1(TestSuite):
     """Mock test suite, will contain a sequence of tests."""
-    pass
+    __test__ = False
 
 
 class MockSuite2(TestSuite):
     """Mock test suite, will contain a sequence of tests."""
-    pass
+    __test__ = False
 
 
 class MockNestedTestSuite(MockTestSuite):
     """Mock test suite, will be contained in other test cases."""
-    pass
+    __test__ = False
 
 
 class MockTestSuite1(TestSuite):
     """Mock test suite, will contain a sequence of tests."""
-    pass
+    __test__ = False
 
 
 class MockFlow(TestFlow):
     """Mock test flow for unit-testing blocks behavior."""
+    __test__ = False
+
     resources = (request('res1', DemoResource, ip_address=IP_ADDRESS1),)
 
     def create_resource_manager(self):
@@ -520,30 +560,37 @@ class MockFlow(TestFlow):
 
 class MockFlow1(MockFlow):
     """Mock test flow for unit-testing blocks behavior."""
+    __test__ = False
+
     resources = (request('res1', DemoResource, ip_address=IP_ADDRESS1),)
 
 
 class MockFlow2(MockFlow):
     """Mock test flow for unit-testing blocks behavior."""
+    __test__ = False
+
     resources = (request('res1', DemoResource, ip_address=IP_ADDRESS1),)
 
 
 class MockSubFlow(MockFlow):
     """Mock test sub-flow for unit-testing blocks behavior."""
+    __test__ = False
 
 
 class MockBlock(TestBlock):
     """Mock test block for unit-testing blocks behavior."""
-    pass
+    __test__ = False
 
 
 class NoMethodsBlock(MockBlock):
     """Mock test block that doesn't define test methods."""
-    pass
+    __test__ = False
 
 
 class MultipleMethodsBlock(MockBlock):
     """Mock test block that defines too many test methods."""
+    __test__ = False
+
     def test_something(self):
         """Mock test function - does nothing."""
         pass
@@ -555,6 +602,8 @@ class MultipleMethodsBlock(MockBlock):
 
 class FailureBlock(MockBlock):
     """Mock block, always fails."""
+    __test__ = False
+
     def test_failure(self):
         """Mock test function - always fails."""
         self.fail()
@@ -562,6 +611,8 @@ class FailureBlock(MockBlock):
 
 class ErrorBlock(MockBlock):
     """Mock block, raise exception."""
+    __test__ = False
+
     def test_run(self):
         """Mock test function - raise exception."""
         raise RuntimeError()
@@ -569,6 +620,8 @@ class ErrorBlock(MockBlock):
 
 class SuccessBlock(MockBlock):
     """Mock block, given the required resources always succeed."""
+    __test__ = False
+
     def test_success(self):
         """Mock test function - always succeed."""
         pass
@@ -576,16 +629,18 @@ class SuccessBlock(MockBlock):
 
 class InputsValidationBlock(SuccessBlock):
     """Mock test, change inputs definition to validate them."""
-    pass
+    __test__ = False
 
 
 class PretendToShareDataBlock(SuccessBlock):
     """Mock test, pretend to inject data into the common object."""
-    pass
+    __test__ = False
 
 
 class WriteToCommonBlock(MockBlock):
     """Mock test, injects data into the common object."""
+    __test__ = False
+
     INJECT_NAME = 'some_name'
     INJECT_VALUE = 'some_value'
     outputs = (INJECT_NAME,)
@@ -597,6 +652,8 @@ class WriteToCommonBlock(MockBlock):
 
 class ReadFromCommonBlock(MockBlock):
     """Mock test, reads a value and asserts it common object."""
+    __test__ = False
+
     READ_NAME = NotImplemented
     READ_VALUE = NotImplemented
 
@@ -607,6 +664,8 @@ class ReadFromCommonBlock(MockBlock):
 
 class AttributeCheckingBlock(MockBlock):
     """Mock test, checks that the test has an attribute."""
+    __test__ = False
+
     ATTRIBUTE_NAME = NotImplemented
 
     def test_attr_exists(self):
@@ -620,6 +679,8 @@ class DynamicResourceLockingBlock(MockBlock):
         is_global (bool): whether to share the resources with the other blocks.
         dynamic_resources (tuple): a list or a tuple of resources to lock.
     """
+    __test__ = False
+
     is_global = False
     dynamic_resources = ()
 
@@ -638,6 +699,8 @@ class DynamicResourceLockingBlock(MockBlock):
 
 class ModifyResourceBlock(MockBlock):
     """Mock block, changes the version of its locked resource."""
+    __test__ = False
+
     resources = (request('res', DemoResource, version=VERSION1),)
 
     FIELD_TO_CHANGE = NotImplemented
@@ -651,6 +714,8 @@ class ModifyResourceBlock(MockBlock):
 
 class CheckResourceBlock(MockBlock):
     """Mock block, checks the version of its locked resource."""
+    __test__ = False
+
     resources = (request('res', DemoResource, version=VERSION1),)
 
     EXPECTED_VERSION = VERSION1
@@ -662,6 +727,8 @@ class CheckResourceBlock(MockBlock):
 
 class SkipBlock(MockBlock):
     """Mock block, contains one test that should be skipped."""
+    __test__ = False
+
     SKIP_MESSAGE = "Test skipped"
 
     def test_skip(self):
@@ -671,6 +738,8 @@ class SkipBlock(MockBlock):
 
 class ExpectedFailureBlock(MockBlock):
     """Mock block, given the required resources will fail as expected."""
+    __test__ = False
+
     @unittest.case.expectedFailure
     def test_expected_failure(self):
         """Mock test function, fail as expected."""
@@ -679,6 +748,8 @@ class ExpectedFailureBlock(MockBlock):
 
 class UnexpectedSuccessBlock(MockBlock):
     """Mock block, contains one test that should fail but succeeds."""
+    __test__ = False
+
     @unittest.case.expectedFailure
     def test_unexpected_success(self):
         """Mock test function - should fail but succeeds."""

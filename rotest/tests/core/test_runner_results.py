@@ -29,6 +29,8 @@ from utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
 
 class AbstractTestRunnerResult(BasicRotestUnitTest):
     """Abstract test class for testing the runners' behavior."""
+    __test__ = False
+
     fixtures = ['case_ut.json']
 
     __metaclass__ = ABCMeta
@@ -203,6 +205,8 @@ class TestMultiprocessRunnerResult(AbstractTestRunnerResult):
         NUMBER_OF_PROCESSES (number): number of worker processes the
             MultiprocessRunner should use.
     """
+    __test__ = True
+
     NUMBER_OF_PROCESSES = 1
 
     def get_runner(self):
@@ -287,6 +291,8 @@ class TestMultiprocessRunnerResult(AbstractTestRunnerResult):
 
 class TestBaseRunnerResult(AbstractTestRunnerResult):
     """Test class for testing the base runner's behavior."""
+    __test__ = True
+
     def get_runner(self):
         """Create and return the relevant test runner.
 
