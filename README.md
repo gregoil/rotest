@@ -75,7 +75,7 @@ class HappyFlow(TestCase):
         self.assertEqual(self.calculator.calculate("1+2"), 3)
 
 if __name__ == "__main__":
-    main()
+    main(HappyFlow)
 ```
 The test can include the `setUp` and `tearDown` methods of `unittest` as
 well, and it differs only in the request for resources. The request includes
