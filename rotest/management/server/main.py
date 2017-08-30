@@ -79,7 +79,7 @@ class ResourceManagerServer(object):
         """
         self.logger.debug("Starting resource manager, port:%d", self._port)
         self._resource_manager.start()
-        self._reactor.run(installSignalHandlers=0)
+        self._reactor.run()
 
     def stop(self):
         """Stop the resource manager server."""

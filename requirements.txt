@@ -1,4 +1,5 @@
 tox
+tox-pip-extensions
 django>=1.7,<1.8
 ipdb
 ipdbugger>=1.1.0
