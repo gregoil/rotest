@@ -16,4 +16,4 @@ test_script:
 
 artifacts:
     - path: ".tox\\core_logger\\core_logger.log"
-    - name: Test log
+      name: Test log
