@@ -11,6 +11,5 @@ install:
 test_script:
     - "%PYTHON%\\python.exe -m tox"
 
-artifacts:
-    - path: ".tox\\core_logger\\core_logger.log"
-      name: Test log
+on_failure:
+    - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
