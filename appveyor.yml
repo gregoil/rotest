@@ -13,3 +13,6 @@ install:
 
 test_script:
     - "%PYTHON%\\python.exe -m tox"
+
+artifacts:
+    - path: .tox/
