@@ -15,4 +15,4 @@ test_script:
     - "%PYTHON%\\python.exe -m tox"
 
 artifacts:
-    - path: .tox/
+    - path: .tox/core_logger/core_logger.log
