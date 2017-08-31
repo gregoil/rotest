@@ -6,17 +6,19 @@ import re
 import django
 
 from rotest.core.case import request
-from tests.core.utils import BasicRotestUnitTest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
                                                 NonExistingResource)
-from utils import (ErrorInSetupCase, SuccessCase, FailureCase, ErrorCase,
-                   StoreMultipleFailuresCase, UnexpectedSuccessCase,
-                   DynamicResourceLockingCase, StoreFailureErrorCase,
-                   ExpectedFailureCase, StoreFailureCase, MockTestSuite)
+
+from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
+                              ErrorCase, StoreMultipleFailuresCase,
+                              UnexpectedSuccessCase, BasicRotestUnitTest,
+                              DynamicResourceLockingCase,
+                              StoreFailureErrorCase, ExpectedFailureCase,
+                              StoreFailureCase, MockTestSuite)
 
 
 RESOURCE_NAME = 'available_resource1'

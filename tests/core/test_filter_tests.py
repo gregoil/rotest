@@ -5,6 +5,7 @@ from rotest.core.case import TestCase
 from rotest.core.suite import TestSuite
 from rotest.core.test_filter import get_tags, match_tags
 from rotest.common.colored_test_runner import colored_main
+
 from utils import (SuccessCase, ErrorCase, TwoTestsCase,
                    MockSuite1, MockSuite2, MockTestSuite, MockTestSuite1)
 
@@ -94,7 +95,8 @@ class TestTagsMatching(unittest.TestCase):
                                       "SuccessCase.test_success"]}
 
         self.assertEqual(expected_test_descriptor,
-                         dict_from_test(MockSuite1(), "test_1 or test_success"))
+                         dict_from_test(MockSuite1(),
+                                        "test_1 or test_success"))
 
     def test_suite_with_matching_tags(self):
         """Test a Suite main test is not trimmed when it matches tags."""
@@ -118,7 +120,8 @@ class TestTagsMatching(unittest.TestCase):
         expected_test_descriptor = {"MockTestSuite": nested_suite_sub_tests}
 
         self.assertEqual(expected_test_descriptor,
-                         dict_from_test(MockTestSuite(), "tag1* and not tag13"))
+                         dict_from_test(MockTestSuite(),
+                                        "tag1* and not tag13"))
 
     def test_suite_with_matching_case(self):
         """Test only the matching Case appears under the Suite main test."""
@@ -134,9 +137,8 @@ class TestTagsMatching(unittest.TestCase):
         """Test only the matching method appears under the Suite main test."""
         expected_test_descriptor = {
             "MockTestSuite1": {
-                 "MockTestSuite": {
-                    "MockSuite1": self.trimmed_two_test_case},
-                    "MockSuite1": self.trimmed_two_test_case}}
+                 "MockTestSuite": {"MockSuite1": self.trimmed_two_test_case},
+                 "MockSuite1": self.trimmed_two_test_case}}
 
         self.assertEqual(expected_test_descriptor,
                          dict_from_test(MockTestSuite1(), "test_1"))
@@ -171,9 +173,9 @@ class TestTagsMatching(unittest.TestCase):
             "MockTestSuite1": {
                 "MockTestSuite": {
                     "MockSuite1": self.trimmed_two_test_case,
-                                 "MockSuite2": self.error_case_descriptor},
-                 "MockSuite1": self.trimmed_two_test_case,
-                 "MockSuite2": self.error_case_descriptor}}
+                    "MockSuite2": self.error_case_descriptor},
+                "MockSuite1": self.trimmed_two_test_case,
+                "MockSuite2": self.error_case_descriptor}}
 
         self.assertEqual(expected_test_descriptor,
                          dict_from_test(MockTestSuite1(),
