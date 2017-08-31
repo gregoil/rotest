@@ -9,7 +9,7 @@ install:
     - "%PYTHON%\\python.exe -m pip install tox"
 
 test_script:
-    - "%PYTHON%\\python.exe -m tox -- -v --faulthandler-timeout 60"
+    - "%PYTHON%\\python.exe -m tox -- -v -k tests/core/test_runner_results.py"
 
 on_failure:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"

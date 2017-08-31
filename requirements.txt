@@ -1,4 +1,3 @@
-pytest-faulthandler
 tox
 tox-pip-extensions
 django>=1.7,<1.8
