@@ -6,7 +6,7 @@ import re
 import django
 
 from rotest.core.case import request
-from rotest.tests.core.utils import BasicRotestUnitTest
+from tests.core.utils import BasicRotestUnitTest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.client.manager import ClientResourceManager

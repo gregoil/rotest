@@ -2,16 +2,15 @@
 from itertools import izip
 from abc import ABCMeta, abstractmethod
 
-from django.test.testcases import TransactionTestCase
-
 from rotest.core.suite import TestSuite
+from django.test.testcases import TransactionTestCase
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.common.utils import \
                                     set_resource_manager_hostname, LOCALHOST
-from rotest.tests.core.utils import (MockCase1, MockCase2, MockTestSuite,
-                                     MockSuite2, MockSuite1, FailureBlock,
-                                     MockNestedTestSuite, MockFlow2,
-                                     SkipBlock, SuccessBlock, MockFlow1)
+
+from tests.core.utils import (MockCase1, MockCase2, MockTestSuite, MockSuite2,
+                              MockSuite1, FailureBlock, MockNestedTestSuite,
+                              MockFlow2, SkipBlock, SuccessBlock, MockFlow1)
 
 
 def get_tests(test):

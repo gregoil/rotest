@@ -1,7 +1,6 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
 import django
-
 from rotest.core.models import GeneralData
 from rotest.core.models.run_data import RunData
 from rotest.management.common.utils import LOCALHOST
@@ -10,11 +9,10 @@ from rotest.common.django_utils.common import get_sub_model
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.client.result_client import ClientResultManager
 from rotest.management.models.ut_models import DemoResource, DemoResourceData
-from rotest.tests.management.resource_base_test import \
-                                                 BaseResourceManagementTest
-from rotest.tests.core.utils import (MockTestSuite, MockSuite1, MockSuite2,
-                                     MockCase, MockCase1, MockCase2,
-                                     SuccessCase)
+
+from tests.management.resource_base_test import BaseResourceManagementTest
+from tests.core.utils import (MockTestSuite, MockSuite1, MockSuite2, MockCase,
+                              MockCase1, MockCase2, SuccessCase)
 
 
 class TestResultManagement(BaseResourceManagementTest):

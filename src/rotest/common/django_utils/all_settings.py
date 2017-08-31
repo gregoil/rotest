@@ -5,7 +5,7 @@ from settings_common import *
 
 INSTALLED_APPS = ('rotest.core',
                   'rotest.management',
-                  'rotest.tests',
+                  'tests',
 
                   # Administrator Related Applications
                   'django.contrib.auth',

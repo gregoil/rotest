@@ -7,7 +7,6 @@ import django
 from django.db import connections
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.testcases import TransactionTestCase
-
 from rotest.core.flow import TestFlow
 from rotest.core.block import TestBlock
 from rotest.core.suite import TestSuite

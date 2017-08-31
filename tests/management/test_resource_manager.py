@@ -16,14 +16,11 @@ from threading import Thread
 import django
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
-
 from rotest.management.common.utils import LOCALHOST
 from rotest.common.colored_test_runner import colored_main
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
-from rotest.tests.management.resource_base_test import \
-                                            BaseResourceManagementTest
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
 from rotest.management.models.ut_models import (DemoResource,
@@ -37,6 +34,8 @@ from rotest.management.common.errors import (ServerError,
                                              ResourceUnavailableError,
                                              ResourceDoesNotExistError,
                                              ResourceAlreadyAvailableError)
+
+from tests.management.resource_base_test import BaseResourceManagementTest
 
 
 class TestResourceManagement(BaseResourceManagementTest):

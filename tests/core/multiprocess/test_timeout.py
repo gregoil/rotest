@@ -5,11 +5,14 @@ This module contains tests for the multiprocess runner timeout functionality.
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import django
 
-from test_runner import AbstractMultiprocessRunnerTest
 from rotest.common.colored_test_runner import colored_main
-from rotest.tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
-from utils import (BasicMultiprocessCase, TimeoutCase, SetupTimeoutCase,
-                   TearDownTimeoutCase, TimeoutWithSubprocessCase)
+
+from tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
+from tests.core.multiprocess.test_runner import AbstractMultiprocessRunnerTest
+from tests.core.multiprocess.utils import (BasicMultiprocessCase, TimeoutCase,
+                                           SetupTimeoutCase,
+                                           TearDownTimeoutCase,
+                                           TimeoutWithSubprocessCase)
 
 
 class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):

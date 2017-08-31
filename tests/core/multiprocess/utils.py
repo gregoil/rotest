@@ -5,11 +5,11 @@ import time
 from multiprocessing import Process
 
 import psutil
-
 from rotest.core.case import request
 from rotest.management.models.ut_models import DemoResource
-from rotest.tests.core.utils import (MockCase, MockFlow, SuccessBlock,
-                                     MockBlock, IP_ADDRESS1)
+
+from tests.core.utils import (MockCase, MockFlow, SuccessBlock, MockBlock,
+                              IP_ADDRESS1)
 
 
 class BasicMultiprocessCase(MockCase):
