@@ -9,7 +9,7 @@ install:
     - "%PYTHON%\\python.exe -m pip install tox pypiwin32"
 
 test_script:
-    - "%PYTHON%\\python.exe -m tox -- -k 'not TestMultiprocessRunnerResult'"
+    - "%PYTHON%\\python.exe -m tox -- -v -k 'not TestMultiprocessRunnerResult'"
 
 on_failure:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
