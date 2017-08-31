@@ -5,9 +5,6 @@ environment:
 
 build: off
 
-init:
-    - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
-
 install:
     - "%PYTHON%\\python.exe -m pip install tox"
 
