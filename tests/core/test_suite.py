@@ -3,8 +3,10 @@
 # pylint: disable=too-many-public-methods,invalid-name,old-style-class
 # pylint: disable=no-member,protected-access,no-init,too-few-public-methods
 import os
+import platform
 
 import django
+import pytest
 from rotest import ROTEST_WORK_DIR
 from rotest.core.suite import TestSuite
 from rotest.common.colored_test_runner import colored_main
@@ -302,6 +304,8 @@ class TestTestSuite(BasicRotestUnitTest):
         self.assertFalse(test_suite.data.success,
                          'Suite data result should have been False')
 
+    @pytest.mark.skipif(platform.system() == "Windows",
+                        reason="Known bug")
     def test_working_dir(self):
         """Test the tests working directories creation and structure.
 
@@ -329,7 +333,7 @@ class TestTestSuite(BasicRotestUnitTest):
                                     MockNestedTestSuite,
                                     MockSuite2)
 
-        # test_suite = MockTestSuite()
+        test_suite = MockTestSuite()
         self.assertEqual(
             ROTEST_WORK_DIR.rstrip(os.path.sep),
             os.path.dirname(test_suite.work_dir).rstrip(os.path.sep),
