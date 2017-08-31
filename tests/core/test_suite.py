@@ -329,15 +329,15 @@ class TestTestSuite(BasicRotestUnitTest):
                                     MockNestedTestSuite,
                                     MockSuite2)
 
-        test_suite = MockTestSuite()
-        # self.assertEqual(
-        #     ROTEST_WORK_DIR.rstrip(os.path.sep),
-        #     os.path.dirname(test_suite.work_dir).rstrip(os.path.sep),
-        #     "Test %r work directory %r is not contained in the base work "
-        #     "directory %r" %
-        #     (test_suite.data, test_suite.work_dir, ROTEST_WORK_DIR))
-        #
-        # self.validate_work_dirs(test_suite)
+        # test_suite = MockTestSuite()
+        self.assertEqual(
+            ROTEST_WORK_DIR.rstrip(os.path.sep),
+            os.path.dirname(test_suite.work_dir).rstrip(os.path.sep),
+            "Test %r work directory %r is not contained in the base work "
+            "directory %r" %
+            (test_suite.data, test_suite.work_dir, ROTEST_WORK_DIR))
+
+        self.validate_work_dirs(test_suite)
 
 
 if __name__ == '__main__':
