@@ -11,7 +11,7 @@ def main():
     # Load django models. This is needed to populate the DB before using it
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
                           "rotest.common.django_utils.ut_settings")
-    
+
     django.setup()
     if platform.system() == 'Windows':
         try:
