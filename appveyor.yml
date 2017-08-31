@@ -11,5 +11,5 @@ install:
 test_script:
     - "%PYTHON%\\python.exe -m tox -- -k TestMultiprocessRunnerResult"
 
-on_failure:
+on_finish:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
