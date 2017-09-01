@@ -9,7 +9,7 @@ install:
     - "%PYTHON%\\python.exe -m pip install tox pypiwin32"
 
 test_script:
-    - "%PYTHON%\\python.exe -m trace --trace %PYTHON%\\Lib\\python2.7\\site-packages\\tox\\__main__.pyc -- -v -k 'TestMultiprocessRunnerResult'"
+    - "%PYTHON%\\python.exe -m trace --trace %PYTHON%\\Lib\\site-packages\\tox\\__main__.pyc -- -v -k 'TestMultiprocessRunnerResult'"
 
 on_failure:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
