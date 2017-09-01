@@ -9,6 +9,7 @@ install:
     - "%PYTHON%\\python.exe -m pip install tox"
 
 test_script:
+    - "%PYTHON%\\python.exe -c 'import platform; print platform.system()'"
     - "%PYTHON%\\Scripts\\tox.exe -e py27-windows -- -v --timeout=60 -k 'not TestCaseRunnerResult and not TestTestSuite'"
 
 on_failure:
