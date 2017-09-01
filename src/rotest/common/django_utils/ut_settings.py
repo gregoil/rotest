@@ -2,6 +2,7 @@
 # pylint: disable=wildcard-import,unused-wildcard-import
 import platform
 
+from rotest.common import core_log
 from settings_common import *
 
 
