@@ -1,5 +1,5 @@
 """Django configuration file for developement."""
-# pylint: disable=wildcard-import,unused-wildcard-import
+# pylint: disable=wildcard-import,unused-wildcard-import,protected-access
 import platform
 
 from rotest.common import core_log

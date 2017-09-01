@@ -5,7 +5,7 @@ setup(
     name='rotest',
     version="2.2.8",
     description="Resource oriented testing framework",
-    long_description=open("README.md").read(),
+    long_description=open("README.rst").read(),
     license="MIT",
     install_requires=['django>=1.7,<1.8',
                       'ipdb',
