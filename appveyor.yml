@@ -6,10 +6,10 @@ environment:
 build: off
 
 install:
-    - "%PYTHON%\\python.exe -m pip install tox pypiwin32 --no-compile"
+    - "%PYTHON%\\python.exe -m pip install tox pypiwin32"
 
 test_script:
-    - "%PYTHON%\\python.exe -m trace --trace %PYTHON%\\Lib\\site-packages\\tox\\__main__.py -- -v -k 'TestMultiprocessRunnerResult'"
+    - "%PYTHON%\\Scripts\\tox.exe -- -v -k TestMultiprocessRunnerResult --timeout=60"
 
 on_failure:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
