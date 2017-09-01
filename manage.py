@@ -5,9 +5,11 @@ import sys
 import platform
 
 import django
+from rotest.common import core_log
 
 
 def main():
+    core_log.info("Using UT settings")
     # Load django models. This is needed to populate the DB before using it
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
                           "rotest.common.django_utils.ut_settings")
@@ -15,6 +17,7 @@ def main():
     django.setup()
     if platform.system() == 'Windows':
         try:
+            core_log.debug("Setting 2048 as the file descriptors limit")
             import win32file
             win32file._setmaxstdio(2048)
 
