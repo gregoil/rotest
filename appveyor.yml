@@ -10,7 +10,7 @@ install:
 
 test_script:
     - '%PYTHON%\\python.exe -c "import sys; print sys.platform"'
-    - "%PYTHON%\\Scripts\\tox.exe -e py27-windows -- -v --timeout=60 -k 'not TestCaseRunnerResult and not TestTestSuite'"
+    - "%PYTHON%\\Scripts\\tox.exe -e py27-win32 -- -v --timeout=60 -k 'not TestCaseRunnerResult and not TestTestSuite'"
 
 on_failure:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
