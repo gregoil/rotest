@@ -1,0 +1,16 @@
+environment:
+    matrix:
+        - PYTHON: "C:\\Python27"
+        - PYTHON: "C:\\Python27-x64"
+
+build: off
+
+install:
+    - "%PYTHON%\\python.exe -m pip install tox"
+
+test_script:
+    - '%PYTHON%\\python.exe -c "import sys; print sys.platform"'
+    - "%PYTHON%\\Scripts\\tox.exe -- --timeout=60"
+
+on_failure:
+    - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"

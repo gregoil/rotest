@@ -5,12 +5,12 @@
 import os
 
 import django
-
 from rotest import ROTEST_WORK_DIR
 from rotest.core.suite import TestSuite
 from rotest.common.colored_test_runner import colored_main
 from rotest.management.models.ut_models import DemoResourceData
-from rotest.tests.core.utils import (MockSuite1, MockSuite2, MockTestSuite,
+
+from tests.core.utils import (MockSuite1, MockSuite2, MockTestSuite,
                               MockNestedTestSuite, SuccessCase, FailureCase,
                               PartialCase, MockFlow, MockFlow1, MockFlow2,
                               SuccessBlock, FailureBlock, BasicRotestUnitTest)
@@ -246,10 +246,12 @@ class TestTestSuite(BasicRotestUnitTest):
 
         for sub_test in sub_test_iterator:
             base_work_dir = os.path.dirname(sub_test.work_dir)
-            self.assertEqual(test.work_dir, base_work_dir, "Test %r "
-                "work directory %r is not contained in its parent 's %r "
-                "work directory %r" % (sub_test.data, sub_test.work_dir,
-                                       test, test.work_dir))
+            self.assertEqual(
+                test.work_dir,
+                base_work_dir,
+                "Test %r work directory %r is not contained in its "
+                "parent's %r work directory %r" %
+                (sub_test.data, sub_test.work_dir, test, test.work_dir))
 
     def test_suite_with_flow(self):
         """Create nested test suite and with test-flow validate success.
@@ -328,13 +330,15 @@ class TestTestSuite(BasicRotestUnitTest):
                                     MockSuite2)
 
         test_suite = MockTestSuite()
-        self.assertEqual(ROTEST_WORK_DIR.rstrip(os.path.sep),
-             os.path.dirname(test_suite.work_dir).rstrip(os.path.sep),
-             "Test %r work directory %r is not contained in the base work "
-             "directory %r" %
-             (test_suite.data, test_suite.work_dir, ROTEST_WORK_DIR))
+        self.assertEqual(
+            ROTEST_WORK_DIR.rstrip(os.path.sep),
+            os.path.dirname(test_suite.work_dir).rstrip(os.path.sep),
+            "Test %r work directory %r is not contained in the base work "
+            "directory %r" %
+            (test_suite.data, test_suite.work_dir, ROTEST_WORK_DIR))
 
         self.validate_work_dirs(test_suite)
+
 
 if __name__ == '__main__':
     django.setup()

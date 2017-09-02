@@ -11,20 +11,18 @@ from StringIO import StringIO
 from multiprocessing import Queue, Event
 
 import django
-
 from rotest.core.runner import BaseTestRunner
-from rotest.tests.core.utils import BasicRotestUnitTest
 from rotest.core.models.general_data import GeneralData
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
-from rotest.tests.core.multiprocess.utils import (TimeoutCase,
-                                                  SuicideCase,
-                                                  SetupTimeoutFlow,
-                                                  SetupCrashFlow)
-from utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
-                   UnexpectedSuccessCase, ExpectedFailureCase, MockSuite1,
-                   MockSuite2, MockTestSuite, StoreMultipleFailuresCase,
-                   StoreFailureErrorCase, TwoTestsCase)
+
+from tests.core.multiprocess.utils import (TimeoutCase, SuicideCase,
+                                           SetupTimeoutFlow, SetupCrashFlow)
+from tests.core.utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
+                              UnexpectedSuccessCase, ExpectedFailureCase,
+                              MockSuite1, MockSuite2, MockTestSuite,
+                              StoreMultipleFailuresCase, StoreFailureErrorCase,
+                              TwoTestsCase, BasicRotestUnitTest)
 
 
 class AbstractTestRunnerResult(BasicRotestUnitTest):

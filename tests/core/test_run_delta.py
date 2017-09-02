@@ -2,17 +2,17 @@
 # pylint: disable=too-many-arguments
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import django
-
 from rotest.core.runner import run
 from rotest.core.models.run_data import RunData
 from rotest.core.models.case_data import TestOutcome
-from rotest.tests.core.utils import BasicRotestUnitTest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.db_handler import DBHandler
-from utils import (ErrorCase, SuccessCase, FailureCase, SkipCase,
-                   MockSuite1, MockSuite2, MockNestedTestSuite,
-                   MockTestSuite, FailTwiceCase, MockFlow, MockFlow1,
-                   MockFlow2, SuccessBlock, FailureBlock, SkipBlock)
+
+from tests.core.utils import (ErrorCase, SuccessCase, FailureCase, SkipCase,
+                              MockSuite1, MockSuite2, MockNestedTestSuite,
+                              MockTestSuite, FailTwiceCase, MockFlow,
+                              MockFlow1, MockFlow2, SuccessBlock, FailureBlock,
+                              SkipBlock, BasicRotestUnitTest)
 
 
 class TestRunDelta(BasicRotestUnitTest):

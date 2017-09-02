@@ -11,15 +11,16 @@ from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
                                                 InitializeErrorResource)
-from rotest.tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock,
-                                     MockFlow, SkipBlock, ExpectedFailureBlock,
-                                     UnexpectedSuccessBlock, NoMethodsBlock,
-                                     InputsValidationBlock, WriteToCommonBlock,
-                                     MultipleMethodsBlock, ReadFromCommonBlock,
-                                     BasicRotestUnitTest, MockSubFlow,
-                                     AttributeCheckingBlock, MockBlock,
-                                     DynamicResourceLockingBlock,
-                                     PretendToShareDataBlock)
+
+from tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock, MockFlow,
+                              SkipBlock, ExpectedFailureBlock,
+                              UnexpectedSuccessBlock, NoMethodsBlock,
+                              InputsValidationBlock, WriteToCommonBlock,
+                              MultipleMethodsBlock, ReadFromCommonBlock,
+                              BasicRotestUnitTest, MockSubFlow,
+                              AttributeCheckingBlock, MockBlock,
+                              DynamicResourceLockingBlock,
+                              PretendToShareDataBlock)
 
 
 class TestTestFlow(BasicRotestUnitTest):
@@ -425,9 +426,10 @@ class TestTestFlow(BasicRotestUnitTest):
         ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
         ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
 
-        MockFlow.blocks = (WriteToCommonBlock,
-                           ReadFromCommonBlock.params(pipe_parameter=
-                               PipeTo(WriteToCommonBlock.INJECT_NAME)))
+        MockFlow.blocks = (
+            WriteToCommonBlock,
+            ReadFromCommonBlock.params(
+                pipe_parameter=PipeTo(WriteToCommonBlock.INJECT_NAME)))
 
         test_flow = MockFlow()
         self.run_test(test_flow)

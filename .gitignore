@@ -102,3 +102,4 @@ ENV/
 
 .idea/
 rotest_test
+rotest_test-journal

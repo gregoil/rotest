@@ -4,6 +4,9 @@ from setuptools import setup, find_packages
 setup(
     name='rotest',
     version="2.2.8",
+    description="Resource oriented testing framework",
+    long_description=open("README.rst").read(),
+    license="MIT",
     install_requires=['django>=1.7,<1.8',
                       'ipdb',
                       'ipdbugger>=1.1.0',
@@ -16,7 +19,8 @@ setup(
                       'xmltodict',
                       'jsonschema',
                       'basicstruct'],
-    packages=find_packages(exclude=['doc']),
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     package_data={'': ['*.xls', '*.xsd', '*.json', '*.css', '*.xml', '*.rst']},
     zip_safe=False
 )

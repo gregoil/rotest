@@ -6,9 +6,11 @@ import itertools
 import xlrd
 
 from rotest.core.block import TestBlock
-from base_result_handler_test import BaseResultHandlerTest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.excel_handler import ExcelHandler
+
+from tests.core.handlers_tests.base_result_handler_test import \
+    BaseResultHandlerTest
 
 
 class TestExcelHandler(BaseResultHandlerTest):
@@ -137,8 +139,8 @@ class TestExcelHandler(BaseResultHandlerTest):
                           ExcelHandler.FAILED,
                           ExcelHandler.ERROR,
                           ExcelHandler.SKIPPED,
-                          ExcelHandler.SKIPPED_SUMMARY_PATTERN % \
-                                    ExcelHandler.TAGS_SKIP_MESSAGE,
+                          ExcelHandler.SKIPPED_SUMMARY_PATTERN %
+                              ExcelHandler.TAGS_SKIP_MESSAGE,
                           ExcelHandler.EXPECTED_FAILURE,
                           ExcelHandler.UNEXPECTED_SUCCESS)
 
