@@ -10,7 +10,7 @@ install:
 
 test_script:
     - '%PYTHON%\\python.exe -c "import sys; print sys.platform"'
-    - "%PYTHON%\\Scripts\\tox.exe -- --timeout=60"
+    - "%PYTHON%\\Scripts\\tox.exe"
 
 on_failure:
     - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"

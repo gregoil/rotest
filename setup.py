@@ -3,10 +3,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='rotest',
-    version="2.2.8",
+    version="2.3.2",
     description="Resource oriented testing framework",
     long_description=open("README.rst").read(),
     license="MIT",
+    author="gregoil",
+    author_email="gregoil@walla.co.il",
+    url="https://github.com/gregoil/rotest",
+    keywords=["testing", "system", "django", "unittest"],
     install_requires=['django>=1.7,<1.8',
                       'ipdb',
                       'ipdbugger>=1.1.0',
