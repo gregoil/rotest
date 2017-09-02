@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='rotest',
-    version="2.3.2",
+    version="2.3.3",
     description="Resource oriented testing framework",
     long_description=open("README.rst").read(),
     license="MIT",
