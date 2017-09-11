@@ -7,12 +7,12 @@ import xlwt
 from xlwt.Style import easyxf
 
 from rotest.core.suite import TestSuite
-from abstract_handler import AbstractResultHandler
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.result.handlers.remote_db_handler import RemoteDBHandler
+from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
 
 class ExcelHandler(AbstractResultHandler):
