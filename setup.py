@@ -21,14 +21,14 @@ result_handlers = [
 
 setup(
     name='rotest',
-    version="2.3.3",
+    version="2.4.0",
     description="Resource oriented testing framework",
     long_description=open("README.rst").read(),
     license="MIT",
     author="gregoil",
     author_email="gregoil@walla.co.il",
     url="https://github.com/gregoil/rotest",
-    keywords=["testing", "system", "django", "unittest"],
+    keywords="testing system django unittest",
     install_requires=['django>=1.7,<1.8',
                       'ipdb',
                       'ipdbugger>=1.1.0',

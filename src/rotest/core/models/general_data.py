@@ -75,6 +75,9 @@ class GeneralData(models.Model):
         Returns:
             str. link to the test admin page.
         """
+        if self.id is None:
+            return ""
+
         return linked_unicode(self)
 
     @property
