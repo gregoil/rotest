@@ -9,10 +9,10 @@ import optparse
 import django
 
 from rotest.common import core_log
-from rotest.core.result.result import Result
 from rotest.core.utils.json_parser import parse
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.runners.base_runner import BaseTestRunner
+from rotest.core.result.result import get_result_handler_options
 from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -22,9 +22,6 @@ MINIMUM_TIMES_TO_RUN = 1
 FILE_FOLDER = os.path.dirname(__file__)
 DEFAULT_SCHEMA_PATH = os.path.join(FILE_FOLDER, "schema.json")
 DEFAULT_CONFIG_PATH = os.path.join(FILE_FOLDER, "default_config.json")
-
-OUTPUTS_OPTIONS = Result.OUTPUTS_HANDLERS.keys()
-OUTPUTS_OPTIONS.remove(TagsHandler.NAME)
 
 # Load django models before using the runner in tests.
 django.setup()
@@ -142,13 +139,13 @@ def output_option_parser(option, opt, value, parser):
     Raises:
         optparse.OptionValueError. unsupported handler requested.
     """
-    output_options = OUTPUTS_OPTIONS
+    output_options = get_result_handler_options()
 
     handlers = value.split(',')
 
     for handler in handlers:
         if handler not in output_options:
-            raise optparse.OptionValueError('unsupported handler %r, '
+            raise optparse.OptionValueError('Unsupported handler %r, '
                                             'supported handlers %r' %
                                             (handler, output_options))
 
@@ -255,7 +252,8 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-o", "--outputs", type='string',
                       help="Output handlers separated by comma, "
-                      "options %r" % str(OUTPUTS_OPTIONS), action="callback",
+                      "options %r" % str(get_result_handler_options()),
+                      action="callback",
                       callback=output_option_parser, dest="outputs",
                       default=outputs)
 

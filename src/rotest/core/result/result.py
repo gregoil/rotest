@@ -2,21 +2,23 @@
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,dangerous-default-value
 from unittest.result import TestResult
+import pkg_resources
 
 from rotest.common import core_log
-from handlers.db_handler import DBHandler
-from handlers.xml_handler import XMLHandler
-from handlers.tags_handler import TagsHandler
-from handlers.excel_handler import ExcelHandler
-from handlers.stream.dots_handler import DotsHandler
-from handlers.stream.tree_handler import TreeHandler
 from rotest.core.models.case_data import TestOutcome
-from handlers.artifact_handler import ArtifactHandler
-from handlers.remote_db_handler import RemoteDBHandler
-from handlers.signature_handler import SignatureHandler
 from rotest.core.flow_component import AbstractFlowComponent
-from handlers.stream.stream_handler import EventStreamHandler
-from handlers.stream.log_handler import LogInfoHandler, LogDebugHandler
+
+
+def get_result_handlers():
+    return {entry_point.name: entry_point.load()
+            for entry_point in
+            pkg_resources.iter_entry_points("rotest.result_handlers")}
+
+
+def get_result_handler_options():
+    return [handler_name
+            for handler_name in get_result_handlers()
+            if handler_name != "tags"]
 
 
 class Result(TestResult):
@@ -30,12 +32,7 @@ class Result(TestResult):
         main_test (object): the main test instance (e.g. TestSuite instance
             or TestFlow instance).
     """
-    DEFAULT_OUTPUTS = (DBHandler.NAME, TreeHandler.NAME, ExcelHandler.NAME)
-    OUTPUTS_HANDLERS = {handler.NAME: handler for handler in
-                        (DBHandler, DotsHandler, TreeHandler, XMLHandler,
-                         EventStreamHandler, ExcelHandler, RemoteDBHandler,
-                         TagsHandler, ArtifactHandler, LogInfoHandler,
-                         LogDebugHandler, SignatureHandler)}
+    DEFAULT_OUTPUTS = ("tree", "excel")
 
     def __init__(self, stream=None, descriptions=None,
                  outputs=DEFAULT_OUTPUTS, main_test=None):
@@ -44,11 +41,15 @@ class Result(TestResult):
 
         self.main_test = main_test
 
+        all_result_handlers = get_result_handlers()
+
         self.result_handlers = [
-            self.OUTPUTS_HANDLERS[handler_name](stream=stream,
-                                                main_test=main_test,
-                                                descriptions=descriptions)
-            for handler_name in outputs]
+            all_result_handlers[result_handler_name](
+                stream=stream,
+                main_test=main_test,
+                descriptions=descriptions)
+            for result_handler_name in outputs
+        ]
 
     def startTestRun(self):
         """Called once before any tests are executed."""
