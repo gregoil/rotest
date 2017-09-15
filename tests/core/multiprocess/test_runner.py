@@ -4,6 +4,7 @@ This module contains tests for the multiprocess runner functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import os
+import sys
 import unittest
 from Queue import Empty
 from multiprocessing import Queue, Event
@@ -83,6 +84,8 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
             pass
 
 
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Multiprocess is not implemented on Windows")
 class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
     """Test class for testing MultiprocessRunner."""
 
@@ -174,6 +177,8 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
 
 
 @pytest.mark.skip(reason="known bug")
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Multiprocess is not implemented on Windows")
 class TestMultipleWorkers(AbstractMultiprocessRunnerTest):
     """Test class for testing MultiprocessRunner."""
 
