@@ -3,6 +3,9 @@ rotest
 .. image:: https://travis-ci.org/gregoil/rotest.svg?branch=travis_ci
     :target: https://travis-ci.org/gregoil/rotest
 
+.. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9?svg=true
+    :target: https://ci.appveyor.com/project/gregoil/rotest
+
 Rotest is a resource oriented testing framework, for writing system or
 integration tests.
 

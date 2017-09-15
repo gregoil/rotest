@@ -1,9 +1,11 @@
 """Test Rotest's multiprocesses behavior on crashes."""
 # pylint: disable=expression-not-assigned,invalid-name,too-many-public-methods
+import sys
 import unittest
 from Queue import Empty
 from multiprocessing import Process, Queue, Event, active_children
 
+import pytest
 import django
 import psutil
 from rotest.common import core_log
@@ -84,6 +86,8 @@ class AbstractCrashTest(unittest.TestCase):
                 core_log.debug("Process %r not found", self.runner_process.pid)
 
 
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Multiprocess is not implemented on Windows")
 class RunnerCrashTest(AbstractCrashTest):
     """Test workers behavior upon runner process death."""
     WORKERS_TIMEOUT = 2  # Seconds
@@ -120,6 +124,8 @@ class RunnerCrashTest(AbstractCrashTest):
                                               len(workers_pids)))
 
 
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Multiprocess is not implemented on Windows")
 class WorkerCrashTest(AbstractCrashTest):
     """Test runner behavior upon workers processes death."""
     WORKERS_TIMEOUT = 10  # Seconds

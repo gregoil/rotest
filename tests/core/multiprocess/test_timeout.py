@@ -3,8 +3,10 @@
 This module contains tests for the multiprocess runner timeout functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
+import sys
 import django
 
+import pytest
 from rotest.common.colored_test_runner import colored_main
 
 from tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
@@ -15,6 +17,8 @@ from tests.core.multiprocess.utils import (BasicMultiprocessCase, TimeoutCase,
                                            TimeoutWithSubprocessCase)
 
 
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Multiprocess is not implemented on Windows")
 class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
     """Test class for testing timeout feature in MultiprocessRunner."""
 
