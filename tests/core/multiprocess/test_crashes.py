@@ -10,8 +10,6 @@ from rotest.common import core_log
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.runners.multiprocess.common import kill_process_tree
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
-from rotest.management.common.utils import \
-                                    set_resource_manager_hostname, LOCALHOST
 
 from tests.core.multiprocess.utils import TimeoutCase
 from tests.core.utils import MockTestSuite, override_client_creator
@@ -34,7 +32,6 @@ class AbstractCrashTest(unittest.TestCase):
         """
         super(AbstractCrashTest, cls).setUpClass()
 
-        set_resource_manager_hostname(LOCALHOST)
         override_client_creator()
 
     def setUp(self):

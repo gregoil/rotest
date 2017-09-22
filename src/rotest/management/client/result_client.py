@@ -8,13 +8,13 @@ additional data about the run.
 """
 from rotest.common import core_log
 from rotest.management.common import messages
+from rotest.common.config import RESOURCE_MANAGER_HOST
 from rotest.management.client.client import AbstractClient
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.common.utils import (TEST_ID_KEY,
                                             TEST_NAME_KEY,
                                             TEST_SUBTESTS_KEY,
-                                            TEST_CLASS_CODE_KEY,
-                                            get_resource_manager_hostname)
+                                            TEST_CLASS_CODE_KEY)
 
 
 class ClientResultManager(AbstractClient):
@@ -25,7 +25,7 @@ class ClientResultManager(AbstractClient):
     def __init__(self, host=None, logger=core_log):
         """Initialize the result client."""
         if host is None:
-            host = get_resource_manager_hostname()
+            host = RESOURCE_MANAGER_HOST
 
         super(ClientResultManager, self).__init__(logger=logger, host=host)
 

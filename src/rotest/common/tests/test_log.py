@@ -3,8 +3,8 @@ import os
 import time
 import unittest
 
-from rotest import ROTEST_WORK_DIR
 from rotest.common import core_log
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.log import get_test_logger
 from rotest.common.colored_test_runner import colored_main
 

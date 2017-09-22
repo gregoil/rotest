@@ -8,14 +8,13 @@ also for the resources cleanup procedure and release.
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from itertools import izip
 
-from rotest import ROTEST_WORK_DIR
 from rotest.common import core_log
 from rotest.common.utils import AttrDict
 from rotest.management.common import messages
 from rotest.management.client.client import AbstractClient
 from rotest.management.models.resource_data import ResourceData
 from rotest.management.common.errors import ResourceDoesNotExistError
-from rotest.management.common.utils import get_resource_manager_hostname
+from rotest.common.config import ROTEST_WORK_DIR, RESOURCE_MANAGER_HOST
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
@@ -79,7 +78,7 @@ class ClientResourceManager(AbstractClient):
                  keep_resources=DEFAULT_KEEP_RESOURCES):
         """Initialize the resource client."""
         if host is None:
-            host = get_resource_manager_hostname()
+            host = RESOURCE_MANAGER_HOST
 
         self.locked_resources = []
         self.keep_resources = keep_resources

@@ -6,8 +6,6 @@ from django.test.testcases import TransactionTestCase
 
 from rotest.core.suite import TestSuite
 from rotest.core.models.case_data import TestOutcome, CaseData
-from rotest.management.common.utils import \
-                                    set_resource_manager_hostname, LOCALHOST
 
 from tests.core.utils import (MockCase1, MockCase2, MockTestSuite, MockSuite2,
                               MockSuite1, FailureBlock, MockNestedTestSuite,
@@ -59,17 +57,6 @@ class BaseResultHandlerTest(TransactionTestCase):
                         TestOutcome.SKIPPED,
                         TestOutcome.EXPECTED_FAILURE,
                         TestOutcome.UNEXPECTED_SUCCESS)
-
-    @classmethod
-    def setUpClass(cls):
-        """Set the server host to be the localhost.
-
-        This will allow the resource manager server and the
-        tests to use the same DB.
-        """
-        super(BaseResultHandlerTest, cls).setUpClass()
-
-        set_resource_manager_hostname(LOCALHOST)
 
     @abstractmethod
     def get_result_handler(self):

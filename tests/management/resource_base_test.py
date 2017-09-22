@@ -6,10 +6,8 @@ from threading import Thread
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.result.result import Result
-from rotest.management.common.utils import LOCALHOST
 from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.management.server.main import ResourceManagerServer
-from rotest.management.common.utils import set_resource_manager_hostname
 
 
 class BaseResourceManagementTest(TransactionTestCase):
@@ -22,17 +20,6 @@ class BaseResourceManagementTest(TransactionTestCase):
     thread on the setUp of each test and stop in on the tearDown.
     """
     SERVER_STARTUP_TIME = 0.5
-
-    @classmethod
-    def setUpClass(cls):
-        """Set the server host to be the localhost.
-
-        This will allow the resource manager server and the
-        tests to use the same DB.
-        """
-        super(BaseResourceManagementTest, cls).setUpClass()
-
-        set_resource_manager_hostname(LOCALHOST)
 
     def setUp(self):
         """Start ResourceManagerServer in an independent thread."""

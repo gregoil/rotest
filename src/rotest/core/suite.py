@@ -3,11 +3,11 @@
 import unittest
 from itertools import count
 
-from rotest import ROTEST_WORK_DIR
 from rotest.common import core_log
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.common.utils import get_work_dir
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.models.suite_data import SuiteData
 
 
