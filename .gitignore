@@ -103,4 +103,6 @@ ENV/
 .idea/
 rotest_test
 rotest_test-journal
+rotest_ut_test
+rotest_ut_test-journal
 nohup.out

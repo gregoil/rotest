@@ -4,8 +4,8 @@ import time
 import unittest
 
 from rotest.common import core_log
-from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.log import get_test_logger
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.colored_test_runner import colored_main
 
 
@@ -19,11 +19,14 @@ class TestLog(unittest.TestCase):
     def setUpClass(cls):
         cls.core_log_file_path = cls._get_log_file_path(core_log)
         cls.test_log = get_test_logger(cls.TEST_LOG_BASENAME, cls.TEST_LOG_DIR)
-        cls.test_log_file_path = cls._get_log_file_path(TestLog.test_log)
+        cls.test_log_file_path = cls._get_log_file_path(cls.test_log)
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(TestLog.test_log_file_path)
+        for log_handler in cls.test_log.handlers:
+            log_handler.close()
+
+        os.remove(cls.test_log_file_path)
 
     @staticmethod
     def _get_log_file_path(logger):
@@ -33,8 +36,7 @@ class TestLog(unittest.TestCase):
                 return handler.baseFilename
 
     def test_core_logger(self):
-        """Add log print and verify only one occurrence in core log file
-        """
+        """Log in core logger and verify logging occurs in this logger only."""
         with open(self.core_log_file_path, 'r') as core_log_file:
             with open(self.test_log_file_path, 'r') as test_log_file:
                 log_msg = '%s TEST_CORE_LOGGER' % time.ctime()
@@ -47,8 +49,7 @@ class TestLog(unittest.TestCase):
                 self.assertEquals(test_log_file_content.count(log_msg), 0)
 
     def test_test_logger(self):
-        """Add log print and verify only one occurrence in core & test log file
-        """
+        """Log in test logger and verify logging occurs in both loggers."""
         with open(self.core_log_file_path, 'r') as core_log_file:
             with open(self.test_log_file_path, 'r') as test_log_file:
                 log_msg = '%s TEST_TEST_LOGGER' % time.ctime()

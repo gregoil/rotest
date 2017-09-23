@@ -91,14 +91,17 @@ class BaseTestRunner(TextTestRunner):
         core_log.debug('Generating run data for %r', self.run_name)
         run_data = RunData(run_name=self.run_name, run_delta=self.run_delta)
 
-        core_log.debug('Creating test object for %r', test_class.get_name())
+        core_log.debug("Creating resource client")
         self.resource_manager = self.create_resource_manager()
-        self.test_item = test_class(run_data=run_data,
-                            config=self.config,
-                            skip_init=self.skip_init,
-                            save_state=self.save_state,
-                            enable_debug=self.enable_debug,
-                            resource_manager=self.resource_manager)
+
+        core_log.debug('Creating test object for %r', test_class.get_name())
+        self.test_item = test_class(
+            run_data=run_data,
+            config=self.config,
+            skip_init=self.skip_init,
+            save_state=self.save_state,
+            enable_debug=self.enable_debug,
+            resource_manager=self.resource_manager)
 
         run_data.main_test = self.test_item.data
 

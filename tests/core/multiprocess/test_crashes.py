@@ -1,13 +1,13 @@
 """Test Rotest's multiprocesses behavior on crashes."""
 # pylint: disable=expression-not-assigned,invalid-name,too-many-public-methods
+import sys
 import unittest
 from Queue import Empty
 from multiprocessing import Process, Queue, Event, active_children
 
-import django
+import pytest
 import psutil
 from rotest.common import core_log
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.runners.multiprocess.common import kill_process_tree
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -70,17 +70,17 @@ class AbstractCrashTest(unittest.TestCase):
         core_log.debug("Waiting for runner process to end")
         self.runner_process.join(timeout=self.RUNNER_JOIN_TIMEOUT)
 
-        if psutil.pid_exists(self.runner_process.pid) is True:
+        try:
+            core_log.debug("Killing runner process tree")
+            process = psutil.Process(self.runner_process.pid)
+            kill_process_tree(process)
 
-            try:
-                core_log.debug("Killing runner process tree")
-                process = psutil.Process(self.runner_process.pid)
-                kill_process_tree(process)
-
-            except psutil.NoSuchProcess:
-                core_log.debug("Process %r not found", self.runner_process.pid)
+        except psutil.NoSuchProcess:
+            core_log.debug("Process %r not found", self.runner_process.pid)
 
 
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Test isn't runnable on Windows")
 class RunnerCrashTest(AbstractCrashTest):
     """Test workers behavior upon runner process death."""
     WORKERS_TIMEOUT = 2  # Seconds
@@ -117,6 +117,8 @@ class RunnerCrashTest(AbstractCrashTest):
                                               len(workers_pids)))
 
 
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="Test isn't runnable on Windows")
 class WorkerCrashTest(AbstractCrashTest):
     """Test runner behavior upon workers processes death."""
     WORKERS_TIMEOUT = 10  # Seconds
@@ -152,15 +154,5 @@ class WorkerCrashTest(AbstractCrashTest):
                             "Dead workers should have been replaced")
 
 
-class CrashTestSuite(unittest.TestSuite):
-    """Multiprocess crash tests suite."""
-    TESTS = (RunnerCrashTest, WorkerCrashTest)
-
-    def __init__(self):
-        super(CrashTestSuite, self).__init__(unittest.makeSuite(test)
-                                             for test in self.TESTS)
-
-
 if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='CrashTestSuite')
+    unittest.main()
