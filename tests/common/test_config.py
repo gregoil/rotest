@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 import yaml
 import mock
+import pathlib2
 from rotest.common.config import Option, get_configuration, search_config_file
 
 
@@ -145,24 +146,27 @@ class ConfigFileTest(unittest.TestCase):
         self.assertEqual(configuration, {"target": "default"})
 
     @mock.patch("os.path.abspath",
-                return_value="/home/user/project/")
-    @mock.patch("os.path.isfile",
-                side_effect=lambda path:
-                            path == "/home/user/project/.rotest.yml")
+                return_value=str(pathlib2.Path("/home/user/project/")))
+    @mock.patch(
+        "os.path.isfile",
+        side_effect=lambda path:
+            path == str(pathlib2.Path("/home/user/project/.rotest.yml")))
     def test_finding_configuration_file_on_current_directory(self, *_args):
         """Test finding the config file in the direct ancestor."""
         self.assertEqual(search_config_file(),
-                         "/home/user/project/.rotest.yml")
+                         str(pathlib2.Path("/home/user/project/.rotest.yml")))
 
-    @mock.patch("os.path.abspath",
-                return_value="/home/user/project/sub1/sub2/")
-    @mock.patch("os.path.isfile",
-                side_effect=lambda path:
-                            path == "/home/user/project/.rotest.yml")
+    @mock.patch(
+        "os.path.abspath",
+        return_value=str(pathlib2.Path("/home/user/project/sub1/sub2/")))
+    @mock.patch(
+        "os.path.isfile",
+        side_effect=lambda path:
+            path == str(pathlib2.Path("/home/user/project/.rotest.yml")))
     def test_finding_configuration_file_on_ancestor_directories(self, *_args):
         """Test finding the config file in the non-direct ancestor."""
         self.assertEqual(search_config_file(),
-                         "/home/user/project/.rotest.yml")
+                         str(pathlib2.Path("/home/user/project/.rotest.yml")))
 
 
 class EdgeCaseTest(unittest.TestCase):
