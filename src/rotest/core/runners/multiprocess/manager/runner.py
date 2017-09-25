@@ -250,8 +250,9 @@ class MultiprocessRunner(BaseTestRunner):
         # Note: Using items() because workers_pool may change during iteration.
         for pid, worker in self.workers_pool.items():
             if worker.is_alive() is False:
-                self.restart_worker(worker=worker,
-                        reason='Worker %r has died unexpectedly' % pid)
+                self.restart_worker(
+                    worker=worker,
+                    reason='Worker %r has died unexpectedly' % pid)
 
             elif worker.timeout is not None:
                 timeout = worker.timeout
@@ -259,9 +260,10 @@ class MultiprocessRunner(BaseTestRunner):
                 test_duration = test_duration.total_seconds()
 
                 if test_duration > timeout:
-                    self.restart_worker(worker=worker,
-                            reason='Worker %r timed out (%r > %r)' %
-                                    (pid, test_duration, timeout))
+                    self.restart_worker(
+                        worker=worker,
+                        reason='Worker %r timed out (%r > %r)' %
+                               (pid, test_duration, timeout))
 
     def execute(self, test_item):
         """Execute the given test item.

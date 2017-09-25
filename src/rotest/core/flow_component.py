@@ -11,8 +11,8 @@ from itertools import count
 
 from ipdbugger import debug
 
-from rotest import ROTEST_WORK_DIR
 from rotest.common import core_log
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.log import get_test_logger
 from rotest.common.utils import get_work_dir, AttrDict
 from rotest.management.common.errors import ServerError

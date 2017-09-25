@@ -2,7 +2,7 @@
 import os
 from zipfile import ZipFile
 
-from rotest import ARTIFACT_DIR_ENVIROMENT_VAR
+from rotest.common import config
 from abstract_handler import AbstractResultHandler
 
 
@@ -21,16 +21,15 @@ class ArtifactHandler(AbstractResultHandler):
     """
     NAME = 'artifact'
     EXTENSTION = '.zip'
-    DEFAULT_PROJECT_FOLDER = 'other'
+    DEFAULT_PROJECT_FOLDER = 'default'
 
     def __init__(self, *args, **kwargs):
         """Initialize the handler and check that the artifacts dir was set."""
         super(ArtifactHandler, self).__init__(*args, **kwargs)
-        if ARTIFACT_DIR_ENVIROMENT_VAR not in os.environ:
-            raise RuntimeError("Environment variable %r was not set properly" %
-                               ARTIFACT_DIR_ENVIROMENT_VAR)
+        self.artifacts_path = config.ARTIFACTS_DIR
 
-        self.artifacts_path = os.environ[ARTIFACT_DIR_ENVIROMENT_VAR]
+        if not os.path.isdir(self.artifacts_path):
+            os.mkdir(self.artifacts_path)
 
         run_data = self.main_test.data.run_data
         if run_data is not None and run_data.run_name is not None:

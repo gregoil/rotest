@@ -4,9 +4,9 @@ import socket
 from itertools import count
 
 from rotest.common import core_log
-from rotest import RESOURCE_REQUEST_TIMEOUT
 from rotest.management.common import messages
 from rotest.management.common.errors import ErrorFactory
+from rotest.common.config import RESOURCE_REQUEST_TIMEOUT
 from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.management.common.parsers.abstract_parser import ParsingError
 from rotest.management.common.utils import (MESSAGE_DELIMITER,

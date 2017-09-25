@@ -1,11 +1,9 @@
 """Common resource management constants."""
 # pylint: disable=exec-used
-import os
 import importlib
 from socket import gethostbyaddr
 
 from errors import ResourceTypeError
-from rotest import RESOURCES_MANAGER_HOST_ENV_VAR
 
 HOST_PORT_SEPARATOR = ':'
 DEFAULT_SERVER_PORT = 7777
@@ -79,26 +77,3 @@ def extract_type_path(object_type):
         str. type full path.
     """
     return "%s.%s" % (object_type.__module__, object_type.__name__)
-
-
-def get_resource_manager_hostname():
-    """Return resource manager host name using environment variable.
-
-    Returns:
-        str. resource manager host name.
-    """
-    hostname = os.environ.get(RESOURCES_MANAGER_HOST_ENV_VAR)
-    if hostname is None:
-        raise RuntimeError("%r environment variable is not defined" %
-                           RESOURCES_MANAGER_HOST_ENV_VAR)
-
-    return hostname
-
-
-def set_resource_manager_hostname(hostname):
-    """Set resource manager host name.
-
-    Args:
-        hostname (str): new host name.
-    """
-    os.environ[RESOURCES_MANAGER_HOST_ENV_VAR] = hostname

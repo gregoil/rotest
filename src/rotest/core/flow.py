@@ -3,8 +3,8 @@
 # pylint: disable=dangerous-default-value,unused-variable,too-many-arguments
 from itertools import count
 
-from rotest import ROTEST_WORK_DIR
 from rotest.core.block import TestBlock
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
                                         MODE_FINALLY, MODE_OPTIONAL,

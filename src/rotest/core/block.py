@@ -2,7 +2,7 @@
 # pylint: disable=dangerous-default-value,too-many-arguments
 from itertools import count
 
-from rotest import ROTEST_WORK_DIR
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
                                         MODE_FINALLY, MODE_OPTIONAL)
 

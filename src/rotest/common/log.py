@@ -11,7 +11,7 @@ from logging.handlers import RotatingFileHandler
 
 from termcolor import colored
 
-from rotest import ROTEST_WORK_DIR
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.constants import WHITE, BOLD, CYAN, YELLOW, RED, MAGENTA
 
 

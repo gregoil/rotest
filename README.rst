@@ -3,6 +3,9 @@ rotest
 .. image:: https://travis-ci.org/gregoil/rotest.svg?branch=travis_ci
     :target: https://travis-ci.org/gregoil/rotest
 
+.. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9?svg=true
+    :target: https://ci.appveyor.com/project/gregoil/rotest
+
 Rotest is a resource oriented testing framework, for writing system or
 integration tests.
 
@@ -120,4 +123,3 @@ Following, those are the options exposed when running the test:
       -F, --failfast        Stop the run on first failure
       -D, --debug           Enter ipdb debug mode upon any test exception
       -S, --skip-init       Skip initialization and validation of resources
-
