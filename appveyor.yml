@@ -12,4 +12,4 @@ test_script:
     - "%PYTHON%\\Scripts\\tox.exe"
 
 on_failure:
-    - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
+    - appveyor PushArtifact "$HOME\\.rotest\\core_logger\\core_logger.log"
