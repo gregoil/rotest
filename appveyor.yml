@@ -1,7 +1,6 @@
 environment:
     matrix:
         - PYTHON: "C:\\Python27"
-        - PYTHON: "C:\\Python27-x64"
 
 build: off
 
@@ -13,4 +12,4 @@ test_script:
     - "%PYTHON%\\Scripts\\tox.exe"
 
 on_failure:
-    - appveyor PushArtifact ".tox\\core_logger\\core_logger.log"
+    - appveyor PushArtifact "%userprofile%\\.rotest\\core_logger\\core_logger.log"

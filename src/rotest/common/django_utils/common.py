@@ -1,8 +1,6 @@
 "Functions that ease the use of Django."""
 # pylint: disable=protected-access
-from django.core import serializers
 from django.utils.safestring import SafeUnicode
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_fields(model_object, ignore_fields=()):
@@ -66,50 +64,3 @@ def linked_unicode(item):
     pagename = item.__class__.__name__.lower()
     return SafeUnicode("<a href='/admin/%s/%s/%d/'>%s</a>" %
                        (app, pagename, item.id, item))
-
-
-def load_fixture(app_name, fixture_file, apps):
-    """Deserialize and save the objects in a fixture.
-
-    This loads the json fixture file to the db using the historical models,
-    thus enables loading fixtures in migrations.
-
-    Args:
-        app_name (str): name of the django application.
-        fixture_filename (str): fixture file name.
-        apps(django.apps.registry.Apps): historical version of the application.
-    """
-    with open(fixture_file, "rb") as fixture:
-        objects = serializers.deserialize('json',
-                                          fixture,
-                                          ignorenonexistent=True)
-
-        # Create the instance based on historical model.
-        for obj in objects:
-            model = apps.get_model(app_name, obj.object.__class__.__name__)
-            parent = None
-
-            try:
-                instance = model.objects.get(pk=obj.object.pk)
-
-            except model.DoesNotExist:
-                instance = model(pk=obj.object.pk)
-                try:
-                    parent = model.__base__.objects.get(pk=obj.object.pk)
-
-                except ObjectDoesNotExist:
-                    # No base class instance found
-                    pass
-
-            for field, value in obj.object.__dict__.iteritems():
-                if hasattr(instance, field):
-                    setattr(instance, field, value)
-
-            # In case the resource's model hierarchies are presented separately
-            # in the fixture, we'd want to update the instance and not replace
-            # it (which might cause loss of data or integrity errors)
-            if parent is not None:
-                for field, value in parent.__dict__.iteritems():
-                    setattr(instance, field, value)
-
-            instance.save()

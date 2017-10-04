@@ -2,9 +2,8 @@
 # pylint: disable=multiple-statements
 import json
 
+from attrdict import AttrDict
 from jsonschema import validate
-
-from rotest.common.utils import AttrDict
 
 
 def parse(json_path, schema_path=None):
