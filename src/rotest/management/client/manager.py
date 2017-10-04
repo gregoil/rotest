@@ -8,8 +8,9 @@ also for the resources cleanup procedure and release.
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from itertools import izip
 
+from attrdict import AttrDict
+
 from rotest.common import core_log
-from rotest.common.utils import AttrDict
 from rotest.management.common import messages
 from rotest.management.client.client import AbstractClient
 from rotest.management.models.resource_data import ResourceData

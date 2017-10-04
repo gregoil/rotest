@@ -251,8 +251,8 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
                       dest="processes")
 
     parser.add_option("-o", "--outputs", type='string',
-                      help="Output handlers separated by comma, "
-                      "options %r" % str(get_result_handler_options()),
+                      help="Output handlers separated by comma. Options : {}"
+                      .format(", ".join(get_result_handler_options())),
                       action="callback",
                       callback=output_option_parser, dest="outputs",
                       default=outputs)

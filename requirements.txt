@@ -1,5 +1,6 @@
 -e .
 astroid==1.5.3
+attrdict==2.0.0
 attrs==17.2.0
 Automat==0.6.0
 backports.functools-lru-cache==1.4
@@ -8,6 +9,7 @@ basicstruct==1.0.3
 colorama==0.3.9
 configparser==3.5.0
 constantly==15.1.0
+coverage==4.4.1
 decorator==4.1.2
 Django==1.7.11
 enum34==1.1.6
@@ -17,7 +19,7 @@ functools32==3.2.3.post2
 hyperlink==17.3.1
 incremental==17.5.0
 ipdb==0.10.3
-ipdbugger==1.1.1
+ipdbugger==1.1.2
 ipython==5.5.0
 ipython-genutils==0.2.0
 isort==4.2.15
@@ -39,6 +41,7 @@ pyflakes==1.5.0
 Pygments==2.2.0
 pylint==1.7.2
 pytest==3.2.2
+pytest-cov==2.5.1
 pytest-django==3.1.2
 PyYAML==3.12
 scandir==1.5

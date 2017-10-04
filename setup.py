@@ -34,6 +34,7 @@ setup(
                       'ipdbugger>=1.1.0',
                       'lxml<4.0.0',
                       'xlwt',
+                      'attrdict',
                       'pyyaml',
                       'twisted',
                       'psutil',

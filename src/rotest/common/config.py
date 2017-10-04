@@ -4,8 +4,7 @@ import sys
 import itertools
 
 import yaml
-
-from rotest.common.utils import AttrDict
+from attrdict import AttrDict
 
 
 ROTEST_CONFIGURATION_FILES = ("rotest.yaml", "rotest.yml",

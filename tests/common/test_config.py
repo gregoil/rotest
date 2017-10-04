@@ -147,6 +147,13 @@ class ConfigFileTest(unittest.TestCase):
 
     @mock.patch("os.path.abspath",
                 return_value=str(pathlib2.Path("/home/user/project/")))
+    @mock.patch("os.path.isfile", return_value=False)
+    def test_config_file_cannot_be_found(self, *_args):
+        """Test non-existing config file scenario."""
+        self.assertEqual(search_config_file(), None)
+
+    @mock.patch("os.path.abspath",
+                return_value=str(pathlib2.Path("/home/user/project/")))
     @mock.patch(
         "os.path.isfile",
         side_effect=lambda path:
