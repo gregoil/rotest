@@ -4,18 +4,22 @@
 # pylint: disable=invalid-name,too-few-public-methods,no-member,unused-argument
 import os
 import sys
+from collections import defaultdict
 import optparse
 
 import django
 
 from rotest.common import core_log
+from rotest.core.case import TestCase
+from rotest.core.flow import TestFlow
+from rotest.core.block import TestBlock
+from rotest.core.suite import TestSuite
 from rotest.core.utils.json_parser import parse
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core.result.result import get_result_handler_options
 from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
-
 
 LAST_RUN_INDEX = -1
 MINIMUM_TIMES_TO_RUN = 1
@@ -86,7 +90,9 @@ def run(test_class, save_state=None, outputs=None, config=None,
     Args:
         test_class (type): test class inheriting from
             :class:`rotest.core.case.TestCase` or
-            :class:`rotest.core.suite.TestSuite`.
+            :class:`rotest.core.suite.TestSuite` or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.block.TestBlock`.
         save_state (bool): determine if storing resources state is required.
             The behavior can be overridden using resource's save_state flag.
         outputs (list): list of the required output handlers' names.
@@ -211,14 +217,138 @@ def set_run_configuration(options, schema_path=DEFAULT_SCHEMA_PATH):
     return config
 
 
+# Syntax symbol used to access the fields of Django models in querying
+SUBFIELD_ACCESSOR = '__'
+
+
+def parse_resource_identifiers(resources_str):
+    """Update the tests' resources to ask for specific instances.
+
+    Note:
+        Requests which don't specify an instance will be handled automatically.
+
+    Args:
+        resources_str (str): string representation of the required resources.
+
+    Example:
+        input:
+            'resource_a=demo_res1,resource_b.ip_address=10.0.0.1'
+        output:
+            {'resource_a': {'name': 'demo_res1'},
+             'resource_b': {'ip_address': '10.0.0.1'}}
+
+    Returns:
+        dict. the parsed resource identifiers.
+    """
+    if resources_str is None or len(resources_str) == 0:
+        return {}
+
+    resource_requests = resources_str.split(',')
+
+    requests_dict = defaultdict(dict)
+    requests = (request.split('=', 1) for request in resource_requests)
+
+    for resource_type, request_value in requests:
+        request_fields = resource_type.split('.')
+        if len(request_fields) == 1:
+            requests_dict[resource_type]['name'] = request_value
+
+        else:
+            resource_name = request_fields[0]
+            request_fields = request_fields[1:]
+            resource_request = requests_dict[resource_name]
+            resource_request[SUBFIELD_ACCESSOR.join(request_fields)] = \
+                request_value
+
+    return requests_dict
+
+
+def _update_test_resources(test_element, identifiers_dict):
+    """Update resource requests for a specific test.
+
+    Args:
+        test_element (type): target test class inheriting from
+            :class:`rotest.core.case.TestCase or
+            :class:`rotest.core.Suite.TestSuite or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.block.TestBlock`.
+        identifiers_dict (dict): states the resources constraints in the
+            form of <request name>: <resource constraints>.
+    """
+    requests_found = set()
+
+    for resource_request in test_element.resources:
+        if resource_request.name in identifiers_dict:
+            resource_request.kwargs.update(
+                identifiers_dict[resource_request.name])
+            requests_found.add(resource_request.name)
+
+    return requests_found
+
+
+def update_requests(test_element, identifiers_dict):
+    """Recursively update resources requests.
+
+    Update requests to use specific resources according to the identifiers.
+
+    Args:
+        test_element (type): target test class inheriting from
+            :class:`rotest.core.case.TestCase or
+            :class:`rotest.core.Suite.TestSuite or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.block.TestBlock`.
+        identifiers_dict (dict): states the resources constraints in the
+            form of <request name>: <resource constraints>.
+
+        Returns:
+            set. the 'specific' constraints that were found and fulfilled.
+    """
+    requests_found = set()
+
+    if issubclass(test_element, (TestSuite, TestFlow)):
+        for component in test_element.components:
+            requests_found.update(
+                update_requests(component, identifiers_dict))
+
+    if issubclass(test_element, (TestCase, TestFlow, TestBlock)):
+        requests_found.update(
+            _update_test_resources(test_element, identifiers_dict))
+
+    return requests_found
+
+
+def update_resource_requests(test_class, resource_identifiers):
+    """Update the resources requests according to the parameters.
+
+    Args:
+        test_class (type): test class to update its resources, inheriting form
+            :class:`rotest.core.case.TestCase or
+            :class:`rotest.core.Suite.TestSuite or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.block.TestBlock`.
+        resource_identifiers (dict): states the resources constraints in the
+            form of <request name>: <resource constraints>.
+    """
+    specifics_fulfilled = update_requests(test_class, resource_identifiers)
+
+    if len(specifics_fulfilled) != len(resource_identifiers):
+        unfound_requests = list(set(resource_identifiers.keys()) -
+                                specifics_fulfilled)
+        raise ValueError("Tests do not contain requests of the names %s" %
+                         unfound_requests)
+
+
 def main(test_class, save_state=None, delta_iterations=None, processes=None,
-         outputs=None, test_filter=None, config_path=None, skip_init=None):
+         outputs=None, test_filter=None, config_path=None, skip_init=None,
+         resources=None):
     """Call the Rotest's `run` method using the given options.
 
     Args:
         test_class (type): test class inheriting from
             :class:`rotest.core.case.TestCase` or
-            :class:`rotest.core.suite.TestSuite`.
+            :class:`rotest.core.suite.TestSuite` or
+            :class:`rotest.core.flow.TestFlow` or
+            :class:`rotest.core.block.TestBlock`.
         save_state (bool): enable save state.
         delta_iterations (number): enable run of failed tests only, enter the
             number of times the failed tests should run.
@@ -227,6 +357,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
         test_filter (str): trim test by a given filter to contain only tags
             matching tests.
         skip_init (bool): True to skip resources initialize and validation.
+        resources (str): string representation of the required resources.
 
     Raises:
         SystemExit. exit with a status matching the test result.
@@ -277,7 +408,13 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     parser.add_option("-S", "--skip-init", action="store_true",
                       default=skip_init, help="Skip initialization and "
-                      "validation of resources", dest="skip_init")
+                                              "validation of resources",
+                      dest="skip_init")
+
+    parser.add_option("-r", "--resources", action="store", type='str',
+                      default=resources,
+                      help="Specific resources to request by name",
+                      dest="resources")
 
     options, _ = parser.parse_args()
 
@@ -286,6 +423,9 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
     if options.list is True:
         print_test_hierarchy(test_class, options.filter)
         return
+
+    resource_identifiers = parse_resource_identifiers(options.resources)
+    update_resource_requests(test_class, resource_identifiers)
 
     if options.filter is not None and options.filter != "":
         # Add a tags filtering handler.
