@@ -31,7 +31,6 @@ import subprocess
 
 import docopt
 import django
-import daemon
 from twisted.internet.protocol import ServerFactory
 from twisted.internet.selectreactor import SelectReactor
 
@@ -41,6 +40,9 @@ from rotest.common.config import RESOURCE_MANAGER_PORT
 from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.common.log import (ROTEST_WORK_DIR, LOG_FORMAT, ColoredFormatter,
                                get_test_logger)
+
+if sys.platform != "win32":
+    import daemon
 
 
 LOG_NAME = 'resource_manager'
