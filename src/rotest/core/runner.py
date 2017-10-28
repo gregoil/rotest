@@ -305,7 +305,7 @@ def update_requests(test_element, identifiers_dict):
     """
     requests_found = set()
 
-    if issubclass(test_element, (TestSuite, TestFlow)):
+    if issubclass(test_element, TestSuite):
         for component in test_element.components:
             requests_found.update(
                 update_requests(component, identifiers_dict))

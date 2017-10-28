@@ -210,6 +210,10 @@ CONFIGURATION_SCHEMA = {
                                "RESOURCE_MANAGER_HOST"],
         config_file_options=["host"],
         default_value="localhost"),
+    "port": Option(
+        environment_variables=["ROTEST_SERVER_PORT"],
+        config_file_options=["port"],
+        default_value="7777"),
     "resource_request_timeout": Option(
         command_line_options=["--resource-request-timeout"],
         environment_variables=["ROTEST_RESOURCE_REQUEST_TIMEOUT",
@@ -244,6 +248,7 @@ CONFIGURATION = get_configuration(
 
 ROTEST_WORK_DIR = os.path.expanduser(CONFIGURATION.workdir)
 RESOURCE_MANAGER_HOST = CONFIGURATION.host
+RESOURCE_MANAGER_PORT = int(CONFIGURATION.port)
 RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)

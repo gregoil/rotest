@@ -6,12 +6,12 @@ from itertools import count
 from rotest.common import core_log
 from rotest.management.common import messages
 from rotest.management.common.errors import ErrorFactory
-from rotest.common.config import RESOURCE_REQUEST_TIMEOUT
 from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.management.common.parsers.abstract_parser import ParsingError
+from rotest.common.config import (RESOURCE_REQUEST_TIMEOUT,
+                                  RESOURCE_MANAGER_PORT)
 from rotest.management.common.utils import (MESSAGE_DELIMITER,
-                                            MESSAGE_MAX_LENGTH,
-                                            DEFAULT_SERVER_PORT)
+                                            MESSAGE_MAX_LENGTH)
 
 
 class AbstractClient(object):
@@ -30,7 +30,7 @@ class AbstractClient(object):
     REPLY_OVERHEAD_TIME = 2
     _DEFAULT_REPLY_TIMEOUT = 18
 
-    def __init__(self, host, port=DEFAULT_SERVER_PORT,
+    def __init__(self, host, port=RESOURCE_MANAGER_PORT,
                  parser=DEFAULT_PARSER(),
                  lock_timeout=RESOURCE_REQUEST_TIMEOUT,
                  logger=core_log):
