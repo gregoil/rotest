@@ -6,7 +6,6 @@ from socket import gethostbyaddr
 from errors import ResourceTypeError
 
 HOST_PORT_SEPARATOR = ':'
-DEFAULT_SERVER_PORT = 7777
 
 MESSAGE_DELIMITER = '\r\n'
 MESSAGE_MAX_LENGTH = 240000

@@ -123,3 +123,5 @@ Following, those are the options exposed when running the test:
       -F, --failfast        Stop the run on first failure
       -D, --debug           Enter ipdb debug mode upon any test exception
       -S, --skip-init       Skip initialization and validation of resources
+      -r RESOURCES, --resources=RESOURCES
+                            Specific resources to request by name
