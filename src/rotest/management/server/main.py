@@ -1,11 +1,3 @@
-# """Resource manager server runner.
-#
-# Note:
-#     By default, resource manager server supports only the basic resources
-#     defined under Rotest. In order to extend the resources, set the
-#     "DJANGO_SETTINGS_MODULE" environment variable to point to the extended
-#     package's settings module.
-# """
 """Run resource manager server.
 
 Usage:
@@ -111,6 +103,14 @@ class ResourceManagerServer(object):
 
 
 def start_server(server_port, run_django_server, django_port):
+    """Run the resource management server, and optionally the Django frontend.
+
+    Args:
+        server_port (number): port for the resource management server.
+        run_django_server (bool): whether to run the Django frontend as well,
+            or not.
+        django_port (number): port for the Django frontend.
+    """
     django_process = None
     try:
         if run_django_server:
