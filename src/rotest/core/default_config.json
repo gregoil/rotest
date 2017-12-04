@@ -2,7 +2,7 @@
   "save_state": false,
   "delta_iterations": 0,
   "processes": null,
-  "outputs": ["logdebug", "excel"],
+  "outputs": ["tree", "excel"],
   "filter": null,
   "run_name": null,
   "list": false,

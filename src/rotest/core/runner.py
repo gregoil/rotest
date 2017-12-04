@@ -151,9 +151,9 @@ def output_option_parser(option, opt, value, parser):
 
     for handler in handlers:
         if handler not in output_options:
-            raise optparse.OptionValueError('Unsupported handler %r, '
-                                            'supported handlers %r' %
-                                            (handler, output_options))
+            raise optparse.OptionValueError(
+                'Unsupported handler %r, supported handlers: %s' %
+                (handler, ", ".join(output_options)))
 
     setattr(parser.values, option.dest, handlers)
 

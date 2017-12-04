@@ -79,9 +79,9 @@ class AbstractFlowComponent(unittest.TestCase):
     a warning would be displayed to the user. This check is done on a static
     level (i.e. before running any test).
 
-    Test authors should subclass TestBlock for their own tests and override
-    'inputs' tuple with the names of the fields required for the run of the
-    block, and override 'mode' to state the type of the block.
+    Test authors should subclass TestBlock for their own tests and
+    override 'inputs' tuple with the names of the fields required for the run
+    of the block, and override 'mode' to state the type of the block.
 
     Attributes:
         resources (tuple): list of the required resources. each item is a
@@ -108,7 +108,7 @@ class AbstractFlowComponent(unittest.TestCase):
             CRITICAL: stop test flow on failure or error.
             FINALLY: always run this block, regardless of the others' result.
             OPTIONAL: don't stop test flow on failure (but do so on error),
-                failure in this type of block still fails the test-flow.
+            failure in this type of block still fails the test-flow.
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
