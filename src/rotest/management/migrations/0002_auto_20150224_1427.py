@@ -6,19 +6,11 @@ from django.contrib.auth import models as auth_models
 
 
 def create_users(apps, schema_editor):
-    try:
-        auth_models.User.objects.get(username='rotest')
-    except auth_models.User.DoesNotExist:
-        auth_models.User.objects.create_superuser('rotest',
-                                                  'rotest@rotest.com',
-                                                  'rotest')
-
-    try:
-        auth_models.User.objects.get(username='localhost')
-    except auth_models.User.DoesNotExist:
-        auth_models.User.objects.create_user('localhost',
-                                             'localhost@rotest.com',
-                                             'localhost')
+    qa_group, _ = auth_models.Group.objects.get_or_create(name="QA")
+    localhost, _ = auth_models.User.objects.get_or_create(username="localhost",
+                                                       password="localhost",
+                                                       email="l@l.com")
+    qa_group.user_set.add(localhost)
 
 
 class Migration(migrations.Migration):

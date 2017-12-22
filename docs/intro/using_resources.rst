@@ -171,7 +171,7 @@ First, let's initialize the database with the following Django commands:
     Applying sessions.0001_initial... OK
 
 The first command creates a migrations file, that orders changing the database
-schemas or contents. The second commands changes the database according to
+schemas or contents. The second command changes the database according to
 those orders. If the database does not already exist, it creates it.
 
 Let's run the Rotest server, using the ``rotest-server`` command:
@@ -184,9 +184,7 @@ Let's run the Rotest server, using the ``rotest-server`` command:
 A few explanations about this command:
 
 * If given the ``--run-django-server`` option, it runs the Django admin panel
-  as well. Go ahead at navigate in your browser to
-  `<http://127.0.0.1:8080/admin>`_, and use the following
-  credentials: ``username="rotest"``, ``password="rotest"``.
+  as well. We'll access it in the next section.
 
 * If given the ``--django-port <port>`` option, it uses this value as the
   port of the Django admin panel. If not given, it defaults to ``8000``.
@@ -194,9 +192,24 @@ A few explanations about this command:
 * If given the ``--daemon`` or ``-D`` option, the program runs in the
   background.
 
-To sum this up, add a Calculator resource. Just enter the Django admin panel,
-add a resource with the name ``calc`` for instance, and a local IP address like
-``127.0.0.1``:
+Adding a Resource on Django Admin Panel
+=======================================
+
+To sum this up, let's add a Calculator resource. Run the `createsuperuser`
+command to get access to the admin panel:
+
+.. code-block:: console
+
+  $ python manage.py createsuperuser
+  Username (leave blank to use 'user'): <choose a user in here>
+  Email address: <choose your email address>
+  Password: <type in your password>
+  Password (again): <type password again>
+  Superuser created successfully.
+
+Now, Just enter the Django admin panel (via `<http://127.0.0.1:8080/admin>`_),
+access it using the above credentials, and add a resource with the name
+``calc`` and a local IP address like ``127.0.0.1``:
 
 .. figure:: adding_resource.png
   :target: ../_images/adding_resource.png
