@@ -49,7 +49,6 @@ class TestBlock(AbstractFlowComponent):
             upon any exception in a test statement.
         resource_manager (ClientResourceManager): client resource manager.
         skip_init (bool): True to skip resources initialize and validation.
-
         inputs (tuple): lists the names of fields the block expecteds to have
             (locked resources, values set via 'parametrize' or 'share').
         outputs (tuple): lists the names of fields the block shares.
@@ -57,7 +56,7 @@ class TestBlock(AbstractFlowComponent):
             CRITICAL: stop test flow on failure or error.
             FINALLY: always run this block, regardless of the others' result.
             OPTIONAL: don't stop test flow on failure (but do so on error),
-                failure in this type of block still fails the test-flow.
+            failure in this type of block still fails the test-flow.
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
@@ -71,28 +70,6 @@ class TestBlock(AbstractFlowComponent):
                  parent=None, run_data=None, enable_debug=True,
                  resource_manager=None, skip_init=False, is_main=True,
                  parameters={}):
-        """Validate & initialize the TestBlock.
-
-        Args:
-            indexer (iterator): the generator of test indexes.
-            base_work_dir (str): the base directory of the tests.
-            save_state (bool): flag to determine if storing the states of
-                resources is required.
-            force_validate (bool): a flag to determine if the resource will be
-                validated once it requested (even if not marked as dirty).
-            config (AttrDict): dictionary of configurations.
-            parent (TestCase): container of this test.
-            run_data (RunData): test run data object.
-            enable_debug (bool): whether to enable entering ipdb debugging mode
-                upon any exception in a test statement.
-            resource_manager (ClientResourceManager): tests' client resource
-                manager instance, leave None to create a new one for the test.
-            skip_init (bool): True to skip resources initialize and validation.
-            parameters (dict): parameters this component was instantiated with.
-
-        Raises:
-            AttributeError: in case of empty resource tuple.
-        """
         super(TestBlock, self).__init__(parent=parent,
                                         config=config,
                                         indexer=indexer,

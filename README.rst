@@ -1,4 +1,4 @@
-rotest
+Rotest
 ------
 .. image:: https://travis-ci.org/gregoil/rotest.svg?branch=travis_ci
     :target: https://travis-ci.org/gregoil/rotest
@@ -15,7 +15,7 @@ resources. The resources may be DUT (devices under test) or they may help
 the test process. The tests look very much like tests written using the
 builtin module `unittest`.
 
-Why use rotest?
+Why Use Rotest?
 ===============
 - Enabling a great team use resources without interfering each other.
 - Easily abstracting automated components in the system.
@@ -38,11 +38,13 @@ For our example, let's look at an example for a `Calculator` resource:
     from rotest.management import base_resource
     from rotest.management.models import resource_data
 
+
     class CalculatorData(resource_data.ResourceData):
         class Meta:
             app_label = "resources"
 
         ip_address = models.IPAddressField()
+
 
     class Calculator(base_resource.BaseResource):
         DATA_CLASS = CalculatorData
@@ -79,11 +81,13 @@ Now, an example for a test:
     from rotest.core.runner import main
     from rotest.core.case import TestCase, request
 
+
     class SimpleCalculationTest(TestCase):
         resources = [request("calculator", Calculator)]
 
         def test_simple_calculation(self):
             self.assertEqual(self.calculator.calculate("1+2"), 3)
+
 
     if __name__ == "__main__":
         main(SimpleCalculationTest)
@@ -95,7 +99,7 @@ parameters for finding the suitable resource.
 
 Following, those are the options exposed when running the test:
 
-.. code-block:: bash
+.. code-block:: console
 
     $ python test.py --help
     Usage: test.py [options]
