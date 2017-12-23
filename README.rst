@@ -121,7 +121,8 @@ And then it was referenced to in
 
     src/rotest/common/django_utils/all_settings.py
 
-And all of it's views are referenced to at it's `models.py` file,
+And all of it's models (`ResourceData`s) are referenced to at it's `models.py`
+file,
 
 And we also added these lines to `admin.py`:
 
@@ -189,13 +190,20 @@ run the following command
 
 .. code-block:: console
 
+    $ python playground/book/test_book.py
     AnonymousSuite
       BookCase.test_clockwork_orange ... OK
       BookCase.test_display_for_library ... OK
+      BookCase.test_the_bible ... SKIP
+      Game of Thrones is not a holy book.
 
-    Ran 2 tests in 0.122s
+    ======================================================================
+    SKIPPED: BookCase.test_the_bible
+    ----------------------------------------------------------------------
+    A Book is not a holy book.
+    Ran 3 tests in 0.189s
 
-    OK
+    OK (skipped=1)
 
 You can even try a more verbose version of the same test, for easier debugging.
 

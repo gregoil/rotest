@@ -5,6 +5,8 @@ from rotest.management.models.resource_data import ResourceData
 
 class BookData(ResourceData):
     class Meta(type):
+        # In the django admin page you divide your resources into categories,
+        # The category chosen is the metaclass's app_label member.
         app_label = "playground"
 
     title = models.TextField()
