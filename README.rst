@@ -33,17 +33,20 @@ follow some simple steps.
 First clone this repository anywhere on your file-system.
 
 .. code-block:: bash
+
     git clone https://github.com/gregoil/rotest.git
 
 
 *cd* into the rotest root directory.
 
 .. code-block:: bash
+
     cd rotest
 
 Install our dependencies, We recommend using a *virtualenv*.
 
 .. code-block:: bash
+
     python -m pip install -r requirements.txt
 
 
@@ -54,6 +57,7 @@ whenever you import rotest it will reference your local directory where you
 did the clone, from there you can make changes to the package.)
 
 .. code-block:: bash
+
     python setup.py develop
 
 
@@ -63,17 +67,20 @@ database, So:
 Install any DB technology you want, I'd use sqlite for simplicity's sake.
 
 .. code-block:: bash
+
     sudo apt-get install sqlite3
 
 
 Export the DJANGO_SETTINGS_MODULE environment variable.
 
 .. code-block:: bash
+
     export DJANGO_SETTINGS_MODULE=rotest.common.django_utils.all_settings
 
 Set up our resource database:
 
 .. code-block:: bash
+
     python src/rotest/common/django_utils/manage.py migrate
 
 
@@ -82,6 +89,7 @@ This command will prompt you for the user's name, password, email, etc...
 Just fill it.
 
 .. code-block:: bash
+
     python src/rotest/common/django_utils/manage.py createsuperuser
 
 
@@ -92,6 +100,7 @@ We can create the books table by migrating
 output that there is nothing to migrate.)
 
 .. code-block:: bash
+
     python src/rotest/common/django_utils/manage.py makemigrations
     python src/rotest/common/django_utils/manage.py migrate
 
@@ -102,11 +111,13 @@ We can simply run makemigrations because playground directory was
 created with the command:
 
 .. code-block:: bash
+
     django-admin startapp playground
 
 And then it was referenced to in
 
 .. code-block:: console
+
     src/rotest/common/django_utils/all_settings.py
 
 And all of it's views are referenced to at it's models.py file,
@@ -114,6 +125,7 @@ And all of it's views are referenced to at it's models.py file,
 And we also added these lines to admin.py:
 
 .. code-block:: python
+
     from django.contrib import admin
     from . import models
     admin.site.register(models.BookData)
@@ -124,6 +136,7 @@ Run the server in another terminal/console/shell
 (Make sure you have the environment variables listed in this article.)
 
 .. code-block:: bash
+
     python src/rotest/common/django_utils/manage.py runserver 0.0.0.0:8000
 
 Launch the rotest resource manager to run on a machine and then configure
@@ -138,6 +151,7 @@ In another terminal/console/shell run the server:
 (Make sure you have the environment variables listed in this article.)
 
 .. code-block:: bash
+
     python src/rotest/management/server/main.py
 
 
@@ -147,6 +161,7 @@ In your development terminal/console/shell configure the resource manager:
 proxy to the database and what guarantees the successful teamwork.)
 
 .. code-block:: bash
+
     export RESOURCE_MANAGER_HOST=localhost
 
 That's it for the boilerplate, now we can actually start messing around with
@@ -159,6 +174,7 @@ title: Game of Thrones
 author: George R. R. Martin
 
 .. code-block:: console
+
     http://localhost:8000/admin/playground/bookdata/add/
 
 
@@ -166,9 +182,11 @@ Let's try and run the most basic test in the playground, *test_book*.
 run the following command
 
 .. code-block:: bash
+
     python playground/book/test_book.py
 
 .. code-block:: console
+
     AnonymousSuite
       BookCase.test_clockwork_orange ... OK
       BookCase.test_display_for_library ... OK
@@ -180,6 +198,7 @@ run the following command
 You can even try a more verbose version of the same test, for easier debugging.
 
 .. code-block:: bash
+
     python playground/book/test_book.py -o logdebug
 
 
