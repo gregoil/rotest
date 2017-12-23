@@ -43,14 +43,14 @@ First clone this repository anywhere on your file-system.
 
     cd rotest
 
-Install our dependencies, We recommend using a *virtualenv*.
+Install our dependencies, We recommend using a `virtualenv`.
 
 .. code-block:: bash
 
     python -m pip install -r requirements.txt
 
 
-Set rotest on develop mode.
+Set rotest on **develop** mode.
 
 (This basically means that instead of installing rotest as a 3rd-party package,
 whenever you import rotest it will reference your local directory where you
@@ -61,8 +61,7 @@ did the clone, from there you can make changes to the package.)
     python setup.py develop
 
 
-An **AWESOME** feature of rotest is it's easy-to-configure django resource
-database, So:
+A feature of rotest is it's easy-to-configure django resource database, So:
 
 Install any DB technology you want, I'd use sqlite for simplicity's sake.
 
@@ -104,10 +103,12 @@ output that there is nothing to migrate.)
     python src/rotest/common/django_utils/manage.py makemigrations
     python src/rotest/common/django_utils/manage.py migrate
 
+----------------------------------------------------------------------------
+
 ----
 Note
 ----
-We can simply run makemigrations because playground directory was
+We can simply run `makemigrations` because playground directory was
 created with the command:
 
 .. code-block:: bash
@@ -120,9 +121,9 @@ And then it was referenced to in
 
     src/rotest/common/django_utils/all_settings.py
 
-And all of it's views are referenced to at it's models.py file,
+And all of it's views are referenced to at it's `models.py` file,
 
-And we also added these lines to admin.py:
+And we also added these lines to `admin.py`:
 
 .. code-block:: python
 
@@ -130,6 +131,7 @@ And we also added these lines to admin.py:
     from . import models
     admin.site.register(models.BookData)
 
+----------------------------------------------------------------------------
 
 Run the server in another terminal/console/shell
 
@@ -144,7 +146,7 @@ your development station to that machine.
 
 For simplicity sake, we'll do all of this on one machine, so we will use
 **localhost**. (Note: although rotest defaults to localhost if no
-*RESOURCE_MANAGER_HOST* is defined, explicit is better than implicit)
+`RESOURCE_MANAGER_HOST` is defined, explicit is better than implicit)
 
 In another terminal/console/shell run the server:
 
