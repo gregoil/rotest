@@ -200,7 +200,7 @@ run the following command
     ======================================================================
     SKIPPED: BookCase.test_the_bible
     ----------------------------------------------------------------------
-    A Book is not a holy book.
+    Game of Thrones is not a holy book.
     Ran 3 tests in 0.189s
 
     OK (skipped=1)
