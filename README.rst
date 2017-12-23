@@ -32,21 +32,20 @@ follow some simple steps.
 
 First clone this repository anywhere on your file-system.
 
-```bash
-git clone https://github.com/gregoil/rotest.git
-```
+.. code-block:: bash
+    git clone https://github.com/gregoil/rotest.git
+
 
 *cd* into the rotest root directory.
 
-```bash
-cd rotest
-```
+.. code-block:: bash
+    cd rotest
 
 Install our dependencies, We recommend using a *virtualenv*.
 
-```bash
-python -m pip install -r requirements.txt
-```
+.. code-block:: bash
+    python -m pip install -r requirements.txt
+
 
 Set rotest on develop mode.
 
@@ -54,38 +53,37 @@ Set rotest on develop mode.
 whenever you import rotest it will reference your local directory where you
 did the clone, from there you can make changes to the package.)
 
-```bash
-python setup.py develop
-```
+.. code-block:: bash
+    python setup.py develop
+
 
 An **AWESOME** feature of rotest is it's easy-to-configure django resource
 database, So:
 
 Install any DB technology you want, I'd use sqlite for simplicity's sake.
 
-```bash
-sudo apt-get install sqlite3
-```
+.. code-block:: bash
+    sudo apt-get install sqlite3
+
 
 Export the DJANGO_SETTINGS_MODULE environment variable.
 
-```bash
-export DJANGO_SETTINGS_MODULE=rotest.common.django_utils.all_settings
-```
+.. code-block:: bash
+    export DJANGO_SETTINGS_MODULE=rotest.common.django_utils.all_settings
 
 Set up our resource database:
 
-```bash
-python src/rotest/common/django_utils/manage.py migrate
-```
+.. code-block:: bash
+    python src/rotest/common/django_utils/manage.py migrate
+
 
 Create an admin account in our rotest-app,
 This command will prompt you for the user's name, password, email, etc...
 Just fill it.
 
-```bash
-python src/rotest/common/django_utils/manage.py createsuperuser
-```
+.. code-block:: bash
+    python src/rotest/common/django_utils/manage.py createsuperuser
+
 
 
 We can create the books table by migrating
@@ -93,37 +91,40 @@ We can create the books table by migrating
 (Note: if the playground/migrations directory isn't empty these commands will
 output that there is nothing to migrate.)
 
-```bash
-python src/rotest/common/django_utils/manage.py makemigrations
-python src/rotest/common/django_utils/manage.py migrate
-```
+.. code-block:: bash
+    python src/rotest/common/django_utils/manage.py makemigrations
+    python src/rotest/common/django_utils/manage.py migrate
 
-    Note
-        We can simply run makemigrations because playground directory was
-        created with the command:
+----
+Note
+----
+We can simply run makemigrations because playground directory was
+created with the command:
 
-            django-admin startapp playground
+.. code-block:: bash
+    django-admin startapp playground
 
-        And then it was referenced to in
+And then it was referenced to in
 
-            src/rotest/common/django_utils/all_settings.py
+.. code-block:: console
+    src/rotest/common/django_utils/all_settings.py
 
-        And all of it's views are referenced to at it's models.py file,
+And all of it's views are referenced to at it's models.py file,
 
-        And we also added these lines to admin.py:
+And we also added these lines to admin.py:
 
-            >>>from django.contrib import admin
-            >>>from . import models
-            >>>admin.site.register(models.BookData)
+.. code-block:: python
+    from django.contrib import admin
+    from . import models
+    admin.site.register(models.BookData)
 
 
 Run the server in another terminal/console/shell
 
 (Make sure you have the environment variables listed in this article.)
 
-```bash
-python src/rotest/common/django_utils/manage.py runserver 0.0.0.0:8000
-```
+.. code-block:: bash
+    python src/rotest/common/django_utils/manage.py runserver 0.0.0.0:8000
 
 Launch the rotest resource manager to run on a machine and then configure
 your development station to that machine.
@@ -136,54 +137,51 @@ In another terminal/console/shell run the server:
 
 (Make sure you have the environment variables listed in this article.)
 
-```bash
-python src/rotest/management/server/main.py
-```
+.. code-block:: bash
+    python src/rotest/management/server/main.py
+
 
 In your development terminal/console/shell configure the resource manager:
 
 (This is how we will access/lock/release resources, that's basically our
 proxy to the database and what guarantees the successful teamwork.)
-```bash
-export RESOURCE_MANAGER_HOST=localhost
-```
+
+.. code-block:: bash
+    export RESOURCE_MANAGER_HOST=localhost
 
 That's it for the boilerplate, now we can actually start messing around with
 the infrastructure.
 
 Add a book resource using the rotest GUI with the following values:
 
-    name: gotbook
-    title: Game of Thrones
-    author: George R. R. Martin
+name: gotbook
+title: Game of Thrones
+author: George R. R. Martin
 
-```
-http://localhost:8000/admin/playground/bookdata/add/
-```
+.. code-block:: console
+    http://localhost:8000/admin/playground/bookdata/add/
 
 
 Let's try and run the most basic test in the playground, *test_book*.
 run the following command
 
-```bash
-python playground/book/test_book.py
-```
+.. code-block:: bash
+    python playground/book/test_book.py
 
-```console
-AnonymousSuite
-  BookCase.test_clockwork_orange ... OK
-  BookCase.test_display_for_library ... OK
+.. code-block:: console
+    AnonymousSuite
+      BookCase.test_clockwork_orange ... OK
+      BookCase.test_display_for_library ... OK
 
-Ran 2 tests in 0.122s
+    Ran 2 tests in 0.122s
 
-OK
-```
+    OK
 
 You can even try a more verbose version of the same test, for easier debugging.
 
-```bash
-python playground/book/test_book.py -o logdebug
-```
+.. code-block:: bash
+    python playground/book/test_book.py -o logdebug
+
 
 Examples
 ========
