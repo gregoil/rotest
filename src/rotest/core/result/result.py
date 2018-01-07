@@ -222,7 +222,7 @@ class Result(TestResult):
 
         exception_string = self._exc_info_to_string(err, test)
 
-        test.logger.error("Test %r ended in failure: %r",
+        test.logger.error("Test %r ended in failure: %s",
                           test.data, exception_string)
         test.end(test_outcome=TestOutcome.FAILED, details=exception_string)
 
@@ -243,7 +243,7 @@ class Result(TestResult):
 
         exception_string = self._exc_info_to_string(err, test)
 
-        test.logger.critical("Test %r ended in error: %r",
+        test.logger.critical("Test %r ended in error: %s",
                              test.data, exception_string)
         test.end(test_outcome=TestOutcome.ERROR, details=exception_string)
 
@@ -264,7 +264,7 @@ class Result(TestResult):
 
         exception_string = self._exc_info_to_string(err, test)
 
-        test.logger.info("Test %r ended in an expected failure: %r",
+        test.logger.info("Test %r ended in an expected failure: %s",
                          test.data, exception_string)
         test.end(test_outcome=TestOutcome.EXPECTED_FAILURE,
                  details=exception_string)
@@ -284,7 +284,7 @@ class Result(TestResult):
 
             super(Result, self).addUnexpectedSuccess(test)
 
-        test.logger.warn("Test %r ended in an unexpected success", test.data)
+        test.logger.error("Test %r ended in an unexpected success", test.data)
         test.end(test_outcome=TestOutcome.UNEXPECTED_SUCCESS)
 
         for result_handler in self.result_handlers:

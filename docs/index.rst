@@ -22,7 +22,7 @@ Advanced
 .. toctree::
    :maxdepth: 1
 
-   api/rotest
+   API Documentation <api/rotest>
 
 Indices and tables
 ==================
