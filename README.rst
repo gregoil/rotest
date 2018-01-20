@@ -17,7 +17,7 @@ builtin module `unittest`.
 
 Why Use Rotest?
 ===============
-- Enabling a great team use resources without interfering each other.
+- Allowing teams to share resources without interfering with one another.
 - Easily abstracting automated components in the system.
 - Lots of useful features: multiprocess, filtering tests, variety of result
   handlers (and the ability to define custom ones), and much more.
