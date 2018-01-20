@@ -63,7 +63,6 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/api/
 
 # PyBuilder
 target/
@@ -107,3 +106,4 @@ rotest_test-journal
 rotest_ut_test
 rotest_ut_test-journal
 nohup.out
+/.project
