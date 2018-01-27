@@ -3,6 +3,8 @@
 This module contains tests for the multiprocess runner timeout functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
+import sys
+
 import django
 import pytest
 
