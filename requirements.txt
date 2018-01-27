@@ -8,7 +8,6 @@ basicstruct==1.0.3
 colorama==0.3.9
 configparser==3.5.0
 constantly==15.1.0
-coverage==4.4.1
 decorator==4.1.2
 Django==1.7.11
 docopt==0.6.2
@@ -43,7 +42,6 @@ pyflakes==1.5.0
 Pygments==2.2.0
 pylint==1.7.2
 pytest==3.2.2
-pytest-cov==2.5.1
 pytest-django==3.1.2
 python-daemon==2.1.2
 PyYAML==3.12
