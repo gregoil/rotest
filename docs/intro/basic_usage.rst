@@ -29,20 +29,30 @@ tasks. Here is a brief explanation of the components:
               self.assertEqual(result, some_value)
 
 * :class:`rotest.core.suite.TestSuite`: Again, a known concept from the
-  :mod:`unittest` module. It aggragates tests, to make a semantic separation
-  between them. This way, you can hold a bunch of tests and run them as a group.
+  :mod:`unittest` module. It aggregates tests, to make a semantic separation
+  between them. This way, you can hold a bunch of tests and run them as a set.
   A :class:`rotest.core.suite.TestSuite` can hold each of the following:
 
   - :class:`rotest.core.case.TestCase` classes.
   - :class:`rotest.core.suite.TestSuite` classes.
   - The more complex concept of :class:`rotest.core.flow.TestFlow` classes.
 
+  .. code-block:: python
+
+      from rotest.core.suite import TestSuite
+
+
+      class MySuite(TestSuite):
+          components = [TestCase1,
+                        TestCase2,
+                        OtherTestSuite]
+
 Creating a Rotest Project
 =========================
 
-Rotest is built in a client-server infrastructure, for a good reason. There
+Rotest has a built in a client-server infrastructure, for a good reason. There
 must be someone who can distribute resources between tests, that are being run
-by several developers or testers. Those, there must be a server that have a
+by several developers or testers. Thus, there must be a server that have a
 database of all the instances. Rotest uses the infrastructure of Django, to
 define this database, and to make use of the Django's admin frontend to enable
 changing it.

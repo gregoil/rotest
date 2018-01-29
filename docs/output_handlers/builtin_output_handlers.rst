@@ -114,3 +114,28 @@ reporting systems can parse and display. The two relevant options are
 
 Those artifacts are saved in the working directory of Rotest. For more about
 this location, see :ref:`configurations`.
+
+Remote
+===========
+
+When adding ``remote`` to the list of output handlers, all test events and
+results are saved in the remote (server's) database, which enables keeping
+tests run history. Furthermore, tests skip delta filtering (``--delta``
+run option) queries the remote database to see which tests already passed.
+
+DB
+===========
+
+The ``db`` handler behaves the same as ``remote`` handler, only uses a local
+DB (which should be defined in your project's ``settings.py`` file)
+
+Artifact
+===========
+
+This handler saves the working directory of the tests into a ZIP file, which
+might be useful for keeping important runs' logs and other files for future
+debugging or evaluation.
+
+Those artifacts are saved in the artifacts directory of Rotest. It is
+recommended to make this folder a shared folder between all your users.
+For more about this location, see :ref:`configurations`.

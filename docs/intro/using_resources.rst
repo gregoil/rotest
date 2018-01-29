@@ -83,11 +83,11 @@ content of the :file:`resources/admin.py` file:
 
 .. code-block:: python
 
-    from django.contrib import admin
+    from rotest.management.admin import register_resource_to_admin
 
     from . import models
 
-    admin.site.register(models.CalculatorData)
+    register_resource_to_admin(models.CalculatorData, attr_list=['ip_address'])
 
 Let's continue to write the Calculator resource, which exposes a simple
 calculation action. Edit the file :file:`resources/calculator.py`:

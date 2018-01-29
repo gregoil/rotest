@@ -166,3 +166,25 @@ in the following ways:
           django_settings: package1.package2.settings
 
 * There is no default value.
+
+Artifacts dir
+----------------------
+
+.. envvar:: ARTIFACTS_DIR
+
+    Rotest artifact directory.
+
+Rotest enables saving ZIP files containing the tests and resources data, using
+an output handler named ``artifact`` (see :ref:`output_handlers`). Define it
+in the following ways:
+
+* Define :envvar:`ARTIFACTS_DIR`.
+
+* Define ``artifact_fir`` in the configuration file:
+
+  .. code-block:: yaml
+
+      rotest:
+          artifacts_dir: ~/rotest_artifacts
+
+* Use the default, which is ``~/.rotest/artifacts``.

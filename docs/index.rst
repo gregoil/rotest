@@ -20,6 +20,7 @@ Advanced
     cli_options/index
     output_handlers/index
     configurations
+    advanced/index
 
 Indices and tables
 ==================

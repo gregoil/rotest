@@ -110,8 +110,8 @@ Following, those are the options exposed when running the test:
                             Tests' configuration file path
       -s, --save-state      Enable save state
       -d DELTA_ITERATIONS, --delta-iterations=DELTA_ITERATIONS
-                            Enable run of failed tests only, enter the number of
-                            times the failed tests should run
+                            Enable run of unsuccessful tests only, enter the
+                            number of times the failed tests should run
       -p PROCESSES, --processes=PROCESSES
                             Use multiprocess test runner
       -o OUTPUTS, --outputs=OUTPUTS

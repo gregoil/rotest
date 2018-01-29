@@ -14,5 +14,3 @@ output handlers.
    :maxdepth: 2
 
    builtin_output_handlers
-   custom_output_handlers
-
