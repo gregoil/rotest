@@ -167,8 +167,8 @@ in the following ways:
 
 * There is no default value.
 
-Artifacts dir
-----------------------
+Artifacts Directory
+-------------------
 
 .. envvar:: ARTIFACTS_DIR
 

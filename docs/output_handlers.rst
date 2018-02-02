@@ -1,6 +1,14 @@
-========================
-Built-in Output Handlers
-========================
+.. _output_handlers:
+
+===============
+Output Handlers
+===============
+
+Output Handlers are a great concept in Rotest. They let you take actions
+when certain events occurs, as a logic separated from the test's logic.
+
+Rotest has several builtin output handlers, as well as enable making custom
+output handlers.
 
 Dots
 ====
@@ -99,38 +107,41 @@ Logs
 
 To see the logs while running the tests, use ``logdebug`` or ``loginfo``.
 As expected, ``logdebug`` will print every log record with level which is
-higher or equal to DEBUG (DEBUG, INFO, WARNING, ERROR, CRITICAL), whereas
-``loginfo`` will print every log record with level which is higher or equal to
-INFO (INFO, WARNING, ERROR, CRITICAL).
+higher or equal to ``DEBUG`` (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``,
+``CRITICAL``), whereas ``loginfo`` will print every log record with level which
+is higher or equal to ``INFO`` (``INFO``, ``WARNING``, ``ERROR``,
+``CRITICAL``).
 
 XML & Excel
 ===========
 
 Sometimes, you want to have a better visualization of the results. Rotest can
-output a human-readable :file:`results.xls` file, to be sent via email for
-instance. Alternatively, it can output a Junit-compatible XML, which lots of
-reporting systems can parse and display. The two relevant options are
-``-o excel`` and ``-o xml``.
+output the results into a human-readable :file:`results.xls` file, which can be
+sent via email for instance. Alternatively, it can output a Junit-compatible
+XML, which lots of reporting systems can parse and display. The two relevant
+options are ``-o excel`` and ``-o xml``.
 
 Those artifacts are saved in the working directory of Rotest. For more about
 this location, see :ref:`configurations`.
 
 Remote
-===========
+======
+
+.. program:: rotest
 
 When adding ``remote`` to the list of output handlers, all test events and
 results are saved in the remote (server's) database, which enables keeping
-tests run history. Furthermore, tests skip delta filtering (``--delta``
+tests run history. Furthermore, tests skip delta filtering (:option:`--delta`
 run option) queries the remote database to see which tests already passed.
 
 DB
-===========
+==
 
 The ``db`` handler behaves the same as ``remote`` handler, only uses a local
 DB (which should be defined in your project's ``settings.py`` file)
 
 Artifact
-===========
+========
 
 This handler saves the working directory of the tests into a ZIP file, which
 might be useful for keeping important runs' logs and other files for future

@@ -10,6 +10,9 @@ Basic
 
     readme
     intro/index
+    cli_options/index
+    output_handlers
+    configurations
 
 Advanced
 ========
@@ -17,10 +20,8 @@ Advanced
 .. toctree::
     :maxdepth: 2
 
-    cli_options/index
-    output_handlers/index
-    configurations
-    advanced/index
+    advanced/custom_output_handlers
+    advanced/blocks
 
 Indices and tables
 ==================

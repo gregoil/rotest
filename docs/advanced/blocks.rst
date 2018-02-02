@@ -10,23 +10,23 @@ composing tests faster.
 
 ``TestBlock`` is a building block for tests, commonly responsible for a single
 action or a small set of actions.
-They inherit from :mod:`unittest`'s :class:`TestCase <unittest.TestCase>` ,
-enabling their test-like behavior (self.skipTest, self.assertEqual, self.fail,
-etc.), and the Rotest infrastructure expands their behavior to also be
-function-like (to have "inputs" and "outputs").
+It inherits from :mod:`unittest`'s :class:`TestCase <unittest.TestCase>`,
+enabling it test-like behavior (``self.skipTest``, ``self.assertEqual``,
+``self.fail``, etc.), and the Rotest infrastructure expands its behavior to
+also be function-like (to have "inputs" and "outputs").
 
 ``TestFlow`` is a test composed of ``TestBlock`` instances (or other sub-test
 flows), passing them their 'inputs' and putting them together, enabling them
 to share data between each other.
-The ``TestFlow`` can lock resources much like Rotest's TestCase, which it
+A ``TestFlow`` can lock resources much like Rotest's TestCase, which it
 passes to all the blocks under it.
 
 The flow's final result depends on the result of the blocks under it by the
 following order:
 
-* If some block had an error, the flow ends with an error
-* If some block had a failure, the flow ends with a failure
-* Otherwise, the flow succeeds
+* If some block had an error, the flow ends with an error.
+* If some block had a failure, the flow ends with a failure.
+* Otherwise, the flow succeeds.
 
 See also ``mode`` in the ``TestBlock``'s "Features" segment below for more
 information about the run mechanism of a ``TestFlow``.
@@ -74,11 +74,11 @@ TestBlock
        ...
 
    means declaring that the block would calculate and share (using the
-   'share_data' method) those fields, so that components following the block
-   would get those fields in runtime.
+   ``share_data`` method) those fields, so that components following the block
+   would get those fields at runtime.
    Declaring inputs and outputs of blocks is not mandatory, but it's a good way
    to make sure that the blocks "click" together properly, and no block will be
-   missing fields in run time.
+   missing fields at runtime.
 
 Common features (for both flows and blocks)
 -------------------------------------------
@@ -88,17 +88,17 @@ Common features (for both flows and blocks)
    The resources of a flow will automatically propagate to the components under
    it.
 
-#. ``parametrize`` (also 'params'): used to pass values to blocks or sub-flows,
-   see example in the `Sharing data`_ section.
-   Note that calling ``parametrize() `` or ``params()`` doesn't actually
+#. ``parametrize`` (also ``params``): used to pass values to blocks or
+   sub-flows, see example in the `Sharing data`_ section.
+   Note that calling ``parametrize()`` or ``params()`` doesn't actually
    instantiate the component, but just saves values to be passed to it when it
    will be run.
 
-#. ``mode``: this field can be defined statically in the component's class
-   and\\or passed to the instance using 'parametrize' (parametrized fields
-   override class fields of blocks, since they are injected into the instance).
+#. ``mode``: this field can be defined statically in the component's class or
+   passed to the instance using 'parametrize' (parametrized fields override
+   class fields of blocks, since they are injected into the instance).
    Blocks and sub-flows can run in one of the following modes (which are
-   numbers, defined in :mod:`rotest.core.flow_component`)
+   defined in :mod:`rotest.core.flow_component`)
 
    #. ``MODE_CRITICAL``: upon failure or error, end the flow's run, skipping
       the following components (except those with mode ``MODE_FINALLY``).
@@ -156,10 +156,10 @@ methods:
 
   .. code-block:: python
 
-      self.share_data(field_name=x)
+      self.share_data(field_name=value)
 
   then all the components under the parent flow are injected (into their
-  instance - self) with the field 'field_name' with value x.
+  instance - self) where the field ``field_name`` is with value ``value``.
 
 * Setting initial data to the test flow - you can set initial data to the
   components of flows by writing:
@@ -167,14 +167,15 @@ methods:
   .. code-block:: python
 
       DemoFlow(TestFlow):
-          common = {'field_name': 5, 'other_field': 'abc'}
+          common = {'field_name': 5,
+                    'other_field': 'abc'}
       ...
 
-  This will inject field_name=5 and other_field='abc' as fields of the flow and
+  This will inject ``field_name=5`` and ``other_field='abc'`` as fields of the flow and
   its components before starting its run, so the blocks would also have access
   to those fields.
   This is the same as sharing those fields at the beginning of the flow's setUp
-  method, using 'share_data()'.
+  method, using ``share_data()``.
 
 * Using parametrize - you can specify fields for blocks or flows by calling
   their 'parametrize' class method.
@@ -185,13 +186,14 @@ methods:
 
       DemoFlow(TestFlow):
           blocks = (DemoBlock,
-                    DemoBlock.parametrize(field_name=5, other_field='abc'))
+                    DemoBlock.parametrize(field_name=5,
+                                          other_field='abc'))
 
-  will create two blocks under the DemoFlow, one DemoBlock block with the
-  default values for 'field_name' and 'other_field' (which can be set by
-  defining them as class fields for the block for example, see optional inputs
-  and fields section), and a second DemoBlock with field_name=5 and
-  other_field='abc' injected into the the block instance (in runtime).
+  will create two blocks under the ``DemoFlow``, one ``DemoBlock`` block with
+  the default values for ``field_name`` and ``other_field`` (which can be set
+  by defining them as class fields for the block for example, see optional
+  inputs and fields section), and a second ``DemoBlock`` with ``field_name=5``
+  and ``other_field='abc'`` injected into the block instance (at runtime).
 
 Example
 -------
@@ -200,6 +202,7 @@ Example
 
     class DoSomethingBlock(TestBlock):
         """A block that does something.
+
         Attributes:
             resource1 (object): resource the block uses.
             input2 (object): input for the block.
@@ -281,8 +284,9 @@ The functions gets the following arguments:
 * ``name`` - name of the flow, default value is "AnonymousTestFlow", but it's
   recommended to override it.
 
-* ``mode`` - mode of the new flow
-  `MODE_CRITICAL` \\ `MODE_OPTIONAL` \\ `MODE_FINALLY`, default is critical.
+* ``mode`` - mode of the new flow.
+  Either ``MODE_CRITICAL``, ``MODE_OPTIONAL`` or ``MODE_FINALLY``. Default is
+  ``MODE_CRITICAL``.
 
 * ``common`` - dict of initial fields and values for the new flow, same as the
   class variable 'common', default is empty dict.
@@ -326,6 +330,7 @@ For example:
 
     class DemoBlock(TestBlock):
         """Demo block.
+
         Attributes:
             argument1 (number): block's first argument.
             argument2 (number): block's second argument.

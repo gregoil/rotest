@@ -257,7 +257,9 @@ Once in the debugging session, you can do any of the following:
 Retrying Tests
 ==============
 
-.. option:: -d DELTA_ITERATIONS, --delta-iterations DELTA_ITERATIONS
+.. option:: -d DELTA_ITERATIONS,
+            --delta DELTA_ITERATIONS
+            --delta-iterations DELTA_ITERATIONS
 
     Rerun test a specified amount of times until it passes.
 
