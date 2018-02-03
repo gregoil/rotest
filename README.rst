@@ -1,6 +1,6 @@
 Rotest
 ------
-.. image:: https://travis-ci.org/gregoil/rotest.svg?branch=travis_ci
+.. image:: https://travis-ci.org/gregoil/rotest.svg?branch=master
     :target: https://travis-ci.org/gregoil/rotest
 
 .. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9/branch/master?svg=true
