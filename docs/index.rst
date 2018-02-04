@@ -1,8 +1,3 @@
-.. Rotest documentation master file, created by
-   sphinx-quickstart on Sat Nov 25 12:43:54 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 ==================================
 Welcome to Rotest's documentation!
 ==================================
@@ -11,18 +6,22 @@ Basic
 =====
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   readme
-   intro/index
+    readme
+    intro/index
+    cli_options/index
+    output_handlers
+    configurations
 
 Advanced
 ========
 
 .. toctree::
-   :maxdepth: 1
+    :maxdepth: 2
 
-   API Documentation <api/rotest>
+    advanced/custom_output_handlers
+    advanced/blocks
 
 Indices and tables
 ==================

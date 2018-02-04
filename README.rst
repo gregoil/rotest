@@ -1,9 +1,9 @@
 Rotest
 ------
-.. image:: https://travis-ci.org/gregoil/rotest.svg?branch=travis_ci
+.. image:: https://travis-ci.org/gregoil/rotest.svg?branch=master
     :target: https://travis-ci.org/gregoil/rotest
 
-.. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9/branch/master?svg=true
     :target: https://ci.appveyor.com/project/gregoil/rotest
 
 Rotest is a resource oriented testing framework, for writing system or
@@ -19,14 +19,14 @@ Why Use Rotest?
 ===============
 - Allowing teams to share resources without interfering with one another.
 - Easily abstracting automated components in the system.
-- Lots of useful features: multiprocess, filtering tests, variety of result
-  handlers (and the ability to define custom ones), and much more.
+- Lots of useful features: multiprocess, filtering tests, variety of output
+  handlers (and the ability to create custom ones), and much more.
 
 Examples
 ========
 For a complete step-by-step explanation about the framework, you can read
-our documentation in the tutorial. If you just want to see how it looks,
-read further.
+our documentation at `ReadTheDocs <http://rotest.rtfd.io>`_. If you just want
+to see how it looks, read further.
 
 For our example, let's look at an example for a `Calculator` resource:
 
@@ -110,14 +110,14 @@ Following, those are the options exposed when running the test:
                             Tests' configuration file path
       -s, --save-state      Enable save state
       -d DELTA_ITERATIONS, --delta-iterations=DELTA_ITERATIONS
-                            Enable run of failed tests only, enter the number of
-                            times the failed tests should run
+                            Enable run of unsuccessful tests only, enter the
+                            number of times the failed tests should run
       -p PROCESSES, --processes=PROCESSES
                             Use multiprocess test runner
       -o OUTPUTS, --outputs=OUTPUTS
-                            Output handlers separated by comma, options "['dots',
-                            'xml', 'full', 'remote', 'db', 'excel', 'tree',
-                            'artifact', 'signature', 'loginfo', 'logdebug']"
+                            Output handlers separated by comma. Options: dots,
+                            xml, full, remote, tree, excel, db, artifact,
+                            signature, loginfo, logdebug
       -f FILTER, --filter=FILTER
                             Run only tests that match the filter expression, e.g
                             "Tag1* and not Tag13"

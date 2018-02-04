@@ -1,4 +1,6 @@
 """Setup file for handling packaging and distribution."""
+import sys
+
 from setuptools import setup, find_packages
 
 result_handlers = [
@@ -19,6 +21,27 @@ result_handlers = [
     "rotest.core.result.handlers.stream.stream_handler:EventStreamHandler",
 ]
 
+requirements = [
+    'django>=1.7,<1.8',
+    'ipdb',
+    'ipdbugger>=1.1.2',
+    'docopt',
+    'lxml<4.0.0',
+    'xlwt',
+    'attrdict',
+    'pyyaml',
+    'twisted',
+    'psutil',
+    'colorama',
+    'termcolor',
+    'xmltodict',
+    'jsonschema',
+    'basicstruct'
+]
+
+if not sys.platform.startswith("win32"):
+    requirements.append('python-daemon')
+
 setup(
     name='rotest',
     version="2.4.0",
@@ -29,22 +52,7 @@ setup(
     author_email="gregoil@walla.co.il",
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
-    install_requires=['django>=1.7,<1.8',
-                      'ipdb',
-                      'ipdbugger>=1.1.2',
-                      'docopt',
-                      'lxml<4.0.0',
-                      'xlwt',
-                      'attrdict',
-                      'pyyaml',
-                      'twisted',
-                      'psutil',
-                      'python-daemon',
-                      'colorama',
-                      'termcolor',
-                      'xmltodict',
-                      'jsonschema',
-                      'basicstruct'],
+    install_requires=requirements,
     entry_points={
         "console_scripts": [
             "rotest-server = rotest.management.server.main:main"

@@ -3,7 +3,10 @@
 This module contains tests for the multiprocess runner timeout functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
+import sys
+
 import django
+import pytest
 
 from rotest.common.colored_test_runner import colored_main
 
@@ -78,6 +81,8 @@ class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
 
         self.validate_test_processes(1)
 
+    @pytest.mark.skipif(sys.platform == "win32",
+                        reason="Flaky test on appveyor")
     def test_suite_continues_after_timeout(self):
         """Test that a test suite continues to run after a case is killed.
 
