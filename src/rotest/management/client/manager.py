@@ -347,7 +347,7 @@ class ClientResourceManager(AbstractClient):
         if descriptor.type.DATA_CLASS is None:
             # Dataless resource
             matching_resources = [resource for resource in resources
-                                  if type(resource) == descriptor.type]
+                                  if isinstance(resource, descriptor.type)]
 
             for field_name, value in descriptor.properties.items():
                 for resource in matching_resources[:]:

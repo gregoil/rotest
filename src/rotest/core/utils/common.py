@@ -38,9 +38,8 @@ def print_test_instance(test_name, depth, tag_filter, test_tags, all_tags):
         print colored(test_format, MAGENTA)
         return True
 
-    else:
-        print test_format
-        return False
+    print test_format
+    return False
 
 
 def print_test_hierarchy(test, tag_filter, tags=[], depth=0):

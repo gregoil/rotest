@@ -3,7 +3,7 @@
 Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
-# pylint: disable=too-many-instance-attributes,no-self-use
+# pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 import os
 from bdb import BdbQuit
 

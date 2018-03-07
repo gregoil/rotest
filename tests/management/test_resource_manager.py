@@ -253,9 +253,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Make sure the lock succeeded and that we get different resources.
         """
         descriptor = Descriptor(DemoService, name=self.FREE1_NAME)
-        
+
         previous_resources = []
-        
+
         for _ in xrange(2):
             resources = self.client._lock_resources(descriptors=[descriptor],
                                                     timeout=self.LOCK_TIMEOUT)

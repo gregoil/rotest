@@ -3,6 +3,7 @@
 Implement monitors and use them as output handlers to monitor background
 processes, statuses and resources.
 """
+# pylint: disable=broad-except
 from functools import wraps
 
 from server import MonitorServer

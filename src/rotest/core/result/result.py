@@ -1,8 +1,8 @@
 """Tests results handling interface."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,dangerous-default-value
-import pkg_resources
 from unittest.result import TestResult
+import pkg_resources
 
 from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
