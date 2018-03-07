@@ -487,7 +487,7 @@ class TestTestCase(BasicRotestUnitTest):
                                              name=fail_resource_name),
                                      request('ok_resource',
                                              DemoResource,
-                                             name=RESOURCE_NAM))
+                                             name=RESOURCE_NAME))
 
         case = self._run_case(TempSuccessCase)
 
@@ -663,7 +663,7 @@ class TestTestCase(BasicRotestUnitTest):
                                                 name=available_resource_name)
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource,
+        self.validate_resource(test_resource, validated=False,
                                initialized=False, finalized=False)
 
         self.validate_resource(available_resource,
