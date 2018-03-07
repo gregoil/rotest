@@ -507,7 +507,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         self.validate_resource(fail_resource,
                                initialized=False, finalized=True)
-        self.validate_resource(ok_resource,
+        self.validate_resource(ok_resource, validated=False,
                                initialized=False, finalized=False)
 
     def test_error_in_resource_finalize(self):
@@ -666,7 +666,7 @@ class TestTestCase(BasicRotestUnitTest):
         self.validate_resource(test_resource, validated=False,
                                initialized=False, finalized=False)
 
-        self.validate_resource(available_resource,
+        self.validate_resource(available_resource, validated=False,
                                initialized=False, finalized=False)
 
     def test_store_state(self):
