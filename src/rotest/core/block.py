@@ -42,13 +42,14 @@ class TestBlock(AbstractFlowComponent):
         logger (logging.Logger): test logger.
         save_state (bool): a flag to determine if storing the states of
             resources is required.
-        force_validate (bool): a flag to determine if the resource will be
-            validated once it requested (even if not marked as dirty).
+        force_initialize (bool): a flag to determine if the resources will be
+            initialized even if their validation succeeds.
         config (AttrDict): dictionary of configurations.
         enable_debug (bool): whether to enable entering ipdb debugging mode
             upon any exception in a test statement.
         resource_manager (ClientResourceManager): client resource manager.
         skip_init (bool): True to skip resources initialize and validation.
+
         inputs (tuple): lists the names of fields the block expecteds to have
             (locked resources, values set via 'parametrize' or 'share').
         outputs (tuple): lists the names of fields the block shares.
@@ -56,7 +57,7 @@ class TestBlock(AbstractFlowComponent):
             CRITICAL: stop test flow on failure or error.
             FINALLY: always run this block, regardless of the others' result.
             OPTIONAL: don't stop test flow on failure (but do so on error),
-            failure in this type of block still fails the test-flow.
+                failure in this type of block still fails the test-flow.
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
@@ -66,10 +67,11 @@ class TestBlock(AbstractFlowComponent):
     IS_COMPLEX = False
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
-                 save_state=True, force_validate=False, config=None,
+                 save_state=True, force_initialize=False, config=None,
                  parent=None, run_data=None, enable_debug=True,
                  resource_manager=None, skip_init=False, is_main=True,
                  parameters={}):
+
         super(TestBlock, self).__init__(parent=parent,
                                         config=config,
                                         indexer=indexer,
@@ -80,6 +82,7 @@ class TestBlock(AbstractFlowComponent):
                                         save_state=save_state,
                                         enable_debug=enable_debug,
                                         base_work_dir=base_work_dir,
+                                        force_initialize=force_initialize,
                                         resource_manager=resource_manager)
 
         self.logger.debug("Initialized %r test-block successfully", self.data)
@@ -122,8 +125,3 @@ class TestBlock(AbstractFlowComponent):
         if len(missing_inputs) > 0:
             raise AttributeError("Block %r is missing mandatory inputs %s" %
                                  (self.data.name, missing_inputs))
-
-    def run(self, result=None):
-        # Validate all required inputs were passed
-        self._validate_inputs()
-        super(TestBlock, self).run(result)

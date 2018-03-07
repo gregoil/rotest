@@ -12,6 +12,8 @@ from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite
 from message_handler import RunnerMessageHandler
+from rotest.core.result.monitor import AbstractMonitor
+from rotest.core.result.result import get_result_handlers
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core.runners.multiprocess.worker.process import WorkerProcess
 
@@ -71,6 +73,15 @@ class MultiprocessRunner(BaseTestRunner):
 
         self.finished_workers = 0
         self.workers_number = workers_number
+        output_handlers = get_result_handlers()
+
+        # Separate monitors from regular output handlers
+        self.monitors = [handler_name for handler_name in self.outputs
+                         if issubclass(output_handlers[handler_name],
+                                       AbstractMonitor)]
+
+        self.outputs = [handler_name for handler_name in self.outputs
+                        if handler_name not in self.monitors]
 
     def queue_test_jobs(self, test_item):
         """Queue all the test cases DB identifiers.
@@ -108,6 +119,7 @@ class MultiprocessRunner(BaseTestRunner):
                                run_delta=self.run_delta,
                                skip_init=self.skip_init,
                                save_state=self.save_state,
+                               output_handlers=self.monitors,
                                results_queue=self.results_queue,
                                requests_queue=self.requests_queue)
 

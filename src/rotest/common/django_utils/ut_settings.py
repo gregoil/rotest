@@ -36,5 +36,5 @@ if platform.system() == 'Windows':
         win32file._setmaxstdio(2048)
 
     except ImportError:
-        core_log.warning("Cannot find package 'win32file'. Install it using "
-                         "'pip install pypiwin32'")
+        raise RuntimeError("Cannot find package 'win32file'. Install it using "
+                           "'pip install pypiwin32'")

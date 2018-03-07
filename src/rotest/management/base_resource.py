@@ -3,13 +3,12 @@
 Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
-# pylint: disable=invalid-name,cell-var-from-loop,broad-except
-# pylint: disable=access-member-before-definition,property-on-old-class
-# pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
+# pylint: disable=too-many-instance-attributes,no-self-use
 import os
 from bdb import BdbQuit
 
 from ipdbugger import debug
+from attrdict import AttrDict
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
@@ -32,30 +31,38 @@ class BaseResource(object):
         config (AttrDict): run configuration.
         work_dir (str): working directory for this resource.
         save_state (bool): flag to indicate if the resource is a duplication.
-        force_validate (bool): flag to indicate if the validation is mandatory.
+        force_initialize (bool): a flag to determine if the resource will be
+            initialized even if the validation succeeds.
     """
-    DATA_CLASS = NotImplemented
+    DATA_CLASS = None
 
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, **kwargs):
         # We use core_log as default logger in case
         # that resource is used outside case.
         self.logger = core_log
 
-        self.data = data
+        if data is not None:
+            self.data = data
+            for field_name, field_value in self.data.get_fields().iteritems():
+                setattr(self, field_name, field_value)
+
+        else:
+            self.data = AttrDict(kwargs)
+            self.name = "%s-%d" % (self.__class__.__name__, id(self))
+
         self.config = None
+        self.parent = None
         self.work_dir = None
         self.save_state = None
-        self.force_validate = None
+        self.force_initialize = None
 
         self._sub_resources = None
 
-        # Copy all the resource data's fields to the resource.
-        if self.data is not None:
-            for field_name, field_value in self.data.get_fields().iteritems():
-                setattr(self, field_name, field_value)
+        for field_name, field_value in kwargs.iteritems():
+            setattr(self, field_name, field_value)
 
     def create_sub_resources(self):
         """Create and return the sub resources if needed.
@@ -95,13 +102,13 @@ class BaseResource(object):
 
     def get_sub_resources(self):
         """Return an iterable to the resource's sub-resources."""
-        return (sub_resource for sub_resource in self._sub_resources
-                if sub_resource.data is not None)
+        return (sub_resource for sub_resource in self._sub_resources)
 
     def set_sub_resources(self):
         """Create and set the sub resources if needed."""
         self._sub_resources = tuple(self.create_sub_resources())
         for resource in self.get_sub_resources():
+            resource.parent = self
             resource.set_sub_resources()
 
     def _safe_execute(self, callbacks, *args, **kwargs):
@@ -215,35 +222,15 @@ class BaseResource(object):
         self._safe_execute(finalization_methods)
 
     def validate(self):
-        """Boolean Hook method for validating resource state before using it.
+        """Validate whether the resource is ready for work or not.
 
-        Will be called by the resource client once the resource is locked.
+        If this method failed, the resource client will call the 'initialize'
+        method to setup the resource.
 
         Returns:
             bool. True if validation succeeded, False otherwise.
         """
-        result = True
-
-        for resource in self.get_sub_resources():
-            try:
-                resource.data.dirty = not resource.validate()
-
-            except Exception:
-                resource.data.dirty = True
-
-            result = result and (not resource.data.dirty)
-
-        return result
-
-    def reset(self):
-        """Hook method for reseting the resource.
-
-        Will be called by the resource client once a dirty resource is locked.
-        """
-        dirty_resources = [resource for resource in self.get_sub_resources()
-                           if resource.data.dirty is True]
-
-        self._safe_execute([resource.reset for resource in dirty_resources])
+        return False
 
     def enable_debug(self):
         """Wrap the resource methods with debugger."""
@@ -256,10 +243,11 @@ class BaseResource(object):
             resource.enable_debug()
 
     @classmethod
-    def lock(cls, skip_init=False, **kwargs):
+    def lock(cls, config=None, skip_init=False, **kwargs):
         """Lock an instance of this resource class.
 
         Args:
+            config (str): path to the json config file.
             skip_init (bool): whether to skip initialization or not.
             kwargs (dict): additional query parameters for the request,
                 e.g. name or group.
@@ -267,19 +255,25 @@ class BaseResource(object):
         Returns:
             BaseResource. locked and initialized resource, ready for work.
         """
+        # These runtime imports are done to avoid cyclic imports.
+        from rotest.core.runner import _parse_config_file
         from rotest.management.client.manager import (ClientResourceManager,
                                                       ResourceRequest)
 
         if BaseResource._SHELL_CLIENT is None:
             BaseResource._SHELL_CLIENT = ClientResourceManager()
-            BaseResource._SHELL_CLIENT.connect()
 
         resource_request = ResourceRequest(BaseResource._SHELL_REQUEST_NAME,
                                            cls,
                                            **kwargs)
 
+        config_dict = None
+        if config is not None:
+            config_dict = _parse_config_file(config)
+
         result = BaseResource._SHELL_CLIENT.request_resources(
                                                         [resource_request],
+                                                        config=config_dict,
                                                         skip_init=skip_init,
                                                         use_previous=False)
 
@@ -289,5 +283,5 @@ class BaseResource(object):
         """Release the resource, assuming it was locked with a shell client."""
         if BaseResource._SHELL_CLIENT is not None:
             BaseResource._SHELL_CLIENT.release_resources(
-                {BaseResource._SHELL_CLIENT: self},
+                {BaseResource._SHELL_REQUEST_NAME: self},
                 force_release=True)

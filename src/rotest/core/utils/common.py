@@ -11,6 +11,7 @@ from rotest.core.test_filter import match_tags
 from rotest.core.flow_component import ClassInstantiator
 
 
+PASS_ALL_FILTER = "*"
 HIERARCHY_SEPARATOR = " |  "
 
 
@@ -24,6 +25,9 @@ def print_test_instance(test_name, depth, tag_filter, test_tags, all_tags):
             operators, e.g. "Tag1 and (Tag2 or Tag3 or Tag3)".
         test_tags (list): original tags list of the test.
         all_tags (list): accumulated tags for the test.
+
+    Returns:
+        bool. whether the test passed the filter or not.
     """
     test_format = " ".join([HIERARCHY_SEPARATOR * depth,
                            test_name, str(test_tags)])
@@ -32,9 +36,11 @@ def print_test_instance(test_name, depth, tag_filter, test_tags, all_tags):
         match_tags(all_tags, tag_filter) is True):
 
         print colored(test_format, MAGENTA)
+        return True
 
     else:
         print test_format
+        return False
 
 
 def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
@@ -62,26 +68,27 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
             print_test_instance(test_name, depth, tag_filter,
                                 test.TAGS, method_tags)
 
-        return
+    elif issubclass(actual_test, TestBlock):
+        print_test_instance(test.get_name(), depth, tag_filter,
+                            [], tags)
 
-    if issubclass(actual_test, TestBlock):
-        print HIERARCHY_SEPARATOR * depth, test.get_name()
-        return
-
-    tags.extend(actual_test.TAGS)
-    if issubclass(actual_test, TestFlow):
-        test_name = test.get_name()
-        print_test_instance(test_name, depth, tag_filter,
-                            actual_test.TAGS, tags)
-
-    tags.append(actual_test.__name__)
-
-    if issubclass(actual_test, TestSuite) is True:
+    elif issubclass(actual_test, TestSuite) is True:
+        tags.extend(actual_test.TAGS)
+        tags.append(actual_test.__name__)
         sub_tests = test.components
         print HIERARCHY_SEPARATOR * depth, test.get_name(), test.TAGS
+        for sub_test in sub_tests:
+            print_test_hierarchy(sub_test, tag_filter, tags, depth + 1)
 
-    else:
+    elif issubclass(actual_test, TestFlow):
+        tags.extend(actual_test.TAGS)
+        tags.append(actual_test.__name__)
+        test_name = test.get_name()
+        is_colored = print_test_instance(test_name, depth, tag_filter,
+                                         actual_test.TAGS, tags)
+
         sub_tests = actual_test.blocks
-
-    for sub_test in sub_tests:
-        print_test_hierarchy(sub_test, tag_filter, tags, depth + 1)
+        for sub_test in sub_tests:
+            print_test_hierarchy(sub_test,
+                                 PASS_ALL_FILTER if is_colored else None,
+                                 tags, depth + 1)

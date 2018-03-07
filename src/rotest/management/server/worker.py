@@ -187,7 +187,9 @@ class Worker(LineReceiver):
         Args:
             test_id (number): the identifier of the test.
         """
-        pass
+        test_data = self.all_tests[test_id]
+        test_data.end()
+        test_data.save()
 
     def update_resources(self, test_id, resources):
         """Update the resources list for a test data.
@@ -235,9 +237,9 @@ class Worker(LineReceiver):
             test_id (number): the identifier of the test.
         """
         test_data = self.all_tests[test_id]
-        has_succeeded = all(sub_test.success for sub_test in
-                            test_data.get_sub_tests_data())
-        test_data.end(has_succeeded=has_succeeded)
+        has_succeeded = all(sub_test.success for sub_test in test_data)
+        test_data.success = has_succeeded
+        test_data.end()
         test_data.save()
 
     def respond(self, reply):

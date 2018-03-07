@@ -77,7 +77,7 @@ class ExcelHandler(AbstractResultHandler):
 
     CHAR_LENGTH = 256  # Character length is in units of 1/256
     MAX_TRACEBACK_LENGTH = 32767  # Max length of Excel cell content
-    HEADER_TO_WIDTH = {RESULT: CHAR_LENGTH * 20,
+    HEADER_TO_WIDTH = {RESULT: CHAR_LENGTH * 22,
                        ASSIGNEE: CHAR_LENGTH * 13,
                        COMMENTS: CHAR_LENGTH * 82,
                        END_TIME: CHAR_LENGTH * 26,
@@ -154,6 +154,16 @@ class ExcelHandler(AbstractResultHandler):
 
     def start_test(self, test):
         """Update the Excel that a test case starts.
+
+        Args:
+            test (object): test item instance.
+        """
+        self._write_test_result(test)
+
+        self.workbook.save(self.output_file_path)
+
+    def stop_test(self, test):
+        """Called when the given test has been run.
 
         Args:
             test (object): test item instance.
@@ -304,12 +314,15 @@ class ExcelHandler(AbstractResultHandler):
             status = self.RESULT_CHOICES[test.data.exception_type]
 
         status_desc = status
+        tb_str = test.data.traceback
+
+        if status == self.SKIPPED and tb_str in self.PASSED_MESSAGES:
+            status = status_desc = self.PASSED
+
         if (isinstance(test, AbstractFlowComponent) is True and
             test.is_main is False):
 
             status_desc = self.BLOCK_PREFIX + status
-
-        tb_str = test.data.traceback
 
         if test.data.start_time is not None:
             self._write_to_cell(row_num, self.START_TIME,
@@ -320,9 +333,6 @@ class ExcelHandler(AbstractResultHandler):
             self._write_to_cell(row_num, self.END_TIME,
                                 self.DEFAULT_CELL_STYLE,
                                 str(test.data.end_time))
-
-        if status == self.SKIPPED and tb_str in self.PASSED_MESSAGES:
-            status = status_desc = self.PASSED
 
         self._write_to_cell(row_num, self.RESULT,
                             self.CONTENT_TO_STYLE[status], status_desc)

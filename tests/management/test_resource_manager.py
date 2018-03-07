@@ -23,7 +23,8 @@ from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
-from rotest.management.models.ut_models import (DemoResource,
+from rotest.management.models.ut_models import (DemoService,
+                                                DemoResource,
                                                 DemoResourceData,
                                                 DemoComplexResource,
                                                 DemoComplexResourceData)
@@ -243,6 +244,42 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         for locked_name in (self.FREE1_NAME, self.FREE2_NAME):
             self.get_resource(locked_name, owner="")
+
+    def test_lock_service_twice(self):
+        """Lock a resource without a data class twice and see that it works.
+
+        * Try to lock a service.
+        * Try to lock the same one again.
+        * Make sure the lock succeeded and that we get different resources.
+        """
+        descriptor = Descriptor(DemoService, name=self.FREE1_NAME)
+        
+        previous_resources = []
+        
+        for _ in xrange(2):
+            resources = self.client._lock_resources(descriptors=[descriptor],
+                                                    timeout=self.LOCK_TIMEOUT)
+
+            resources_num = len(resources)
+            self.assertEquals(resources_num, 1, "Expected list with 1 "
+                              "resource in it but found %d" % resources_num)
+
+            resource, = resources
+            self.assertEquals(resource.name, self.FREE1_NAME,
+                              "Expected resource with name %r but got %r"
+                              % (self.FREE1_NAME, resource.name))
+
+            self.assertIsInstance(resource, descriptor.type,
+                                  "Expected resource of type %r, but got %r"
+                                  % (descriptor.type.__name__,
+                                     resource.__class__.__name__))
+
+            self.assertNotIn(resource, previous_resources,
+                             "Expected a new resource, got an old one")
+
+            previous_resources.append(resource)
+
+        self.client._release_resources(resources=previous_resources)
 
     def test_lock_non_existing_name_resource(self):
         """Try to Lock a resource that dosen't exist & validate failure.
@@ -1002,7 +1039,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Checks that the client uses previously locked resources.
         * Checks that the client doesn't initialize them again.
         * Checks that the client doesn't finalize them in between.
-        * Checks that the client releases them when their not needed anymore.
+        * Checks that the client releases them when they're not needed anymore.
         """
         self.client.keep_resources = True
 
@@ -1158,6 +1195,59 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEqual(self.client.locked_resources, [])
         # Check that it's not the same resource that was saved before
         self.assertFalse(resource1 is resource2)
+
+    def test_keeping_locked_services(self):
+        """Test work without keeping the locked services.
+
+        * Checks that the client keeps the services.
+        * Checks that the client uses previously locked services.
+        * Checks that the client releases them when they're not needed anymore.
+        """
+        self.client.keep_resources = True
+        resource_name1 = self.FREE1_NAME
+
+        requests = [ResourceRequest('res1', DemoService, name=resource_name1)]
+
+        # Make sure the client has no locked resources
+        self.assertEqual(len(self.client.locked_resources), 0)
+        # Request the free resource
+        resources = self.client.request_resources(requests, use_previous=True)
+        # Check that it locked 1 resource
+        self.assertEqual(len(resources), 1)
+        resource1 = resources.values()[0]
+        self.client.release_resources(resources)
+        # Check that the resource is saved in the client
+        self.assertEqual(self.client.locked_resources, [resource1])
+        self.assertEqual(resource1.name, resource_name1)
+
+        # Make a similar request
+        resources = self.client.request_resources(requests, use_previous=True)
+        # Check that it locked 1 resource
+        self.assertEqual(len(resources), 1)
+        resource2 = resources.values()[0]
+        self.client.release_resources(resources)
+        # Check that the resource is the only saved resource in the client
+        self.assertEqual(self.client.locked_resources, [resource2])
+        # Check that it's the same resource that was saved before
+        self.assertTrue(resource1 is resource2)
+
+        resource_name2 = self.FREE2_NAME
+        requests = [ResourceRequest('res2', DemoResource, name=resource_name2)]
+
+        # Make a non-similar request
+        resources = self.client.request_resources(requests, use_previous=True)
+        # Check that it locked 1 resource
+        self.assertEqual(len(resources), 1)
+        resource3 = resources.values()[0]
+        self.client.release_resources(resources)
+        # Check that the new resource is the only saved resource in the client
+        self.assertEqual(self.client.locked_resources, [resource3])
+        # Check that it's not the same resource from before
+        self.assertFalse(resource1 is resource3)
+        self.assertNotEqual(resource1.name, resource3.name)
+
+        self.client.disconnect()
+        self.assertEqual(self.client.locked_resources, [])
 
 
 if __name__ == '__main__':

@@ -125,8 +125,7 @@ class ReleaseResources(AbstractMessage):
     """Release resources request message.
 
     Attributes:
-        requests (list): list of tuples of (name, dirty) where 'name' is the
-            resource's name and 'dirty' is the resource's state.
+        requests (list): list of resources names.
     """
     pass
 

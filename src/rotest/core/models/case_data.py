@@ -128,11 +128,6 @@ class CaseData(GeneralData):
 
             self.exception_type = result_type
 
-        has_succeeded = None
-        if self.exception_type != TestOutcome.SKIPPED:
-            has_succeeded = self.exception_type in (TestOutcome.SUCCESS,
-                                                TestOutcome.EXPECTED_FAILURE)
-
         if result_type not in (TestOutcome.SUCCESS,
                                TestOutcome.UNEXPECTED_SUCCESS):
 
@@ -141,4 +136,15 @@ class CaseData(GeneralData):
 
             self.traceback = details
 
-        self.end(has_succeeded)
+        self.end()
+
+    def end(self):
+        """Update the data that the test ended and calculate its result."""
+        super(CaseData, self).end()
+        has_succeeded = None
+        if self.exception_type != TestOutcome.SKIPPED:
+            has_succeeded = self.exception_type in (TestOutcome.SUCCESS,
+                                                TestOutcome.EXPECTED_FAILURE)
+
+        if self.success in (None, True):
+            self.success = has_succeeded

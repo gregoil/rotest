@@ -87,24 +87,12 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="ReleaseRequest">
-		<xs:sequence>
-			<xs:element name="Dictionary">
-				<xs:complexType>
-					<xs:all>
-						<xs:element name="name" type="MessageString"/>
-						<xs:element name="dirty" type="MessageBoolean"/>
-					</xs:all>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
 	<xs:complexType name="RequestsList">
 		<xs:sequence>
 			<xs:element name="List">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Item" type="ReleaseRequest" maxOccurs="unbounded"/>
+						<xs:element name="Item" type="MessageString" maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

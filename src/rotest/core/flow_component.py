@@ -5,20 +5,16 @@
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
 import sys
 import unittest
-from bdb import BdbQuit
 from functools import wraps
 from itertools import count
-
-from ipdbugger import debug
-from attrdict import AttrDict
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
 from rotest.common.log import get_test_logger
 from rotest.common.config import ROTEST_WORK_DIR
+from rotest.core.abstract_test import AbstractTest
 from rotest.management.common.errors import ServerError
 from rotest.core.models.case_data import TestOutcome, CaseData
-from rotest.management.client.manager import ClientResourceManager
 
 
 # CRITICAL: stop test on failure
@@ -62,7 +58,7 @@ class ClassInstantiator(object):
         return self.component_class.get_name(**parameters)
 
 
-class AbstractFlowComponent(unittest.TestCase):
+class AbstractFlowComponent(AbstractTest):
     """Define TestBlock, which is a part of a test.
 
     Defines tests that are parts of a greater test. The block is dependent on
@@ -79,9 +75,9 @@ class AbstractFlowComponent(unittest.TestCase):
     a warning would be displayed to the user. This check is done on a static
     level (i.e. before running any test).
 
-    Test authors should subclass TestBlock for their own tests and
-    override 'inputs' tuple with the names of the fields required for the run
-    of the block, and override 'mode' to state the type of the block.
+    Test authors should subclass TestBlock for their own tests and override
+    'inputs' tuple with the names of the fields required for the run of the
+    block, and override 'mode' to state the type of the block.
 
     Attributes:
         resources (tuple): list of the required resources. each item is a
@@ -93,8 +89,8 @@ class AbstractFlowComponent(unittest.TestCase):
         logger (logging.Logger): test logger.
         save_state (bool): a flag to determine if storing the states of
             resources is required.
-        force_validate (bool): a flag to determine if the resource will be
-            validated once it requested (even if not marked as dirty).
+        force_initialize (bool): a flag to determine if the resources will be
+            initialized even if their validation succeeds.
         config (AttrDict): dictionary of configurations.
         enable_debug (bool): whether to enable entering ipdb debugging mode
             upon any exception in a test statement.
@@ -108,76 +104,32 @@ class AbstractFlowComponent(unittest.TestCase):
             CRITICAL: stop test flow on failure or error.
             FINALLY: always run this block, regardless of the others' result.
             OPTIONAL: don't stop test flow on failure (but do so on error),
-            failure in this type of block still fails the test-flow.
+                failure in this type of block still fails the test-flow.
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
-    SETUP_METHOD_NAME = 'setUp'
-    TEARDOWN_METHOD_NAME = 'tearDown'
     COMPONENT_NAME_PARAMETER = 'name'
     NO_RESOURCES_MESSAGE = 'Failed to request resources'
     PREVIOUS_FAILED_MESSAGE = 'Previous component failed'
 
-    resources = ()
     mode = MODE_CRITICAL
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
-                 save_state=True, force_validate=False, config=None,
+                 save_state=True, force_initialize=False, config=None,
                  parent=None, run_data=None, enable_debug=True,
                  resource_manager=None, skip_init=False, is_main=True,
                  parameters={}):
-        """Validate & initialize the TestBlock.
 
-        Args:
-            indexer (iterator): the generator of test indexes.
-            base_work_dir (str): the base directory of the tests.
-            save_state (bool): flag to determine if storing the states of
-                resources is required.
-            force_validate (bool): a flag to determine if the resource will be
-                validated once it requested (even if not marked as dirty).
-            config (AttrDict): dictionary of configurations.
-            parent (TestCase): container of this test.
-            run_data (RunData): test run data object.
-            enable_debug (bool): whether to enable entering ipdb debugging mode
-                upon any exception in a test statement.
-            resource_manager (ClientResourceManager): tests' client resource
-                manager instance, leave None to create a new one for the test.
-            skip_init (bool): True to skip resources initialize and validation.
-            is_main (bool): whether the instance is the root of the flow tree
-                or is a sub-component of another flow.
-            parameters (dict): parameters this component was instantiated with.
-
-        Raises:
-            AttributeError: in case of empty resource tuple.
-        """
         test_method_name = self.get_test_method_name()
-        if enable_debug is True:
-            for method_name in (test_method_name, self.SETUP_METHOD_NAME,
-                                self.TEARDOWN_METHOD_NAME):
-
-                debug(getattr(self, method_name),
-                      ignore_exceptions=[KeyboardInterrupt,
-                                         unittest.SkipTest,
-                                         BdbQuit])
-
-        super(AbstractFlowComponent, self).__init__(test_method_name)
+        super(AbstractFlowComponent, self).__init__(indexer, test_method_name,
+                                        base_work_dir, save_state,
+                                        force_initialize, config, parent,
+                                        run_data, enable_debug,
+                                        resource_manager, skip_init)
 
         self._pipes = {}
-        self._tags = None
-        self.result = None
-        self.config = config
-        self.parent = parent
         self.is_main = is_main
-        self.skip_init = skip_init
         self.parameters = parameters
-        self.save_state = save_state
-        self.identifier = indexer.next()
-        self.enable_debug = enable_debug
-        self.force_validate = force_validate
-        self.parents_count = self._get_parents_count()
-
-        self.all_resources = AttrDict()
-        self.locked_resources = AttrDict()
 
         name = self.get_name(**parameters)
         core_log.debug("Initializing %r flow-component", name)
@@ -187,9 +139,6 @@ class AbstractFlowComponent(unittest.TestCase):
         self.data = CaseData(name=name, run_data=run_data)
 
         self.logger = get_test_logger(repr(self.data), self.work_dir)
-
-        self._is_client_local = False
-        self.resource_manager = resource_manager
 
         if self.resource_manager is None:
             self.resource_manager = self.create_resource_manager()
@@ -202,14 +151,6 @@ class AbstractFlowComponent(unittest.TestCase):
 
         raise AttributeError("'%s' object has no attribute '%s'" %
                              (self.__class__.__name__, name))
-
-    def create_resource_manager(self):
-        """Create a new resource manager client instance.
-
-        Returns:
-            ClientResourceManager. new resource manager client.
-        """
-        return ClientResourceManager(logger=self.logger)
 
     @classmethod
     def parametrize(cls, **parameters):
@@ -250,75 +191,6 @@ class AbstractFlowComponent(unittest.TestCase):
                                  "methods : %s" % (cls.__name__, test_names))
 
         return test_names[0]
-
-    def request_resources(self, resources_to_request, use_previous=False,
-                          is_global=False):
-        """Lock the requested resources and prepare them for the test.
-
-        Lock the required resources using the resource manager, then assign
-        each resource to its requested name, and update the result of the
-        chosen resources. This method can also be used to add resources to all
-        the sibling blocks under the test-flow.
-
-        Args:
-            resources_to_request (list): list of resource requests to lock.
-            use_previous (bool): whether to use previously locked resources and
-                release the unused ones.
-            is_global (bool): whether to inject the resources to the parent and
-                sibling components or not.
-        """
-        if len(resources_to_request) == 0:
-            # No resources to requested
-            return
-
-        if not self.resource_manager.is_connected():
-            self.resource_manager.connect()
-
-        requested_resources = self.resource_manager.request_resources(
-                                        config=self.config,
-                                        skip_init=self.skip_init,
-                                        use_previous=use_previous,
-                                        save_state=self.save_state,
-                                        base_work_dir=self.work_dir,
-                                        requests=resources_to_request,
-                                        force_validate=self.force_validate)
-
-        if is_global is True:
-            self.parent.add_resources(requested_resources, from_block=self)
-            self.parent.locked_resources.update(requested_resources)
-
-            if self.result is not None:
-                self.result.updateResources(self.parent)
-
-        else:
-            self.add_resources(requested_resources)
-            self.locked_resources.update(requested_resources)
-
-            if self.result is not None:
-                self.result.updateResources(self)
-
-    def release_resources(self, resources, dirty=False, force_release=True):
-        """Release resources and mark them as 'dirty' or 'clean'.
-
-        Args:
-            resources (dict): resources to release.
-            dirty (bool): dirty state to set to the resources.
-            force_release (bool): whether to always release to resources
-                or enable saving them for next tests.
-        """
-        if len(resources) == 0:
-            # No resources were locked
-            return
-
-        self.resource_manager.release_resources(resources,
-                                                dirty=dirty,
-                                                force_release=force_release)
-
-        # Remove the resources from the test's resource to avoid double release
-        for key in resources.keys():
-            self.locked_resources.pop(key, None)
-            if self.is_main is False:
-                self.parent.locked_resources.pop(key, None)
 
     def _decorate_setup(self, setup_method):
         """Decorate setUp method to handle skips, and resources requests.
@@ -369,7 +241,12 @@ class AbstractFlowComponent(unittest.TestCase):
                     raise
 
             try:
+                if self.is_main is False:
+                    # Validate all required inputs were passed
+                    self._validate_inputs()
+
                 setup_method(*args, **kwargs)
+                self.result.setupFinished(self)
 
             except:
                 self.release_resources(self.locked_resources, dirty=True)
@@ -401,9 +278,9 @@ class AbstractFlowComponent(unittest.TestCase):
                 result.addError(self, sys.exc_info())
 
             finally:
-                self.release_resources(self.locked_resources,
-                        dirty=self.data.exception_type == TestOutcome.ERROR,
-                        force_release=True)
+                self.release_resources(
+                       dirty=self.data.exception_type == TestOutcome.ERROR,
+                       force_release=False)
 
                 if (self._is_client_local is True and
                         self.resource_manager.is_connected() is True):
@@ -415,31 +292,6 @@ class AbstractFlowComponent(unittest.TestCase):
     def tearDown(self):
         """TearDown method."""
         pass
-
-    def _get_parents_count(self):
-        """Get the number of ancestors.
-
-        Returns:
-            number. number of ancestors.
-        """
-        if self.parent is None:
-            return 0
-
-        return self.parent.parents_count + 1
-
-    def start(self):
-        """Update the data that the test started."""
-        self.data.start()
-
-    def end(self, test_outcome, details=None):
-        """Update the data that the test ended.
-
-        Args:
-            test_outcome (number): test outcome code (as defined in
-                rotest.core.models.case_data.TestOutcome).
-            details (str): details of the result (traceback/skip reason).
-        """
-        self.data.update_result(test_outcome, details)
 
     def run(self, result=None):
         """Run the test component.
@@ -481,6 +333,23 @@ class AbstractFlowComponent(unittest.TestCase):
 
     # override in subs
 
+    def was_successful(self):
+        """Indicate whether or not the component was successful.
+
+        Returns:
+            bool. Whether of not the test was successful.
+        """
+        return self.data.exception_type is None or \
+            self.data.exception_type in TestOutcome.POSITIVE_RESULTS
+
+    def had_error(self):
+        """Indicate whether or not the component contained an error.
+
+        Returns:
+            bool. Whether of not the component contains an error.
+        """
+        return self.data.exception_type == TestOutcome.ERROR
+
     @classmethod
     def get_name(cls, **parameters):
         """Return test name.
@@ -493,19 +362,6 @@ class AbstractFlowComponent(unittest.TestCase):
             str. test name.
         """
         pass
-
-    def add_resources(self, resources, from_block=None):
-        """Register the resources to the block and set them as its attributes.
-
-        Args:
-            resources (dict): dictionary of attributes name to resources
-                instance to add to the blocks.
-            from_block (TestBlock): block to start adding from, leave None
-                to add to all the blocks.
-        """
-        self.all_resources.update(resources)
-        for name, resource in resources.iteritems():
-            setattr(self, name, resource)
 
     def skip_sub_components(self, reason):
         """Skip the sub-components of the test.

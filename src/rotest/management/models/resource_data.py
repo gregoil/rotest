@@ -35,8 +35,6 @@ class ResourceData(models.Model):
         owner (str): name of the locking user.
         reserved (str): name of the user allow to lock the resource.
             Empty string means available to all.
-        dirty (bool): a flag specifying if the resource has some kind of
-            problem and needs to be reseted.
         is_usable (bool): a flag to indicate if the resource is a duplication.
         comment (str): general comment for the resource.
         owner_time (datetime): timestamp of the last ownership event.
@@ -49,7 +47,6 @@ class ResourceData(models.Model):
     IGNORED_FIELDS = ["group", "owner_time", "reserved_time"]
 
     name = NameField(unique=True)
-    dirty = models.BooleanField(default=False)
     is_usable = models.BooleanField(default=True)
     group = models.ForeignKey(auth_models.Group, blank=True, null=True)
     comment = models.CharField(default='', blank=True,
@@ -259,15 +256,3 @@ class ResourceData(models.Model):
                 self._reserve_sub_resources(self.reserved)
 
         return super(ResourceData, self).save(*args, **kwargs)
-
-    def is_dirty(self):
-        """Return whether the resource or any of its sub resources is dirty.
-
-        Returns:
-            bool. True if the resource is dirty, False otherwise.
-        """
-        dirty = self.dirty
-        for resource in self.get_sub_resources():
-            dirty = dirty or resource.dirty
-
-        return dirty

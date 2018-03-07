@@ -1,4 +1,4 @@
-"""XML parser module.
+"""An XML parser module.
 
 Note:
     Django works with Unicode therefore, we use here basestring which is the
@@ -25,37 +25,31 @@ class XMLParser(AbstractParser):
     Each message should be composed from basic-types (such as numbers, strings
     and booleans), lists, dictionaries, and resources (which derived from
     :class:`BaseResource`).
-
     Any other object type may cause an error during the encoding process.
     The result of successful encoding process is an XML string, represent the
     encoded message.
 
     For instance, the inner message object:
-
-    .. code-block:: python
-
-        [False, {'key1': 5, 'key2': 'google'}, [1, 2, 3]]
-
+                            [False, {'key1': 5, 'key2': 'google'}, [1, 2, 3]]
     will be encoded as:
 
-    .. code-block:: xml
+    <List>
+        <Item>false</Item>
+        <Item>
+            <Dictionary>
+                <key1>5</key1>
+                <key2>"google"</key2>
+            </Dictionary>
+        </Item>
+        <Item>
+            <List>
+                <Item>1</item>
+                <Item>2</item>
+                <Item>3</item>
+            </List>
+        </Item>
+    </List>
 
-        <List>
-            <Item>false</Item>
-            <Item>
-                <Dictionary>
-                    <key1>5</key1>
-                    <key2>"google"</key2>
-                </Dictionary>
-            </Item>
-            <Item>
-                <List>
-                    <Item>1</item>
-                    <Item>2</item>
-                    <Item>3</item>
-                </List>
-            </Item>
-        </List>
 
     When decoding data (an XML string), the parser validates it using the
     parser's scheme. Failure in the validation case will cause a raise of

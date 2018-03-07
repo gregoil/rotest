@@ -138,22 +138,22 @@ class BasicRotestUnitTest(TransactionTestCase):
                          "differs from actual value %r"
                         % (success, actual_success))
 
-    def validate_resource(self, resource, dirty=True,
+    def validate_resource(self, resource, validated=True,
                           initialized=True, finalized=True):
         """Validate the state of a resource according to the paramters.
 
         Args:
             resource (BaseResource): resource to check.
-            dirty (bool): expected dirty state.
+            validated (bool): validated state.
             initialized (bool): initialized dirty state.
             finalized (bool): finalized dirty state.
 
         Raises:
             AssertionError. resource failed to validate.
         """
-        self.assertEqual(resource.dirty, dirty,
-                         "%r 'dirty' state was %r and not %r" %
-                         (resource.name, resource.dirty, dirty))
+        self.assertEqual(resource.validate_flag, validated,
+                         "%r 'validate' state was %r and not %r" %
+                         (resource.name, resource.validate_flag, validated))
 
         self.assertEqual(resource.initialization_flag, initialized,
                          "%r 'initialized' state was %r and not %r" %
@@ -217,19 +217,26 @@ class MockResourceClient(ClientResourceManager):
         resources = []
         for descriptor in descriptors:
             data_type = descriptor.type.DATA_CLASS
-            try:
-                available_resources = data_type.objects.filter(
-                                 is_usable=True, **descriptor.properties)
-                if len(available_resources) == 0:
+            if data_type is None:
+                resource = descriptor.type(**descriptor.properties)
+
+            else:
+                if not self.is_connected():
+                    self.connect()
+
+                try:
+                    available_resources = data_type.objects.filter(
+                                     is_usable=True, **descriptor.properties)
+                    if len(available_resources) == 0:
+                        raise ResourceDoesNotExistError()
+
+                    resource = descriptor.type(available_resources[0])
+
+                except ObjectDoesNotExist:  # The resource doesn't exist.
                     raise ResourceDoesNotExistError()
 
-                resource = descriptor.type(available_resources[0])
-
-            except ObjectDoesNotExist:  # The resource doesn't exist.
-                raise ResourceDoesNotExistError()
-
-            if resource.owner != '' or resource.reserved != '':
-                raise ResourceUnavailableError()
+                if resource.owner != '' or resource.reserved != '':
+                    raise ResourceUnavailableError()
 
             resources.append(resource)
 
@@ -241,7 +248,8 @@ class MockResourceClient(ClientResourceManager):
             if resource in self.locked_resources:
                 self.locked_resources.remove(resource)
 
-        [resource.data.save() for resource in resources]
+        [resource.data.save() for resource in resources
+         if resource.DATA_CLASS is not None]
 
     def query_resources(self, descriptor):
         """Query the content of the server's DB.
@@ -599,6 +607,19 @@ class MultipleMethodsBlock(MockBlock):
         pass
 
 
+class StoreFailuresBlock(MockBlock):
+    """Mock test block that stores two failures."""
+    __test__ = False
+
+    FAILURE_MESSAGE1 = "Stored failure"
+    FAILURE_MESSAGE2 = "Stored failure 2"
+
+    def test_store_failures(self):
+        """Mock test function - stores failures."""
+        self.expect(False, self.FAILURE_MESSAGE1)
+        self.expect(False, self.FAILURE_MESSAGE2)
+
+
 class FailureBlock(MockBlock):
     """Mock block, always fails."""
     __test__ = False
@@ -685,8 +706,11 @@ class DynamicResourceLockingBlock(MockBlock):
 
     def test_dynamic_lock(self):
         """Mock test function - always succeed."""
-        self.request_resources(self.dynamic_resources,
-                               is_global=self.is_global)
+        if self.is_global:
+            self.parent.request_resources(self.dynamic_resources)
+
+        else:
+            self.request_resources(self.dynamic_resources)
 
         for resource_request in self.dynamic_resources:
             self.assertTrue(hasattr(self, resource_request.name),

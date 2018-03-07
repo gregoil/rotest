@@ -114,8 +114,8 @@ class AbstractTestParser(TransactionTestCase):
 
     def test_release_resource_message(self):
         """Test encoding & decoding of ReleaseResources message."""
-        request1 = {"name": "resource1", "dirty": True}
-        request2 = {"name": "resource2", "dirty": False}
+        request1 = "resource1"
+        request2 = "resource2"
         msg = ReleaseResources(requests=[request1, request2])
         self.validate(msg)
 

@@ -4,8 +4,8 @@
 # pylint: disable=invalid-name,too-few-public-methods,no-member,unused-argument
 import os
 import sys
-from collections import defaultdict
 import optparse
+from collections import defaultdict
 
 import django
 
@@ -151,9 +151,9 @@ def output_option_parser(option, opt, value, parser):
 
     for handler in handlers:
         if handler not in output_options:
-            raise optparse.OptionValueError(
-                'Unsupported handler %r, supported handlers: %s' %
-                (handler, ", ".join(output_options)))
+            raise optparse.OptionValueError('Unsupported handler %r, '
+                                            'supported handlers %r' %
+                                            (handler, output_options))
 
     setattr(parser.values, option.dest, handlers)
 
@@ -382,7 +382,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
                       dest="processes")
 
     parser.add_option("-o", "--outputs", type='string',
-                      help="Output handlers separated by comma. Options: {}"
+                      help="Output handlers separated by comma. Options : {}"
                       .format(", ".join(get_result_handler_options())),
                       action="callback",
                       callback=output_option_parser, dest="outputs",

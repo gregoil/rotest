@@ -41,16 +41,27 @@ class AbstractResultHandler(object):
     def should_skip(self, test):
         """Check if the test should be skipped.
 
+        Note:
+            Override to implement a 'should_skip' check.
+
         Args:
             test (object): test item instance.
 
         Returns:
-            str: skip reason if the test should be skipped, None otherwise.
+            str. skip reason if the test should be skipped, None otherwise.
         """
         return None
 
     def update_resources(self, test):
         """Called once after locking the tests resources.
+
+        Args:
+            test (object): test item instance.
+        """
+        pass
+
+    def setup_finished(self, test):
+        """Called when the given test finished setting up.
 
         Args:
             test (object): test item instance.
@@ -86,68 +97,30 @@ class AbstractResultHandler(object):
         pass
 
     def add_success(self, test):
-        """Called when a test has completed successfully.
-
-        Args:
-            test (object): test item instance.
-        """
+        """Called when a test has completed successfully."""
         pass
 
     def add_skip(self, test, reason):
-        """Called when a test is skipped.
-
-        Args:
-            test (object): test item instance.
-            reason (str): reason for skipping the test.
-        """
+        """Called when a test is skipped."""
         pass
 
     def add_failure(self, test, exception_string):
-        """Called when a failure in the product has occurred.
-
-        Args:
-            test (object): test item instance.
-            exception_string (str): exception description.
-        """
+        """Called when an error has occurred."""
         pass
 
     def add_error(self, test, exception_string):
-        """Called when an error has occurred.
-
-        Args:
-            test (object): test item instance.
-            exception_string (str): exception description.
-        """
+        """Called when an error has occurred."""
         pass
 
     def add_expected_failure(self, test, exception_string):
-        """Called when an expected failure or error occurred.
-
-        Args:
-            test (object): test item instance.
-            exception_string (str): exception description.
-        """
+        """Called when an expected failure/error occurred."""
         pass
 
     def add_unexpected_success(self, test):
-        """Called when a test was expected to fail, but succeed.
-
-        Args:
-            test (object): test item instance.
-        """
+        """Called when a test was expected to fail, but succeed."""
         pass
 
     def print_errors(self, tests_run, errors, skipped, failures,
                      expected_failures, unexpected_successes):
-        """Print a summary of all the given error lists to the stream.
-
-        Args:
-            tests_run (number): number of tests run.
-            errors (list): error tests details list.
-            skipped (list): skipped tests details list.
-            failures (list): failures tests details list.
-            expected_failures (list): expected failures tests details list.
-            unexpected_successes (list): unexpected successes tests details
-                list.
-        """
+        """Called by TestRunner after test run."""
         pass

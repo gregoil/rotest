@@ -109,16 +109,9 @@ class GeneralData(models.Model):
         self.status = self.IN_PROGRESS
         self.start_time = datetime.now()
 
-    def end(self, has_succeeded):
-        """Update the data that the test ended.
-
-        Args:
-            has_succeeded (bool): the success status of the test.
-        """
+    def end(self):
+        """Update the data that the test ended."""
         self.status = self.FINISHED
-        if self.success is None or self.success is True:
-            self.success = has_succeeded
-
         self.end_time = datetime.now()
 
     def add_sub_test_data(self, sub_test_data):

@@ -36,8 +36,9 @@ class DemoResourceData(ResourceData):
     ip_address = models.IPAddressField()
     mode = models.IntegerField(choices=MODE_CHOICE, default=BOOT_MODE)
 
+    validation_result = models.BooleanField(default=False)
     reset_flag = models.BooleanField(default=False)
-    validate_flag = models.NullBooleanField(default=None)
+    validate_flag = models.NullBooleanField(default=False)
     finalization_flag = models.BooleanField(default=False)
     initialization_flag = models.BooleanField(default=False)
 
@@ -125,7 +126,7 @@ class DemoResource(BaseResource):
         """
         self.data.validate_flag = True
         self.data.save()
-        return True
+        return self.data.validation_result
 
     def reset(self):
         """Set flag to True once the resource is reseted."""
@@ -194,7 +195,7 @@ class DemoComplexResource(BaseResource):
 
         self.data.validate_flag = True
         self.data.save()
-        return True
+        return False
 
     def reset(self):
         """Set flag to True once the resource is reseted."""
@@ -219,3 +220,8 @@ class InitializeErrorResource(DemoResource):
     def initialize(self):
         """Raise an exception."""
         raise InitializationError("Intentional error in initialize")
+
+
+class DemoService(BaseResource):
+    """Fake service class, used in resource manager tests."""
+    DATA_CLASS = None

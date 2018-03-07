@@ -36,7 +36,7 @@ def get_command_line_configuration(configuration_schema, command_line_options):
     """Get configuration, based on the given arguments to the program.
 
     Notes:
-        * The first argument is ommited, as it's the script path.
+        * The first argument is omitted, as it's the script path.
         * Both '--option=value' and '--option value' formats are supported.
         * Both '--<option>' and '-<option>' formats are supported.
 
@@ -49,7 +49,7 @@ def get_command_line_configuration(configuration_schema, command_line_options):
     Returns:
         dict: a match between each target option to the given value.
     """
-    # Ommiting the first argument, which is the script path
+    # Omitting the first argument, which is the script path
     command_line_options = command_line_options[1:]
 
     # Replacing every form of '--option=value' to '--option value'

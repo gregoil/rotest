@@ -182,11 +182,3 @@ class TestSuite(unittest.TestSuite):
     def start(self):
         """Update the data that the test started."""
         self.data.start()
-
-    def end(self, has_succeeded):
-        """Update the data that the test ended.
-
-        Args:
-            has_succeeded (bool): the success status of the test.
-        """
-        self.data.end(has_succeeded)

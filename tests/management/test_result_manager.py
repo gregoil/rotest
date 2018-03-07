@@ -161,7 +161,7 @@ class TestResultManagement(BaseResourceManagementTest):
         self._validate_has_times(test_case, start_time=True, end_time=False)
 
         self.client.stop_test(test_case)
-        self._validate_has_times(test_case, start_time=True, end_time=False)
+        self._validate_has_times(test_case, start_time=True, end_time=True)
 
     def test_update_resources(self):
         """Test that the update_resources method updates the test's data."""

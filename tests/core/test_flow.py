@@ -17,10 +17,10 @@ from tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock, MockFlow,
                               UnexpectedSuccessBlock, NoMethodsBlock,
                               InputsValidationBlock, WriteToCommonBlock,
                               MultipleMethodsBlock, ReadFromCommonBlock,
-                              BasicRotestUnitTest, MockSubFlow,
-                              AttributeCheckingBlock, MockBlock,
+                              BasicRotestUnitTest, PretendToShareDataBlock,
+                              MockSubFlow, AttributeCheckingBlock, MockBlock,
                               DynamicResourceLockingBlock,
-                              PretendToShareDataBlock)
+                              StoreFailuresBlock)
 
 
 class TestTestFlow(BasicRotestUnitTest):
@@ -364,7 +364,7 @@ class TestTestFlow(BasicRotestUnitTest):
         """
         pass_value = 'not_exist_value'
         PretendToShareDataBlock.outputs = (pass_value,)
-        InputsValidationBlock.inputs = (pass_value, )
+        InputsValidationBlock.inputs = (pass_value,)
 
         MockFlow.blocks = (PretendToShareDataBlock, InputsValidationBlock)
         test_flow = MockFlow()
@@ -462,6 +462,36 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=1)
 
+    def test_flow_expect_failure(self):
+        """Validate behavior of test flow with blocks that fail with 'expect'.
+
+        We test the flow treats 'expect' failures like normal failures.
+        """
+        MockFlow.blocks = (StoreFailuresBlock.params(mode=MODE_CRITICAL),
+                           SuccessBlock.params(mode=MODE_CRITICAL),
+                           StoreFailuresBlock.params(mode=MODE_FINALLY))
+    
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertFalse(self.result.wasSuccessful(),
+                         'Flow succeeded when it should have failed')
+
+        self.assertEqual(self.result.testsRun, 1,
+                         "Result didn't run the correct number of tests")
+
+        self.assertEqual(len(self.result.failures), 1,
+                         "Result didn't had the correct number of failures")
+
+        self.validate_blocks(test_flow, skips=1, failures=2)
+
+        # === Validate data object ===
+        self.assertFalse(test_flow.data.success,
+                         'Flow data result should have been False')
+
+        self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
+                         'Flow data status should have been failure')
+
     def test_error_in_setup(self):
         """Create test flow with error in setUp and validate behavior.
 
@@ -492,7 +522,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
-                        'Flow data status should have been error')
+                         'Flow data status should have been error')
 
     def test_error_no_resources(self):
         """Validate that flows are skipped if they can't get the resources."""
@@ -501,8 +531,7 @@ class TestTestFlow(BasicRotestUnitTest):
         class TempFlow(MockFlow):
             resources = (request('no_resource',
                                  DemoResource,
-                                 name=no_resource_name,
-                                 dirty=False,),)
+                                 name=no_resource_name),)
 
         TempFlow.blocks = (SuccessBlock,)
 
@@ -514,7 +543,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been None')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SKIPPED,
-                        'Flow data status should have been skipped')
+                         'Flow data status should have been skipped')
 
     def test_error_in_resources_locking(self):
         """Test TestFlow behavior on resource locking error.
@@ -530,8 +559,7 @@ class TestTestFlow(BasicRotestUnitTest):
         class TempFlow(MockFlow):
             resources = (request('fail_resource',
                                  InitializeErrorResource,
-                                 name=fail_resource_name,
-                                 dirty=False,),)
+                                 name=fail_resource_name),)
 
         TempFlow.blocks = (SuccessBlock,)
 
@@ -550,7 +578,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         fail_resource = DemoResourceData.objects.get(name=fail_resource_name)
 
-        self.validate_resource(fail_resource, dirty=True,
+        self.validate_resource(fail_resource,
                                initialized=False, finalized=True)
 
     def test_error_in_teardown(self):
@@ -602,8 +630,7 @@ class TestTestFlow(BasicRotestUnitTest):
             outputs = (dynamic_request_name,)
             dynamic_resources = (request(dynamic_request_name,
                                          DemoResource,
-                                         name=dynamic_resource_name,
-                                         dirty=False,),)
+                                         name=dynamic_resource_name),)
 
         AttributeCheckingBlock.ATTRIBUTE_NAME = dynamic_request_name
 
@@ -629,10 +656,10 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         test_resource = DemoResourceData.objects.get(name=global_resource_name)
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
         test_resource = DemoResourceData.objects.get(
                                                  name=dynamic_resource_name)
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_shared_dynamic_resources_locking(self):
         """Test that cases can dynamically lock resources.
@@ -651,8 +678,7 @@ class TestTestFlow(BasicRotestUnitTest):
             outputs = (dynamic_request_name,)
             dynamic_resources = (request(dynamic_request_name,
                                          DemoResource,
-                                         name=dynamic_resource_name,
-                                         dirty=False,),)
+                                         name=dynamic_resource_name),)
 
         AttributeCheckingBlock.ATTRIBUTE_NAME = dynamic_request_name
 
@@ -675,10 +701,10 @@ class TestTestFlow(BasicRotestUnitTest):
                         'Flow failed when it should have succeeded')
 
         test_resource = DemoResourceData.objects.get(name=global_resource_name)
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
         test_resource = DemoResourceData.objects.get(
                                                  name=dynamic_resource_name)
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_critical_blocks(self):
         """Validate behavior of block in CRITICAL mode.

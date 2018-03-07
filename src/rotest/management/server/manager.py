@@ -213,14 +213,13 @@ class ManagerThread(Thread):
         resource.owner_time = datetime.now()
         resource.save()
 
-    def _release_resource(self, resource, dirty, user_name):
+    def _release_resource(self, resource, user_name):
         """Mark the resource as free.
 
         For complex resource, marks also its sub-resources as free.
 
         Args:
             resource (ResourceData): resource to release.
-            dirty (bool): state of the resource as reported by the client.
             user_name (str): name of the releasing user.
 
         Raises:
@@ -232,7 +231,7 @@ class ManagerThread(Thread):
 
         for sub_resource in resource.get_sub_resources():
             try:
-                self._release_resource(sub_resource, dirty, user_name)
+                self._release_resource(sub_resource, user_name)
 
             except ServerError as ex:
                 errors[sub_resource.name] = (ex.ERROR_CODE, str(ex))
@@ -251,7 +250,6 @@ class ManagerThread(Thread):
 
         resource.owner = ""
         resource.owner_time = None
-        resource.dirty = dirty
         resource.save()
 
         if len(errors) != 0:
@@ -281,9 +279,8 @@ class ManagerThread(Thread):
             self.logger.debug("User %r didn't lock any resource", user_name)
 
         else:
-            resources.update(owner="", owner_time=None, dirty=True)
-            self.logger.debug("User %r was successfully cleaned, his "
-                              "resources were marked as dirty", user_name)
+            resources.update(owner="", owner_time=None)
+            self.logger.debug("User %r was successfully cleaned", user_name)
 
         return SuccessReply()
 
@@ -400,9 +397,7 @@ class ManagerThread(Thread):
                 at least one of the given resources.
         """
         errors = {}
-        resources_generator = ((sub_request['name'], sub_request['dirty'])
-                               for sub_request in request.message.requests)
-        for name, dirty in resources_generator:
+        for name in request.message.requests:
             try:
                 resource_data = ResourceData.objects.get(name=name)
 
@@ -416,7 +411,7 @@ class ManagerThread(Thread):
             self.logger.debug("Releasing %r resource", name)
 
             try:
-                self._release_resource(resource, dirty, request.worker.name)
+                self._release_resource(resource, request.worker.name)
                 self.logger.debug("Resource %r released successfully", name)
 
             except ServerError as ex:

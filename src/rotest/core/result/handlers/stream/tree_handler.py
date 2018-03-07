@@ -1,7 +1,6 @@
 """Tree format stream output handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,super-init-not-called,unused-argument
-from rotest.core.case import TestCase
 from base_handler import BaseStreamHandler, NEW_LINE
 from rotest.common.constants import GREEN, YELLOW, RED, BOLD, CYAN, BLUE
 
@@ -24,10 +23,10 @@ class TreeHandler(BaseStreamHandler):
             str. test's description including indentation and parents.
         """
         indentation = test.parents_count * self.INDENTATION
-        if isinstance(test, TestCase):
+        if test.IS_COMPLEX is False:
             return indentation + test.data.name + ' ... '
 
-        return indentation + test.data.name + NEW_LINE
+        return indentation + test.data.name
 
     def start_test(self, test):
         """Write the test start to the stream.
@@ -35,7 +34,7 @@ class TreeHandler(BaseStreamHandler):
         Args:
             test (TestSuite / TestCase): test item instance.
         """
-        self.stream.write(self.get_description(test))
+        self.stream.write(NEW_LINE + self.get_description(test))
 
     def start_composite(self, test):
         """Called when the given TestSuite or TestCase is about to be run.
@@ -51,7 +50,11 @@ class TreeHandler(BaseStreamHandler):
         Args:
             test (TestCase): test item instance.
         """
-        self.stream.writeln('OK', GREEN)
+        if test.IS_COMPLEX is True:
+            indentation = test.parents_count * self.INDENTATION
+            self.stream.write(NEW_LINE + indentation)
+
+        self.stream.write('OK ', GREEN)
 
     def add_skip(self, test, reason):
         """Write the test skip to the stream.
@@ -60,8 +63,11 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             reason (str): skip reason description.
         """
-        self.stream.writeln('SKIP', YELLOW)
-        self.write_details(reason, test.parents_count, YELLOW)
+        if test.IS_COMPLEX is True:
+            indentation = test.parents_count * self.INDENTATION
+            self.stream.write(NEW_LINE + indentation)
+
+        self.stream.write('SKIP ', YELLOW)
 
     def add_failure(self, test, exception_str):
         """Write the failure to the stream.
@@ -70,8 +76,11 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             exception_str (str): exception traceback string.
         """
-        self.stream.writeln('FAIL', RED)
-        self.write_details(exception_str, test.parents_count, RED)
+        if test.IS_COMPLEX is True:
+            indentation = test.parents_count * self.INDENTATION
+            self.stream.write(NEW_LINE + indentation)
+
+        self.stream.write('FAIL ', RED)
 
     def add_error(self, test, exception_str):
         """Write the failure to the stream.
@@ -80,8 +89,11 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             exception_str (str): exception traceback string.
         """
-        self.stream.writeln('ERROR', RED, BOLD)
-        self.write_details(exception_str, test.parents_count, RED, BOLD)
+        if test.IS_COMPLEX is True:
+            indentation = test.parents_count * self.INDENTATION
+            self.stream.write(NEW_LINE + indentation)
+
+        self.stream.write('ERROR ', RED, BOLD)
 
     def add_expected_failure(self, test, exception_str):
         """Write the expected failure to the stream.
@@ -90,8 +102,11 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             exception_str (str): exception traceback string.
         """
-        self.stream.writeln('Expected Failure', CYAN)
-        self.write_details(exception_str, test.parents_count, CYAN)
+        if test.IS_COMPLEX is True:
+            indentation = test.parents_count * self.INDENTATION
+            self.stream.write(NEW_LINE + indentation)
+
+        self.stream.write('ExpectedFailure ', CYAN)
 
     def add_unexpected_success(self, test):
         """Write the test unexpected success to the stream.
@@ -99,4 +114,8 @@ class TreeHandler(BaseStreamHandler):
         Args:
             test (TestCase): test item instance.
         """
-        self.stream.writeln('Unexpected Success', BLUE)
+        if test.IS_COMPLEX is True:
+            indentation = test.parents_count * self.INDENTATION
+            self.stream.write(NEW_LINE + indentation)
+
+        self.stream.write('UnexpectedSuccess ', BLUE)

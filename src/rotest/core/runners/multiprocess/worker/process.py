@@ -40,10 +40,11 @@ class WorkerProcess(Process):
             if it passes it.
         start_time (datetime.datetime): the start time of the current test.
         skip_init (bool): True to skip resources initialization and validation.
+        output_handlers (list): output handlers for the worker's runner.
     """
     def __init__(self, save_state, config, run_delta, run_name, requests_queue,
-                 reply_queue, results_queue, root_test, failfast,
-                 parent_id, skip_init, *args, **kwargs):
+                 reply_queue, results_queue, root_test, failfast, parent_id,
+                 skip_init, output_handlers, *args, **kwargs):
 
         core_log.debug('Initializing test worker')
         super(WorkerProcess, self).__init__()
@@ -59,6 +60,7 @@ class WorkerProcess(Process):
         self.reply_queue = reply_queue
         self.results_queue = results_queue
         self.requests_queue = requests_queue
+        self.output_handlers = output_handlers
 
         self.config = config
         self.run_name = run_name
@@ -109,14 +111,14 @@ class WorkerProcess(Process):
         """
         core_log.debug('Worker %r started working', self.pid)
 
-        runner = WorkerRunner(outputs=[],
-                              config=self.config,
+        runner = WorkerRunner(config=self.config,
                               enable_debug=False,
                               failfast=self.failfast,
                               run_name=self.run_name,
                               run_delta=self.run_delta,
                               skip_init=self.skip_init,
                               save_state=self.save_state,
+                              outputs=self.output_handlers,
                               reply_queue=self.reply_queue,
                               results_queue=self.results_queue)
 

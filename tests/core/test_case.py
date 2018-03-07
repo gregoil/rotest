@@ -28,80 +28,70 @@ class TempSuccessCase(SuccessCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempDynamicResourceLockingCase(DynamicResourceLockingCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempFailureCase(FailureCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempStoreFailureCase(StoreFailureCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempErrorCase(ErrorCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempStoreFailureErrorCase(StoreFailureErrorCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempErrorInSetupCase(ErrorInSetupCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempExpectedFailureCase(ExpectedFailureCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempUnexpectedSuccessCase(UnexpectedSuccessCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TempStoreMultipleFailuresCase(StoreMultipleFailuresCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    resources = (request('test_resource', DemoResource,
-                         name=RESOURCE_NAME, dirty=False,),)
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
 class TestTestCase(BasicRotestUnitTest):
@@ -152,9 +142,8 @@ class TestTestCase(BasicRotestUnitTest):
         * Validates the resource's state.
         """
         TempSuccessCase.resources = (request('test_resource',
-                                          DemoResource,
-                                          name=RESOURCE_NAME,
-                                          dirty=False,),)
+                                             DemoResource,
+                                             name=RESOURCE_NAME),)
 
         case = self._run_case(TempSuccessCase)
 
@@ -164,7 +153,7 @@ class TestTestCase(BasicRotestUnitTest):
         # === Validate case data object ===
         self.assertTrue(case.data.success)
 
-        test_resource = case.locked_resources[self.DEMO_RESOURCE_NAME]
+        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
         self.assertTrue(isinstance(test_resource, DemoResource),
                 "State resource data type should have been 'DemoResourceData'")
 
@@ -179,7 +168,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_dynamic_resources_locking(self):
         """Test that cases can dynamically lock resources.
@@ -189,14 +178,12 @@ class TestTestCase(BasicRotestUnitTest):
         """
         TempDynamicResourceLockingCase.resources = (request('test_resource',
                                                          DemoResource,
-                                                         name=RESOURCE_NAME,
-                                                         dirty=False,),)
+                                                         name=RESOURCE_NAME),)
         dynamic_resource_name = 'available_resource2'
         TempDynamicResourceLockingCase.dynamic_resources = (
                                                  request('dynamic_resource',
                                                  DemoResource,
-                                                 name=dynamic_resource_name,
-                                                 dirty=False,),)
+                                                 name=dynamic_resource_name),)
 
         case = self._run_case(TempDynamicResourceLockingCase)
 
@@ -207,10 +194,10 @@ class TestTestCase(BasicRotestUnitTest):
         self.assertTrue(case.data.success)
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
         test_resource = DemoResourceData.objects.get(
                                                  name=dynamic_resource_name)
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_failed_case_run(self):
         """Test a TestCase on run failure.
@@ -222,9 +209,8 @@ class TestTestCase(BasicRotestUnitTest):
         * Validates the resource's state.
         """
         TempFailureCase.resources = (request('test_resource',
-                                          DemoResource,
-                                          name=RESOURCE_NAME,
-                                          dirty=False,),)
+                                             DemoResource,
+                                             name=RESOURCE_NAME),)
 
         case = self._run_case(TempFailureCase)
 
@@ -239,7 +225,7 @@ class TestTestCase(BasicRotestUnitTest):
                          "Unexpected test outcome, expected %r got %r" %
                          (TestOutcome.FAILED, case.data.exception_type))
 
-        test_resource = case.locked_resources[self.DEMO_RESOURCE_NAME]
+        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
 
         self.assertTrue(isinstance(test_resource, DemoResource),
                 "State resource type should have been 'DemoResource'")
@@ -251,7 +237,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_expect_and_assert_case_run(self):
         """Test a TestCase that uses both expect and assert.
@@ -263,9 +249,8 @@ class TestTestCase(BasicRotestUnitTest):
         * Validates the resource's state.
         """
         TempStoreFailureCase.resources = (request('test_resource',
-                                               DemoResource,
-                                               name=RESOURCE_NAME,
-                                               dirty=False,),)
+                                                  DemoResource,
+                                                  name=RESOURCE_NAME),)
 
         case = self._run_case(TempStoreFailureCase)
 
@@ -288,11 +273,11 @@ class TestTestCase(BasicRotestUnitTest):
                      "Unexpected traceback, %r doesn't match the expression %r"
                      % (case.data.traceback, expected_traceback))
 
-        test_resource = case.locked_resources[self.DEMO_RESOURCE_NAME]
+        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_stored_multiple_failures_case_run(self):
         """Test a TestCase that stores failures.
@@ -305,8 +290,7 @@ class TestTestCase(BasicRotestUnitTest):
         """
         TempStoreMultipleFailuresCase.resources = (request('test_resource',
                                                         DemoResource,
-                                                        name=RESOURCE_NAME,
-                                                        dirty=False,),)
+                                                        name=RESOURCE_NAME),)
 
         case = self._run_case(TempStoreMultipleFailuresCase)
 
@@ -333,7 +317,7 @@ class TestTestCase(BasicRotestUnitTest):
                      "Unexpected traceback, %r doesn't match the expression %r"
                      % (case.data.traceback, expected_traceback))
 
-        test_resource = case.locked_resources[self.DEMO_RESOURCE_NAME]
+        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
 
         self.assertTrue(isinstance(test_resource, DemoResource),
                 "State resource type should have been 'DemoResource'")
@@ -345,7 +329,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_error_and_stored_failure_case_run(self):
         """Test a TestCase on that stores a failure and raises an exception.
@@ -357,9 +341,8 @@ class TestTestCase(BasicRotestUnitTest):
         * Validates the resource's state.
         """
         TempStoreFailureErrorCase.resources = (request('test_resource',
-                                                    DemoResource,
-                                                    name=RESOURCE_NAME,
-                                                    dirty=False,),)
+                                                       DemoResource,
+                                                       name=RESOURCE_NAME),)
 
         case = self._run_case(TempStoreFailureErrorCase)
 
@@ -388,7 +371,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=True)
+        self.validate_resource(test_resource)
 
     def test_errored_case_run(self):
         """Test a TestCase on run error.
@@ -400,9 +383,8 @@ class TestTestCase(BasicRotestUnitTest):
         * Validates the resource's state.
         """
         TempErrorCase.resources = (request('test_resource',
-                                        DemoResource,
-                                        name=RESOURCE_NAME,
-                                        dirty=False,),)
+                                           DemoResource,
+                                           name=RESOURCE_NAME),)
 
         case = self._run_case(TempErrorCase)
 
@@ -419,7 +401,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=True)
+        self.validate_resource(test_resource)
 
     def test_error_in_setup(self):
         """Test a TestCase on setup error.
@@ -431,9 +413,8 @@ class TestTestCase(BasicRotestUnitTest):
         * Validates the resource's state.
         """
         TempErrorInSetupCase.resources = (request('test_resource',
-                                               DemoResource,
-                                               name=RESOURCE_NAME,
-                                               dirty=False,),)
+                                                  DemoResource,
+                                                  name=RESOURCE_NAME),)
 
         case = self._run_case(TempErrorInSetupCase)
 
@@ -450,7 +431,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=True,
+        self.validate_resource(test_resource,
                                initialized=True, finalized=True)
 
     def test_error_in_resource_initialize_good_first(self):
@@ -464,13 +445,11 @@ class TestTestCase(BasicRotestUnitTest):
         """
         fail_resource_name = 'fail_initialize_resource'
         TempSuccessCase.resources = (request('ok_resource',
-                                          DemoResource,
-                                          name=RESOURCE_NAME,
-                                          dirty=False,),
-                                  request('fail_resource',
-                                          DemoResource,
-                                          name=fail_resource_name,
-                                          dirty=False,))
+                                             DemoResource,
+                                             name=RESOURCE_NAME),
+                                     request('fail_resource',
+                                             DemoResource,
+                                             name=fail_resource_name))
 
         case = self._run_case(TempSuccessCase)
 
@@ -488,9 +467,9 @@ class TestTestCase(BasicRotestUnitTest):
         ok_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
         fail_resource = DemoResourceData.objects.get(name=fail_resource_name)
 
-        self.validate_resource(ok_resource, dirty=True,
+        self.validate_resource(ok_resource,
                                initialized=True, finalized=True)
-        self.validate_resource(fail_resource, dirty=True,
+        self.validate_resource(fail_resource,
                                initialized=False, finalized=True)
 
     def test_error_in_resource_initialize_bad_first(self):
@@ -504,13 +483,11 @@ class TestTestCase(BasicRotestUnitTest):
         """
         fail_resource_name = 'fail_initialize_resource'
         TempSuccessCase.resources = (request('fail_resource',
-                                          DemoResource,
-                                          name=fail_resource_name,
-                                          dirty=False,),
+                                             DemoResource,
+                                             name=fail_resource_name),
                                      request('ok_resource',
-                                          DemoResource,
-                                          name=RESOURCE_NAME,
-                                          dirty=False,))
+                                             DemoResource,
+                                             name=RESOURCE_NAM))
 
         case = self._run_case(TempSuccessCase)
 
@@ -528,9 +505,9 @@ class TestTestCase(BasicRotestUnitTest):
         ok_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
         fail_resource = DemoResourceData.objects.get(name=fail_resource_name)
 
-        self.validate_resource(fail_resource, dirty=True,
+        self.validate_resource(fail_resource,
                                initialized=False, finalized=True)
-        self.validate_resource(ok_resource, dirty=False,
+        self.validate_resource(ok_resource,
                                initialized=False, finalized=False)
 
     def test_error_in_resource_finalize(self):
@@ -544,13 +521,11 @@ class TestTestCase(BasicRotestUnitTest):
         """
         fail_resource_name = 'fail_finalize_resource'
         TempSuccessCase.resources = (request('fail_resource',
-                                          DemoResource,
-                                          name=fail_resource_name,
-                                          dirty=False,),
-                                  request('ok_resource',
-                                          DemoResource,
-                                          name=RESOURCE_NAME,
-                                          dirty=False,))
+                                             DemoResource,
+                                             name=fail_resource_name),
+                                     request('ok_resource',
+                                             DemoResource,
+                                             name=RESOURCE_NAME))
 
         case = self._run_case(TempSuccessCase)
 
@@ -568,9 +543,9 @@ class TestTestCase(BasicRotestUnitTest):
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
         fail_resource = DemoResourceData.objects.get(name=fail_resource_name)
 
-        self.validate_resource(test_resource, dirty=False,
+        self.validate_resource(test_resource,
                                initialized=True, finalized=True)
-        self.validate_resource(fail_resource, dirty=True,
+        self.validate_resource(fail_resource,
                                initialized=True, finalized=False)
 
     def test_expected_failure_case_run(self):
@@ -584,8 +559,7 @@ class TestTestCase(BasicRotestUnitTest):
         """
         TempExpectedFailureCase.resources = (request('test_resource',
                                                      DemoResource,
-                                                     name=RESOURCE_NAME,
-                                                     dirty=False,),)
+                                                     name=RESOURCE_NAME),)
 
         case = self._run_case(TempExpectedFailureCase)
 
@@ -604,7 +578,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_unexpected_success_case_run(self):
         """Test a TestCase run on unexpected success.
@@ -617,8 +591,7 @@ class TestTestCase(BasicRotestUnitTest):
         """
         TempUnexpectedSuccessCase.resources = (request('test_resource',
                                                        DemoResource,
-                                                       name=RESOURCE_NAME,
-                                                       dirty=False,),)
+                                                       name=RESOURCE_NAME),)
 
         case = self._run_case(TempUnexpectedSuccessCase)
 
@@ -637,7 +610,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False)
+        self.validate_resource(test_resource)
 
     def test_missing_resource(self):
         """Test a TestCase with a missing required resource.
@@ -654,9 +627,9 @@ class TestTestCase(BasicRotestUnitTest):
 
         # === Validate case data object ===
         self.assertFalse(case.data.success)
-        self.assertEqual(case.data.exception_type, TestOutcome.SKIPPED,
+        self.assertEqual(case.data.exception_type, TestOutcome.ERROR,
                          "Unexpected test outcome, expected %r got %r" %
-                         (TestOutcome.SKIPPED, case.data.exception_type))
+                         (TestOutcome.ERROR, case.data.exception_type))
 
     def test_locked_resource(self):
         """Test a TestCase with a locked required resource.
@@ -672,28 +645,28 @@ class TestTestCase(BasicRotestUnitTest):
         test_resource.save()
 
         TempSuccessCase.resources = (request('available_resource1',
-                                          DemoResource,
-                                          name=available_resource_name),
+                                             DemoResource,
+                                             name=available_resource_name),
                                      request('locked_resource',
-                                          DemoResource,
-                                          name=RESOURCE_NAME))
+                                             DemoResource,
+                                             name=RESOURCE_NAME))
 
         case = self._run_case(TempSuccessCase)
 
         # === Validate case data object ===
         self.assertFalse(case.data.success)
-        self.assertEqual(case.data.exception_type, TestOutcome.SKIPPED,
+        self.assertEqual(case.data.exception_type, TestOutcome.ERROR,
                          "Unexpected test outcome, expected %r got %r" %
-                         (TestOutcome.SKIPPED, case.data.exception_type))
+                         (TestOutcome.ERROR, case.data.exception_type))
 
         available_resource = DemoResourceData.objects.get(
                                                 name=available_resource_name)
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
-        self.validate_resource(test_resource, dirty=False,
+        self.validate_resource(test_resource,
                                initialized=False, finalized=False)
 
-        self.validate_resource(available_resource, dirty=False,
+        self.validate_resource(available_resource,
                                initialized=False, finalized=False)
 
     def test_store_state(self):
@@ -710,7 +683,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         case = self._run_case(TempSuccessCase)
 
-        test_resource = case.locked_resources.values()[0]
+        test_resource = case.all_resources.values()[0]
         expected_state_path = os.path.join(test_resource.work_dir,
                                        ClientResourceManager.DEFAULT_STATE_DIR)
 
@@ -725,9 +698,9 @@ class TestTestCase(BasicRotestUnitTest):
         """
         resource_name = 'save_state_resource'
         TempSuccessCase.resources = (request(resource_name=resource_name,
-                                              resource_class=DemoResource,
-                                              name=RESOURCE_NAME,
-                                              save_state=False),)
+                                             resource_class=DemoResource,
+                                             name=RESOURCE_NAME,
+                                             save_state=False),)
 
         case = self._run_case(TempSuccessCase)
         expected_state_path = os.path.join(case.work_dir,
@@ -735,148 +708,69 @@ class TestTestCase(BasicRotestUnitTest):
 
         self.assertFalse(os.path.exists(expected_state_path))
 
-    def test_force_validate(self):
-        """Tests the force_validate flag.
+    def test_force_initialize(self):
+        """Tests the force_initialize flag when True.
 
         Note:
             DemoResource fixture sets the 'validate_flag' as False.
 
-        * Defines a resource as required resource & set force_validate.
+        * Defines a resource as required resource & set force_initialize.
+        * Runs the test under a test suite.
+        * Validates that 'validate' method was not called.
+        * Validates that 'initialize' method was called.
+        """
+        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
+        self.assertFalse(test_resource.validate_flag)
+
+        test_resource.validation_result = True
+        test_resource.save()
+        TempSuccessCase.resources = (request(
+                                          resource_name='validate_resource',
+                                          resource_class=DemoResource,
+                                          force_initialize=True,
+                                          name=RESOURCE_NAME),)
+
+        self._run_case(TempSuccessCase)
+
+        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
+        test_resource.validation_result = False
+        test_resource.save()
+        self.assertFalse(test_resource.validate_flag,
+                         "Resource was unexpectedly validated")
+        self.assertTrue(test_resource.initialization_flag,
+                        "Resource wasn't initialized as expected")
+
+    def test_skip_initialize(self):
+        """Tests the force_initialize flag when False.
+
+        Note:
+            DemoResource fixture sets the 'validate_flag' as False.
+
+        * Defines a resource as required resource & set force_initialize.
         * Runs the test under a test suite.
         * Validates that 'validate' method was called.
+        * Validates that 'initialize' method was not called.
         """
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertIsNone(test_resource.validate_flag)
+        self.assertFalse(test_resource.validate_flag)
 
+        test_resource.validation_result = True
+        test_resource.save()
         TempSuccessCase.resources = (request(
                                           resource_name='validate_resource',
                                           resource_class=DemoResource,
-                                          force_validate=True,
+                                          force_initialize=False,
                                           name=RESOURCE_NAME),)
 
         self._run_case(TempSuccessCase)
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertTrue(test_resource.validate_flag, "Validation Failed.")
-
-    def test_validate_after_test_error(self):
-        """Tests error causes dirty flag and validation (in next test).
-
-        Note:
-            DemoResouce fixture sets the 'validate_flag' as None.
-
-        * Defines a resource as required resource.
-        * Runs an error test under a test suite.
-        * Validates resource is dirty.
-        * Defines a resource as required resource.
-        * Runs a test under a test suite.
-        * Validates that 'validate' method was called.
-        """
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-
-        self.assertIsNone(test_resource.validate_flag)
-        self.assertFalse(test_resource.dirty)
-
-        TempErrorCase.resources = (request(resource_name='validate_resource',
-                                        resource_class=DemoResource,
-                                        force_validate=False,
-                                        name=RESOURCE_NAME),)
-
-        self._run_case(TempErrorCase)
-
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertTrue(test_resource.dirty)
-
-        TempSuccessCase.resources = (request(
-                                          resource_name='validate_resource',
-                                          resource_class=DemoResource,
-                                          force_validate=False,
-                                          name=RESOURCE_NAME),)
-
-        self._run_case(TempSuccessCase)
-
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-
-        self.assertIsNotNone(test_resource.validate_flag,
-                             "resource wasn't validated")
-        self.assertTrue(test_resource.validate_flag, "Validation Failed.")
-
-    def test_non_validate_after_test_failure(self):
-        """Tests failure does not cause dirty flag or validation(in next test).
-
-        Note:
-            DemoResouce fixture sets the 'validate_flag' as None.
-
-        * Define a resource as required resource.
-        * Run a failure test under a test suite.
-        * Validate resource is not dirty.
-        * Define a resource as required resource.
-        * Run a test under a test suite.
-        * Validate that 'validate' method was not called.
-        """
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-
-        self.assertIsNone(test_resource.validate_flag)
-
-        TempFailureCase.resources = (request(
-                                          resource_name='validate_resource',
-                                          resource_class=DemoResource,
-                                          force_validate=False,
-                                          name=RESOURCE_NAME),)
-
-        self._run_case(TempFailureCase)
-
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertFalse(test_resource.dirty)
-
-        TempSuccessCase.resources = (request(
-                                          resource_name='validate_resource',
-                                          resource_class=DemoResource,
-                                          force_validate=False,
-                                          name=RESOURCE_NAME),)
-
-        self._run_case(TempSuccessCase)
-
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertIsNone(test_resource.validate_flag)
-
-    def test_non_validate_after_test_success(self):
-        """Tests success does not cause dirty flag / validation (in next test).
-
-        Note:
-            DemoResouce fixture sets the 'validate_flag' as None.
-
-        * Define a resource as required resource.
-        * Run a test under a test suite.
-        * Validate resource is not dirty.
-        * Define a resource as required resource.
-        * Run a test under a test suite.
-        * Validate that 'validate' method was not called.
-        """
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertIsNone(test_resource.validate_flag)
-
-        TempSuccessCase.resources = (request(
-                                          resource_name='validate_resource',
-                                          resource_class=DemoResource,
-                                          force_validate=False,
-                                          name=RESOURCE_NAME),)
-
-        self._run_case(TempSuccessCase)
-
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertFalse(test_resource.dirty)
-
-        TempSuccessCase.resources = (request(
-                                          resource_name='validate_resource',
-                                          resource_class=DemoResource,
-                                          force_validate=False,
-                                          name=RESOURCE_NAME),)
-
-        self._run_case(TempSuccessCase)
-
-        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
-        self.assertIsNone(test_resource.validate_flag)
+        test_resource.validation_result = False
+        test_resource.save()
+        self.assertTrue(test_resource.validate_flag,
+                        "Resource wasn't validated as expected")
+        self.assertFalse(test_resource.initialization_flag,
+                         "Resource was unexpectedly initialized")
 
     def test_no_resource(self):
         """Test a TestCase with no required resource.

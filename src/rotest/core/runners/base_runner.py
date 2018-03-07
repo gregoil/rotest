@@ -111,9 +111,7 @@ class BaseTestRunner(TextTestRunner):
         * Removes duplicated test DB entries.
         """
         core_log.debug('Finalizing test %r', self.test_item.data.name)
-        if (self.resource_manager is not None and
-                self.resource_manager.is_connected()):
-
+        if self.resource_manager is not None:
             self.resource_manager.disconnect()
 
     def execute(self, test_item):

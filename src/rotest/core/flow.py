@@ -5,7 +5,6 @@ from itertools import count
 
 from rotest.core.block import TestBlock
 from rotest.common.config import ROTEST_WORK_DIR
-from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
                                         MODE_FINALLY, MODE_OPTIONAL,
                                         ClassInstantiator)
@@ -57,8 +56,8 @@ class TestFlow(AbstractFlowComponent):
         logger (logging.Logger): test logger.
         enable_debug (bool): whether to enable entering ipdb debugging mode
             upon any exception in a test statement.
-        force_validate (bool): a flag to determine if the resource will be
-            validated once it requested (even if not marked as dirty).
+        force_initialize (bool): a flag to determine if the resources will be
+            initialized even if their validation succeeds.
         resource_manager (ClientResourceManager): client resource manager.
         work_dir (str): test directory, contains test data and sub-tests.
         data (CaseData): Contain information about the test flow run.
@@ -82,39 +81,10 @@ class TestFlow(AbstractFlowComponent):
     TEST_METHOD_NAME = "test_run_blocks"
 
     def __init__(self, base_work_dir=ROTEST_WORK_DIR, save_state=True,
-                 force_validate=False, config=None, indexer=count(),
+                 force_initialize=False, config=None, indexer=count(),
                  parent=None, run_data=None, enable_debug=False, is_main=True,
                  skip_init=False, resource_manager=None, parameters={}):
-        """Validate and initialize the TestFlow blocks & data.
 
-        Initializes the common object according to :meth:`create_common` and
-        assigns it as 'common' attribute for the contained test blocks.
-
-        Initializes the flow data object and connect it to the data object of
-        the blocks under it.
-
-        Args:
-            base_work_dir (str): the base directory of the tests.
-            save_state (bool): flag to determine if storing the states of
-                resources is required.
-            config (AttrDict): dictionary of configurations.
-            indexer (iterator): the generator of test indexes.
-            parent (TestSuite): container of this test.
-            run_data (RunData): test run data object.
-            force_validate (bool): a flag to determine if the resource will be
-                validated once it requested (even if not marked as dirty).
-            enable_debug (bool): whether to enable entering ipdb debugging mode
-                upon any exception in a test statement.
-            skip_init (bool): True to skip resources initialize and validation.
-            resource_manager (ClientResourceManager): tests' client resource
-                manager instance, leave None to create a new one for the test.
-            parameters (dict): parameters this component was instantiated with.
-
-        Raises:
-            AttributeError: if stages tuple is empty.
-            TypeError: in case stages tuple contains anything other then
-                classes inheriting from :class:`rotest.core.stage.TestStage`.
-        """
         super(TestFlow, self).__init__(parent=parent,
                                        config=config,
                                        indexer=indexer,
@@ -125,18 +95,14 @@ class TestFlow(AbstractFlowComponent):
                                        save_state=save_state,
                                        enable_debug=enable_debug,
                                        base_work_dir=base_work_dir,
+                                       force_initialize=force_initialize,
                                        resource_manager=resource_manager)
 
         if len(self.blocks) == 0:
             raise AttributeError("Blocks list can't be empty")
 
         self._tests = []
-        if self.resource_manager is None:
-            self._is_client_local = True
-            self.resource_manager = self.create_resource_manager()
-
         for test_class in self.blocks:
-
             if not ((isinstance(test_class, type) and
                      issubclass(test_class, (TestBlock, TestFlow))) or
                     isinstance(test_class, ClassInstantiator)):
@@ -230,7 +196,7 @@ class TestFlow(AbstractFlowComponent):
             from_block (TestBlock): block to start adding from, leave None
                 to add to all the blocks.
         """
-        super(TestFlow, self).add_resources(resources, from_block=None)
+        super(TestFlow, self).add_resources(resources)
 
         all_blocks = list(self)
         start_index = 0
@@ -240,25 +206,40 @@ class TestFlow(AbstractFlowComponent):
         for block in all_blocks[start_index:]:
             block.add_resources(resources)
 
-    def _was_successful(self):
+    def was_successful(self):
         """Return whether the result of the flow-run was success or not."""
-        return all((block.data.success is not False for block in self))
+        return all((block.was_successful() is not False for block in
+                    self)) and super(TestFlow, self).was_successful()
 
-    def _has_errors(self):
+    def had_error(self):
         """Return whether any of the blocks had an exception during its run."""
-        return any((block.data.exception_type == TestOutcome.ERROR
-                    for block in self))
+        return any((block.had_error() for block in self)) or \
+               super(TestFlow, self).had_error()
 
     def test_run_blocks(self):
         """Main test method, run the blocks under the test-flow."""
         for test in self:
             test(self.result)
 
-        if self._has_errors() is True:
-            raise FlowRunException("Some of the blocks had errors")
+        if self.had_error() is True:
+            error_blocks_list = [block.data.name for block in self if
+                                 block.had_error()]
+            flow_result_str = 'The following components had errors:' \
+                              ' {}'.format(error_blocks_list)
 
-        if self._was_successful() is False:
-            self.fail("Some of the blocks have failed")
+            failure = AssertionError(flow_result_str)
+            self.result.addError(self, (failure.__class__, failure, None))
+            return
+
+        if self.was_successful() is False:
+            failed_blocks_list = [block.data.name for block in self if
+                                  not block.was_successful()]
+            flow_result_str = 'The following components have failed:' \
+                              ' {}'.format(failed_blocks_list)
+
+            failure = AssertionError(flow_result_str)
+            self.result.addFailure(self, (failure.__class__, failure, None))
+            return
 
     def run(self, result=None):
         """Run the test case.

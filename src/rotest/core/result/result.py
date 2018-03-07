@@ -1,8 +1,8 @@
 """Tests results handling interface."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,dangerous-default-value
-from unittest.result import TestResult
 import pkg_resources
+from unittest.result import TestResult
 
 from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
@@ -77,6 +77,16 @@ class Result(TestResult):
         for result_handler in self.result_handlers:
             result_handler.start_test(test)
 
+    def setupFinished(self, test):
+        """Called when the given test finished setting up.
+
+        Args:
+            test (object): test item instance.
+        """
+        test.logger.info("Test %r finished setup", test.data)
+        for result_handler in self.result_handlers:
+            result_handler.setup_finished(test)
+
     def shouldSkip(self, test):
         """Check if the test should be skipped.
 
@@ -105,7 +115,6 @@ class Result(TestResult):
             test (object): test item instance.
         """
         test.logger.debug("Saving %r's resources", test.data)
-
         for result_handler in self.result_handlers:
             result_handler.update_resources(test)
 
@@ -121,7 +130,7 @@ class Result(TestResult):
             super(Result, self).stopTest(test)
 
         test.logger.debug("Test %r has stopped running", test.data)
-
+        test.data.end()
         for result_handler in self.result_handlers:
             result_handler.stop_test(test)
 
@@ -152,14 +161,13 @@ class Result(TestResult):
             test (rotest.core.suite.TestSuite): test item instance.
         """
         core_log.debug("Test %r has stopped running", test.data)
-        has_succeeded = None
         sub_values = [sub_test.data.success for sub_test in test
                       if sub_test.data.success is not None]
 
         if len(sub_values) > 0:
-            has_succeeded = all(sub_values)
+            test.data.success = all(sub_values)
 
-        test.end(has_succeeded=has_succeeded)
+        test.data.end()
 
         for result_handler in self.result_handlers:
             result_handler.stop_composite(test)
@@ -179,6 +187,9 @@ class Result(TestResult):
         Args:
             test (object): test item instance.
         """
+        if test.data.exception_type is not None:
+            return
+
         if (isinstance(test, AbstractFlowComponent) is False or
             test.is_main is True):
 
@@ -221,8 +232,7 @@ class Result(TestResult):
             super(Result, self).addFailure(test, err)
 
         exception_string = self._exc_info_to_string(err, test)
-
-        test.logger.error("Test %r ended in failure: %s",
+        test.logger.error("Test %r ended in failure: %r",
                           test.data, exception_string)
         test.end(test_outcome=TestOutcome.FAILED, details=exception_string)
 
@@ -242,8 +252,7 @@ class Result(TestResult):
             super(Result, self).addError(test, err)
 
         exception_string = self._exc_info_to_string(err, test)
-
-        test.logger.critical("Test %r ended in error: %s",
+        test.logger.critical("Test %r ended in error: %r",
                              test.data, exception_string)
         test.end(test_outcome=TestOutcome.ERROR, details=exception_string)
 
@@ -264,7 +273,7 @@ class Result(TestResult):
 
         exception_string = self._exc_info_to_string(err, test)
 
-        test.logger.info("Test %r ended in an expected failure: %s",
+        test.logger.info("Test %r ended in an expected failure: %r",
                          test.data, exception_string)
         test.end(test_outcome=TestOutcome.EXPECTED_FAILURE,
                  details=exception_string)
@@ -284,7 +293,7 @@ class Result(TestResult):
 
             super(Result, self).addUnexpectedSuccess(test)
 
-        test.logger.error("Test %r ended in an unexpected success", test.data)
+        test.logger.warn("Test %r ended in an unexpected success", test.data)
         test.end(test_outcome=TestOutcome.UNEXPECTED_SUCCESS)
 
         for result_handler in self.result_handlers:
