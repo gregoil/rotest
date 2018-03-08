@@ -249,7 +249,7 @@ class MultipleClientsParallelCase(AbstractManagerParallelCase):
         results.remove(self.SERVER_ERROR_CODE)
 
         resources_names = [resources[0].name for resources in results
-                           if isinstance(resources, list) is True]
+                           if isinstance(resources, list)]
         self.assertEquals(set(resources_names), set(available_resources),
                           "Not all resources were locked as expected.")
 

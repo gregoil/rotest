@@ -48,9 +48,8 @@ class RemoteDBHandler(AbstractResultHandler):
         Returns:
             str. Skip reason if the test should be skipped, None otherwise.
         """
-        if (test.data.run_data is not None and
-            test.data.run_data.run_delta is True and
-            self.client.should_skip(test) is True):
+        if (test.data.run_data is not None and test.data.run_data.run_delta and
+                self.client.should_skip(test)):
 
             return self.SKIP_DELTA_MESSAGE
 

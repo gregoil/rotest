@@ -1,4 +1,4 @@
-"""An XML parser module.
+"""XML parser module.
 
 Note:
     Django works with Unicode therefore, we use here basestring which is the
@@ -25,12 +25,13 @@ class XMLParser(AbstractParser):
     Each message should be composed from basic-types (such as numbers, strings
     and booleans), lists, dictionaries, and resources (which derived from
     :class:`BaseResource`).
+
     Any other object type may cause an error during the encoding process.
     The result of successful encoding process is an XML string, represent the
     encoded message.
 
     For instance, the inner message object:
-                            [False, {'key1': 5, 'key2': 'google'}, [1, 2, 3]]
+        [False, {'key1': 5, 'key2': 'google'}, [1, 2, 3]]
     will be encoded as:
 
     <List>
@@ -49,7 +50,6 @@ class XMLParser(AbstractParser):
             </List>
         </Item>
     </List>
-
 
     When decoding data (an XML string), the parser validates it using the
     parser's scheme. Failure in the validation case will cause a raise of
@@ -120,7 +120,7 @@ class XMLParser(AbstractParser):
         """
         root = objectify.XML(data)
 
-        if self.scheme.validate(root) is False:
+        if not self.scheme.validate(root):
             scheme_errors = self.scheme.error_log.filter_from_errors()
             raise ParsingError("Scheme validation failed. reason: %r"
                                % scheme_errors)
@@ -352,11 +352,11 @@ class XMLParser(AbstractParser):
             field_object, _, is_direct, is_many_to_many = \
                 resource_type._meta.get_field_by_name(field_name)
 
-            if is_direct is True:
+            if is_direct:
                 raise ParsingError("Got unsupported direct list field %r" %
                                    field_name)
 
-            if is_many_to_many is True:
+            if is_many_to_many:
                 raise ParsingError("Got unsupported many to many field %r" %
                                    field_name)
 

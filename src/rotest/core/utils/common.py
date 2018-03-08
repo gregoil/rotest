@@ -32,9 +32,7 @@ def print_test_instance(test_name, depth, tag_filter, test_tags, all_tags):
     test_format = " ".join([HIERARCHY_SEPARATOR * depth,
                            test_name, str(test_tags)])
 
-    if (tag_filter is not None and
-        match_tags(all_tags, tag_filter) is True):
-
+    if tag_filter is not None and match_tags(all_tags, tag_filter):
         print colored(test_format, MAGENTA)
         return True
 
@@ -71,7 +69,7 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
         print_test_instance(test.get_name(), depth, tag_filter,
                             [], tags)
 
-    elif issubclass(actual_test, TestSuite) is True:
+    elif issubclass(actual_test, TestSuite):
         tags.extend(actual_test.TAGS)
         tags.append(actual_test.__name__)
         sub_tests = test.components

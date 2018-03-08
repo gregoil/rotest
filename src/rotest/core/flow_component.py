@@ -170,7 +170,7 @@ class AbstractFlowComponent(AbstractTest):
 
     def share_data(self, **parameters):
         """Inject the parameters to the parent and sibling components."""
-        if self.IS_COMPLEX is False:
+        if not self.IS_COMPLEX:
             self.parent._set_parameters(**parameters)
 
         else:
@@ -209,7 +209,7 @@ class AbstractFlowComponent(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            if self.is_main is True:
+            if self.is_main:
                 skip_reason = self.result.shouldSkip(self)
                 if skip_reason is not None:
                     self.skip_sub_components(skip_reason)
@@ -233,7 +233,7 @@ class AbstractFlowComponent(AbstractTest):
             except Exception as err:
                 self.logger.exception("Got an error while getting resources")
 
-                if isinstance(err, ServerError) is True:
+                if isinstance(err, ServerError):
                     self.skip_sub_components(self.NO_RESOURCES_MESSAGE)
                     self.skipTest(self.NO_RESOURCES_MESSAGE)
 
@@ -241,14 +241,14 @@ class AbstractFlowComponent(AbstractTest):
                     raise
 
             try:
-                if self.is_main is False:
+                if not self.is_main:
                     # Validate all required inputs were passed
                     self._validate_inputs()
 
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
 
-            except:
+            except Exception:
                 self.release_resources(self.locked_resources, dirty=True)
                 raise
 
@@ -274,7 +274,7 @@ class AbstractFlowComponent(AbstractTest):
             try:
                 teardown_method(*args, **kwargs)
 
-            except:
+            except Exception:
                 result.addError(self, sys.exc_info())
 
             finally:
@@ -282,8 +282,8 @@ class AbstractFlowComponent(AbstractTest):
                        dirty=self.data.exception_type == TestOutcome.ERROR,
                        force_release=False)
 
-                if (self._is_client_local is True and
-                        self.resource_manager.is_connected() is True):
+                if (self._is_client_local and
+                        self.resource_manager.is_connected()):
 
                     self.resource_manager.disconnect()
 

@@ -34,5 +34,5 @@ class Request(object):
         Args:
             reply (AbstractReply): a reply from the resource manager.
         """
-        if self.server_request is False and self.worker.is_alive is True:
+        if not self.server_request and self.worker.is_alive:
             self.worker.respond(reply)

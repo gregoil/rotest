@@ -127,7 +127,7 @@ class TestFlow(AbstractFlowComponent):
 
         self.share_data(**self.__class__.common)
 
-        if self.is_main is True:
+        if self.is_main:
             self._validate_inputs()
 
         self.logger.debug("Initialized %r test-flow successfully", self.data)
@@ -208,20 +208,20 @@ class TestFlow(AbstractFlowComponent):
 
     def was_successful(self):
         """Return whether the result of the flow-run was success or not."""
-        return all((block.was_successful() is not False for block in
-                    self)) and super(TestFlow, self).was_successful()
+        return (all(block.was_successful() for block in self) and
+                super(TestFlow, self).was_successful())
 
     def had_error(self):
         """Return whether any of the blocks had an exception during its run."""
-        return any((block.had_error() for block in self)) or \
-               super(TestFlow, self).had_error()
+        return (any(block.had_error() for block in self) or
+                super(TestFlow, self).had_error())
 
     def test_run_blocks(self):
         """Main test method, run the blocks under the test-flow."""
         for test in self:
             test(self.result)
 
-        if self.had_error() is True:
+        if self.had_error():
             error_blocks_list = [block.data.name for block in self if
                                  block.had_error()]
             flow_result_str = 'The following components had errors:' \
@@ -231,7 +231,7 @@ class TestFlow(AbstractFlowComponent):
             self.result.addError(self, (failure.__class__, failure, None))
             return
 
-        if self.was_successful() is False:
+        if not self.was_successful():
             failed_blocks_list = [block.data.name for block in self if
                                   not block.was_successful()]
             flow_result_str = 'The following components have failed:' \

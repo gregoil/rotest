@@ -38,7 +38,7 @@ class DBHandler(AbstractResultHandler):
         test.data.run_data = run_data
         test.data.save()
 
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             for sub_test in test:
                 test.data.add_sub_test_data(sub_test.data)
                 cls._save_sub_tests(sub_test, run_data)
@@ -82,10 +82,9 @@ class DBHandler(AbstractResultHandler):
             str. Skip reason if the test should be skipped, None otherwise.
         """
         if (test.data.run_data is not None and
-            test.data.run_data.run_delta is True and
-            test.data.should_skip(test.data.name, test.data.run_data,
-                                  test.data.pk) is True):
-
+                test.data.run_data.run_delta and
+                test.data.should_skip(test.data.name, test.data.run_data,
+                                      test.data.pk)):
             return self.SKIP_DELTA_MESSAGE
 
         return None

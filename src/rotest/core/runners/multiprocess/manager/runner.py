@@ -261,7 +261,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         # Note: Using items() because workers_pool may change during iteration.
         for pid, worker in self.workers_pool.items():
-            if worker.is_alive() is False:
+            if not worker.is_alive():
                 self.restart_worker(
                     worker=worker,
                     reason='Worker %r has died unexpectedly' % pid)

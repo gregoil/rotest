@@ -40,7 +40,7 @@ def get_tags(test):
     tags = test.TAGS[:]
     tags.append(test.__class__.__name__)
 
-    if isinstance(test, TestCase) is True:
+    if isinstance(test, TestCase):
         tags.append(test._testMethodName)
 
     if test.parent is not None:

@@ -95,7 +95,7 @@ class CaseData(GeneralData):
 
         matches = query_set.order_by(cls._RUNTIME_ORDER)
 
-        return matches.count() > 0 and matches.first().success is True
+        return matches.count() > 0 and matches.first().success
 
     def resources_names(self):
         """Return a string representing the resources this test used.

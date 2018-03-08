@@ -47,7 +47,7 @@ def get_item_by_id(test_item, item_id):
     if test_item.identifier == item_id:
         return test_item
 
-    if test_item.IS_COMPLEX is True:
+    if test_item.IS_COMPLEX:
         sub_test = max([sub_test for sub_test in test_item
                         if sub_test.identifier <= item_id],
                        key=lambda test: test.identifier)
@@ -61,7 +61,7 @@ def kill_process(process):
     Args:
         process (psutil.Process): process to kill.
     """
-    if process.is_running() is False:
+    if not process.is_running():
         return
 
     process.kill()

@@ -283,19 +283,17 @@ class ExcelHandler(AbstractResultHandler):
 
         status = self.DID_NOT_RUN
         status_desc = status
-        if (isinstance(test, AbstractFlowComponent) is True and
-            test.is_main is False):
-
+        if isinstance(test, AbstractFlowComponent) and not test.is_main:
             status_desc = self.BLOCK_PREFIX + status
 
-        if isinstance(test, TestSuite) is False:
+        if not isinstance(test, TestSuite):
             self._write_to_cell(self.row_number, self.RESULT,
                                 self.CONTENT_TO_STYLE[status],
                                 status_desc)
 
             self.test_to_row[test.identifier] = self.row_number
 
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             for sub_test in test:
                 self._generate_initial_excel(sub_test)
 
@@ -319,9 +317,7 @@ class ExcelHandler(AbstractResultHandler):
         if status == self.SKIPPED and tb_str in self.PASSED_MESSAGES:
             status = status_desc = self.PASSED
 
-        if (isinstance(test, AbstractFlowComponent) is True and
-            test.is_main is False):
-
+        if isinstance(test, AbstractFlowComponent) and not test.is_main:
             status_desc = self.BLOCK_PREFIX + status
 
         if test.data.start_time is not None:

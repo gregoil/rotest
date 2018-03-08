@@ -7,12 +7,16 @@ Usage:
 Options:
     -h --help
         show this help message and exit
+
     --server-port <port>
         port for communicating with the client
+
     --run-django-server
         run the Django frontend as well
+
     --django-port <port>
         set Django's port [default: 8000]
+
     -D --daemon
         run as a daemon
 """
@@ -51,7 +55,7 @@ def get_logger(log_to_screen):
     """
     logger = get_test_logger(LOG_NAME, ROTEST_WORK_DIR)
 
-    if log_to_screen is True:
+    if log_to_screen:
         log_handler = logging.StreamHandler(stream=sys.stdout)
         log_handler.setFormatter(ColoredFormatter(LOG_FORMAT))
         logger.addHandler(log_handler)
@@ -133,8 +137,10 @@ def main():
     Loads the Django models if needed and starts a manager server.
     """
     django.setup()
+
     args = docopt.docopt(__doc__)
     server_port = args["--server-port"]
+
     if server_port is None:
         server_port = RESOURCE_MANAGER_PORT
     else:

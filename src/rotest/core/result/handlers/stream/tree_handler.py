@@ -23,7 +23,7 @@ class TreeHandler(BaseStreamHandler):
             str. test's description including indentation and parents.
         """
         indentation = test.parents_count * self.INDENTATION
-        if test.IS_COMPLEX is False:
+        if not test.IS_COMPLEX:
             return indentation + test.data.name + ' ... '
 
         return indentation + test.data.name
@@ -50,7 +50,7 @@ class TreeHandler(BaseStreamHandler):
         Args:
             test (TestCase): test item instance.
         """
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
             self.stream.write(NEW_LINE + indentation)
 
@@ -63,7 +63,7 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             reason (str): skip reason description.
         """
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
             self.stream.write(NEW_LINE + indentation)
 
@@ -76,7 +76,7 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             exception_str (str): exception traceback string.
         """
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
             self.stream.write(NEW_LINE + indentation)
 
@@ -89,7 +89,7 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             exception_str (str): exception traceback string.
         """
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
             self.stream.write(NEW_LINE + indentation)
 
@@ -102,7 +102,7 @@ class TreeHandler(BaseStreamHandler):
             test (TestCase): test item instance.
             exception_str (str): exception traceback string.
         """
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
             self.stream.write(NEW_LINE + indentation)
 
@@ -114,7 +114,7 @@ class TreeHandler(BaseStreamHandler):
         Args:
             test (TestCase): test item instance.
         """
-        if test.IS_COMPLEX is True:
+        if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
             self.stream.write(NEW_LINE + indentation)
 

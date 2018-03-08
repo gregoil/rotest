@@ -81,7 +81,7 @@ class AbstractClient(object):
         Raises:
             RuntimeError: wasn't connected in the first place.
         """
-        if self.is_connected() is False:
+        if not self.is_connected():
             raise RuntimeError("Socket was not connected")
 
         self._socket.close()
@@ -147,7 +147,7 @@ class AbstractClient(object):
         encoded_reply = ""
 
         try:
-            while encoded_reply.endswith(MESSAGE_DELIMITER) is False:
+            while not encoded_reply.endswith(MESSAGE_DELIMITER):
                 encoded_reply += self._socket.recv(MESSAGE_MAX_LENGTH)
 
             reply_msg = self._parser.decode(encoded_reply)
@@ -157,12 +157,12 @@ class AbstractClient(object):
                                "seconds" %
                                (request_msg, self._socket.gettimeout()))
 
-        if isinstance(reply_msg, messages.ParsingFailure) is True:
+        if isinstance(reply_msg, messages.ParsingFailure):
             raise ParsingError("Server failed to parse a message, assumed ID "
                                "%r. Failure Reason is: %r."
                                % (request_msg.msg_id, reply_msg.reason))
 
-        if isinstance(reply_msg, messages.AbstractReply) is False:
+        if not isinstance(reply_msg, messages.AbstractReply):
             raise TypeError("Server sent an illegal message. Replies should "
                             "be of type AbstractReply. Received message is: %r"
                             % reply_msg)
@@ -172,7 +172,7 @@ class AbstractClient(object):
                                " but got a reply on message with id %r" %
                                (request_msg.msg_id, reply_msg.request_id))
 
-        if isinstance(reply_msg, messages.ErrorReply) is True:
+        if isinstance(reply_msg, messages.ErrorReply):
             raise ErrorFactory.build_error(reply_msg.code, reply_msg.content)
 
         return reply_msg

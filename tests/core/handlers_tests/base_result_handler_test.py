@@ -22,10 +22,10 @@ def get_tests(test):
         rotest.core.case.TestCase. the next case that's included in the
             given test hierarchy.
     """
-    if isinstance(test, TestSuite) is False:
+    if not isinstance(test, TestSuite):
         yield test
 
-    if test.IS_COMPLEX is True:
+    if test.IS_COMPLEX:
         for sub_test in test:
             for leaf in get_tests(sub_test):
                 yield leaf

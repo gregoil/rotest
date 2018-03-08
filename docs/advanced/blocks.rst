@@ -52,7 +52,7 @@ TestBlock
 
    .. code-block:: python
 
-       DemoBlock(TestBlock):
+       class DemoBlock(TestBlock):
            inputs = ('field_name', 'other_field')
        ...
 
@@ -69,7 +69,7 @@ TestBlock
 
    .. code-block:: python
 
-       DemoBlock(TestBlock):
+       class DemoBlock(TestBlock):
            outputs = ('field_name', 'other_field')
        ...
 
@@ -166,7 +166,7 @@ methods:
 
   .. code-block:: python
 
-      DemoFlow(TestFlow):
+      class DemoFlow(TestFlow):
           common = {'field_name': 5,
                     'other_field': 'abc'}
       ...
@@ -184,7 +184,7 @@ methods:
 
   .. code-block:: python
 
-      DemoFlow(TestFlow):
+      class DemoFlow(TestFlow):
           blocks = (DemoBlock,
                     DemoBlock.parametrize(field_name=5,
                                           other_field='abc'))

@@ -23,8 +23,8 @@ class LogStreamHandler(EventStreamHandler):
         """Initialize the handler and register the new stream log handler."""
         super(LogStreamHandler, self).__init__(*args, **kwargs)
 
-        if any(handler.get_name() == self.LOG_HANDLER_NAME
-               for handler in core_log.handlers) is False:
+        if all(handler.get_name() != self.LOG_HANDLER_NAME
+               for handler in core_log.handlers):
 
             current_log_stream = logging.StreamHandler(self.stream)
             current_log_stream.setLevel(self.LEVEL)

@@ -60,7 +60,7 @@ class WorkerRunner(BaseTestRunner):
         """
         test_item._is_client_local = False
         test_item.resource_manager = self.resource_manager
-        if test_item.IS_COMPLEX is True:
+        if test_item.IS_COMPLEX:
             for sub_item in test_item:
                 self._propagate_resource_manager(sub_item)
 

@@ -175,7 +175,7 @@ class Worker(LineReceiver):
         test_data = self.all_tests[test_id]
         if test_data.should_skip(test_name=test_data.name,
                                  run_data=self.run_data,
-                                 exclude_pk=test_data.pk) is True:
+                                 exclude_pk=test_data.pk):
 
             return self.SKIP_DELTA_MESSAGE
 

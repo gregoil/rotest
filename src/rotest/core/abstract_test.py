@@ -60,7 +60,7 @@ class AbstractTest(unittest.TestCase):
                  run_data=None, enable_debug=True, resource_manager=None,
                  skip_init=False):
 
-        if enable_debug is True:
+        if enable_debug:
             for method_name in (methodName, self.SETUP_METHOD_NAME,
                                 self.TEARDOWN_METHOD_NAME):
 
@@ -110,7 +110,7 @@ class AbstractTest(unittest.TestCase):
         Returns:
             bool. True if the validation passed, False otherwise.
         """
-        if expression is False:
+        if not expression:
             failure = AssertionError(msg)
             self.result.addFailure(self, (failure.__class__, failure, None))
             return False
