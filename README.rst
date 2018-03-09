@@ -25,7 +25,7 @@ Why Use Rotest?
 Examples
 ========
 For a complete step-by-step explanation about the framework, you can read
-our documentation at `ReadTheDocs <http://rotest.rtfd.io>`_. If you just want
+our documentation at `Read The Docs <http://rotest.rtfd.io>`_. If you just want
 to see how it looks, read further.
 
 For our example, let's look at an example for a `Calculator` resource:

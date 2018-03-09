@@ -66,9 +66,7 @@ class Result(TestResult):
         Args:
             test (object): test item instance.
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).startTest(test)
 
         test.logger.info("Test %r has started running", test.data)
@@ -124,9 +122,7 @@ class Result(TestResult):
         Args:
             test (object): test item instance.
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).stopTest(test)
 
         test.logger.debug("Test %r has stopped running", test.data)
@@ -190,9 +186,7 @@ class Result(TestResult):
         if test.data.exception_type is not None:
             return
 
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).addSuccess(test)
 
         test.logger.info("Test %r ended successfully", test.data)
@@ -208,9 +202,7 @@ class Result(TestResult):
             test (object): test item instance.
             reason (str): skip reason description.
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).addSkip(test, reason)
 
         test.logger.warning("Test %r skipped, reason %r", test.data, reason)
@@ -226,13 +218,11 @@ class Result(TestResult):
             test (object): test item instance.
             err (tuple): tuple of values as returned by sys.exc_info().
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).addFailure(test, err)
 
         exception_string = self._exc_info_to_string(err, test)
-        test.logger.error("Test %r ended in failure: %r",
+        test.logger.error("Test %r ended in failure: %s",
                           test.data, exception_string)
         test.end(test_outcome=TestOutcome.FAILED, details=exception_string)
 
@@ -246,13 +236,11 @@ class Result(TestResult):
             test (object): test item instance.
             err (tuple): tuple of values as returned by sys.exc_info().
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).addError(test, err)
 
         exception_string = self._exc_info_to_string(err, test)
-        test.logger.critical("Test %r ended in error: %r",
+        test.logger.critical("Test %r ended in error: %s",
                              test.data, exception_string)
         test.end(test_outcome=TestOutcome.ERROR, details=exception_string)
 
@@ -266,14 +254,12 @@ class Result(TestResult):
             test (object): test item instance.
             err (tuple): tuple of values as returned by sys.exc_info().
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).addExpectedFailure(test, err)
 
         exception_string = self._exc_info_to_string(err, test)
 
-        test.logger.info("Test %r ended in an expected failure: %r",
+        test.logger.info("Test %r ended in an expected failure: %s",
                          test.data, exception_string)
         test.end(test_outcome=TestOutcome.EXPECTED_FAILURE,
                  details=exception_string)
@@ -288,12 +274,10 @@ class Result(TestResult):
             test (object): test item instance.
             err (tuple): tuple of values as returned by sys.exc_info().
         """
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).addUnexpectedSuccess(test)
 
-        test.logger.warn("Test %r ended in an unexpected success", test.data)
+        test.logger.error("Test %r ended in an unexpected success", test.data)
         test.end(test_outcome=TestOutcome.UNEXPECTED_SUCCESS)
 
         for result_handler in self.result_handlers:

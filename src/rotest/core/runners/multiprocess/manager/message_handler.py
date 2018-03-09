@@ -172,9 +172,7 @@ class RunnerMessageHandler(object):
             message (StartTest): worker message object.
         """
         self.result.startTest(test)
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             self.runner.update_worker(worker_pid=message.msg_id, test=test)
             self.runner.update_timeout(worker_pid=message.msg_id,
                                        timeout=test.TIMEOUT)
@@ -214,9 +212,7 @@ class RunnerMessageHandler(object):
             message (StopTest): worker message object.
         """
         self.result.stopTest(test)
-        if (isinstance(test, AbstractFlowComponent) is False or
-            test.is_main is True):
-
+        if not isinstance(test, AbstractFlowComponent) or test.is_main:
             self._update_parent_stop(test)
 
     def _handle_composite_stop_message(self, test, message):

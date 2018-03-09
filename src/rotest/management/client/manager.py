@@ -118,11 +118,11 @@ class ClientResourceManager(AbstractClient):
         try:
             resource.connect()
 
-        except:
+        except Exception:
             self.logger.exception("Connecting to %r failed", resource.name)
             raise
 
-        if skip_init is True:
+        if skip_init:
             self.logger.debug("Skipping validation and initialization")
             return
 
@@ -218,7 +218,7 @@ class ClientResourceManager(AbstractClient):
             resource.logger.debug("Resource %r work dir was created under %r",
                                   request.name, base_work_dir)
 
-            if enable_debug is True:
+            if enable_debug:
                 resource.enable_debug()
 
             self._initialize_resource(resource, skip_init)
@@ -245,7 +245,7 @@ class ClientResourceManager(AbstractClient):
         for name, resource in resources.iteritems():
 
             try:
-                if resource.save_state is True:
+                if resource.save_state:
 
                     try:
                         resource.store_state_dir(self.DEFAULT_STATE_DIR)
@@ -481,7 +481,7 @@ class ClientResourceManager(AbstractClient):
 
             return initialized_resources
 
-        except:
+        except Exception:
             self._cleanup_resources(initialized_resources)
             self._release_resources(locked_resources)
             raise
@@ -502,9 +502,7 @@ class ClientResourceManager(AbstractClient):
         Raises:
             RuntimeError. releasing resources failed.
         """
-        if (self.keep_resources is True and force_release is False and
-            dirty is False):
-
+        if self.keep_resources and not force_release and not dirty:
             self.logger.debug("Refraining from releasing the resources")
             return
 

@@ -109,7 +109,7 @@ class AbstractMonitor(AbstractResultHandler):
 
     def safe_run_monitor(self, test):
         """Wrapper for run_monitor that prevents errors and multiple fails."""
-        if self._failed is True and self.SINGLE_FAILURE is True:
+        if self._failed and self.SINGLE_FAILURE:
             return
 
         try:
@@ -155,7 +155,7 @@ class AbstractMonitor(AbstractResultHandler):
             test (object): test item instance.
             message (str): failure message.
         """
-        if self._failed is True and self.SINGLE_FAILURE is True:
+        if self._failed and self.SINGLE_FAILURE:
             return
 
         self._failed = True

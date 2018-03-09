@@ -81,4 +81,4 @@ class RunData(models.Model):
         Returns:
             number. 0 success, 1 otherwise.
         """
-        return int(self.main_test.success is False)
+        return int(not self.main_test.success)

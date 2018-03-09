@@ -104,7 +104,7 @@ class TestExcelHandler(BaseResultHandlerTest):
                 in the right indentation.
         """
         self.current_row += 1
-        if test.IS_COMPLEX is False:
+        if not test.IS_COMPLEX:
             test_name = test.data.name
             self.validate_test_row(self.current_row, level, test_name)
 
@@ -180,7 +180,7 @@ class TestExcelHandler(BaseResultHandlerTest):
         Raises:
             AsserationError. the result isn't as expected.
         """
-        if isinstance(test, TestBlock) is True:
+        if isinstance(test, TestBlock):
             result = ExcelHandler.BLOCK_PREFIX + result
 
         self._read_excel()

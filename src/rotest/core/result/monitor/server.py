@@ -13,7 +13,7 @@ class RepeatingTimer(Thread):
         self.finished = Event()
 
     def run(self):
-        while self.finished.is_set() is False:
+        while not self.finished.is_set():
             self.func()
             self.finished.wait(self.cycle)
 

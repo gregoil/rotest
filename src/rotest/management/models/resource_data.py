@@ -80,7 +80,7 @@ class ResourceData(models.Model):
         Returns:
             bool. whether the sub resources are available.
         """
-        return all(sub_resource.is_available(user_name) is True
+        return all(sub_resource.is_available(user_name)
                    for sub_resource in self.get_sub_resources())
 
     def is_available(self, user_name=""):
@@ -212,8 +212,7 @@ class ResourceData(models.Model):
                 cur_available = self._is_sub_resources_available(self.reserved)
                 pre_available = self._is_sub_resources_available(pre_reserved)
                 if (self.reserved != "" and
-                    cur_available is False and
-                    pre_available is False):
+                        not cur_available and not pre_available):
                     raise ValidationError('Cannot reserve a resource if its '
                                           'sub-resources are not available')
 
@@ -245,7 +244,7 @@ class ResourceData(models.Model):
 
     def save(self, *args, **kwargs):
         """Propagate reservation change to sub-resources of the resource."""
-        if self._was_reserved_changed() is True:
+        if self._was_reserved_changed():
             if self.reserved == '':
                 self.reserved_time = None
                 pre_reserved = ResourceData.objects.get(pk=self.pk).reserved

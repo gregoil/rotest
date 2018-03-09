@@ -63,7 +63,7 @@ class DemoResource(BaseResource):
 
     def initialize(self):
         """Turns on the initialization flag and calls 'boot_mode' method."""
-        if self.data.fails_on_initialize is True:
+        if self.data.fails_on_initialize:
             raise RuntimeError("Intentional Error in initialization")
 
         self.data.initialization_flag = True
@@ -112,7 +112,7 @@ class DemoResource(BaseResource):
 
     def finalize(self):
         """Turns on the finalization flag."""
-        if self.data.fails_on_finalize is True:
+        if self.data.fails_on_finalize:
             raise RuntimeError("Intentional Error in finalization")
 
         self.data.finalization_flag = True

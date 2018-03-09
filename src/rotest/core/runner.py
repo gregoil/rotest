@@ -57,7 +57,7 @@ def get_runner(save_state=False, outputs=None, config=None,
         runner. test runner instance.
     """
     if processes_number is not None and processes_number > 0:
-        if enable_debug is True:
+        if enable_debug:
             raise RuntimeError("Cannot debug in multiprocess")
 
         return MultiprocessRunner(stream=stream,
@@ -151,9 +151,9 @@ def output_option_parser(option, opt, value, parser):
 
     for handler in handlers:
         if handler not in output_options:
-            raise optparse.OptionValueError('Unsupported handler %r, '
-                                            'supported handlers %r' %
-                                            (handler, output_options))
+            raise optparse.OptionValueError(
+                'Unsupported handler %r, supported handlers: %s' %
+                (handler, ", ".join(output_options)))
 
     setattr(parser.values, option.dest, handlers)
 
@@ -169,7 +169,7 @@ def _parse_config_file(json_path, schema_path=DEFAULT_SCHEMA_PATH):
         AttrDict. configuration dict, containing default values for run
             options and other parameters.
     """
-    if os.path.exists(json_path) is False:
+    if not os.path.exists(json_path):
         raise ValueError("Illegal config-path: %r" % json_path)
 
     core_log.debug('Parsing configuration file %r', json_path)
@@ -382,7 +382,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
                       dest="processes")
 
     parser.add_option("-o", "--outputs", type='string',
-                      help="Output handlers separated by comma. Options : {}"
+                      help="Output handlers separated by comma. Options: {}"
                       .format(", ".join(get_result_handler_options())),
                       action="callback",
                       callback=output_option_parser, dest="outputs",
@@ -420,7 +420,7 @@ def main(test_class, save_state=None, delta_iterations=None, processes=None,
 
     config = set_run_configuration(options)
 
-    if options.list is True:
+    if options.list:
         print_test_hierarchy(test_class, options.filter)
         return
 

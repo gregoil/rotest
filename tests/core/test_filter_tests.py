@@ -36,7 +36,7 @@ def dict_from_test(test, tags_filter=None):
     if isinstance(test, TestSuite):
         test_descriptor = {}
         for sub_test in test:
-            if sub_test.IS_COMPLEX is True:
+            if sub_test.IS_COMPLEX:
                 sub_dict = dict_from_test(sub_test, tags_filter)
                 if sub_dict is not None:
                     test_descriptor.update(sub_dict)

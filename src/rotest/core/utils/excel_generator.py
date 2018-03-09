@@ -30,7 +30,7 @@ class TestSimulator(object):
         Yields:
             CaseData. leaves of the tests tree.
         """
-        if self.IS_COMPLEX is False:
+        if not self.IS_COMPLEX:
             yield self
 
         else:
@@ -53,7 +53,7 @@ def _generate_tests_tree_by_data(test_data, parents_count=0):
                               identifier=test_data.pk,
                               parents_count=parents_count)
 
-    if isinstance(test_data, CaseData) is False:
+    if not isinstance(test_data, CaseData):
         simulator.IS_COMPLEX = True
 
         for sub_test in test_data.get_sub_tests_data():
@@ -64,7 +64,7 @@ def _generate_tests_tree_by_data(test_data, parents_count=0):
     else:
         simulator.IS_COMPLEX = False
         if (test_data.exception_type != TestOutcome.SUCCESS and
-            test_data.should_skip(test_data.name, test_data.run_data) is True):
+            test_data.should_skip(test_data.name, test_data.run_data)):
 
             test_data.traceback = ""
             test_data.success = True
@@ -89,7 +89,7 @@ def _generate_tests_tree_by_run_name(run_name):
     run_datas = RunData.objects.filter(run_name=run_name,
                    main_test__isnull=False).order_by('main_test__start_time')
 
-    if run_datas.exists() is False:
+    if not run_datas.exists():
         raise RuntimeError("No runs found for run name %r" % run_name)
 
     last_run = run_datas.last()

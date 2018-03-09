@@ -100,7 +100,7 @@ class ManagerThread(Thread):
         """Handles the requests in the pool and waits for new requests."""
         self.logger.debug("Resource manager main thread started")
 
-        while self._stop_flag is False:
+        while not self._stop_flag:
             try:
                 self._handle_requests()
                 self._accept_requests()
@@ -161,8 +161,7 @@ class ManagerThread(Thread):
             self.logger.debug("Handling request: %r", request)
 
             # an orphan request, client is not alive.
-            if (request.server_request is False and
-                request.worker.is_alive is False):
+            if not request.server_request and not request.worker.is_alive:
                 self.logger.warning("Client %r disconnected, request dropped",
                                     request.worker.name)
                 self._requests.remove(request)
@@ -238,7 +237,7 @@ class ManagerThread(Thread):
                 self.logger.debug("Failed to release sub-resource %r, "
                                   "Reason: %s", sub_resource, ex)
 
-        if resource.is_available(user_name) is True:
+        if resource.is_available(user_name):
             raise ResourceAlreadyAvailableError("Failed releasing resource "
                                                 "%r, it was not locked"
                                                 % resource.name)
@@ -269,8 +268,7 @@ class ManagerThread(Thread):
 
         self.logger.debug("Removing requests of user %r", user_name)
         for request in self._requests[:]:
-            if (request.worker.name == user_name and
-                    request.server_request is False):
+            if request.worker.name == user_name and not request.server_request:
                 self._requests.remove(request)
 
         self.logger.debug("Releasing locked resources of user %r", user_name)
@@ -360,7 +358,7 @@ class ManagerThread(Thread):
                                                 "the requirements: %r" % desc)
 
             availables = (resource for resource in matches
-                          if resource.is_available(client) is True)
+                          if resource.is_available(client))
 
             try:
                 resource = availables.next()

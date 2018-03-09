@@ -31,7 +31,7 @@ class TagsHandler(AbstractResultHandler):
         """
         test_tags = get_tags(test)
 
-        if match_tags(test_tags, self.TAGS_PATTERN) is False:
+        if not match_tags(test_tags, self.TAGS_PATTERN):
             return self.SKIP_MESSAGE
 
         return None

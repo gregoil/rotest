@@ -123,7 +123,7 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
 
         expected_registrations = 3  # Once for the flow and one per block
         pids = []
-        while pid_queue.empty() is False:
+        while not pid_queue.empty():
             pids.append(pid_queue.get_nowait())
 
         self.assertEqual(len(pids), expected_registrations,

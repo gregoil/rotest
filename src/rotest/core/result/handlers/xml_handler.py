@@ -43,12 +43,10 @@ class XMLHandler(AbstractResultHandler):
             error (bool): whether the test result is considered an Error.
             failure (bool): whether the test result is considered a Failure.
         """
-        if (isinstance(test, AbstractFlowComponent) is True and
-            test.is_main is False):
-
+        if isinstance(test, AbstractFlowComponent) and not test.is_main:
             return
 
-        if isinstance(test, TestFlow) is True:
+        if isinstance(test, TestFlow):
             test_name = test.data.name
             method_name = TestFlow.TEST_METHOD_NAME
 

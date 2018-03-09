@@ -174,7 +174,7 @@ class BaseResource(object):
 
         # In case a state dir already exists, create a new one.
         state_dir_index = 1
-        while os.path.exists(store_dir) is True:
+        while os.path.exists(store_dir):
             state_dir_index += 1
             store_dir = os.path.join(self.work_dir,
                                      dir_name + str(state_dir_index))

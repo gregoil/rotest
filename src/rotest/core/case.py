@@ -131,7 +131,7 @@ class TestCase(AbstractTest):
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
 
-            except:
+            except Exception:
                 self.release_resources(dirty=True)
                 raise
 
@@ -157,7 +157,7 @@ class TestCase(AbstractTest):
             try:
                 teardown_method(*args, **kwargs)
 
-            except:
+            except Exception:
                 result.addError(self, sys.exc_info())
 
             finally:
@@ -165,7 +165,7 @@ class TestCase(AbstractTest):
                           dirty=self.data.exception_type == TestOutcome.ERROR,
                           force_release=False)
 
-                if self._is_client_local is True:
+                if self._is_client_local:
                     self.resource_manager.disconnect()
 
         return teardown_method_wrapper

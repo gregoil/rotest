@@ -40,7 +40,7 @@ def get_work_dir(base_dir, test_name):
     work_dir = basic_work_dir
 
     copy_count = count()
-    while os.path.exists(work_dir) is True:
+    while os.path.exists(work_dir):
         work_dir = basic_work_dir + '(%s)' % copy_count.next()
 
     os.makedirs(work_dir)

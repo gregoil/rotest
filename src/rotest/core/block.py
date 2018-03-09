@@ -118,7 +118,7 @@ class TestBlock(AbstractFlowComponent):
             AttributeError: not all inputs were passed to the block.
         """
         missing_inputs = [input_name for input_name in self.inputs
-                          if (hasattr(self, input_name) is False and
+                          if (not hasattr(self, input_name) and
                               input_name not in extra_inputs and
                               input_name not in self._pipes)]
 
