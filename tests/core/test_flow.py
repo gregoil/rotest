@@ -539,11 +539,11 @@ class TestTestFlow(BasicRotestUnitTest):
         self.run_test(test_flow)
 
         # === Validate case data object ===
-        self.assertEqual(test_flow.data.success, None,
+        self.assertEqual(test_flow.data.success, False,
                          'Flow data result should have been None')
 
-        self.assertEqual(test_flow.data.exception_type, TestOutcome.SKIPPED,
-                         'Flow data status should have been skipped')
+        self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
+                         'Flow data status should have been error')
 
     def test_error_in_resources_locking(self):
         """Test TestFlow behavior on resource locking error.
