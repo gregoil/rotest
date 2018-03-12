@@ -44,7 +44,7 @@ if not sys.platform.startswith("win32"):
 
 setup(
     name='rotest',
-    version="2.7.1",
+    version="2.7.5",
     description="Resource oriented testing framework",
     long_description=open("README.rst").read(),
     license="MIT",
