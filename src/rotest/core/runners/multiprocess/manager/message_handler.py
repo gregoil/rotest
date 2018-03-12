@@ -199,7 +199,7 @@ class RunnerMessageHandler(object):
         """
         self.result.startTeardown(test)
 
-    def _handle_end_message(self, test, message, message):
+    def _handle_end_message(self, test, message):
         """Handle AddResult of a worker.
 
         Args:
