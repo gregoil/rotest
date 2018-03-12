@@ -59,6 +59,14 @@ class AbstractResultHandler(object):
         """
         pass
 
+    def start_teardown(self, test):
+        """Called when the given test is starting its teardown.
+
+        Args:
+            test (rotest.core.abstract_test.AbstractTest): test item instance.
+        """
+        pass
+
     def stop_test(self, test):
         """Called when the given test has been run.
 

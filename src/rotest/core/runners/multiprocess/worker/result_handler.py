@@ -11,6 +11,8 @@ from rotest.management.common.messages import (StopTest,
                                                StartTest,
                                                ShouldSkip,
                                                RunFinished,
+                                               SetupFinished,
+                                               StartTeardown,
                                                StopComposite,
                                                StartComposite,
                                                CloneResources)
@@ -81,6 +83,16 @@ class WorkerHandler(AbstractResultHandler):
                                      test_id=test.identifier))
         skip_reason = self.get_message().should_skip
         return skip_reason
+
+    def setup_finished(self, test):
+        """Notify the manager about the finish of a test setup via queue."""
+        self.send_message(SetupFinished(msg_id=self.worker_pid,
+                                        test_id=test.identifier))
+
+    def start_teardown(self, test):
+        """Notify the manager about the start of a test teardown via queue."""
+        self.send_message(StartTeardown(msg_id=self.worker_pid,
+                                        test_id=test.identifier))
 
     def update_resources(self, test):
         """Called once after locking the tests resources.

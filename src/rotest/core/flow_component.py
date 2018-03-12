@@ -231,14 +231,10 @@ class AbstractFlowComponent(AbstractTest):
                 self.request_resources(self.resources, use_previous=True)
 
             except Exception as err:
-                self.logger.exception("Got an error while getting resources")
-
                 if isinstance(err, ServerError):
                     self.skip_sub_components(self.NO_RESOURCES_MESSAGE)
-                    self.skipTest(self.NO_RESOURCES_MESSAGE)
 
-                else:
-                    raise
+                raise
 
             try:
                 if not self.is_main:
@@ -271,6 +267,7 @@ class AbstractFlowComponent(AbstractTest):
             * Executes the original tearDown method.
             * Releases the test resources.
             """
+            self.result.startTeardown(self)
             try:
                 teardown_method(*args, **kwargs)
 

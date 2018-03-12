@@ -198,6 +198,16 @@ class StartTest(AbstractTestEventMessage):
     pass
 
 
+class SetupFinished(AbstractTestEventMessage):
+    """Finished the setup of a test message."""
+    pass
+
+
+class StartTeardown(AbstractTestEventMessage):
+    """Start the teardown of a test message."""
+    pass
+
+
 class ShouldSkip(AbstractTestEventMessage):
     """Check if the test should be skipped message."""
     pass
