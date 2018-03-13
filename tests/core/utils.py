@@ -145,8 +145,8 @@ class BasicRotestUnitTest(TransactionTestCase):
         Args:
             resource (BaseResource): resource to check.
             validated (bool): validated state.
-            initialized (bool): initialized dirty state.
-            finalized (bool): finalized dirty state.
+            initialized (bool): initialized state.
+            finalized (bool): finalized state.
 
         Raises:
             AssertionError. resource failed to validate.

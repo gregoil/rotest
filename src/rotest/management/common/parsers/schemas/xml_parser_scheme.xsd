@@ -303,6 +303,20 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="SetupFinished">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="StartTeardown">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="AbstractTestEventMessage"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="ShouldSkip">
         <xs:complexType>
             <xs:complexContent>

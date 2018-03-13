@@ -154,6 +154,7 @@ class TestCase(AbstractTest):
             * Executes the original tearDown method.
             * Releases the test resources.
             """
+            self.result.startTeardown(self)
             try:
                 teardown_method(*args, **kwargs)
 

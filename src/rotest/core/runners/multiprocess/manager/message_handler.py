@@ -13,6 +13,8 @@ from rotest.management.common.messages import (StopTest,
                                                AddResult,
                                                ShouldSkip,
                                                RunFinished,
+                                               SetupFinished,
+                                               StartTeardown,
                                                StopComposite,
                                                StartComposite,
                                                CloneResources,
@@ -57,6 +59,8 @@ class RunnerMessageHandler(object):
             StopTest: self._handle_stop_message,
             StartTest: self._handle_start_message,
             ShouldSkip: self._handle_should_skip_message,
+            SetupFinished: self._handle_setup_finished_message,
+            StartTeardown: self._handle_start_teardown_message,
             StopComposite: self._handle_composite_stop_message,
             StartComposite: self._handle_composite_start_message,
             CloneResources: self._handle_update_resources_message}
@@ -176,6 +180,24 @@ class RunnerMessageHandler(object):
             self.runner.update_worker(worker_pid=message.msg_id, test=test)
             self.runner.update_timeout(worker_pid=message.msg_id,
                                        timeout=test.TIMEOUT)
+
+    def _handle_setup_finished_message(self, test, message):
+        """Handle SetupFinished of a worker.
+
+        Args:
+            test (object): test item to update.
+            message (StartTest): worker message object.
+        """
+        self.result.setupFinished(test)
+
+    def _handle_start_teardown_message(self, test, message):
+        """Handle StartTeardown of a worker.
+
+        Args:
+            test (object): test item to update.
+            message (StartTest): worker message object.
+        """
+        self.result.startTeardown(test)
 
     def _handle_end_message(self, test, message):
         """Handle AddResult of a worker.

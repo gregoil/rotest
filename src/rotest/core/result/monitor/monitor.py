@@ -136,8 +136,8 @@ class AbstractMonitor(AbstractResultHandler):
             self._failed = False
             MonitorServer.register_monitor(self, test)
 
-    def stop_test(self, test):
-        """Handle test stop event - unregister the monitor.
+    def start_teardown(self, test):
+        """Handle test teardown event - unregister the monitor.
 
         Args:
             test (object): test item instance.

@@ -85,6 +85,16 @@ class Result(TestResult):
         for result_handler in self.result_handlers:
             result_handler.setup_finished(test)
 
+    def startTeardown(self, test):
+        """Called when the given test is starting its teardown.
+
+        Args:
+            test (object): test item instance.
+        """
+        test.logger.info("Test %r finished setup", test.data)
+        for result_handler in self.result_handlers:
+            result_handler.start_teardown(test)
+
     def shouldSkip(self, test):
         """Check if the test should be skipped.
 

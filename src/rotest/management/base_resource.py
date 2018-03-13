@@ -19,10 +19,12 @@ class BaseResource(object):
     """Represent the common interface of all the resources.
 
     To implement a resource, you may override:
-    initialize, connect, finalize, reset, validate, create_sub_resources,
-    store_state. Also, assign a data container class by setting the
+    initialize, connect, finalize, validate, create_sub_resources, store_state.
+    Also, assign a data container class by setting the
     attribute 'DATA_CLASS', which should point to a subclass of
     :class:`rotest.management.models.resource_data.ResourceData`.
+    Resource without a data class (also called 'Services') will be handled
+    locally, without involving the server.
 
     Attributes:
         DATA_CLASS (class): class of the resource's global data container.
@@ -193,9 +195,6 @@ class BaseResource(object):
         initialization procedure (remember to call 'super' at the beginning).
         """
         self.logger.debug("Initializing resource %r", self.name)
-
-        for resource in self.get_sub_resources():
-            resource.initialize()
 
     def connect(self):
         """Setup a connection session to the resource.
