@@ -87,7 +87,7 @@ class ResourceIdRegistrationCase(BasicMultiprocessCase):
     def test_method(self):
         """Register the resource's ID to the shared queue."""
         self.register_id(id(self.res1))
-        time.sleep(1)  # Make sure the case won't be taken by the same worker
+        time.sleep(0.5)  # Make sure the case won't be taken by the same worker
 
 
 class TimeoutWithSubprocessCase(SubprocessCreationCase):
