@@ -22,6 +22,47 @@ Why Use Rotest?
 - Lots of useful features: multiprocess, filtering tests, variety of output
   handlers (and the ability to create custom ones), and much more.
 
+The Playground
+=================
+We appreciate support with the development of **rotest**.
+
+To help you get started we created a *playground* for you to experiment with
+rotest and test your own features. In order to get started you'll have to
+follow some simple steps you can find in our `documentation
+<http://readthedocs.org/projects/rotest/>`_.
+
+
+Let's try and run the most basic test in the playground, *test_book*.
+run the following command
+
+.. code-block:: bash
+
+    python playground/book/test_book.py
+
+.. code-block:: console
+
+    $ python playground/book/test_book.py
+    AnonymousSuite
+      BookCase.test_clockwork_orange ... OK
+      BookCase.test_display_for_library ... OK
+      BookCase.test_the_bible ... SKIP
+      Game of Thrones is not a holy book.
+
+    ======================================================================
+    SKIPPED: BookCase.test_the_bible
+    ----------------------------------------------------------------------
+    Game of Thrones is not a holy book.
+    Ran 3 tests in 0.189s
+
+    OK (skipped=1)
+
+You can even try a more verbose version of the same test, for easier debugging.
+
+.. code-block:: bash
+
+    python playground/book/test_book.py -o logdebug
+
+
 Examples
 ========
 For a complete step-by-step explanation about the framework, you can read
