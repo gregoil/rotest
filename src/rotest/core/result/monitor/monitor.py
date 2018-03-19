@@ -120,14 +120,16 @@ class AbstractMonitor(AbstractResultHandler):
             test.logger.exception("Got an error while running monitor %r",
                                   self.NAME)
 
-    def start_test(self, test):
+    def setup_finished(self, test):
         """Handle test start event - register the monitor.
 
         Args:
             test (object): test item instance.
         """
         # Don't register a thread if the monitor doesn't override 'run_monitor'
-        if self.run_monitor.im_func is AbstractMonitor.run_monitor.im_func:
+        if self.run_monitor.im_func is AbstractMonitor.run_monitor.im_func or \
+                self.CYCLE is NotImplemented:
+
             return
 
         if isinstance(test, TestCase) or \
