@@ -72,7 +72,7 @@ class GotResourceMonitor(AbstractResourceMonitor):
 class NoResourceMonitor(AbstractResourceMonitor):
     """Resource monitor that expected a non-existing resource."""
     CYCLE = 0.2
-    RESOURCE_NAME = 'no_resource'
+    RESOURCE_NAME = 'non_existing_resource'
 
     def run_monitor(self, test):
         COMMON_LIST.append(threading.current_thread())
@@ -91,7 +91,7 @@ class TempLongSuccessCase(MockCase):
         time.sleep(self.WAIT_TIME)
 
 
-class AbstractTestMonitor(BasicRotestUnitTest):
+class AbstractMonitorTest(BasicRotestUnitTest):
     """Abstract class for testing monitors."""
     __test__ = False
 
@@ -99,9 +99,8 @@ class AbstractTestMonitor(BasicRotestUnitTest):
 
     def setUp(self):
         """Clear global COMMON_LIST."""
-        super(AbstractTestMonitor, self).setUp()
-        while COMMON_LIST:
-            COMMON_LIST.pop()
+        super(AbstractMonitorTest, self).setUp()
+        del COMMON_LIST[:]
 
     def _run_case(self, test_case):
         """Run given case and return it.
@@ -120,13 +119,12 @@ class AbstractTestMonitor(BasicRotestUnitTest):
         return next(iter(test_suite))
 
 
-class TestShortCycle(AbstractTestMonitor):
+class TestShortCycle(AbstractMonitorTest):
     """Test that monitor with a short cycle is called many times."""
     __test__ = True
     RESULT_OUTPUTS = [SuccessShortMonitor]
 
     def test_method(self):
-        """."""
         self._run_case(TempLongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
@@ -148,13 +146,12 @@ class TestShortCycle(AbstractTestMonitor):
                          "Monitor thread is still alive after the test")
 
 
-class TestLongCycle(AbstractTestMonitor):
+class TestLongCycle(AbstractMonitorTest):
     """Test that monitor with a too long cycle is called only one time."""
     __test__ = True
     RESULT_OUTPUTS = [SuccessLongMonitor]
 
     def test_method(self):
-        """."""
         self._run_case(TempLongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
@@ -175,13 +172,12 @@ class TestLongCycle(AbstractTestMonitor):
                          "Monitor thread is still alive after the test")
 
 
-class TestNoCycle(AbstractTestMonitor):
+class TestNoCycle(AbstractMonitorTest):
     """Test that monitor with no cycle defined is not called."""
     __test__ = True
     RESULT_OUTPUTS = [SuccessNonMonitor]
 
     def test_method(self):
-        """."""
         self._run_case(TempLongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
@@ -198,13 +194,12 @@ class TestNoCycle(AbstractTestMonitor):
                          (0, cycle_nums))
 
 
-class TestSingleFailure(AbstractTestMonitor):
+class TestSingleFailure(AbstractMonitorTest):
     """Test that monitor that allows a single failure only fails once."""
     __test__ = True
     RESULT_OUTPUTS = [FailingOnceShortMonitor]
 
     def test_method(self):
-        """."""
         self._run_case(TempLongSuccessCase)
 
         self.assertFalse(self.result.wasSuccessful(),
@@ -221,13 +216,12 @@ class TestSingleFailure(AbstractTestMonitor):
                          "Monitor thread is still alive after the test")
 
 
-class TestMultipleFailure(AbstractTestMonitor):
+class TestMultipleFailure(AbstractMonitorTest):
     """Test that monitor that allows many single failure fails many times."""
     __test__ = True
     RESULT_OUTPUTS = [FailingMuchShortMonitor]
 
     def test_method(self):
-        """."""
         self._run_case(TempLongSuccessCase)
 
         self.assertFalse(self.result.wasSuccessful(),
@@ -244,13 +238,12 @@ class TestMultipleFailure(AbstractTestMonitor):
                          "Monitor thread is still alive after the test")
 
 
-class TestGotResourceMonitor(AbstractTestMonitor):
+class TestGotResourceMonitor(AbstractMonitorTest):
     """Test that resource monitor runs when it gets its resource."""
     __test__ = True
     RESULT_OUTPUTS = [GotResourceMonitor]
 
     def test_method(self):
-        """."""
         self._run_case(TempLongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
@@ -263,7 +256,7 @@ class TestGotResourceMonitor(AbstractTestMonitor):
                            (1, cycle_nums))
 
 
-class TestNoResourceMonitor(AbstractTestMonitor):
+class TestNoResourceMonitor(AbstractMonitorTest):
     """Test that resource monitor doesn't runs when there's no resource."""
     __test__ = True
     RESULT_OUTPUTS = [NoResourceMonitor]
