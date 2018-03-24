@@ -34,7 +34,6 @@ requirements = [
     'psutil',
     'colorama',
     'termcolor',
-    'xmltodict',
     'jsonschema',
     'basicstruct'
 ]
