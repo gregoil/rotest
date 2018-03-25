@@ -1,12 +1,8 @@
 """Test Rotest's Monitor class behavior."""
 import time
-import unittest
 import threading
 
-import django
-
 from rotest.core.case import request
-from rotest.common.colored_test_runner import colored_main
 from rotest.management.models.ut_models import DemoResource
 from rotest.core.result.monitor import AbstractMonitor, AbstractResourceMonitor
 
