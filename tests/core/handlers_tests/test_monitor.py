@@ -78,7 +78,7 @@ class NoResourceMonitor(AbstractResourceMonitor):
         COMMON_LIST.append(threading.current_thread())
 
 
-class TempLongSuccessCase(MockCase):
+class LongSuccessCase(MockCase):
     """Test that waits a while and then passes."""
     __test__ = False
 
@@ -125,7 +125,7 @@ class TestShortCycle(AbstractMonitorTest):
     RESULT_OUTPUTS = [SuccessShortMonitor]
 
     def test_method(self):
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -152,7 +152,7 @@ class TestLongCycle(AbstractMonitorTest):
     RESULT_OUTPUTS = [SuccessLongMonitor]
 
     def test_method(self):
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -178,7 +178,7 @@ class TestNoCycle(AbstractMonitorTest):
     RESULT_OUTPUTS = [SuccessNonMonitor]
 
     def test_method(self):
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -200,7 +200,7 @@ class TestSingleFailure(AbstractMonitorTest):
     RESULT_OUTPUTS = [FailingOnceShortMonitor]
 
     def test_method(self):
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertFalse(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -222,7 +222,7 @@ class TestMultipleFailure(AbstractMonitorTest):
     RESULT_OUTPUTS = [FailingMuchShortMonitor]
 
     def test_method(self):
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertFalse(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -244,7 +244,7 @@ class TestGotResourceMonitor(AbstractMonitorTest):
     RESULT_OUTPUTS = [GotResourceMonitor]
 
     def test_method(self):
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -263,7 +263,7 @@ class TestNoResourceMonitor(AbstractMonitorTest):
 
     def test_method(self):
         """."""
-        self._run_case(TempLongSuccessCase)
+        self._run_case(LongSuccessCase)
 
         self.assertTrue(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -272,24 +272,3 @@ class TestNoResourceMonitor(AbstractMonitorTest):
         self.assertEqual(cycle_nums, 0,
                          "Unexpected number of cycles, expected %d got %d" %
                          (0, cycle_nums))
-
-
-class TestMonitorSuite(unittest.TestSuite):
-    """A test suite for monitor's tests."""
-    TESTS = [TestShortCycle,
-             TestLongCycle,
-             TestNoCycle,
-             TestSingleFailure,
-             TestMultipleFailure,
-             TestGotResourceMonitor,
-             TestNoResourceMonitor]
-
-    def __init__(self):
-        """Construct the class."""
-        super(TestMonitorSuite, self).__init__(
-                            unittest.makeSuite(test) for test in self.TESTS)
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestMonitorSuite')
