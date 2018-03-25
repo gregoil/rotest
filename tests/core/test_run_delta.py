@@ -21,7 +21,7 @@ class TestRunDelta(BasicRotestUnitTest):
 
     fixtures = ['case_ut.json']
 
-    RESULT_OUTPUTS = [DBHandler.NAME]
+    RESULT_OUTPUTS = [DBHandler]
 
     def setUp(self):
         """Create a run data the enabled running in delta mode."""

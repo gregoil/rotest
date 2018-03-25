@@ -67,7 +67,11 @@ class BasicRotestUnitTest(TransactionTestCase):
         Returns:
             Result. a new initiated result object.
         """
-        result = Result(outputs=cls.RESULT_OUTPUTS, main_test=main_test)
+        result = Result(outputs=[], main_test=main_test)
+        for handler_class in cls.RESULT_OUTPUTS:
+            result.result_handlers.append(handler_class(
+                    main_test=result.main_test))
+
         result.startTestRun()
         return result
 
