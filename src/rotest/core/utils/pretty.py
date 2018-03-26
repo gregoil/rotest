@@ -8,12 +8,17 @@ from abc import ABCMeta, abstractmethod
 import enum
 from termcolor import colored
 
+from rotest.core.case import TestCase
+from rotest.core.flow import TestFlow
+from rotest.core.suite import TestSuite
+from rotest.core.block import TestBlock
+
 
 class TitleConfiguration(object):
     """Interface for specifying the colors that will be printed in a test.
 
     Attributes:
-        result (Result): result of the test.
+        result (TestResult): result of the test.
     """
     __metaclass__ = ABCMeta
 
@@ -100,44 +105,44 @@ class NonComplexTitleConfiguration(TitleConfiguration):
 
     def decoration_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "white",
-            Result.success: "green",
-            Result.started: "white",
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "white",
+            TestResult.success: "green",
+            TestResult.started: "white",
         }
 
         return colors[self.result]
 
     def test_type_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "white",
-            Result.success: "green",
-            Result.started: "white",
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "white",
+            TestResult.success: "green",
+            TestResult.started: "white",
         }
 
         return colors[self.result]
 
     def test_result_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "white",
-            Result.success: "green",
-            Result.started: "white",
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "white",
+            TestResult.success: "green",
+            TestResult.started: "white",
         }
 
         return colors[self.result]
 
     def test_name_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "yellow",
-            Result.success: "green",
-            Result.started: "cyan"
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "yellow",
+            TestResult.success: "green",
+            TestResult.started: "cyan"
         }
         return colors[self.result]
 
@@ -151,49 +156,49 @@ class ComplexTitleConfiguration(TitleConfiguration):
 
     def decoration_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "white",
-            Result.success: "green",
-            Result.started: "white",
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "white",
+            TestResult.success: "green",
+            TestResult.started: "white",
         }
 
         return colors[self.result]
 
     def test_result_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "white",
-            Result.success: "green",
-            Result.started: "white",
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "white",
+            TestResult.success: "green",
+            TestResult.started: "white",
         }
 
         return colors[self.result]
 
     def test_type_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "white",
-            Result.success: "green",
-            Result.started: "white",
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "white",
+            TestResult.success: "green",
+            TestResult.started: "white",
         }
 
         return colors[self.result]
 
     def test_name_color(self):
         colors = {
-            Result.failure: "red",
-            Result.error: "red",
-            Result.skip: "yellow",
-            Result.success: "green",
-            Result.started: "blue"
+            TestResult.failure: "red",
+            TestResult.error: "red",
+            TestResult.skip: "yellow",
+            TestResult.success: "green",
+            TestResult.started: "blue"
         }
         return colors[self.result]
 
 
-class Result(enum.Enum):
+class TestResult(enum.Enum):
     success = "success"
     skip = "skip"
     error = "error"
@@ -209,41 +214,121 @@ class Result(enum.Enum):
         return str(self) == other
 
 
-def wrap_title(test, result):
-    test_name = test.__class__.__name__
-    test_type = "What?"  # TODO: Implement this
+class Pretty(object):
+    """Title with decoration.
 
-    result = str(result)
+    Attributes:
+        test (AbstractTest): encapsulated test to generate it's title.
+        result (TestResult): result that the tests ended with (or didn't end).
+        configuration (TitleConfiguration): title's configuration of colors.
+    """
+    def __init__(self, test, result):
+        self.test = test
+        self.result = result
+        self.configuration = TitleConfiguration.from_test(test, result)
 
-    no_decoration_template = " {test_type}: {test_name} ({result}) "
-    text_len_without_colors = len(no_decoration_template.format(**locals()))
-    columns = get_columns()
-    abs_len = (columns - text_len_without_colors)
-    decoration_left_length = abs_len / 2
-    decoration_right_length = int(math.ceil(float(abs_len) / 2))
+    def __str__(self):
+        line = ("{multi_line_decoration}"
+                "{decoration_left}"
+                " {test_type}: {test_name} ({result}) "
+                "{decoration_right}"
+                "{multi_line_decoration}")
 
-    title_configuration = TitleConfiguration.from_test(test, result)
-    decoration_char = title_configuration.decoration_character()
-    decoration_color = title_configuration.decoration_color()
-    test_type_color = title_configuration.test_type_color()
-    test_name_color = title_configuration.test_name_color()
-    result_color = title_configuration.test_result_color()
+        return line.format(
+            multi_line_decoration=self.multi_line_decoration(),
+            decoration_left=self.left_decoration(),
+            test_type=self.test_type(),
+            test_name=self.test_name(),
+            result=self.test_result(),
+            decoration_right=self.right_decoration()
+        )
 
-    final_text = "{decore}\n{decoration_left} {test_type}: " \
-                 "{test_name} ({result}) {decoration_right}{decore}"
-    formatted = final_text.format(
-        decoration_left=colored(decoration_char * decoration_left_length,
-                                color=decoration_color),
-        decoration_right=colored(decoration_char * decoration_right_length,
-                                 color=decoration_color),
-        test_type=colored(test_type, color=test_type_color, attrs=["bold"]),
-        test_name=colored(test_name, color=test_name_color),
-        result=colored(result.capitalize(), color=result_color),
-        decore=colored("\n" + (decoration_char * columns),
-                       decoration_color) if test.IS_COMPLEX else ""
-    )
+    def left_decoration(self):
+        decoration_color = self.configuration.decoration_color()
+        decoration_char = self.configuration.decoration_character()
+        left_decoration_length = self._whole_decoration_line_width() / 2
 
-    return formatted
+        return colored(left_decoration_length * decoration_char,
+                       decoration_color)
+
+    def right_decoration(self):
+        decoration_color = self.configuration.decoration_color()
+        decoration_char = self.configuration.decoration_character()
+        right_decoration_length = int(
+            math.ceil(float(self._whole_decoration_line_width()) / 2))
+
+        return colored(right_decoration_length * decoration_char,
+                       decoration_color)
+
+    def multi_line_decoration(self):
+        if self.configuration.has_multi_line_decoration():
+            decoration_char = self.configuration.decoration_character()
+            decoration_color = self.configuration.decoration_color()
+            line_width = get_columns()
+            return colored(os.linesep +
+                           (decoration_char * line_width) +
+                           os.linesep,
+                           decoration_color)
+
+        else:
+            return os.linesep
+
+    def test_result(self):
+        result_text = self._test_result_uncolored()
+        result_color = self.configuration.test_result_color()
+        return colored(result_text, color=result_color)
+
+    def test_name(self):
+        name = self._test_name_uncolored()
+        color = self.configuration.test_name_color()
+        return colored(name, color=color)
+
+    def test_type(self):
+        test_type = self._test_type_uncolored()
+        color = self.configuration.test_type_color()
+        return colored(test_type, color=color, attrs=["bold"])
+
+    def _test_type_uncolored(self):
+        if isinstance(self.test, TestBlock):
+            return "Block"
+
+        if isinstance(self.test, TestFlow):
+            return "Flow"
+
+        if isinstance(self.test, TestCase):
+            return "Case"
+
+        if isinstance(self.test, TestSuite):
+            return "Suite"
+
+        raise TypeError("Can't pretty print test %r, "
+                        "unsupported type" % self.test)
+
+    def _test_name_uncolored(self):
+        return self.test.__class__.__name__
+
+    def _test_result_uncolored(self):
+        return str(self.result).capitalize()
+
+    def _whole_decoration_line_width(self):
+        """Return the width of the whole decoration line.
+            That means the left and right decoration combined.
+            To be used for calculating the left and right decorations.
+
+            Note:
+                There is a need to calculate left and right decoration
+                differently because it is desired to fill the entire screen
+                even if the screen width is uneven.
+        """
+        no_decoration_template = " {test_type}: {test_name} ({result}) "
+        text_without_colors = no_decoration_template.format(
+            test_type=self._test_type_uncolored(),
+            test_name=self._test_name_uncolored(),
+            result=self._test_result_uncolored()
+        )
+
+        console_width = get_columns()
+        return console_width - len(text_without_colors)
 
 
 def get_columns():
