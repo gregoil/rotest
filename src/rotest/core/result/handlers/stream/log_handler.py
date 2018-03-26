@@ -2,7 +2,7 @@
 import logging
 
 from rotest.common import core_log
-from rotest.core.utils.pretty import wrap_title
+from rotest.core.utils.pretty import wrap_title, Result
 from stream_handler import EventStreamHandler
 from rotest.common.log import ColoredFormatter
 
@@ -53,7 +53,7 @@ class PrettyHandler(LogStreamHandler):
     LEVEL = logging.DEBUG
 
     def start_test(self, test):
-        self.stream.writeln(wrap_title(test, 'default'))
+        self.stream.writeln(wrap_title(test, Result.started))
 
     def stop_test(self, test):
         pass
@@ -62,13 +62,13 @@ class PrettyHandler(LogStreamHandler):
         pass
 
     def add_success(self, test):
-        self.stream.writeln(wrap_title(test, 'success'))
+        self.stream.writeln(wrap_title(test, Result.success))
 
     def add_skip(self, test, reason):
-        self.stream.writeln(wrap_title(test, 'skip'))
+        self.stream.writeln(wrap_title(test, Result.skip))
 
     def add_error(self, test, exception_str):
-        self.stream.writeln(wrap_title(test, 'error'))
+        self.stream.writeln(wrap_title(test, Result.error))
 
     def add_failure(self, test, exception_str):
-        self.stream.writeln(wrap_title(test, 'fail'))
+        self.stream.writeln(wrap_title(test, Result.failure))

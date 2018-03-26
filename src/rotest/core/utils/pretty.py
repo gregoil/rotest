@@ -10,6 +10,21 @@ from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.block import TestBlock
 
+import enum
+
+
+class Result(enum.Enum):
+    success = "success"
+    skip = "skip"
+    error = "error"
+    failure = "fail"
+    started = "started"
+    block_started = "block-started"
+    flow_started = "flow-started"
+
+    def __str__(self):
+        return str(self.value)
+
 
 def wrap_title(test, result):
     columns = get_columns()
@@ -18,53 +33,55 @@ def wrap_title(test, result):
     if isinstance(test, TestBlock):
         test_type = "Block"
         title_char = "-"
-        if result == "default":
-            result = "block-default"
+        if result == Result.started:
+            result = Result.block_started
 
     elif isinstance(test, TestFlow):
         test_type = "Flow"
         title_char = "="
-        if result == "default":
-            result = "flow-default"
+        if result == Result.started:
+            result = Result.flow_started
 
     elif isinstance(test, TestCase):
         test_type = "Case"
         title_char = "-"
-        if result == "default":
-            result = "block-default"
+        if result == Result.started:
+            result = Result.block_started
 
     elif isinstance(test, TestSuite):
         test_type = "Suite"
         title_char = "="
-        if result == "default":
-            result = "flow-default"
+        if result == Result.started:
+            result = Result.flow_started
 
     else:
         raise TypeError("Unsupported type for pretty-logging: %r" % test_class)
 
     result_to_type_color = {
-        "fail": "red",
-        "error": "red",
-        "skip": "white",
-        "success": "green",
-        "block-default": "white",
-        "flow-default": "white"
+        Result.failure: "red",
+        Result.error: "red",
+        Result.skip: "white",
+        Result.success: "green",
+        Result.block_started: "white",
+        Result.flow_started: "white"
     }
 
     result_to_name_color = {
-        "fail": "red",
-        "error": "red",
-        "skip": "yellow",
-        "success": "green",
-        "block-default": "cyan",
-        "flow-default": "blue"
+        Result.failure: "red",
+        Result.error: "red",
+        Result.skip: "yellow",
+        Result.success: "green",
+        Result.block_started: "cyan",
+        Result.flow_started: "blue"
     }
 
     name_color = result_to_name_color[result]
     type_color = result_to_type_color[result]
 
-    if result in ("block-default", "flow-default"):
-        result = "started"
+    if result in (Result.block_started, Result.flow_started):
+        result = Result.started
+
+    result = str(result)
 
     text_len_without_colors = (len(test_type) + 2 + len(test_class) +
                                len(result) + 2 + 3)
