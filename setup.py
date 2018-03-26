@@ -15,6 +15,8 @@ result_handlers = [
     "artifact = rotest.core.result.handlers.artifact_handler:ArtifactHandler",
     "logdebug = "
     "rotest.core.result.handlers.stream.log_handler:LogDebugHandler",
+    "pretty = "
+    "rotest.core.result.handlers.stream.log_handler:PrettyHandler",
     "signature = "
     "rotest.core.result.handlers.signature_handler:SignatureHandler",
     "full = "

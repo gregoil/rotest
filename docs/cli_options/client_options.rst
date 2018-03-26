@@ -32,7 +32,7 @@ First, and most important, using the help options :option:`-h` or
       -o OUTPUTS, --outputs=OUTPUTS
                             Output handlers separated by comma. Options: dots,
                             xml, full, remote, tree, excel, db, artifact,
-                            signature, loginfo, logdebug
+                            signature, loginfo, logdebug, pretty
       -f FILTER, --filter=FILTER
                             Run only tests that match the filter expression, e.g
                             "Tag1* and not Tag13"

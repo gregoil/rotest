@@ -106,6 +106,7 @@ Logs
 ====
 
 To see the logs while running the tests, use ``logdebug`` or ``loginfo``.
+Additionally, you can use ``pretty`` for an easier to read logging system.
 As expected, ``logdebug`` will print every log record with level which is
 higher or equal to ``DEBUG`` (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``,
 ``CRITICAL``), whereas ``loginfo`` will print every log record with level which
