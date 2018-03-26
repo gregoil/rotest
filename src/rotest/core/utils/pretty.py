@@ -1,16 +1,196 @@
 """Utils module for pretty-printing the logs."""
 import os
 import sys
+import math
 import struct
-
-from termcolor import colored
-
-from rotest.core.suite import TestSuite
-from rotest.core.case import TestCase
-from rotest.core.flow import TestFlow
-from rotest.core.block import TestBlock
+from abc import ABCMeta, abstractmethod
 
 import enum
+from termcolor import colored
+
+
+class TitleConfiguration(object):
+    """Interface for specifying the colors that will be printed in a test.
+
+    Attributes:
+        result (Result): result of the test.
+    """
+    __metaclass__ = ABCMeta
+
+    def __init__(self, result):
+        self.result = result
+
+    @abstractmethod
+    def decoration_character(self):
+        """Define the character that will be used to decorate the test.
+
+        Returns:
+            str. character to be printed in the log.
+        """
+        pass
+
+    @abstractmethod
+    def decoration_color(self):
+        """Define the color of the decoration.
+
+        Returns:
+            str. name of the color to color the decoration.
+        """
+        pass
+
+    @abstractmethod
+    def test_type_color(self):
+        """Define the color of the test type.
+
+        Returns:
+            str. name of the color to color the test type("Block"/"Flow")
+        """
+        pass
+
+    @abstractmethod
+    def test_name_color(self):
+        """Define the color of the test's name.
+
+        Returns:
+            str. name of the color to color the test name.
+        """
+        pass
+
+    @abstractmethod
+    def has_multi_line_decoration(self):
+        """Determine whether or not this test has a multi-line decoration.
+
+        Returns:
+            bool. True if this tests has multiple lines of decoration.
+        """
+        pass
+
+    @abstractmethod
+    def test_result_color(self):
+        """Define the color of the test's result.
+
+        Returns:
+            str. name of the color to color the test name.
+        """
+        pass
+
+    @staticmethod
+    def from_test(test, result):
+        """Return a configuration matching the test supplied.
+
+        Returns:
+            TestConfiguration. configuration that matches a given test.
+
+        Raises:
+            TypeError: If given any test that is not an AbstractTest.
+        """
+        if test.IS_COMPLEX:
+            return ComplexTitleConfiguration(result)
+
+        else:
+            return NonComplexTitleConfiguration(result)
+
+
+class NonComplexTitleConfiguration(TitleConfiguration):
+    def has_multi_line_decoration(self):
+        return False
+
+    def decoration_character(self):
+        return "-"
+
+    def decoration_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "white",
+            Result.success: "green",
+            Result.started: "white",
+        }
+
+        return colors[self.result]
+
+    def test_type_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "white",
+            Result.success: "green",
+            Result.started: "white",
+        }
+
+        return colors[self.result]
+
+    def test_result_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "white",
+            Result.success: "green",
+            Result.started: "white",
+        }
+
+        return colors[self.result]
+
+    def test_name_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "yellow",
+            Result.success: "green",
+            Result.started: "cyan"
+        }
+        return colors[self.result]
+
+
+class ComplexTitleConfiguration(TitleConfiguration):
+    def has_multi_line_decoration(self):
+        return True
+
+    def decoration_character(self):
+        return "="
+
+    def decoration_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "white",
+            Result.success: "green",
+            Result.started: "white",
+        }
+
+        return colors[self.result]
+
+    def test_result_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "white",
+            Result.success: "green",
+            Result.started: "white",
+        }
+
+        return colors[self.result]
+
+    def test_type_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "white",
+            Result.success: "green",
+            Result.started: "white",
+        }
+
+        return colors[self.result]
+
+    def test_name_color(self):
+        colors = {
+            Result.failure: "red",
+            Result.error: "red",
+            Result.skip: "yellow",
+            Result.success: "green",
+            Result.started: "blue"
+        }
+        return colors[self.result]
 
 
 class Result(enum.Enum):
@@ -25,79 +205,42 @@ class Result(enum.Enum):
     def __str__(self):
         return str(self.value)
 
+    def __eq__(self, other):
+        return str(self) == other
+
 
 def wrap_title(test, result):
-    columns = get_columns()
-
-    test_class = test.__class__.__name__
-    if isinstance(test, TestBlock):
-        test_type = "Block"
-        title_char = "-"
-        if result == Result.started:
-            result = Result.block_started
-
-    elif isinstance(test, TestFlow):
-        test_type = "Flow"
-        title_char = "="
-        if result == Result.started:
-            result = Result.flow_started
-
-    elif isinstance(test, TestCase):
-        test_type = "Case"
-        title_char = "-"
-        if result == Result.started:
-            result = Result.block_started
-
-    elif isinstance(test, TestSuite):
-        test_type = "Suite"
-        title_char = "="
-        if result == Result.started:
-            result = Result.flow_started
-
-    else:
-        raise TypeError("Unsupported type for pretty-logging: %r" % test_class)
-
-    result_to_type_color = {
-        Result.failure: "red",
-        Result.error: "red",
-        Result.skip: "white",
-        Result.success: "green",
-        Result.block_started: "white",
-        Result.flow_started: "white"
-    }
-
-    result_to_name_color = {
-        Result.failure: "red",
-        Result.error: "red",
-        Result.skip: "yellow",
-        Result.success: "green",
-        Result.block_started: "cyan",
-        Result.flow_started: "blue"
-    }
-
-    name_color = result_to_name_color[result]
-    type_color = result_to_type_color[result]
-
-    if result in (Result.block_started, Result.flow_started):
-        result = Result.started
+    test_name = test.__class__.__name__
+    test_type = "What?"  # TODO: Implement this
 
     result = str(result)
 
-    text_len_without_colors = (len(test_type) + 2 + len(test_class) +
-                               len(result) + 2 + 3)
+    no_decoration_template = " {test_type}: {test_name} ({result}) "
+    text_len_without_colors = len(no_decoration_template.format(**locals()))
+    columns = get_columns()
     abs_len = (columns - text_len_without_colors)
+    decoration_left_length = abs_len / 2
+    decoration_right_length = int(math.ceil(float(abs_len) / 2))
+
+    title_configuration = TitleConfiguration.from_test(test, result)
+    decoration_char = title_configuration.decoration_character()
+    decoration_color = title_configuration.decoration_color()
+    test_type_color = title_configuration.test_type_color()
+    test_name_color = title_configuration.test_name_color()
+    result_color = title_configuration.test_result_color()
+
     final_text = "{decore}\n{decoration_left} {test_type}: " \
                  "{test_name} ({result}) {decoration_right}{decore}"
     formatted = final_text.format(
-        decoration_left=colored(title_char * (abs_len / 2), color=type_color),
-        decoration_right=colored(title_char * ((abs_len if abs_len % 2 == 0
-                                                else abs_len + 1) / 2),
-                                 color=type_color),
-        test_type=colored(test_type, color=type_color, attrs=["bold"]),
-        test_name=colored(test_class, color=name_color),
-        result=colored(result.capitalize(), color=name_color),
-        decore=colored("\n" + (title_char * columns), type_color)
-        if test.IS_COMPLEX else ""
+        decoration_left=colored(decoration_char * decoration_left_length,
+                                color=decoration_color),
+        decoration_right=colored(decoration_char * decoration_right_length,
+                                 color=decoration_color),
+        test_type=colored(test_type, color=test_type_color, attrs=["bold"]),
+        test_name=colored(test_name, color=test_name_color),
+        result=colored(result.capitalize(), color=result_color),
+        decore=colored("\n" + (decoration_char * columns),
+                       decoration_color) if test.IS_COMPLEX else ""
     )
 
     return formatted
