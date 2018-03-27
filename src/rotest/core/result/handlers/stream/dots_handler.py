@@ -8,7 +8,7 @@ from rotest.core.flow_component import AbstractFlowComponent
 from rotest.common.constants import GREEN, YELLOW, RED, BOLD, CYAN, BLUE
 
 
-def check_main_decorator(func):
+def ignore_subtests(func):
     """Only call the handler method on test cases and top test flows.
 
     Args:
@@ -18,11 +18,11 @@ def check_main_decorator(func):
         function. wrapped method that only runs on main tests.
     """
     @wraps(func)
-    def check_main(self, test, *args, **kwargs):
+    def ignore_subtests_wrapper(self, test, *args, **kwargs):
         if not isinstance(test, AbstractFlowComponent) or test.is_main:
             return func(self, test, *args, **kwargs)
 
-    return check_main
+    return ignore_subtests_wrapper
 
 
 class DotsHandler(BaseStreamHandler):
@@ -33,7 +33,7 @@ class DotsHandler(BaseStreamHandler):
     """
     NAME = 'dots'
 
-    @check_main_decorator
+    @ignore_subtests
     def add_success(self, test):
         """Write the test success to the stream.
 
@@ -42,7 +42,7 @@ class DotsHandler(BaseStreamHandler):
         """
         self.stream.write('.', GREEN)
 
-    @check_main_decorator
+    @ignore_subtests
     def add_skip(self, test, reason):
         """Write the test skip to the stream.
 
@@ -52,7 +52,7 @@ class DotsHandler(BaseStreamHandler):
         """
         self.stream.write('s', YELLOW)
 
-    @check_main_decorator
+    @ignore_subtests
     def add_failure(self, test, exception_str):
         """Write the failure to the stream.
 
@@ -62,7 +62,7 @@ class DotsHandler(BaseStreamHandler):
         """
         self.stream.write('F', RED)
 
-    @check_main_decorator
+    @ignore_subtests
     def add_error(self, test, exception_str):
         """Write the failure to the stream.
 
@@ -72,7 +72,7 @@ class DotsHandler(BaseStreamHandler):
         """
         self.stream.write('E', RED, BOLD)
 
-    @check_main_decorator
+    @ignore_subtests
     def add_expected_failure(self, test, exception_str):
         """Write the expected failure to the stream.
 
@@ -82,7 +82,7 @@ class DotsHandler(BaseStreamHandler):
         """
         self.stream.write('x', CYAN)
 
-    @check_main_decorator
+    @ignore_subtests
     def add_unexpected_success(self, test):
         """Write the test unexpected success to the stream.
 
