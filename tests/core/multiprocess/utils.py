@@ -81,13 +81,22 @@ class SubprocessCreationCase(BasicMultiprocessCase):
 
 
 class ResourceIdRegistrationCase(BasicMultiprocessCase):
-    """Saves the ID of the locked resource to a queue."""
+    """Saves the ID of the locked resource to a queue and waits for others.
+
+    Attributes:
+        wait_for_others (number): to how many resource registrations
+            (other than of this case) the case would wait before finishing.
+    """
     resources = (request('res1', DemoResource, ip_address=IP_ADDRESS1),)
+
+    wait_for_others = 0
+    WAIT_AFTER_CHECK = 0.2
 
     def test_method(self):
         """Register the resource's ID to the shared queue."""
         self.register_id(id(self.res1))
-        time.sleep(0.5)  # Make sure the case won't be taken by the same worker
+        while self.pid_queue.qsize() < self.wait_for_others + 1:
+            time.sleep(self.WAIT_AFTER_CHECK)
 
 
 class TimeoutWithSubprocessCase(SubprocessCreationCase):
