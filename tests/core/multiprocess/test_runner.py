@@ -10,7 +10,6 @@ from multiprocessing import Queue, Event
 
 import django
 import psutil
-import pytest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
