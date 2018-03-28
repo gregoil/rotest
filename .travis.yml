@@ -9,7 +9,7 @@ deploy:
   file: "$ROTEST_WORK_DIR/core_logger/core_logger.log"
   skip_cleanup: true
   on:
-    tags: true
+    tags: false
 deploy:
   provider: pypi
   on:
