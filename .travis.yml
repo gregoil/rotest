@@ -4,6 +4,13 @@ python:
 install: pip install tox
 script: tox
 deploy:
+  provider: releases
+  api_key: f7a34174ca59fd6d20ef3d99b9224f057c25d0a8
+  file: "$ROTEST_WORK_DIR/core_logger/core_logger.log"
+  skip_cleanup: true
+  on:
+    tags: true
+deploy:
   provider: pypi
   on:
     tags: true
@@ -11,7 +18,3 @@ deploy:
   user: gregoil
   password:
     secure: FPeYFjy+BLKF8ntnmEv9uUEci1FwIvtllfzKcYc54rQ9bTB9DLBS870qMYdnHzxWr6jm/YeOZ1azo0ITPP5Va0IJGRan0RXh0c2g4sw6NhsX4x9uxmjHodo61nD9SnkNiVi44HpLtOsRbrEFSJgZa9dDSwvUppuQKRD7Aje0ECJqauQHOov55Rdka6F/W9FjHaAgkTXWucKqPursxzO7AUFApinlqpWLPx62Yinv8JjONz0o1eTpl37qjafdT2pJKPYzteLoXjCnMME10GY5jJdBmoAs/tBnBl2WcjLs9kHvjR/IK89feXpOzzpp2cW18JURtXOhHyO0+ySHiu0H/6jEn1AT/voTVUpgRJQF5AyDf8nJlkUTbKMgdpwvR4gVKkxZekLR+iudTB1ADmkg5q0AUBetcQz6ypgJ9KW9wwl+vcAruGVIghtRF8WXzIyKZEJl0h43MG064Bvxr+Iy2LX8u8iqraEGOW4zaLhJxKTkZI+ZFOAS2pec62u61kd0OMkhl30nSS+7y1wYflwAlu06XaaCalv0wBZkUf2H6Bwn1Hapf1zdjhWy9YwhrNot6NqAw/w9DoEDYD/3XAHqnp+sAIgr9K34owCmijX4nKIKry8RgX0xhnA9m4SYn+VEsrI7fGWeXBKA/1S+6LnYQLWgs2a4bv3pH/MG6pFOUzc=
-addons:
-  artifacts:
-    paths:
-    - $ROTEST_WORK_DIR/core_logger/core_logger.log
