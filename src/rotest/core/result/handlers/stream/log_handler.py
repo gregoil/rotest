@@ -49,17 +49,12 @@ class LogDebugHandler(LogStreamHandler):
 
 
 class PrettyHandler(LogStreamHandler):
+    """Pretty log to screen handler."""
     NAME = 'pretty'
     LEVEL = logging.DEBUG
 
     def start_test(self, test):
         self.stream.writeln(str(Pretty(test, TestResult.started)))
-
-    def stop_test(self, test):
-        pass
-
-    def stop_test_run(self):
-        pass
 
     def add_success(self, test):
         self.stream.writeln(str(Pretty(test, TestResult.success)))
@@ -72,3 +67,9 @@ class PrettyHandler(LogStreamHandler):
 
     def add_failure(self, test, exception_str):
         self.stream.writeln(str(Pretty(test, TestResult.failure)))
+
+    def add_expected_failure(self, test, exception_str):
+        self.stream.writeln(str(Pretty(test, TestResult.expected_failure)))
+
+    def add_unexpected_success(self, test):
+        self.stream.writeln(str(Pretty(test, TestResult.unexpected_success)))
