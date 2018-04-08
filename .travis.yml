@@ -4,13 +4,6 @@ python:
 install: pip install tox
 script: tox
 deploy:
-  provider: releases
-  api_key: f7a34174ca59fd6d20ef3d99b9224f057c25d0a8
-  file: "$ROTEST_WORK_DIR/core_logger/core_logger.log"
-  skip_cleanup: true
-  on:
-    tags: false
-deploy:
   provider: pypi
   on:
     tags: true
