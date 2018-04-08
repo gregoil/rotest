@@ -108,9 +108,10 @@ class AbstractTest(unittest.TestCase):
                                                 field.__class__,
                                                 field.kwargs))
 
-                elif issubclass(field, BaseResource):
-                    all_requests.append(request(field_name,
-                                                field))
+                elif isinstance(field, type) and \
+                        issubclass(field, BaseResource):
+
+                    all_requests.append(request(field_name, field))
 
     def create_resource_manager(self):
         """Create a new resource manager client instance.
