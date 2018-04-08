@@ -36,8 +36,7 @@ class TempComplexRequestCase(SuccessCase):
     __test__ = False
 
     resources = (request('res1', DemoResource, name='available_resource1'),)
-    res2 = DemoResource(name='resource_with_no_group')
-    res3 = DemoResource
+    res2 = DemoResource(name='available_resource2')
 
 
 class TempDynamicResourceLockingCase(DynamicResourceLockingCase):
@@ -183,8 +182,7 @@ class TestTestCase(BasicRotestUnitTest):
         """Test a TestCase with all the ways to request resources.
 
         * Way 1 - overriding 'resources'.
-        * Way 2 - declaring fields with BaseResource subclass.
-        * Way 3 - declaring fields with BaseResource instance.
+        * Way 2 - declaring fields with BaseResource instance.
         """
         case = self._run_case(TempComplexRequestCase)
 
@@ -204,11 +202,11 @@ class TestTestCase(BasicRotestUnitTest):
             self.validate_resource(test_resource)
             locked_names.append(resource.name)
 
-        self.assertEqual(len(test_resources), 3,
+        self.assertEqual(len(test_resources), 2,
                          "Unexpected number of resources, expected %r got %r" %
-                         (3, len(test_resources)))
+                         (2, len(test_resources)))
 
-        for request_name in ['res1', 'res2', 'res3']:
+        for request_name in ['res1', 'res2']:
             self.assertTrue(request_name in test_resources,
                             "Test didn't request a resource for %s" %
                             request_name)
@@ -220,7 +218,7 @@ class TestTestCase(BasicRotestUnitTest):
         self.assertIn('available_resource1', locked_names,
                       "Resource request using 'resources' ignored kwargs")
 
-        self.assertIn('resource_with_no_group', locked_names,
+        self.assertIn('available_resource2', locked_names,
                       "Resource request using class field ignored kwargs")
 
     def test_dynamic_resources_locking(self):

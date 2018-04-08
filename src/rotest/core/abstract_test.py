@@ -94,7 +94,7 @@ class AbstractTest(unittest.TestCase):
 
         Resource requests can be done both by overriding the class's
         'resources' field and by declaring class fields that point to a
-        BaseResource class or instance.
+        BaseResource instance.
 
         Returns:
             list. resource requests of the test class.
@@ -107,11 +107,6 @@ class AbstractTest(unittest.TestCase):
                     all_requests.append(request(field_name,
                                                 field.__class__,
                                                 **field.kwargs))
-
-                elif isinstance(field, type) and \
-                        issubclass(field, BaseResource):
-
-                    all_requests.append(request(field_name, field))
 
         return all_requests
 
