@@ -230,7 +230,7 @@ class MockResourceClient(ClientResourceManager):
 
                 try:
                     available_resources = data_type.objects.filter(
-                                     is_usable=True, **descriptor.properties)
+                         owner='', is_usable=True, **descriptor.properties)
                     if len(available_resources) == 0:
                         raise ResourceDoesNotExistError()
 
@@ -242,6 +242,9 @@ class MockResourceClient(ClientResourceManager):
                 if resource.owner != '' or resource.reserved != '':
                     raise ResourceUnavailableError()
 
+                resource.data.owner = 'test'
+                resource.data.save()
+
             resources.append(resource)
 
         return resources
@@ -252,8 +255,10 @@ class MockResourceClient(ClientResourceManager):
             if resource in self.locked_resources:
                 self.locked_resources.remove(resource)
 
-        [resource.data.save() for resource in resources
-         if resource.DATA_CLASS is not None]
+        for resource in resources:
+            if resource.DATA_CLASS is not None:
+                resource.data.owner = ''
+                resource.data.save()
 
     def query_resources(self, descriptor):
         """Query the content of the server's DB.

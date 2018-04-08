@@ -36,7 +36,7 @@ class TempComplexRequestCase(SuccessCase):
     __test__ = False
 
     resources = (request('res1', DemoResource, name='available_resource1'),)
-    res2 = DemoResource(name='available_resource2')
+    res2 = DemoResource(name='resource_with_no_group')
     res3 = DemoResource
 
 
@@ -196,9 +196,9 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resources = case.all_resources
         locked_names = []
-        for resource in test_resources:
+        for resource in test_resources.values():
             self.assertTrue(isinstance(resource, DemoResource),
-                            "Got wrong resource for the request")
+                            "Got wrong resource %r for the request" % resource)
 
             test_resource = DemoResourceData.objects.get(name=resource.name)
             self.validate_resource(test_resource)
@@ -209,15 +209,19 @@ class TestTestCase(BasicRotestUnitTest):
                          (3, len(test_resources)))
 
         for request_name in ['res1', 'res2', 'res3']:
+            self.assertTrue(request_name in test_resources,
+                            "Test didn't request a resource for %s" %
+                            request_name)
+
             self.assertTrue(request_name in case.__dict__,
                             "Test doesn't contain field named %s" %
                             request_name)
 
         self.assertIn('available_resource1', locked_names,
-                      "Resource request 1 ignored kwargs")
+                      "Resource request using 'resources' ignored kwargs")
 
-        self.assertIn('available_resource2', locked_names,
-                      "Resource request 2 ignored kwargs")
+        self.assertIn('resource_with_no_group', locked_names,
+                      "Resource request using class field ignored kwargs")
 
     def test_dynamic_resources_locking(self):
         """Test that cases can dynamically lock resources.

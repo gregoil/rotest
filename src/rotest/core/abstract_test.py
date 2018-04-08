@@ -106,7 +106,7 @@ class AbstractTest(unittest.TestCase):
                 if isinstance(field, BaseResource):
                     all_requests.append(request(field_name,
                                                 field.__class__,
-                                                field.kwargs))
+                                                **field.kwargs))
 
                 elif isinstance(field, type) and \
                         issubclass(field, BaseResource):
