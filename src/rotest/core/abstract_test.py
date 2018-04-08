@@ -113,6 +113,8 @@ class AbstractTest(unittest.TestCase):
 
                     all_requests.append(request(field_name, field))
 
+        return all_requests
+
     def create_resource_manager(self):
         """Create a new resource manager client instance.
 
