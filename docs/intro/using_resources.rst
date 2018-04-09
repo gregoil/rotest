@@ -244,13 +244,13 @@ following content:
 .. code-block:: python
 
     from rotest.core.runner import main
-    from rotest.core.case import TestCase, request
+    from rotest.core.case import TestCase
 
     from resources.calculator import Calculator
 
 
     class AddTest(TestCase):
-        resources = [request("calc", Calculator)]
+        calc = Calculator()
 
         def test_add(self):
             result = self.calc.calculate("1 + 1")
