@@ -344,8 +344,8 @@ As an example, let's suppose we have the following test:
 .. code-block:: python
 
     class SomeTest(TestCase):
-        resources = [request("res1", Resource1),
-                     request("res2", Resource2)]
+        res1 = Resource1()
+        res2 = Resource2()
 
         def test(self):
             ...

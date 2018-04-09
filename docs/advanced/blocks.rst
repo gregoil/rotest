@@ -222,8 +222,7 @@ Example
 
     class DemoFlow(TestFlow):
         """Demo test-flow."""
-        resources = (request('resource1', SomeResourceClass,
-                             some_limitation=LIMITATION),)
+        resource1 = SomeResourceClass(some_limitation=LIMITATION)
 
         common = {'input2': INPUT_VALUE}
 
@@ -297,8 +296,7 @@ The functions gets the following arguments:
 
     class DemoFlow(TestFlow):
         """Demo test-flow."""
-        resources = (request('resource1', SomeResourceClass,
-                             some_limitation=LIMITATION),)
+        resource1 = SomeResourceClass(some_limitation=LIMITATION)
 
         blocks = (DemoBlock1,
                   DemoBlock2,

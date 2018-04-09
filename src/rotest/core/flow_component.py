@@ -228,7 +228,8 @@ class AbstractFlowComponent(AbstractTest):
                             self.skipTest(self.PREVIOUS_FAILED_MESSAGE)
 
             try:
-                self.request_resources(self.resources, use_previous=True)
+                self.request_resources(self.get_resource_requests(),
+                                       use_previous=True)
 
             except Exception as err:
                 if isinstance(err, ServerError):
