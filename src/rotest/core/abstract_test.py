@@ -89,7 +89,8 @@ class AbstractTest(unittest.TestCase):
         self._is_client_local = False
         self.resource_manager = resource_manager
 
-    def get_resource_requests(self):
+    @classmethod
+    def get_resource_requests(cls):
         """Return a list of all the resource requests this test makes.
 
         Resource requests can be done both by overriding the class's
@@ -99,10 +100,10 @@ class AbstractTest(unittest.TestCase):
         Returns:
             list. resource requests of the test class.
         """
-        all_requests = list(self.resources)
-        for field_name in self.__class__.__dict__:
+        all_requests = list(cls.resources)
+        for field_name in cls.__dict__:
             if not field_name.startswith("_"):
-                field = getattr(self.__class__, field_name)
+                field = getattr(cls, field_name)
                 if isinstance(field, BaseResource):
                     all_requests.append(request(field_name,
                                                 field.__class__,
