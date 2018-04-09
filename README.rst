@@ -79,11 +79,11 @@ Now, an example for a test:
 .. code-block:: python
 
     from rotest.core.runner import main
-    from rotest.core.case import TestCase, request
+    from rotest.core.case import TestCase
 
 
     class SimpleCalculationTest(TestCase):
-        resources = [request("calculator", Calculator)]
+        calculator = Calculator()
 
         def test_simple_calculation(self):
             self.assertEqual(self.calculator.calculate("1+2"), 3)
@@ -93,9 +93,7 @@ Now, an example for a test:
         main(SimpleCalculationTest)
 
 The test can include the `setUp` and `tearDown` methods of `unittest` as
-well, and it differs only in the request for resources. The request includes
-the target member name, the requested class and might include more
-parameters for finding the suitable resource.
+well, and it differs only in the request for resources.
 
 Following, those are the options exposed when running the test:
 
