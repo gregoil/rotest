@@ -11,6 +11,7 @@ from ipdbugger import debug
 from attrdict import AttrDict
 
 from rotest.common.config import ROTEST_WORK_DIR
+from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
 
@@ -88,6 +89,28 @@ class AbstractTest(unittest.TestCase):
         self._is_client_local = False
         self.resource_manager = resource_manager
 
+    @classmethod
+    def get_resource_requests(cls):
+        """Return a list of all the resource requests this test makes.
+
+        Resource requests can be done both by overriding the class's
+        'resources' field and by declaring class fields that point to a
+        BaseResource instance.
+
+        Returns:
+            list. resource requests of the test class.
+        """
+        all_requests = list(cls.resources)
+        for field_name in cls.__dict__:
+            if not field_name.startswith("_"):
+                field = getattr(cls, field_name)
+                if isinstance(field, BaseResource):
+                    all_requests.append(request(field_name,
+                                                field.__class__,
+                                                **field.kwargs))
+
+        return all_requests
+
     def create_resource_manager(self):
         """Create a new resource manager client instance.
 
@@ -128,8 +151,7 @@ class AbstractTest(unittest.TestCase):
         for name, resource in resources.iteritems():
             setattr(self, name, resource)
 
-    def request_resources(self, resources_to_request, use_previous=False,
-                          is_global=False):
+    def request_resources(self, resources_to_request, use_previous=False):
         """Lock the requested resources and prepare them for the test.
 
         Lock the required resources using the resource manager, then assign
@@ -141,8 +163,6 @@ class AbstractTest(unittest.TestCase):
             resources_to_request (list): list of resource requests to lock.
             use_previous (bool): whether to use previously locked resources and
                 release the unused ones.
-            is_global (bool): whether to inject the resources to the parent and
-                sibling components or not.
         """
         if len(resources_to_request) == 0:
             # No resources to requested

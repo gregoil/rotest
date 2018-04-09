@@ -126,7 +126,9 @@ class TestCase(AbstractTest):
             if skip_reason is not None:
                 self.skipTest(skip_reason)
 
-            self.request_resources(self.resources, use_previous=True)
+            self.request_resources(self.get_resource_requests(),
+                                   use_previous=True)
+
             try:
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
