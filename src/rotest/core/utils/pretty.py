@@ -28,6 +28,8 @@ class TitleConfiguration(object):
     def __init__(self, result):
         self.result = result
 
+    has_multi_line_decoration = False
+
     @abstractproperty
     def decoration_character(self):
         """Define the character that will be used to decorate the test.
@@ -65,15 +67,6 @@ class TitleConfiguration(object):
         pass
 
     @abstractproperty
-    def has_multi_line_decoration(self):
-        """Determine whether or not this test has a multi-line decoration.
-
-        Returns:
-            bool. True if this tests has multiple lines of decoration.
-        """
-        pass
-
-    @abstractproperty
     def test_result_color(self):
         """Define the color of the test's result.
 
@@ -100,11 +93,6 @@ class TitleConfiguration(object):
 
 class NonComplexTitleConfiguration(TitleConfiguration):
     """Title configuration for tests that are not complex."""
-
-    @property
-    def has_multi_line_decoration(self):
-        return False
-
     @property
     def decoration_character(self):
         return "-"
@@ -167,10 +155,7 @@ class NonComplexTitleConfiguration(TitleConfiguration):
 
 class ComplexTitleConfiguration(TitleConfiguration):
     """Title configuration for complex tests."""
-
-    @property
-    def has_multi_line_decoration(self):
-        return True
+    has_multi_line_decoration = True
 
     @property
     def decoration_character(self):
@@ -252,10 +237,11 @@ class Pretty(object):
     """Title with decoration.
 
     Attributes:
-        test (AbstractTest): encapsulated test to generate it's title.
+        test (AbstractTest): encapsulated test to generate its title.
         result (TestResult): result that the tests ended with (or didn't end).
         configuration (TitleConfiguration): title's configuration of colors.
     """
+
     def __init__(self, test, result):
         self.test = test
         self.result = result
@@ -344,8 +330,8 @@ class Pretty(object):
 
     def _whole_decoration_line_width(self):
         """Return the width of the whole decoration line.
-            That means the left and right decoration combined.
-            To be used for calculating the left and right decorations.
+               That means the left and right decoration combined.
+               To be used for calculating the left and right decorations.
 
             Returns:
                 int. width of the whole decoration line together.
