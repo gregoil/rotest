@@ -10,7 +10,6 @@ from multiprocessing import Queue, Event
 
 import django
 import psutil
-import pytest
 from rotest.common.colored_test_runner import colored_main
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -160,6 +159,7 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
         * Runs two tests with the same request.
         * Validates that only one instance of the resource was used.
         """
+        ResourceIdRegistrationCase.wait_for_others = 0
         ResourceIdRegistrationCase.pid_queue = self.pid_queue
 
         MockSuite1.components = (ResourceIdRegistrationCase,
@@ -173,7 +173,6 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
                          resources_locked)
 
 
-@pytest.mark.skip(reason="known bug")
 class TestMultipleWorkers(AbstractMultiprocessRunnerTest):
     """Test class for testing MultiprocessRunner."""
 
@@ -190,6 +189,7 @@ class TestMultipleWorkers(AbstractMultiprocessRunnerTest):
             both workers will get the same resource data, but will initiate
             different resource instance, which is good enough for the test.
         """
+        ResourceIdRegistrationCase.wait_for_others = 1
         ResourceIdRegistrationCase.pid_queue = self.pid_queue
 
         MockSuite1.components = (ResourceIdRegistrationCase,
