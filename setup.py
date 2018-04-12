@@ -15,6 +15,8 @@ result_handlers = [
     "artifact = rotest.core.result.handlers.artifact_handler:ArtifactHandler",
     "logdebug = "
     "rotest.core.result.handlers.stream.log_handler:LogDebugHandler",
+    "pretty = "
+    "rotest.core.result.handlers.stream.log_handler:PrettyHandler",
     "signature = "
     "rotest.core.result.handlers.signature_handler:SignatureHandler",
     "full = "
@@ -43,7 +45,7 @@ if not sys.platform.startswith("win32"):
 
 setup(
     name='rotest',
-    version="2.8.0",
+    version="2.8.1",
     description="Resource oriented testing framework",
     long_description=open("README.rst").read(),
     license="MIT",
