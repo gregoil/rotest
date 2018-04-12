@@ -29,15 +29,7 @@ class TitleConfiguration(object):
         self.result = result
 
     has_multi_line_decoration = False
-
-    @abstractproperty
-    def decoration_character(self):
-        """Define the character that will be used to decorate the test.
-
-        Returns:
-            str. character to be printed in the log.
-        """
-        pass
+    decoration_character = "-"
 
     @abstractproperty
     def decoration_color(self):
@@ -93,10 +85,6 @@ class TitleConfiguration(object):
 
 class NonComplexTitleConfiguration(TitleConfiguration):
     """Title configuration for tests that are not complex."""
-    @property
-    def decoration_character(self):
-        return "-"
-
     @property
     def decoration_color(self):
         colors = {
@@ -156,10 +144,7 @@ class NonComplexTitleConfiguration(TitleConfiguration):
 class ComplexTitleConfiguration(TitleConfiguration):
     """Title configuration for complex tests."""
     has_multi_line_decoration = True
-
-    @property
-    def decoration_character(self):
-        return "="
+    decoration_character = "="
 
     @property
     def decoration_color(self):
@@ -330,8 +315,9 @@ class Pretty(object):
 
     def _whole_decoration_line_width(self):
         """Return the width of the whole decoration line.
-               That means the left and right decoration combined.
-               To be used for calculating the left and right decorations.
+
+       That means the left and right decoration combined, to be used for
+       calculating the left and right decorations.
 
             Returns:
                 int. width of the whole decoration line together.
