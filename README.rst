@@ -6,6 +6,10 @@ Rotest
 .. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9/branch/master?svg=true
     :target: https://ci.appveyor.com/project/gregoil/rotest
 
+.. image:: https://img.shields.io/pypi/v/rotest.svg
+    :alt: PyPI
+    :target: https://pypi.python.org/pypi/rotest/
+
 Rotest is a resource oriented testing framework, for writing system or
 integration tests.
 
