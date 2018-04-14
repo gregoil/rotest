@@ -5,6 +5,7 @@ responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 import os
+import traceback
 from bdb import BdbQuit
 
 from ipdbugger import debug
@@ -134,8 +135,7 @@ class BaseResource(object):
                 self.logger.debug("%s ended successfully", callback)
 
             except Exception as ex:
-                self.logger.warning("%s failed (reason: %s)",
-                                    callback, ex)
+                self.logger.exception("%s failed", callback)
                 error_messages.append("%s: %s" % (callback, ex))
 
         if len(error_messages) != 0:
