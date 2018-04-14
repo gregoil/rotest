@@ -6,7 +6,6 @@ import itertools
 import xlrd
 
 from rotest.core.block import TestBlock
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.excel_handler import ExcelHandler
 
 from tests.core.handlers_tests.base_result_handler_test import \
@@ -231,7 +230,3 @@ class TestExcelHandler(BaseResultHandlerTest):
             actual_cell = actual_sheet.cell(row, col)
             expected_cell = expected_sheet.cell(row, col)
             self.assertEqual(actual_cell, expected_cell)
-
-
-if __name__ == '__main__':
-    colored_main(defaultTest='TestExcelHandler')

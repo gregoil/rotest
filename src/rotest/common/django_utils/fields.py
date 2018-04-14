@@ -1,6 +1,7 @@
 """Contain common module fields."""
 # pylint: disable=too-many-public-methods
 import re
+
 from django.db import models
 from django.core.exceptions import ValidationError
 

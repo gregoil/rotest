@@ -6,10 +6,10 @@ processes, statuses and resources.
 # pylint: disable=broad-except
 from functools import wraps
 
-from server import MonitorServer
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.block import TestBlock
+from rotest.core.result.monitor.server import MonitorServer
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
 

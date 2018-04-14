@@ -3,10 +3,8 @@
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
 import os
 import re
-import django
 
 from rotest.core.case import request
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.models.ut_models import (DemoResource,
@@ -839,8 +837,3 @@ class TestTestCase(BasicRotestUnitTest):
         self.assertEqual(case.data.exception_type, TestOutcome.SUCCESS,
                          "Unexpected test outcome, expected %r got %r" %
                          (TestOutcome.SUCCESS, case.data.exception_type))
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestTestCase')

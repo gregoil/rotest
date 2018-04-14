@@ -6,7 +6,6 @@ import unittest
 from rotest.common import core_log
 from rotest.common.log import get_test_logger
 from rotest.common.config import ROTEST_WORK_DIR
-from rotest.common.colored_test_runner import colored_main
 
 
 class TestLog(unittest.TestCase):
@@ -60,7 +59,3 @@ class TestLog(unittest.TestCase):
                 test_log_file_content = test_log_file.read()
                 self.assertEquals(core_log_file_content.count(log_msg), 1)
                 self.assertEquals(test_log_file_content.count(log_msg), 1)
-
-
-if __name__ == '__main__':
-    colored_main(defaultTest='TestLog')

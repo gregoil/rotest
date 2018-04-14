@@ -4,10 +4,8 @@
 # pylint: disable=no-member,protected-access,no-init,too-few-public-methods
 import os
 
-import django
 from rotest.core.suite import TestSuite
 from rotest.common.config import ROTEST_WORK_DIR
-from rotest.common.colored_test_runner import colored_main
 from rotest.management.models.ut_models import DemoResourceData
 
 from tests.core.utils import (MockSuite1, MockSuite2, MockTestSuite,
@@ -338,8 +336,3 @@ class TestTestSuite(BasicRotestUnitTest):
             (test_suite.data, test_suite.work_dir, ROTEST_WORK_DIR))
 
         self.validate_work_dirs(test_suite)
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestTestSuite')

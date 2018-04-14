@@ -6,4 +6,4 @@ test sets and etc. Django ORM modules are used in Rotest to manipulate the
 main tests database, Django's 'AdminPage' is used as a GUI interface for
 Rotest's database."""
 # pylint: disable=unused-import
-from common import get_sub_model, linked_unicode
+from .common import get_sub_model, linked_unicode

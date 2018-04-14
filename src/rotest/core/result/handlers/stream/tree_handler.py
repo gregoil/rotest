@@ -1,8 +1,9 @@
 """Tree format stream output handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,super-init-not-called,unused-argument
-from base_handler import BaseStreamHandler, NEW_LINE
 from rotest.common.constants import GREEN, YELLOW, RED, BOLD, CYAN, BLUE
+from rotest.core.result.handlers.stream.base_handler import \
+                                                BaseStreamHandler, NEW_LINE
 
 
 class TreeHandler(BaseStreamHandler):

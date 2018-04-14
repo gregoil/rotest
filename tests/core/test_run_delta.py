@@ -1,11 +1,9 @@
 """Test run delta feature."""
 # pylint: disable=too-many-arguments
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
-import django
 from rotest.core.runner import run
 from rotest.core.models.run_data import RunData
 from rotest.core.models.case_data import TestOutcome
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.db_handler import DBHandler
 
 from tests.core.utils import (ErrorCase, SuccessCase, FailureCase, SkipCase,
@@ -437,8 +435,3 @@ class TestRunDelta(BasicRotestUnitTest):
                         outputs=(DBHandler.NAME,), run_name='run1')
         self.validate_suite_data(run_data.main_test, False, successes=1,
                                  fails=1)
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestRunDelta')

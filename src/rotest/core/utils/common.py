@@ -7,7 +7,7 @@ from rotest.core.flow import TestFlow
 from rotest.core.block import TestBlock
 from rotest.core.suite import TestSuite
 from rotest.common.constants import MAGENTA
-from rotest.core.test_filter import match_tags
+from rotest.core.filter import match_tags
 from rotest.core.flow_component import ClassInstantiator
 
 

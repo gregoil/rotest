@@ -5,7 +5,7 @@ from functools import partial
 
 from termcolor import COLORS
 
-from constants import GREEN, RED, YELLOW
+from .constants import GREEN, RED, YELLOW
 
 
 DEFAULT = 0

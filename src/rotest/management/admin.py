@@ -6,7 +6,7 @@ Used in order to modify the appearance of tables in the admin site.
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as utext
 
-from models import ResourceData
+from rotest.management.models import ResourceData
 from rotest.common.django_utils.common import linked_unicode
 
 

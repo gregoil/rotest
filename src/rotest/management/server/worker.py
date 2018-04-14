@@ -1,10 +1,11 @@
 """Worker - handle a session under the resource manager server."""
 # pylint: disable=abstract-method,invalid-name,signature-differs
 from itertools import count
+
 from twisted.protocols.basic import LineReceiver
 
-from request import Request
 from rotest.core.models.run_data import RunData
+from rotest.management.server.request import Request
 from rotest.management.common.utils import get_host_name
 from rotest.management.common.messages import CleanupUser, ParsingFailure
 from rotest.management.common.parsers.abstract_parser import ParsingError

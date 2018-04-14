@@ -3,9 +3,9 @@
 # pylint: disable=too-many-arguments,super-init-not-called,unused-argument
 from functools import wraps
 
-from base_handler import BaseStreamHandler
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.common.constants import GREEN, YELLOW, RED, BOLD, CYAN, BLUE
+from rotest.core.result.handlers.stream.base_handler import BaseStreamHandler
 
 
 def ignore_subtests(func):

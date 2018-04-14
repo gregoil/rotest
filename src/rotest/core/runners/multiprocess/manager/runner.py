@@ -11,11 +11,12 @@ from rotest.common import core_log
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite
-from message_handler import RunnerMessageHandler
 from rotest.core.result.monitor import AbstractMonitor
 from rotest.core.result.result import get_result_handlers
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core.runners.multiprocess.worker.process import WorkerProcess
+from rotest.core.runners.multiprocess.manager.message_handler import \
+                                                        RunnerMessageHandler
 
 
 class MultiprocessRunner(BaseTestRunner):

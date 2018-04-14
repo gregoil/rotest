@@ -3,7 +3,7 @@
 # pylint: disable=too-many-public-methods,no-init,old-style-class
 from django.db import models
 
-from general_data import GeneralData
+from .general_data import GeneralData
 
 
 class TestOutcome(object):

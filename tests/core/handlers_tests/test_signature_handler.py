@@ -3,10 +3,9 @@
 import os
 
 import xlrd
-
-from base_result_handler_test import BaseResultHandlerTest
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.signature_handler import SignatureHandler
+
+from .base_result_handler_test import BaseResultHandlerTest
 
 
 class TestSignatureHandler(BaseResultHandlerTest):
@@ -95,7 +94,3 @@ class TestSignatureHandler(BaseResultHandlerTest):
         else:
             self.assertRaises(IndexError, self.worksheet.cell_value,
                               rowx=self.current_row, colx=0)
-
-
-if __name__ == '__main__':
-    colored_main(defaultTest='TestSignatureHandler')

@@ -2,9 +2,10 @@
 import logging
 
 from rotest.common import core_log
-from rotest.core.utils.pretty import Pretty, TestResult
-from stream_handler import EventStreamHandler
 from rotest.common.log import ColoredFormatter
+from rotest.core.utils.pretty import Pretty, TestResult
+from rotest.core.result.handlers.stream.stream_handler import \
+                                                        EventStreamHandler
 
 
 class LogStreamHandler(EventStreamHandler):

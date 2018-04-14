@@ -3,7 +3,7 @@
 import importlib
 from socket import gethostbyaddr
 
-from errors import ResourceTypeError
+from rotest.management.common.errors import ResourceTypeError
 
 HOST_PORT_SEPARATOR = ':'
 

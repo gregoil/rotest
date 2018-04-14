@@ -10,10 +10,8 @@ from abc import ABCMeta
 from StringIO import StringIO
 from multiprocessing import Queue, Event
 
-import django
 from rotest.core.runner import BaseTestRunner
 from rotest.core.models.general_data import GeneralData
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
 from tests.core.multiprocess.utils import (TimeoutCase, SuicideCase,
@@ -305,19 +303,3 @@ class TestBaseRunnerResult(AbstractTestRunnerResult):
                                 enable_debug=False,
                                 stream=StringIO())
         return client
-
-
-class TestRunnerResultSuite(unittest.TestSuite):
-    """A test suite for runner results' tests."""
-    TESTS = [TestBaseRunnerResult,
-             TestMultiprocessRunnerResult]
-
-    def __init__(self):
-        """Construct the class."""
-        super(TestRunnerResultSuite, self).__init__(unittest.makeSuite(test)
-                                                    for test in self.TESTS)
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestRunnerResultSuite')

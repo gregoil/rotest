@@ -3,7 +3,7 @@ import os
 from zipfile import ZipFile
 
 from rotest.common import config
-from abstract_handler import AbstractResultHandler
+from .abstract_handler import AbstractResultHandler
 
 
 class ArtifactHandler(AbstractResultHandler):

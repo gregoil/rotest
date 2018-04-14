@@ -211,7 +211,7 @@ class NonExistingResource(BaseResource):
 
 
 class InitializationError(StandardError):
-    """Will be thrown intentianlly on connect."""
+    """Will be thrown intentionally on connect."""
     pass
 
 

@@ -3,11 +3,10 @@ import unittest
 
 from rotest.core.case import TestCase
 from rotest.core.suite import TestSuite
-from rotest.core.test_filter import get_tags, match_tags
-from rotest.common.colored_test_runner import colored_main
+from rotest.core.filter import get_tags, match_tags
 
-from utils import (SuccessCase, ErrorCase, TwoTestsCase,
-                   MockSuite1, MockSuite2, MockTestSuite, MockTestSuite1)
+from .utils import (SuccessCase, ErrorCase, TwoTestsCase,
+                    MockSuite1, MockSuite2, MockTestSuite, MockTestSuite1)
 
 
 def dict_from_test(test, tags_filter=None):
@@ -234,7 +233,3 @@ class TestTagsMatching(unittest.TestCase):
 
         self.assertEqual(expected_test_descriptor,
                          dict_from_test(MockTestSuite1(), "TEST_1 or TAG2"))
-
-
-if __name__ == '__main__':
-    colored_main(defaultTest='TestTagsMatching')
