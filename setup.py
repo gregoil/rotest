@@ -54,6 +54,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=requirements,
+    python_requires="~=2.7.0",
     entry_points={
         "console_scripts": [
             "rotest-server = rotest.management.server.main:main"
@@ -62,5 +63,16 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     package_data={'': ['*.xls', '*.xsd', '*.json', '*.css', '*.xml', '*.rst']},
-    zip_safe=False
+    zip_safe=False,
+    classifiers=[
+        'License :: OSI Approved :: MIT License',
+        'Topic :: Software Development :: Testing',
+        'Intended Audience :: Developers',
+        'Programming Language :: Python :: 2.7',
+        'Libraries :: Python Modules',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX',
+        'Operating System :: Unix',
+        'Operating System :: MacOS',
+    ],
 )
