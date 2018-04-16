@@ -15,6 +15,12 @@ from rotest.common.utils import get_work_dir
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
+class ConvertToKwargsMeta(type):
+    def __call__(cls, *args, **kwargs):
+        kwargs.update(zip(cls.__init__.func_code.co_varnames[1:], args))
+        return type.__call__(cls, **kwargs)
+
+
 class BaseResource(object):
     """Represent the common interface of all the resources.
 
@@ -36,12 +42,14 @@ class BaseResource(object):
         force_initialize (bool): a flag to determine if the resource will be
             initialized even if the validation succeeds.
     """
+    __metaclass__ = ConvertToKwargsMeta
+
     DATA_CLASS = None
 
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
 
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         # We use core_log as default logger in case
         # that resource is used outside case.
         self.kwargs = kwargs
