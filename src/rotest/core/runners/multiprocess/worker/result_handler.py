@@ -100,9 +100,13 @@ class WorkerHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
+        test_resources = {request_name: resource
+                          for request_name, resource in test.locked_resources
+                          if resource.DATA_CLASS is not None}
+
         self.send_message(CloneResources(msg_id=self.worker_pid,
                                          test_id=test.identifier,
-                                         resources=test.locked_resources))
+                                         resources=test_resources))
 
     def stop_test(self, test):
         """Notify the manager about the finish of a test run via queue.
