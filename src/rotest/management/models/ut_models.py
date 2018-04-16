@@ -199,8 +199,6 @@ class DemoComplexResource(BaseResource):
 
     def reset(self):
         """Set flag to True once the resource is reseted."""
-        super(DemoComplexResource, self).reset()
-
         self.data.reset_flag = True
         self.data.save()
 
