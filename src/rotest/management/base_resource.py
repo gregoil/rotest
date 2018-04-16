@@ -16,6 +16,15 @@ from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
 class ConvertToKwargsMeta(type):
+    """Metaclass that converts args to kwargs when creating an instance.
+
+    This enables requesting resources that have args more easily, e.g.:
+        Assuming ResClass gets 'x' in the __init__, then without this meta
+        you'd have to request the resource like this:
+            res1 = ResClass(x=5)
+        but with the meta you can request it like this:
+            res1 = ResClass(5)
+    """
     def __call__(cls, *args, **kwargs):
         kwargs.update(zip(cls.__init__.func_code.co_varnames[1:], args))
         return type.__call__(cls, **kwargs)
@@ -49,7 +58,7 @@ class BaseResource(object):
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None, **kwargs):
         # We use core_log as default logger in case
         # that resource is used outside case.
         self.kwargs = kwargs
