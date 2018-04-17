@@ -20,6 +20,9 @@ class DBHandler(AbstractResultHandler):
         Args:
             resource (BaseResource): a resource to save.
         """
+        if resource.DATA_CLASS is None:
+            return
+
         test.logger.debug("Saving a copy of resource %r", resource.name)
 
         copy_resource = resource.data.duplicate()

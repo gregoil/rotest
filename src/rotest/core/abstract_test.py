@@ -10,7 +10,6 @@ from itertools import count
 from ipdbugger import debug
 from attrdict import AttrDict
 
-from rotest.common.config import ROTEST_WORK_DIR
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
@@ -55,11 +54,9 @@ class AbstractTest(unittest.TestCase):
     TAGS = []
     IS_COMPLEX = False
 
-    def __init__(self, indexer=count(), methodName='runTest',
-                 base_work_dir=ROTEST_WORK_DIR, save_state=True,
+    def __init__(self, indexer=count(), methodName='runTest', save_state=True,
                  force_initialize=False, config=None, parent=None,
-                 run_data=None, enable_debug=True, resource_manager=None,
-                 skip_init=False):
+                 enable_debug=True, resource_manager=None, skip_init=False):
 
         if enable_debug:
             for method_name in (methodName, self.SETUP_METHOD_NAME,
@@ -101,13 +98,20 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        for field_name in cls.__dict__:
-            if not field_name.startswith("_"):
-                field = getattr(cls, field_name)
-                if isinstance(field, BaseResource):
-                    all_requests.append(request(field_name,
-                                                field.__class__,
-                                                **field.kwargs))
+        checked_class = cls
+        while checked_class is not AbstractTest:
+            for field_name in checked_class.__dict__:
+                if not field_name.startswith("_"):
+                    field = getattr(checked_class, field_name)
+                    if isinstance(field, BaseResource):
+                        new_request = request(field_name,
+                                              field.__class__,
+                                              **field.kwargs)
+
+                        if new_request not in all_requests:
+                            all_requests.append(new_request)
+
+            checked_class = checked_class.__bases__[0]
 
         return all_requests
 

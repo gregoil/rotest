@@ -15,6 +15,21 @@ from rotest.common.utils import get_work_dir
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
+class ConvertToKwargsMeta(type):
+    """Metaclass that converts args to kwargs when creating an instance.
+
+    This enables requesting resources that have args more easily, e.g.:
+        Assuming ResClass gets 'x' in the __init__, then without this meta
+        you'd have to request the resource like this:
+            res1 = ResClass(x=5)
+        but with the meta you can request it like this:
+            res1 = ResClass(5)
+    """
+    def __call__(cls, *args, **kwargs):
+        kwargs.update(zip(cls.__init__.func_code.co_varnames[1:], args))
+        return type.__call__(cls, **kwargs)
+
+
 class BaseResource(object):
     """Represent the common interface of all the resources.
 
@@ -36,6 +51,8 @@ class BaseResource(object):
         force_initialize (bool): a flag to determine if the resource will be
             initialized even if the validation succeeds.
     """
+    __metaclass__ = ConvertToKwargsMeta
+
     DATA_CLASS = None
 
     _SHELL_CLIENT = None
