@@ -3,6 +3,8 @@ import sys
 
 from setuptools import setup, find_packages
 
+__version__ = "2.8.2"
+
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
     "xml = rotest.core.result.handlers.xml_handler:XMLHandler",
@@ -45,7 +47,7 @@ if not sys.platform.startswith("win32"):
 
 setup(
     name='rotest',
-    version="2.8.1",
+    version=__version__,
     description="Resource oriented testing framework",
     long_description=open("README.rst").read(),
     license="MIT",
