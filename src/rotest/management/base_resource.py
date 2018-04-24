@@ -151,8 +151,7 @@ class BaseResource(object):
                 self.logger.debug("%s ended successfully", callback)
 
             except Exception as ex:
-                self.logger.warning("%s failed (reason: %s)",
-                                    callback, ex)
+                self.logger.exception("%s failed", callback)
                 error_messages.append("%s: %s" % (callback, ex))
 
         if len(error_messages) != 0:
@@ -254,7 +253,6 @@ class BaseResource(object):
         debug(self.initialize, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.finalize, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.validate, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
-        debug(self.reset, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.store_state, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         for resource in self.get_sub_resources():
             resource.enable_debug()

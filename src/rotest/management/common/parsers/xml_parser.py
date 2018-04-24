@@ -12,8 +12,9 @@ from django.db import models
 from lxml import etree, objectify, builder
 
 from rotest.management.common import messages
-from abstract_parser import ParsingError, AbstractParser
 from rotest.management.base_resource import BaseResource
+from rotest.management.common.parsers.abstract_parser import \
+                                            ParsingError, AbstractParser
 from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
                                             extract_type, extract_type_path)
 

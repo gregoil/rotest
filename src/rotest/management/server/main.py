@@ -30,9 +30,9 @@ import django
 from twisted.internet.protocol import ServerFactory
 from twisted.internet.selectreactor import SelectReactor
 
-from worker import Worker
-from manager import ManagerThread
+from rotest.management.server.worker import Worker
 from rotest.common.config import RESOURCE_MANAGER_PORT
+from rotest.management.server.manager import ManagerThread
 from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.common.log import (ROTEST_WORK_DIR, LOG_FORMAT, ColoredFormatter,
                                get_test_logger)

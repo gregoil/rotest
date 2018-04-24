@@ -1,8 +1,8 @@
 """Stream output handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,super-init-not-called
-from base_handler import BaseStreamHandler
 from rotest.common.constants import GREEN, YELLOW, RED, BOLD, CYAN, BLUE
+from rotest.core.result.handlers.stream.base_handler import BaseStreamHandler
 
 
 class EventStreamHandler(BaseStreamHandler):

@@ -1,4 +1,4 @@
-from log import define_core_logger
+from .log import define_core_logger
 
 USE_COLORED_LOGGER = True
 

@@ -2,8 +2,8 @@
 # pylint: disable=too-few-public-methods,no-init,old-style-class
 from django.db import models
 
-from general_data import GeneralData
 from rotest.common.django_utils import get_sub_model
+from rotest.core.models.general_data import GeneralData
 from rotest.common.django_utils.fields import NameField, PathField
 
 

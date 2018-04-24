@@ -5,6 +5,7 @@ from collections import OrderedDict
 import yaml
 import mock
 import pathlib2
+
 from rotest.common.config import Option, get_configuration, search_config_file
 
 
@@ -196,7 +197,3 @@ class EdgeCaseTest(unittest.TestCase):
             command_line_options=["script.py"])
 
         self.assertEqual(configuration, {"target": None})
-
-
-if __name__ == "__main__":
-    unittest.main()

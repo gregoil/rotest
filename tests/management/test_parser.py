@@ -1,10 +1,8 @@
 """Abstract Testing class for any kind of parser."""
 from abc import ABCMeta, abstractmethod
 
-import django
 from django.test.testcases import TransactionTestCase
 
-from rotest.common.colored_test_runner import colored_main
 from rotest.management.common.parsers.xml_parser import XMLParser
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.models.ut_models import (DemoResource,
@@ -128,8 +126,3 @@ class TestXMLParser(AbstractTestParser):
     def setUpClass(cls):
         """Initialize the parser."""
         cls.PARSER = XMLParser()
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestXMLParser')

@@ -5,10 +5,7 @@ This module contains tests for the multiprocess runner timeout functionality.
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import sys
 
-import django
 import pytest
-
-from rotest.common.colored_test_runner import colored_main
 
 from tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
 from tests.core.multiprocess.test_runner import AbstractMultiprocessRunnerTest
@@ -156,8 +153,3 @@ class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
                          "terminated due to timeout")
 
         self.validate_test_processes(2)
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestMultiprocessTimeouts', verbosity=2)

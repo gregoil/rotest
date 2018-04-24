@@ -1,12 +1,9 @@
 """Test TestSuite behavior and common variables."""
 # pylint: disable=no-init,old-style-class,too-many-public-methods
 # pylint: disable=too-many-lines,too-many-arguments,too-many-locals
-import django
-
 from rotest.core.case import request
 from rotest.core.flow_component import PipeTo
 from rotest.core.models.case_data import TestOutcome
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
@@ -1046,8 +1043,3 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
                          'Flow data status should have been failure')
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestTestFlow')

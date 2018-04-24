@@ -1,6 +1,5 @@
 """Represent a descriptor of a resource."""
-from errors import ResourceBuildError
-
+from rotest.management.common.errors import ResourceBuildError
 from rotest.management.common.utils import (TYPE_NAME,
                                             PROPERTIES,
                                             extract_type,

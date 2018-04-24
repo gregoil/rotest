@@ -1,6 +1,6 @@
 """Tags filtering handler."""
-from abstract_handler import AbstractResultHandler
-from rotest.core.test_filter import match_tags, get_tags
+from rotest.core.filter import match_tags, get_tags
+from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
 
 class TagsHandler(AbstractResultHandler):

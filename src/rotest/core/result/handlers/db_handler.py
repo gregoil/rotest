@@ -1,6 +1,6 @@
 """Database result handler."""
 # pylint: disable=unused-argument
-from abstract_handler import AbstractResultHandler
+from .abstract_handler import AbstractResultHandler
 
 
 class DBHandler(AbstractResultHandler):

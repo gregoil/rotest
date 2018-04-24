@@ -13,11 +13,9 @@ import time
 from itertools import izip
 from threading import Thread
 
-import django
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from rotest.management.common.utils import LOCALHOST
-from rotest.common.colored_test_runner import colored_main
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
@@ -1248,8 +1246,3 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.client.disconnect()
         self.assertEqual(self.client.locked_resources, [])
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main()

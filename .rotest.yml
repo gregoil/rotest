@@ -1,4 +1,4 @@
 rotest:
     workdir: ~/.rotest
     host: localhost
-    django_settings: rotest.common.django_utils.ut_settings
+    django_settings: rotest.common.django_utils.settings

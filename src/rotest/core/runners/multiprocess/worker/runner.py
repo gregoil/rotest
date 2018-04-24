@@ -1,7 +1,8 @@
 """Multiprocess worker runner."""
 # pylint: disable=too-many-arguments,invalid-name,protected-access
-from result_handler import WorkerHandler
 from rotest.core.runners.base_runner import BaseTestRunner
+from rotest.core.runners.multiprocess.worker.result_handler import \
+                                                            WorkerHandler
 
 
 class WorkerRunner(BaseTestRunner):

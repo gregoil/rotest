@@ -2,6 +2,7 @@
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments
 import os
+
 from lxml import etree
 from lxml.builder import E
 

@@ -1,10 +1,8 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
-import django
 from rotest.core.models import GeneralData
 from rotest.core.models.run_data import RunData
 from rotest.management.common.utils import LOCALHOST
-from rotest.common.colored_test_runner import colored_main
 from rotest.common.django_utils.common import get_sub_model
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.client.result_client import ClientResultManager
@@ -257,8 +255,3 @@ class TestResultManagement(BaseResourceManagementTest):
         self._validate_test_result(test_case, success=False,
                                error_tuple=(TestOutcome.ERROR, ERROR_STRING))
         self._validate_test_result(main_test, success=False)
-
-
-if __name__ == '__main__':
-    django.setup()
-    colored_main(defaultTest='TestResultManagement')

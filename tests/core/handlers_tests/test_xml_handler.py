@@ -5,7 +5,6 @@ import os
 import xmltodict
 
 from rotest.core.block import TestBlock
-from rotest.common.colored_test_runner import colored_main
 from rotest.core.result.handlers.xml_handler import XMLHandler
 
 from tests.core.handlers_tests.base_result_handler_test import \
@@ -67,7 +66,3 @@ class TestXMLHandler(BaseResultHandlerTest):
                                      dict_constructor=dict)
 
         self.assertEqual(expected_xml, result_xml)
-
-
-if __name__ == '__main__':
-    colored_main(defaultTest='TestXMLHandler')

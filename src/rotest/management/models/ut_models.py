@@ -199,8 +199,6 @@ class DemoComplexResource(BaseResource):
 
     def reset(self):
         """Set flag to True once the resource is reseted."""
-        super(DemoComplexResource, self).reset()
-
         self.data.reset_flag = True
         self.data.save()
 
@@ -211,7 +209,7 @@ class NonExistingResource(BaseResource):
 
 
 class InitializationError(StandardError):
-    """Will be thrown intentianlly on connect."""
+    """Will be thrown intentionally on connect."""
     pass
 
 

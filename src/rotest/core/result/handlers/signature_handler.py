@@ -1,11 +1,12 @@
 """Known issues result handler."""
 import re
 import os
+
 import xlwt
 from xlwt.Style import easyxf
 
-from abstract_handler import AbstractResultHandler
 from rotest.core.models.signature import SignatureData
+from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
 
 class SignatureHandler(AbstractResultHandler):
