@@ -61,10 +61,10 @@ class TestCase(AbstractTest):
                  run_data=None, enable_debug=True, resource_manager=None,
                  skip_init=False):
 
-        super(TestCase, self).__init__(indexer, methodName, base_work_dir,
-                                       save_state, force_initialize, config,
-                                       parent, run_data, enable_debug,
-                                       resource_manager, skip_init)
+        super(TestCase, self).__init__(indexer, methodName, save_state,
+                                       force_initialize, config, parent,
+                                       enable_debug, resource_manager,
+                                       skip_init)
 
         self.skip_reason = None
         self.skip_determined = False

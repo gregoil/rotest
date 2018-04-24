@@ -122,10 +122,9 @@ class AbstractFlowComponent(AbstractTest):
 
         test_method_name = self.get_test_method_name()
         super(AbstractFlowComponent, self).__init__(indexer, test_method_name,
-                                        base_work_dir, save_state,
-                                        force_initialize, config, parent,
-                                        run_data, enable_debug,
-                                        resource_manager, skip_init)
+                                        save_state, force_initialize, config,
+                                        parent, enable_debug, resource_manager,
+                                        skip_init)
 
         self._pipes = {}
         self.is_main = is_main

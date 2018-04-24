@@ -123,5 +123,6 @@ class TestBlock(AbstractFlowComponent):
                               input_name not in self._pipes)]
 
         if len(missing_inputs) > 0:
-            raise AttributeError("Block %r is missing mandatory inputs %s" %
-                                 (self.data.name, missing_inputs))
+            raise AttributeError("Block %r under %r is missing mandatory "
+                                 "inputs %s" %
+                                 (self.data.name, self.parent, missing_inputs))

@@ -37,6 +37,13 @@ class TempComplexRequestCase(SuccessCase):
     res2 = DemoResource(name='available_resource2')
 
 
+class TempInheritRequestCase(TempComplexRequestCase):
+    """Inherit one resource requests from the parent class."""
+    __test__ = False
+
+    resources = ()
+
+
 class TempDynamicResourceLockingCase(DynamicResourceLockingCase):
     """Inherit class and override resources requests."""
     __test__ = False
@@ -218,6 +225,29 @@ class TestTestCase(BasicRotestUnitTest):
 
         self.assertIn('available_resource2', locked_names,
                       "Resource request using class field ignored kwargs")
+
+    def test_inherit_resource_request(self):
+        """Test a TestCase that inherits its resource request."""
+        case = self._run_case(TempInheritRequestCase)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        # === Validate case data object ===
+        self.assertTrue(case.data.success)
+
+        test_resources = case.all_resources
+        self.assertEqual(len(test_resources), 1,
+                         "Unexpected number of resources, expected %r got %r" %
+                         (1, len(test_resources)))
+
+        request_name = 'res2'
+        self.assertTrue(request_name in test_resources,
+                        "Test didn't request a resource for %s" % request_name)
+
+        self.assertTrue(request_name in case.__dict__,
+                        "Test doesn't contain field named %s" %
+                        request_name)
 
     def test_dynamic_resources_locking(self):
         """Test that cases can dynamically lock resources.
