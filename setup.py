@@ -71,7 +71,6 @@ setup(
         'Topic :: Software Development :: Testing',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2.7',
-        'Libraries :: Python Modules',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',

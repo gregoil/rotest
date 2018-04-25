@@ -101,6 +101,7 @@ ENV/
 .mypy_cache/
 
 .idea/
+rotest_ut
 rotest_test
 rotest_test-journal
 rotest_ut_test
