@@ -1,14 +1,26 @@
 Rotest
 ------
+
+.. image:: https://img.shields.io/pypi/v/rotest.svg
+    :alt: PyPI
+    :target: https://pypi.org/project/rotest/
+
+.. image:: https://img.shields.io/pypi/pyversions/rotest.svg
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/rotest/
+
 .. image:: https://travis-ci.org/gregoil/rotest.svg?branch=master
     :target: https://travis-ci.org/gregoil/rotest
 
 .. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9/branch/master?svg=true
     :target: https://ci.appveyor.com/project/gregoil/rotest
 
-.. image:: https://img.shields.io/pypi/v/rotest.svg
-    :alt: PyPI
-    :target: https://pypi.python.org/pypi/rotest/
+.. image:: https://coveralls.io/repos/github/gregoil/rotest/badge.svg?branch=master
+    :target: https://coveralls.io/github/gregoil/rotest
+
+.. image:: https://img.shields.io/readthedocs/rotest/stable.svg
+    :alt: Read the Docs (version)
+    :target: http://rotest.readthedocs.io/en/stable/
 
 Rotest is a resource oriented testing framework, for writing system or
 integration tests.
