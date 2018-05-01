@@ -167,13 +167,20 @@ class AbstractFlowComponent(AbstractTest):
     # Shortcut
     params = parametrize
 
-    def share_data(self, **parameters):
-        """Inject the parameters to the parent and sibling components."""
+    def share_data(self, override_previous=True, **parameters):
+        """Inject the parameters to the parent and sibling components.
+
+        Args:
+            override_previous (bool): whether to override previous value of
+                the parameters if the were already injected or not.
+        """
         if not self.IS_COMPLEX:
-            self.parent._set_parameters(**parameters)
+            self.parent._set_parameters(override_previous=override_previous,
+                                        **parameters)
 
         else:
-            self._set_parameters(**parameters)
+            self._set_parameters(override_previous=override_previous,
+                                 **parameters)
 
     @classmethod
     def get_test_method_name(cls):
@@ -368,18 +375,25 @@ class AbstractFlowComponent(AbstractTest):
         """
         pass
 
-    def _set_parameters(self, **parameters):
-        """Inject parameters into the component."""
+    def _set_parameters(self, override_previous=True, **parameters):
+        """Inject parameters into the component.
+
+        Args:
+            override_previous (bool): whether to override previous value of
+                the parameters if the were already injected or not.
+        """
         for name, value in parameters.iteritems():
             if isinstance(value, PipeTo):
                 parameter_name = value.parameter_name
-                self._pipes[name] = parameter_name
+                if override_previous or name not in self._pipes:
+                    self._pipes[name] = parameter_name
 
                 if parameter_name not in self.inputs:
                     self.inputs = list(self.inputs) + [parameter_name]
 
             else:
-                setattr(self, name, value)
+                if override_previous or name not in self.__dict__:
+                    setattr(self, name, value)
 
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.

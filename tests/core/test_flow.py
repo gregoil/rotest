@@ -941,6 +941,51 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=3)
 
+    def test_parameters_priority(self):
+        """Test priorities behavior of the common object and parameters.
+
+        * Values passed from the parent are always stronger.
+        * In the same level - parameterizing block is higher priority.
+        * In the same level - Common values are the weakest.
+        """
+        PARAMETER1_NAME = 'field1'
+        PARAMETER1_TOPFLOW_VALUE = 'value_good'
+        PARAMETER1_SUBFLOW_VALUE = 'value_bad1'
+        PARAMETER1_COMMON_VALUE = 'value_bad2'
+
+        PARAMETER2_NAME = 'field2'
+        PARAMETER2_SUBFLOW_VALUE = 'value_good'
+        PARAMETER2_COMMON_VALUE = 'value_bad1'
+
+        class CheckingParameter1Block(ReadFromCommonBlock):
+            READ_NAME = PARAMETER1_NAME
+            READ_VALUE = PARAMETER1_TOPFLOW_VALUE
+
+        class CheckingParameter2Block(ReadFromCommonBlock):
+            READ_NAME = PARAMETER2_NAME
+            READ_VALUE = PARAMETER2_SUBFLOW_VALUE
+
+        class SubFlow(MockSubFlow):
+            common = {PARAMETER1_NAME: PARAMETER1_COMMON_VALUE,
+                      PARAMETER2_NAME: PARAMETER2_COMMON_VALUE}
+
+            blocks = (CheckingParameter1Block.parametrize(
+                            **{PARAMETER1_NAME: PARAMETER1_SUBFLOW_VALUE}),
+                      CheckingParameter2Block.parametrize(
+                            **{PARAMETER2_NAME: PARAMETER2_SUBFLOW_VALUE}))
+
+        class MainFlow(MockFlow):
+            blocks = (SubFlow.parametrize(
+                            **{PARAMETER1_NAME: PARAMETER1_TOPFLOW_VALUE}),)
+
+        test_flow = MainFlow()
+        self.run_test(test_flow)
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.assertEqual(self.result.testsRun, 1,
+                         "Result didn't run the correct number of tests")
+
     def test_critical_flow(self):
         """Validate behavior of flow in CRITICAL mode.
 

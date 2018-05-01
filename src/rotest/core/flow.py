@@ -125,7 +125,7 @@ class TestFlow(AbstractFlowComponent):
             self.logger.debug("Adding %r to tests", test_item)
             self._tests.append(test_item)
 
-        self.share_data(**self.__class__.common)
+        self.share_data(override_previous=False, **self.__class__.common)
 
         if self.is_main:
             self._validate_inputs()
