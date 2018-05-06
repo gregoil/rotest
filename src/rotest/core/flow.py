@@ -175,7 +175,6 @@ class TestFlow(AbstractFlowComponent):
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
         """
-        """Inject parameters into the component and sub-components."""
         # The 'mode' parameter is only relevant to the current hierarchy
         setattr(self, 'mode', parameters.pop('mode', self.mode))
 
