@@ -183,7 +183,7 @@ class TestFlow(AbstractFlowComponent):
                                               **parameters)
 
         for block in self:
-            block._set_parameters(**parameters)
+            block._set_parameters(override_previous, **parameters)
 
     def skip_sub_components(self, reason):
         """Skip the sub-components of the test.
