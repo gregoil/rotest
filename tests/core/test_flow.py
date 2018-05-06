@@ -948,35 +948,35 @@ class TestTestFlow(BasicRotestUnitTest):
         * In the same level - parameterizing block is higher priority.
         * In the same level - Common values are the weakest.
         """
-        PARAMETER1_NAME = 'field1'
-        PARAMETER1_TOPFLOW_VALUE = 'value_good'
-        PARAMETER1_SUBFLOW_VALUE = 'value_bad1'
-        PARAMETER1_COMMON_VALUE = 'value_bad2'
+        parameter1_name = 'field1'
+        parameter1_topflow_value = 'value_good'
+        parameter1_subflow_value = 'value_bad1'
+        parameter1_common_value = 'value_bad2'
 
-        PARAMETER2_NAME = 'field2'
-        PARAMETER2_SUBFLOW_VALUE = 'value_good'
-        PARAMETER2_COMMON_VALUE = 'value_bad1'
+        parameter2_name = 'field2'
+        parameter2_subflow_value = 'value_good'
+        parameter2_common_value = 'value_bad1'
 
         class CheckingParameter1Block(ReadFromCommonBlock):
-            READ_NAME = PARAMETER1_NAME
-            READ_VALUE = PARAMETER1_TOPFLOW_VALUE
+            READ_NAME = parameter1_name
+            READ_VALUE = parameter1_topflow_value
 
         class CheckingParameter2Block(ReadFromCommonBlock):
-            READ_NAME = PARAMETER2_NAME
-            READ_VALUE = PARAMETER2_SUBFLOW_VALUE
+            READ_NAME = parameter2_name
+            READ_VALUE = parameter2_subflow_value
 
         class SubFlow(MockSubFlow):
-            common = {PARAMETER1_NAME: PARAMETER1_COMMON_VALUE,
-                      PARAMETER2_NAME: PARAMETER2_COMMON_VALUE}
+            common = {parameter1_name: parameter1_common_value,
+                      parameter2_name: parameter2_common_value}
 
             blocks = (CheckingParameter1Block.parametrize(
-                            **{PARAMETER1_NAME: PARAMETER1_SUBFLOW_VALUE}),
+                            **{parameter1_name: parameter1_subflow_value}),
                       CheckingParameter2Block.parametrize(
-                            **{PARAMETER2_NAME: PARAMETER2_SUBFLOW_VALUE}))
+                            **{parameter2_name: parameter2_subflow_value}))
 
         class MainFlow(MockFlow):
             blocks = (SubFlow.parametrize(
-                            **{PARAMETER1_NAME: PARAMETER1_TOPFLOW_VALUE}),)
+                            **{parameter1_name: parameter1_topflow_value}),)
 
         test_flow = MainFlow()
         self.run_test(test_flow)

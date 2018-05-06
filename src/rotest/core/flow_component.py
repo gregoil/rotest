@@ -172,7 +172,7 @@ class AbstractFlowComponent(AbstractTest):
 
         Args:
             override_previous (bool): whether to override previous value of
-                the parameters if the were already injected or not.
+                the parameters if they were already injected or not.
         """
         if not self.IS_COMPLEX:
             self.parent._set_parameters(override_previous=override_previous,
@@ -380,7 +380,7 @@ class AbstractFlowComponent(AbstractTest):
 
         Args:
             override_previous (bool): whether to override previous value of
-                the parameters if the were already injected or not.
+                the parameters if they were already injected or not.
         """
         for name, value in parameters.iteritems():
             if isinstance(value, PipeTo):

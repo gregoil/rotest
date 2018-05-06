@@ -168,12 +168,20 @@ class TestFlow(AbstractFlowComponent):
         """
         return parameters.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
-    def _set_parameters(self, **parameters):
+    def _set_parameters(self, override_previous=True, **parameters):
+        """Inject parameters into the component and sub components.
+
+        Args:
+            override_previous (bool): whether to override previous value of
+                the parameters if they were already injected or not.
+        """
         """Inject parameters into the component and sub-components."""
         # The 'mode' parameter is only relevant to the current hierarchy
         setattr(self, 'mode', parameters.pop('mode', self.mode))
 
-        super(TestFlow, self)._set_parameters(**parameters)
+        super(TestFlow, self)._set_parameters(override_previous,
+                                              **parameters)
+
         for block in self:
             block._set_parameters(**parameters)
 
