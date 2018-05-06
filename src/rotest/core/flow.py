@@ -125,7 +125,7 @@ class TestFlow(AbstractFlowComponent):
             self.logger.debug("Adding %r to tests", test_item)
             self._tests.append(test_item)
 
-        self.share_data(**self.__class__.common)
+        self.share_data(override_previous=False, **self.__class__.common)
 
         if self.is_main:
             self._validate_inputs()
@@ -168,14 +168,21 @@ class TestFlow(AbstractFlowComponent):
         """
         return parameters.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
-    def _set_parameters(self, **parameters):
-        """Inject parameters into the component and sub-components."""
+    def _set_parameters(self, override_previous=True, **parameters):
+        """Inject parameters into the component and sub components.
+
+        Args:
+            override_previous (bool): whether to override previous value of
+                the parameters if they were already injected or not.
+        """
         # The 'mode' parameter is only relevant to the current hierarchy
         setattr(self, 'mode', parameters.pop('mode', self.mode))
 
-        super(TestFlow, self)._set_parameters(**parameters)
+        super(TestFlow, self)._set_parameters(override_previous,
+                                              **parameters)
+
         for block in self:
-            block._set_parameters(**parameters)
+            block._set_parameters(override_previous, **parameters)
 
     def skip_sub_components(self, reason):
         """Skip the sub-components of the test.
