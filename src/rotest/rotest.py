@@ -1,11 +1,20 @@
 #!/usr/bin/env python
 import sys
 
-from django.core import management
-
 
 def do_discover(start_dir):
-    pass
+    from unittest import loader
+    from rotest.core import TestCase, TestFlow
+    discovered_tests = loader.discover(start_dir, None, None)._tests
+    all_tests = []
+    for test_class in discovered_tests:
+        if isinstance(test_class, (TestCase, TestFlow)) and \
+                getattr(test_class, "__test__", True) is True:
+
+            all_tests.append(test_class)
+
+    for test_class in all_tests:
+        print test_class
 
 
 def main():
@@ -20,6 +29,7 @@ def main():
 
     # Default option - pass control to django-admin:
     else:
+        from django.core import management
         management.execute_from_command_line()
 
 
