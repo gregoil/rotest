@@ -6,6 +6,7 @@ responsible for the resource static & dynamic information.
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 import os
 from bdb import BdbQuit
+from inspect import getargspec
 
 from ipdbugger import debug
 from attrdict import AttrDict
@@ -26,8 +27,13 @@ class ConvertToKwargsMeta(type):
             res1 = ResClass(5)
     """
     def __call__(cls, *args, **kwargs):
-        kwargs.update(zip(cls.__init__.func_code.co_varnames[1:], args))
-        return type.__call__(cls, **kwargs)
+        argspec = getargspec(cls.__init__)
+        init_positional_args = argspec.args[1:]  # Not including self
+        kwargs.update(zip(init_positional_args,
+                          args[:len(init_positional_args)]))
+
+        args = args[len(init_positional_args):]
+        return type.__call__(cls, *args, **kwargs)
 
 
 class BaseResource(object):
