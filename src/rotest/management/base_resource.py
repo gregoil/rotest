@@ -69,7 +69,7 @@ class BaseResource(object):
     def __init__(self, data=None, **kwargs):
         # We use core_log as default logger in case
         # that resource is used outside case.
-        self.kwargs = None
+        self.kwargs = kwargs
         self.logger = core_log
 
         if data is not None:
