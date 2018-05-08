@@ -31,6 +31,9 @@ class ConvertToKwargsMeta(type):
 
         resource = type.__call__(cls, *args, **kwargs)
         resource.kwargs = kwargs
+        for field_name, field_value in kwargs.iteritems():
+            setattr(resource, field_name, field_value)
+
         if isinstance(resource.data, AttrDict):
             resource.data.update(kwargs)
 
@@ -63,7 +66,7 @@ class BaseResource(object):
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, **kwargs):
         # We use core_log as default logger in case
         # that resource is used outside case.
         self.kwargs = None
