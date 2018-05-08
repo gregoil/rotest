@@ -37,6 +37,8 @@ class ConvertToKwargsMeta(type):
         if isinstance(resource.data, AttrDict):
             resource.data.update(kwargs)
 
+        return resource
+
 
 class BaseResource(object):
     """Represent the common interface of all the resources.
