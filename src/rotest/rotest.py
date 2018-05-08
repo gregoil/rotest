@@ -5,7 +5,7 @@ import sys
 def do_discover(start_dir):
     from unittest import loader
     from rotest.core import TestCase, TestFlow
-    discovered_tests = loader.discover(start_dir, None, None)._tests
+    discovered_tests = loader.discover(start_dir, '*.py', None)._tests
     all_tests = []
     for test_class in discovered_tests:
         if isinstance(test_class, (TestCase, TestFlow)) and \
@@ -13,6 +13,7 @@ def do_discover(start_dir):
 
             all_tests.append(test_class)
 
+    print "discovered tests:"
     for test_class in all_tests:
         print test_class
 
@@ -25,7 +26,7 @@ def main():
         main()
 
     elif argv[0] == "discover":
-        pass
+        do_discover(argv[1])
 
     # Default option - pass control to django-admin:
     else:
