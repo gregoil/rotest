@@ -6,7 +6,6 @@ responsible for the resource static & dynamic information.
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 import os
 from bdb import BdbQuit
-from inspect import getargspec
 
 from ipdbugger import debug
 from attrdict import AttrDict
