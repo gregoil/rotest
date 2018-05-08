@@ -356,7 +356,7 @@ def get_columns():
 
         except ValueError:
             # This occurs when using Docker or any platform
-            # That doesn't initially render it's terminal window.
+            # that doesn't initially render its terminal window.
             return 80
 
     if sys.platform == "win32":
