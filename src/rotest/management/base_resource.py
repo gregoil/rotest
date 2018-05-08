@@ -17,23 +17,23 @@ from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
 class ConvertToKwargsMeta(type):
-    """Metaclass that converts args to kwargs when creating an instance.
+    """Metaclass that validates no positional args are passed to constructor.
 
-    This enables requesting resources that have args more easily, e.g.:
-        Assuming ResClass gets 'x' in the __init__, then without this meta
-        you'd have to request the resource like this:
-            res1 = ResClass(x=5)
-        but with the meta you can request it like this:
+    This enables avoiding requesting resources is coherent, i.e.:
+        Assuming ResClass gets 'x' in the __init__, then when requesting:
             res1 = ResClass(5)
+        The x=5 is not passed to kwargs, thus is not propagated when
+        creating the actual resource when the test starts.
     """
     def __call__(cls, *args, **kwargs):
-        argspec = getargspec(cls.__init__)
-        init_positional_args = argspec.args[1:]  # Not including self
-        kwargs.update(zip(init_positional_args,
-                          args[:len(init_positional_args)]))
+        if len(args) > 0:
+            raise RuntimeError("BaseResource constructors must not get "
+                               "positional arguments")
 
-        args = args[len(init_positional_args):]
-        return type.__call__(cls, *args, **kwargs)
+        resource = type.__call__(cls, *args, **kwargs)
+        resource.kwargs = kwargs
+        if isinstance(resource.data, AttrDict):
+            resource.data.update(kwargs)
 
 
 class BaseResource(object):
@@ -64,10 +64,10 @@ class BaseResource(object):
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
 
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data=None):
         # We use core_log as default logger in case
         # that resource is used outside case.
-        self.kwargs = kwargs
+        self.kwargs = None
         self.logger = core_log
 
         if data is not None:
@@ -76,7 +76,7 @@ class BaseResource(object):
                 setattr(self, field_name, field_value)
 
         else:
-            self.data = AttrDict(kwargs)
+            self.data = AttrDict()
             self.name = "%s-%d" % (self.__class__.__name__, id(self))
 
         self.config = None
@@ -86,9 +86,6 @@ class BaseResource(object):
         self.force_initialize = None
 
         self._sub_resources = None
-
-        for field_name, field_value in kwargs.iteritems():
-            setattr(self, field_name, field_value)
 
     def create_sub_resources(self):
         """Create and return the sub resources if needed.
