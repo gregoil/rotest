@@ -308,6 +308,9 @@ class Pretty(object):
                         "unsupported type" % self.test)
 
     def _test_name_uncolored(self):
+        if hasattr(self.test, "name"):
+            return self.test.name
+
         return self.test.__class__.__name__
 
     def _test_result_uncolored(self):
@@ -346,9 +349,15 @@ def get_columns():
     """
     if sys.platform in ("linux", "linux2", "darwin"):
         # Both OS X (darwin) and Linux support the 'stty' command
-        _, columns = os.popen("stty size").read().split()
-        columns = int(columns)
-        return columns
+        try:
+            _, columns = os.popen("stty size").read().split()
+            columns = int(columns)
+            return columns
+
+        except ValueError:
+            # This occurs when using Docker or any platform
+            # That doesn't initially render it's terminal window.
+            return 80
 
     if sys.platform == "win32":
         from ctypes import windll, create_string_buffer
