@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "2.8.3"
+__version__ = "2.9.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -57,9 +57,10 @@ setup(
     keywords="testing system django unittest",
     install_requires=requirements,
     python_requires="~=2.7.0",
+    scripts=['src/rotest/rotest.py'],
     entry_points={
         "console_scripts": [
-            "rotest-server = rotest.management.server.main:main"
+            "rotest = rotest.rotest:main"
         ],
         "rotest.result_handlers": result_handlers},
     packages=find_packages("src"),
