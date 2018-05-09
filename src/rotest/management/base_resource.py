@@ -16,18 +16,28 @@ from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
 class ConvertToKwargsMeta(type):
-    """Metaclass that converts args to kwargs when creating an instance.
+    """Metaclass that validates no positional args are passed to constructor.
 
-    This enables requesting resources that have args more easily, e.g.:
-        Assuming ResClass gets 'x' in the __init__, then without this meta
-        you'd have to request the resource like this:
-            res1 = ResClass(x=5)
-        but with the meta you can request it like this:
+    This enables avoiding requesting resources is coherent, i.e.:
+        Assuming ResClass gets 'x' in the __init__, then when requesting:
             res1 = ResClass(5)
+        The x=5 is not passed to kwargs, thus is not propagated when
+        creating the actual resource when the test starts.
     """
     def __call__(cls, *args, **kwargs):
-        kwargs.update(zip(cls.__init__.func_code.co_varnames[1:], args))
-        return type.__call__(cls, **kwargs)
+        if len(args) > 0:
+            raise RuntimeError("BaseResource constructors must not get "
+                               "positional arguments")
+
+        resource = type.__call__(cls, *args, **kwargs)
+        resource.kwargs = kwargs
+        for field_name, field_value in kwargs.iteritems():
+            setattr(resource, field_name, field_value)
+
+        if isinstance(resource.data, AttrDict):
+            resource.data.update(kwargs)
+
+        return resource
 
 
 class BaseResource(object):
@@ -70,7 +80,7 @@ class BaseResource(object):
                 setattr(self, field_name, field_value)
 
         else:
-            self.data = AttrDict(kwargs)
+            self.data = AttrDict()
             self.name = "%s-%d" % (self.__class__.__name__, id(self))
 
         self.config = None
@@ -80,9 +90,6 @@ class BaseResource(object):
         self.force_initialize = None
 
         self._sub_resources = None
-
-        for field_name, field_value in kwargs.iteritems():
-            setattr(self, field_name, field_value)
 
     def create_sub_resources(self):
         """Create and return the sub resources if needed.
