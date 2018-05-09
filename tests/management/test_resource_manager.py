@@ -623,8 +623,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Release a free resource, using resource client.
         * Validates a ResourceAlreadyAvailableError is raised.
         """
-        resources = DemoResource(data=
-                         self.get_resource(self.FREE1_NAME, owner="").get())
+        resources = DemoResource(
+            data=self.get_resource(self.FREE1_NAME, owner="").get())
 
         with self.assertRaises(ResourceReleaseError) as cm:
             self.client._release_resources(resources=[resources])
@@ -659,8 +659,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.NON_EXISTING_NAME1, resources_num))
 
-        non_existing_resource = DemoResource(data=
-                             DemoResourceData(name=self.NON_EXISTING_NAME1))
+        non_existing_resource = DemoResource(
+            data=DemoResourceData(name=self.NON_EXISTING_NAME1))
 
         with self.assertRaises(ResourceReleaseError) as cm:
             self.client._release_resources(resources=[non_existing_resource])
@@ -691,8 +691,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Validates a ResourceDoesNotExistError was raised for the non-existing
             resource.
         """
-        resources = DemoResource(data=
-                         self.get_resource(self.FREE1_NAME, owner="").get())
+        resources = DemoResource(
+            data=self.get_resource(self.FREE1_NAME, owner="").get())
 
         resources_num = DemoResourceData.objects.filter(
                                         name=self.NON_EXISTING_NAME1).count()
@@ -701,8 +701,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.NON_EXISTING_NAME1, resources_num))
 
-        non_existing_resource = DemoResource(data=
-                             DemoResourceData(name=self.NON_EXISTING_NAME1))
+        non_existing_resource = DemoResource(
+            data=DemoResourceData(name=self.NON_EXISTING_NAME1))
 
         resources = [resources] + [non_existing_resource]
 
