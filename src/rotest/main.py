@@ -33,18 +33,18 @@ def main():
     # Rotest admin script:
     argv = sys.argv[1:]
     if argv[0] == "server":
-        from rotest.management.server.main import main
-        main()
+        from rotest.management.server.main import main as server_main
+        server_main()
 
     elif argv[0] == "discover":
         tests = do_discover(argv[1])
         from rotest.core import TestSuite, runner
+
         class AlmightySuite(TestSuite):
             components = tests
 
         del argv[1:3]
         runner.main(AlmightySuite)
-
 
     # Default option - pass control to django-admin:
     else:
