@@ -57,10 +57,9 @@ setup(
     keywords="testing system django unittest",
     install_requires=requirements,
     python_requires="~=2.7.0",
-    scripts=['src/rotest/rotest.py'],
     entry_points={
         "console_scripts": [
-            "rotest = rotest.rotest:main"
+            "rotest = rotest.main:main"
         ],
         "rotest.result_handlers": result_handlers},
     packages=find_packages("src"),
