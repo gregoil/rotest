@@ -169,7 +169,7 @@ class TestResultManagement(BaseResourceManagementTest):
         main_test = MockTestSuite(run_data=run_data)
         test_case = next(iter(main_test))
 
-        test_case.locked_resources = {'test_resource': DemoResource(
+        test_case.locked_resources = {'test_resource': DemoResource(data=
                   DemoResourceData.objects.get(name='available_resource1'))}
 
         self.client.start_test_run(main_test)

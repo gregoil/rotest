@@ -571,7 +571,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                              "Sub-resource %r should be locked but "
                              "found available" % sub_resource.name)
 
-        resource_instace = DemoResource(resources.get())
+        resource_instace = DemoResource(data=resources.get())
         self.client._release_resources(resources=[resource_instace])
 
         resources = DemoComplexResourceData.objects.filter(
@@ -623,7 +623,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Release a free resource, using resource client.
         * Validates a ResourceAlreadyAvailableError is raised.
         """
-        resources = DemoResource(
+        resources = DemoResource(data=
                          self.get_resource(self.FREE1_NAME, owner="").get())
 
         with self.assertRaises(ResourceReleaseError) as cm:
@@ -659,7 +659,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.NON_EXISTING_NAME1, resources_num))
 
-        non_existing_resource = DemoResource(
+        non_existing_resource = DemoResource(data=
                              DemoResourceData(name=self.NON_EXISTING_NAME1))
 
         with self.assertRaises(ResourceReleaseError) as cm:
@@ -691,7 +691,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Validates a ResourceDoesNotExistError was raised for the non-existing
             resource.
         """
-        resources = DemoResource(
+        resources = DemoResource(data=
                          self.get_resource(self.FREE1_NAME, owner="").get())
 
         resources_num = DemoResourceData.objects.filter(
@@ -701,7 +701,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.NON_EXISTING_NAME1, resources_num))
 
-        non_existing_resource = DemoResource(
+        non_existing_resource = DemoResource(data=
                              DemoResourceData(name=self.NON_EXISTING_NAME1))
 
         resources = [resources] + [non_existing_resource]
@@ -747,7 +747,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.LOCKED1_NAME, resources_num))
 
-        resource = DemoResource(resources.get())
+        resource = DemoResource(data=resources.get())
         with self.assertRaises(ResourceReleaseError) as cm:
             self.client._release_resources(resources=[resource])
 
