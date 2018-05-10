@@ -1,7 +1,7 @@
 """Run resource manager server.
 
 Usage:
-    rotest-server [--server-port <port>] [--run-django-server]
+    rotest server [--server-port <port>] [--run-django-server]
                   [--django-port <port>] [-D | --daemon]
 
 Options:

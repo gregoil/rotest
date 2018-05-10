@@ -16,7 +16,7 @@ First, and most important, using the help options :option:`-h` or
 
 .. code-block:: console
 
-    $ python some_test_file.py -h
+    $ rotest run some_test_file.py -h
     Usage: some_test_file.py [options]
 
     Options:
@@ -61,7 +61,7 @@ Next, you can print a list of all the tests that will be run, using
 
 .. code-block:: console
 
-    $ python some_test_file.py -l
+    $ rotest run some_test_file.py -l
     CalculatorSuite []
     |   CasesSuite []
     |   |   PassingCase.test_passing ['BASIC']
@@ -97,7 +97,7 @@ of tests using the :option:`-f` or :option:`--filter` options:
 .. code-block:: console
     :emphasize-lines: 13,17,21,26
 
-        $ python some_test_file.py -f FLOW -l
+        $ rotest run some_test_file.py -f FLOW -l
         CalculatorSuite []
         |   CasesSuite []
         |   |   PassingCase.test_passing ['BASIC']
@@ -135,7 +135,7 @@ insensitive):
 .. code-block:: console
     :emphasize-lines: 4-6,9-10,12
 
-        $ python some_test_file.py -f "basic and not skipped*" -l
+        $ rotest run some_test_file.py -f "basic and not skipped*" -l
         CalculatorSuite []
         |   CasesSuite []
         |   |   PassingCase.test_passing ['BASIC']
@@ -176,7 +176,7 @@ first failure:
 
 .. code-block:: console
 
-    $ python some_test_file.py --failfast
+    $ rotest run some_test_file.py --failfast
     CalculatorSuite
     CasesSuite
       PassingCase.test_passing ... OK
@@ -215,7 +215,7 @@ exceptions are raised at the top level of the code:
 
 .. code-block:: console
 
-    $ python some_test_file.py --debug
+    $ rotest run some_test_file.py --debug
     AnonymousSuite
       FailingCase.test ...
     Traceback (most recent call last):
@@ -268,7 +268,7 @@ a success result. Use options :option:`--delta-iterations` or :option:`-d`:
 
 .. code-block:: console
 
-    $ python some_test_file.py --delta-iterations 2
+    $ rotest run some_test_file.py --delta-iterations 2
     AnonymousSuite
       FailingCase.test ... FAIL
       Traceback (most recent call last):
@@ -337,7 +337,7 @@ The request is of the form:
 
 .. code-block:: console
 
-    $ python some_test_file.py --resources <query-for-resource-1>,<query-for-resource-2>,...
+    $ rotest run some_test_file.py --resources <query-for-resource-1>,<query-for-resource-2>,...
 
 As an example, let's suppose we have the following test:
 
@@ -354,13 +354,13 @@ You can request resources by their names:
 
 .. code-block:: console
 
-    $ python some_test_file.py --resources res1=name1,res2=name2
+    $ rotest run some_test_file.py --resources res1=name1,res2=name2
 
 Alternatively, you can make more complex queries:
 
 .. code-block:: console
 
-    $ python some_test_file.py --resources res1.group.name=QA,res2.comment=nightly
+    $ rotest run some_test_file.py --resources res1.group.name=QA,res2.comment=nightly
 
 Activating Output Handlers
 ==========================
@@ -372,6 +372,6 @@ with the output handlers separated using commas:
 
 .. code-block:: console
 
-    $ python some_test_file.py --outputs excel,logdebug
+    $ rotest run some_test_file.py --outputs excel,logdebug
 
 For more about output handlers, read on :ref:`output_handlers`.

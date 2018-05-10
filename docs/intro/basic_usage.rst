@@ -145,3 +145,12 @@ To run it, just do the following:
     OK
       21:46:20 : Finalizing 'AnonymousSuite' test runner
       21:46:20 : Finalizing test 'AnonymousSuite'
+
+Alternatively, you can skip importing and using rotest.core.runner.main,
+and use the built-in tests discoverer:
+
+.. code-block:: console
+
+    $ rotest run test_math.py
+    or
+    $ rotest run <dir to search tests in>

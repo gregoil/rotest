@@ -2,9 +2,9 @@
 Server Options
 ==============
 
-.. program:: rotest-server
+.. program:: rotest
 
-You can run the server using command :command:`rotest-server`.
+You can run the server using command :command:`rotest server`.
 
 Getting Help
 ============
@@ -17,11 +17,11 @@ The :option:`--help` option is here to help:
 
 .. code-block:: console
 
-    $ rotest-server --help
+    $ rotest server --help
     Run resource manager server.
 
     Usage:
-        rotest-server [--server-port <port>] [--run-django-server]
+        rotest server [--server-port <port>] [--run-django-server]
                       [--django-port <port>] [-D | --daemon]
 
     Options:
@@ -53,7 +53,7 @@ in use and you'd like to change it, use option :option:`--server-port`:
 
 .. code-block:: console
 
-    $ rotest-server --server-port 8888
+    $ rotest server --server-port 8888
     Running in attached mode
     <2018-01-24 18:49:19,654>[DEBUG][main@98]: Starting resource manager, port:8888
     <2018-01-24 18:49:19,655>[DEBUG][manager@101]: Resource manager main thread started
@@ -77,7 +77,7 @@ option :option:`--django-port` to choose the used port. It defaults to port
 
 .. code-block:: console
 
-    $ rotest-server --run-django-server --django-port 9999
+    $ rotest server --run-django-server --django-port 9999
     Running in attached mode
     Running the Django server as well
     <2018-01-24 18:54:46,590>[DEBUG][main@98]: Starting resource manager, port:7778
@@ -106,7 +106,7 @@ A common case is to run the server in the background. Use options
 
 .. code-block:: console
 
-    $ rotest-server --daemon
+    $ rotest server --daemon
     Running in detached mode (as daemon)
 
 You can combine it with the other options, like :option:`--run-django-server`.
