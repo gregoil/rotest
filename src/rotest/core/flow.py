@@ -191,6 +191,7 @@ class TestFlow(AbstractFlowComponent):
             reason (str): skip reason to put.
         """
         for test in self:
+            self.result.startTest(test)
             self.result.addSkip(test, reason)
             test.skip_sub_components(reason)
 
