@@ -178,11 +178,12 @@ class TestFlow(AbstractFlowComponent):
         # The 'mode' parameter is only relevant to the current hierarchy
         setattr(self, 'mode', parameters.pop('mode', self.mode))
 
-        super(TestFlow, self)._set_parameters(override_previous,
-                                              **parameters)
+        super(TestFlow, self)._set_parameters(
+            override_previous=override_previous, **parameters)
 
         for block in self:
-            block._set_parameters(override_previous, **parameters)
+            block._set_parameters(override_previous=override_previous,
+                                  **parameters)
 
     def skip_sub_components(self, reason):
         """Skip the sub-components of the test.
