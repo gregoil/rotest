@@ -241,7 +241,7 @@ class MockResourceClient(ClientResourceManager):
                     if len(available_resources) == 0:
                         raise ResourceDoesNotExistError()
 
-                    resource = descriptor.type(available_resources[0])
+                    resource = descriptor.type(data=available_resources[0])
 
                 except ObjectDoesNotExist:  # The resource doesn't exist.
                     raise ResourceDoesNotExistError()
