@@ -18,7 +18,8 @@
         },
         "outputs": {
             "description": "List of output handler names",
-            "type": ["string", "null"]
+            "type": "array",
+            "minItems": 0
         },
         "filter": {
             "description": "Run only tests that match the filter expression",
