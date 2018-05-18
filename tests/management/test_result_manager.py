@@ -170,7 +170,7 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case = next(iter(main_test))
 
         test_case.locked_resources = {'test_resource': DemoResource(
-                  DemoResourceData.objects.get(name='available_resource1'))}
+            data=DemoResourceData.objects.get(name='available_resource1'))}
 
         self.client.start_test_run(main_test)
         self.client.start_test(test_case)
