@@ -2,9 +2,11 @@
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
 import os
 import sys
+import inspect
 from collections import defaultdict
 
 import click
+import django
 
 from rotest.common import core_log
 from rotest.core.utils.json_parser import parse
@@ -320,8 +322,51 @@ def _set_options_by_config(context, _parameter, config_path):
     return config_path
 
 
+def run_tests(paths, save_state, delta_iterations, processes, outputs, filter,
+              run_name, list, fail_fast, debug, skip_init, config_path,
+              resources):
+    click.secho("Using config file at {}".format(os.path.relpath(config_path)))
+
+    tests = discover_tests_under_paths(paths)
+
+    if len(tests) == 0:
+        click.secho("Found no tests at the given paths", bold=True)
+        sys.exit(1)
+
+    class AlmightySuite(TestSuite):
+        components = tests
+
+    if list:
+        print_test_hierarchy(AlmightySuite, filter)
+        return
+
+    resource_identifiers = parse_resource_identifiers(resources)
+    update_resource_requests(AlmightySuite, resource_identifiers)
+
+    if filter:
+        # Add a tags filtering handler.
+        TagsHandler.TAGS_PATTERN = filter
+        outputs.append('tags')
+
+    runs_data = run(config=config_path,
+                    test_class=AlmightySuite,
+                    outputs=outputs,
+                    run_name=run_name,
+                    enable_debug=debug,
+                    fail_fast=fail_fast,
+                    skip_init=skip_init,
+                    save_state=save_state,
+                    processes_number=processes,
+                    delta_iterations=delta_iterations)
+
+    sys.exit(runs_data[-1].get_return_value())
+
+
 @click.command(
-    help="Run tests in a module or directory."
+    help="Run tests in a module or directory.",
+    context_settings=dict(
+        help_option_names=['-h', '--help'],
+    )
 )
 @click.argument("paths",
                 type=click.Path(exists=True),
@@ -371,47 +416,15 @@ def _set_options_by_config(context, _parameter, config_path):
 @click.option("--resources", "-r",
               help="Specify resources to request by attributes, e.g.: "
                    "'-r res1.group=QA,res2.comment=CI'.")
-def cli_run(paths, save_state, delta_iterations, processes, outputs, filter,
-            run_name, list, fail_fast, debug, skip_init, config_path,
-            resources):
-    click.secho("Using config file at {}".format(os.path.relpath(config_path)))
+def main(paths, **kwargs):
+    django.setup()
 
-    if not paths:
-        paths = ["."]
+    if "rotest run" not in click.get_current_context().command_path:
+        # If this function is called from within a file, find tests in it
+        paths = [inspect.getfile(__import__("__main__"))]
 
-    tests = discover_tests_under_paths(paths)
+    else:
+        # The user ran "rotest run"
+        paths = paths or ["."]
 
-    tests_count = len(tests)
-    click.secho("Collected {} tests".format(tests_count),
-                bold=True)
-
-    if tests_count == 0:
-        sys.exit(1)
-
-    class AlmightySuite(TestSuite):
-        components = tests
-
-    if list:
-        print_test_hierarchy(AlmightySuite, filter)
-        return
-
-    resource_identifiers = parse_resource_identifiers(resources)
-    update_resource_requests(AlmightySuite, resource_identifiers)
-
-    if filter:
-        # Add a tags filtering handler.
-        TagsHandler.TAGS_PATTERN = filter
-        outputs.append('tags')
-
-    runs_data = run(config=config_path,
-                    test_class=AlmightySuite,
-                    outputs=outputs,
-                    run_name=run_name,
-                    enable_debug=debug,
-                    fail_fast=fail_fast,
-                    skip_init=skip_init,
-                    save_state=save_state,
-                    processes_number=processes,
-                    delta_iterations=delta_iterations)
-
-    sys.exit(runs_data[-1].get_return_value())
+    run_tests(paths, **kwargs)

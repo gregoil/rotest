@@ -31,7 +31,7 @@ def discover_tests_under_paths(paths):
     Returns:
         set: all discovered tests.
     """
-    loader = unittest.defaultTestLoader
+    loader = unittest.TestLoader()
     loader.suiteClass = list
     loader.loadTestsFromTestCase = lambda test: test
 
