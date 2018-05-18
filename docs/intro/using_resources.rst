@@ -176,7 +176,7 @@ those orders. If the database does not already exist, it creates it.
 
 Let's run the Rotest server, using the :program:`rotest-server` command:
 
-.. program:: rotest-server
+.. program:: rotest server
 
 .. code-block:: console
 

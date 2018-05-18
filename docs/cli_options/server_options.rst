@@ -2,7 +2,7 @@
 Server Options
 ==============
 
-.. program:: rotest
+.. program:: rotest server
 
 You can run the server using command :command:`rotest server`.
 

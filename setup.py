@@ -28,6 +28,8 @@ result_handlers = [
 requirements = [
     'django>=1.7,<1.8',
     'ipdb',
+    'isort',
+    'click>=6',
     'ipdbugger>=1.1.2',
     'docopt',
     'lxml<4.0.0',
@@ -59,7 +61,7 @@ setup(
     python_requires="~=2.7.0",
     entry_points={
         "console_scripts": [
-            "rotest = rotest.main:main"
+            "rotest = rotest.cli.main:main"
         ],
         "rotest.result_handlers": result_handlers},
     packages=find_packages("src"),
