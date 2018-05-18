@@ -267,13 +267,13 @@ def update_resource_requests(test_class, resource_identifiers):
                          unfound_requests)
 
 
-def _output_option_parser(_context, _parameter, value):
+def _output_option_parser(context, _parameter, value):
     """Parse the given CLI options for output handler.
 
     Args:
-        _context: unused click context.
+        context (click.Context): click context object.
         _parameter: unused click parameter name.
-        value (str): the given option in the CLI.
+        value (str): given value in the CLI.
 
     Returns:
         list: requested output handler names.
@@ -281,8 +281,13 @@ def _output_option_parser(_context, _parameter, value):
     Raises:
         click.BadOptionUsage: if the user asked for non-existing handlers.
     """
+    # CLI is more prioritized than what config file has set
+    if value is not None:
+        requested_handlers = set(value.split(","))
+    else:
+        requested_handlers = set(context.params["outputs"])
+
     available_handlers = set(get_result_handler_options())
-    requested_handlers = set(value.split(","))
 
     non_existing_handlers = requested_handlers - available_handlers
 
@@ -341,7 +346,6 @@ def _set_options_by_config(context, _parameter, config_path):
               help="Use multiprocess test runner. "
                    "Specify number of worker processes to be created.")
 @click.option("--outputs", "-o",
-              default="pretty,excel",
               callback=_output_option_parser,
               help="Output handlers separated by comma. Options: {}."
               .format(", ".join(get_result_handler_options())))
