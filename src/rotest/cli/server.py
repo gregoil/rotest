@@ -11,7 +11,7 @@ if sys.platform != "win32":
     import daemon
 
 
-@click.command(help="Run resource manager server",
+@click.command(help="Run resource management server.",
                context_settings=dict(
                    help_option_names=['-h', '--help'],
                ))
