@@ -1,12 +1,15 @@
 # pylint: disable=protected-access
 import os
 import unittest
-from itertools import chain
+from fnmatch import fnmatch
 
 from isort.pie_slice import OrderedSet
 
 from rotest.core import TestCase, TestFlow
-from rotest.common.config import config_path
+
+
+BLACK_LIST = [".tox", ".git", ".idea", "setup.py"]
+WHITE_LIST = ["*test*.py"]
 
 
 def is_test_class(test):
@@ -31,10 +34,41 @@ def guess_root_dir():
         str: directory containing the rotest configuration file if it exists,
             the current directory otherwise.
     """
-    if config_path is not None:
-        return os.path.dirname(config_path)
+    from rotest.common import config
+    if config.config_path is not None:
+        return os.path.dirname(config.config_path)
 
     return os.curdir
+
+
+def get_test_files(paths):
+    """Return test files that match whitelist and blacklist patterns.
+
+    Args:
+        paths (iterable): list of filesystem paths to be looked recursively.
+
+    Yields:
+        str: path of test file.
+    """
+    for path in paths:
+        path = os.path.abspath(path)
+        filename = os.path.basename(path)
+
+        if any(fnmatch(filename, pattern) for pattern in BLACK_LIST):
+            continue
+
+        if os.path.isfile(path):
+            if not any(fnmatch(filename, pattern) for pattern in WHITE_LIST):
+                continue
+
+            yield path
+
+        else:
+            sub_files = (os.path.join(path, filename)
+                         for filename in os.listdir(path))
+
+            for sub_file in get_test_files(sub_files):
+                yield sub_file
 
 
 def discover_tests_under_paths(paths):
@@ -54,16 +88,14 @@ def discover_tests_under_paths(paths):
 
     tests = OrderedSet()
 
-    for path in paths:
-        path = os.path.abspath(path)
-        if os.path.isdir(path):
-            tests_discovered = chain(*loader.discover(start_dir=path,
-                                                      pattern="*.py"))
+    for path in get_test_files(paths):
+        module_name = loader._get_name_from_path(path)
 
-        else:  # It's a file
-            module_name = loader._get_name_from_path(path)
-            tests_discovered = loader.loadTestsFromName(module_name)
+        tests_discovered = loader.loadTestsFromName(module_name)
+        tests_discovered = [test
+                            for test in tests_discovered
+                            if is_test_class(test)]
 
-        tests.update(test for test in tests_discovered if is_test_class(test))
+        tests.update(tests_discovered)
 
     return tests
