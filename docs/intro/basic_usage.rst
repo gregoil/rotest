@@ -14,13 +14,13 @@ The Building Blocks of Rotest
 Rotest is separated into several component types, each performs its specific
 tasks. Here is a brief explanation of the components:
 
-* :class:`rotest.core.case.TestCase`: The most basic runnable unit. Just like
+* :class:`rotest.core.TestCase`: The most basic runnable unit. Just like
   :class:`unittest.TestCase`, it defines the actions and assertions that should
   be performed to do the test. For example:
 
   .. code-block:: python
 
-      from rotest.core.case import TestCase
+      from rotest.core import TestCase
 
 
       class MyCase(TestCase):
@@ -28,18 +28,18 @@ tasks. Here is a brief explanation of the components:
               result = some_function()
               self.assertEqual(result, some_value)
 
-* :class:`rotest.core.suite.TestSuite`: Again, a known concept from the
+* :class:`rotest.core.TestSuite`: Again, a known concept from the
   :mod:`unittest` module. It aggregates tests, to make a semantic separation
   between them. This way, you can hold a bunch of tests and run them as a set.
-  A :class:`rotest.core.suite.TestSuite` can hold each of the following:
+  A :class:`rotest.core.TestSuite` can hold each of the following:
 
-  - :class:`rotest.core.case.TestCase` classes.
-  - :class:`rotest.core.suite.TestSuite` classes.
-  - The more complex concept of :class:`rotest.core.flow.TestFlow` classes.
+  - :class:`rotest.core.TestCase` classes.
+  - :class:`rotest.core.TestSuite` classes.
+  - The more complex concept of :class:`rotest.core.TestFlow` classes.
 
   .. code-block:: python
 
-      from rotest.core.suite import TestSuite
+      from rotest.core import TestSuite
 
 
       class MySuite(TestSuite):
@@ -104,8 +104,8 @@ Let's create a test that doesn't require any resource. Create a file named
 
 .. code-block:: python
 
-    from rotest.core.runner import main
-    from rotest.core.case import TestCase
+    from rotest import main
+    from rotest.core import TestCase
 
 
     class AddTest(TestCase):
@@ -114,7 +114,7 @@ Let's create a test that doesn't require any resource. Create a file named
 
 
     if __name__ == "__main__":
-        main(AddTest)
+        main()
 
 That's a very simple test, that asserts integers addition operation in Python.
 To run it, just do the following:
@@ -146,7 +146,7 @@ To run it, just do the following:
       21:46:20 : Finalizing 'AnonymousSuite' test runner
       21:46:20 : Finalizing test 'AnonymousSuite'
 
-Alternatively, you can skip importing and using rotest.core.runner.main,
+Alternatively, you can skip importing and using :func:`rotest.main`,
 and use the built-in tests discoverer:
 
 .. code-block:: console
