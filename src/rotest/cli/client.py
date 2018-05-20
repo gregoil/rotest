@@ -1,14 +1,22 @@
+# pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
+import os
+import sys
 import inspect
 
 import click
 import django
 
+from rotest.core import TestSuite
+from rotest.core.utils.common import print_test_hierarchy
+from rotest.cli.discover import discover_tests_under_paths
+from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.result.result import get_result_handler_options
 from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
-                                run_tests)
+                                update_resource_requests, run,
+                                parse_resource_identifiers)
 
 
-def _output_option_parser(context, _parameter, value):
+def output_option_parser(context, _parameter, value):
     """Parse the given CLI options for output handler.
 
     Args:
@@ -42,7 +50,7 @@ def _output_option_parser(context, _parameter, value):
     return list(requested_handlers)
 
 
-def _set_options_by_config(context, _parameter, config_path):
+def set_options_by_config(context, _parameter, config_path):
     """Set default CLI outputs based on the given configuration file.
 
     Args:
@@ -61,6 +69,46 @@ def _set_options_by_config(context, _parameter, config_path):
     return config_path
 
 
+def run_tests(paths, save_state, delta_iterations, processes, outputs, filter,
+              run_name, list, fail_fast, debug, skip_init, config_path,
+              resources):
+    click.secho("Using config file at {}".format(os.path.relpath(config_path)))
+
+    tests = discover_tests_under_paths(paths)
+
+    if len(tests) == 0:
+        click.secho("No test was found at given paths", bold=True)
+        sys.exit(1)
+
+    class AlmightySuite(TestSuite):
+        components = tests
+
+    if list:
+        print_test_hierarchy(AlmightySuite, filter)
+        return
+
+    resource_identifiers = parse_resource_identifiers(resources)
+    update_resource_requests(AlmightySuite, resource_identifiers)
+
+    if filter:
+        # Add a tags filtering handler.
+        TagsHandler.TAGS_PATTERN = filter
+        outputs.append('tags')
+
+    runs_data = run(config=config_path,
+                    test_class=AlmightySuite,
+                    outputs=outputs,
+                    run_name=run_name,
+                    enable_debug=debug,
+                    fail_fast=fail_fast,
+                    skip_init=skip_init,
+                    save_state=save_state,
+                    processes_number=processes,
+                    delta_iterations=delta_iterations)
+
+    sys.exit(runs_data[-1].get_return_value())
+
+
 @click.command(
     help="Run tests in a module or directory.",
     context_settings=dict(
@@ -75,7 +123,7 @@ def _set_options_by_config(context, _parameter, config_path):
               is_eager=True,
               default=DEFAULT_CONFIG_PATH,
               type=click.Path(exists=True),
-              callback=_set_options_by_config,
+              callback=set_options_by_config,
               help="Test configuration file path.")
 @click.option("--save-state", "-s",
               is_flag=True,
@@ -90,7 +138,7 @@ def _set_options_by_config(context, _parameter, config_path):
               help="Use multiprocess test runner. "
                    "Specify number of worker processes to be created.")
 @click.option("--outputs", "-o",
-              callback=_output_option_parser,
+              callback=output_option_parser,
               help="Output handlers separated by comma. Options: {}."
               .format(", ".join(get_result_handler_options())))
 @click.option("--filter", "-f",

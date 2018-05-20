@@ -1,17 +1,12 @@
 """Describes Rotest's test running handler class."""
-# pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
+# pylint: disable=too-many-arguments
 import os
 import sys
 from collections import defaultdict
 
-import click
-
 from rotest.common import core_log
 from rotest.core.utils.json_parser import parse
-from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.runners.base_runner import BaseTestRunner
-from rotest.cli.discover import discover_tests_under_paths
-from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core import TestCase, TestFlow, TestBlock, TestSuite
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -264,43 +259,3 @@ def update_resource_requests(test_class, resource_identifiers):
                                 specifics_fulfilled)
         raise ValueError("Tests do not contain requests of the names %s" %
                          unfound_requests)
-
-
-def run_tests(paths, save_state, delta_iterations, processes, outputs, filter,
-              run_name, list, fail_fast, debug, skip_init, config_path,
-              resources):
-    click.secho("Using config file at {}".format(os.path.relpath(config_path)))
-
-    tests = discover_tests_under_paths(paths)
-
-    if len(tests) == 0:
-        click.secho("Found no tests at the given paths", bold=True)
-        sys.exit(1)
-
-    class AlmightySuite(TestSuite):
-        components = tests
-
-    if list:
-        print_test_hierarchy(AlmightySuite, filter)
-        return
-
-    resource_identifiers = parse_resource_identifiers(resources)
-    update_resource_requests(AlmightySuite, resource_identifiers)
-
-    if filter:
-        # Add a tags filtering handler.
-        TagsHandler.TAGS_PATTERN = filter
-        outputs.append('tags')
-
-    runs_data = run(config=config_path,
-                    test_class=AlmightySuite,
-                    outputs=outputs,
-                    run_name=run_name,
-                    enable_debug=debug,
-                    fail_fast=fail_fast,
-                    skip_init=skip_init,
-                    save_state=save_state,
-                    processes_number=processes,
-                    delta_iterations=delta_iterations)
-
-    sys.exit(runs_data[-1].get_return_value())
