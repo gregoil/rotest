@@ -12,19 +12,10 @@ from rotest.cli.client import main as run
     )
 )
 @click.version_option()
-def cli():
-    pass
-
-
 def main():
-    """Run the main `rotest` program."""
     # Load django models before using the runner in tests.
     django.setup()
 
-    cli.add_command(run, name="run")
-    cli.add_command(server)
-    cli()
 
-
-if __name__ == "__main__":
-    main()
+main.add_command(run, name="run")
+main.add_command(server)
