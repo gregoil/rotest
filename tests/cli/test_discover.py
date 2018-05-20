@@ -42,15 +42,22 @@ def test_dunderscore_test_attribute():
     assert is_test_class(NonAbstractCase)
 
 
-@mock.patch("rotest.common.config", mock.MagicMock(config_path=None))
-def test_guess_root_dir_when_config_is_absent():
-    assert guess_root_dir() == os.curdir
+def test_guess_direct_dir_as_root_dir():
+    with Patcher() as patcher:
+        patcher.fs.create_file(os.path.join("root", "test.py"))
+        assert guess_root_dir(os.path.join("root", "test.py")) == "root"
 
 
-@mock.patch("rotest.common.config",
-            mock.MagicMock(config_path="path/to/root/rotest.yml"))
-def test_guess_root_dir_when_config_exists():
-    assert guess_root_dir() == "path/to/root"
+def test_guess_far_root_dir():
+    with Patcher() as patcher:
+        patcher.fs.create_file(
+            os.path.join("root", "dir1", "dir2", "test.py"))
+        patcher.fs.create_file(
+            os.path.join("root", "dir1", "dir2", "__init__.py"))
+        patcher.fs.create_file(
+            os.path.join("root", "dir1", "__init__.py"))
+        assert guess_root_dir(
+                     os.path.join("root", "dir1", "dir2", "test.py")) == "root"
 
 
 def test_yielding_test_files():

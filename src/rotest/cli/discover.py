@@ -1,5 +1,6 @@
 # pylint: disable=protected-access
 import os
+import sys
 import unittest
 from fnmatch import fnmatch
 
@@ -27,18 +28,17 @@ def is_test_class(test):
             getattr(test, "__test__", True))
 
 
-def guess_root_dir():
-    """Guess the root directory of the project.
+def guess_root_dir(path):
+    """Get the first upward directory not containing an __init__.py.
 
     Returns:
-        str: directory containing the rotest configuration file if it exists,
-            the current directory otherwise.
+        str: the first upward directory which is not a package.
     """
-    from rotest.common import config
-    if config.config_path is not None:
-        return os.path.dirname(config.config_path)
+    path = os.path.dirname(path)
+    while os.path.exists(os.path.join(path, "__init__.py")):
+        path = os.path.dirname(path)
 
-    return os.curdir
+    return path
 
 
 def get_test_files(paths):
@@ -82,13 +82,16 @@ def discover_tests_under_paths(paths):
     """
     loader = unittest.TestLoader()
 
-    loader._top_level_dir = guess_root_dir()
     loader.suiteClass = list
     loader.loadTestsFromTestCase = lambda test: test
 
     tests = OrderedSet()
 
     for path in get_test_files(paths):
+        top_level_dir = guess_root_dir(path)
+        loader._top_level_dir = top_level_dir
+        sys.path.insert(0, top_level_dir)
+
         module_name = loader._get_name_from_path(path)
 
         tests_discovered = loader.loadTestsFromName(module_name)
