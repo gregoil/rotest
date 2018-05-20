@@ -85,8 +85,6 @@ class TestBlock(AbstractFlowComponent):
                                         force_initialize=force_initialize,
                                         resource_manager=resource_manager)
 
-        self.logger.debug("Initialized %r test-block successfully", self.data)
-
     @classmethod
     def get_name(cls, **parameters):
         """Return test name.

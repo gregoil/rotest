@@ -122,15 +122,12 @@ class TestFlow(AbstractFlowComponent):
                                    base_work_dir=self.work_dir,
                                    resource_manager=self.resource_manager)
 
-            self.logger.debug("Adding %r to tests", test_item)
             self._tests.append(test_item)
 
         self.share_data(override_previous=False, **self.__class__.common)
 
         if self.is_main:
             self._validate_inputs()
-
-        self.logger.debug("Initialized %r test-flow successfully", self.data)
 
     def __iter__(self):
         return iter(self._tests)
