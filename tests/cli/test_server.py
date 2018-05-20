@@ -50,4 +50,4 @@ def test_raising_on_windows_when_user_tries_daemon_mode(resource_manager):
 
     assert result.exit_code != 0
     resource_manager.assert_not_called()
-    assert "Cannot run as daemon on Windows" in result.output
+    assert "Cannot run as daemon on Windows" in result.exception.message
