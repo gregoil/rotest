@@ -10,7 +10,6 @@ from itertools import count
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
-from rotest.common.log import get_test_logger
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.abstract_test import AbstractTest
 from rotest.management.common.errors import ServerError
@@ -136,8 +135,6 @@ class AbstractFlowComponent(AbstractTest):
         core_log.debug("Creating database entry for %r test-block", name)
         self.work_dir = get_work_dir(base_work_dir, name)
         self.data = CaseData(name=name, run_data=run_data)
-
-        self.logger = get_test_logger(repr(self.data), self.work_dir)
 
         if self.resource_manager is None:
             self.resource_manager = self.create_resource_manager()
