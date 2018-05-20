@@ -36,7 +36,8 @@ def server(port, run_as_daemon):
 
     if run_as_daemon:
         if sys.platform == "win32":
-            raise ValueError("Cannot run as daemon on Windows")
+            raise ValueError(
+                "Cannot run as daemon on Windows")  # pragma: no cover
 
         click.secho("Running in detached mode (as daemon)", bold=True)
         with daemon.DaemonContext(stdout=None):
