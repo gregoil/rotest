@@ -139,14 +139,16 @@ class Result(TestResult):
 
         test.logger.debug("Test %r has stopped running", test.data)
 
+        test.data.end()
+        for result_handler in self.result_handlers:
+            result_handler.stop_test(test)
+
+        # In order to avoid having too many open files we close the log file
+        # handlers at the end of each test.
         handlers = test.logger.handlers[:]
         for handler in handlers:
             handler.close()
             test.logger.removeHandler(handler)
-
-        test.data.end()
-        for result_handler in self.result_handlers:
-            result_handler.stop_test(test)
 
     def startComposite(self, test):
         """Called when the given TestSuite is about to be run.
