@@ -58,7 +58,7 @@ def test_finding_tests_in_current_module(run_tests):
     run_tests.assert_called_once_with(
         ["some_path"], config_path=DEFAULT_CONFIG_PATH, debug=False,
         delta_iterations=None, fail_fast=False, filter=None, list=False,
-        outputs=["excel", "pretty"], processes=None, resources=None,
+        outputs={"excel", "pretty"}, processes=None, resources=None,
         run_name=None, save_state=False, skip_init=False)
 
 
@@ -73,7 +73,7 @@ def test_finding_tests_in_current_directory(run_tests):
     run_tests.assert_called_once_with(
         ["."], config_path=DEFAULT_CONFIG_PATH, debug=False,
         delta_iterations=None, fail_fast=False, filter=None, list=False,
-        outputs=["excel", "pretty"], processes=None, resources=None,
+        outputs={"excel", "pretty"}, processes=None, resources=None,
         run_name=None, save_state=False, skip_init=False)
 
 

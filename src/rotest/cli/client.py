@@ -25,7 +25,7 @@ def output_option_parser(context, _parameter, value):
         value (str): given value in the CLI.
 
     Returns:
-        list: requested output handler names.
+        set: requested output handler names.
 
     Raises:
         click.BadOptionUsage: if the user asked for non-existing handlers.
@@ -47,7 +47,7 @@ def output_option_parser(context, _parameter, value):
                 ", ".join(non_existing_handlers),
                 ", ".join(available_handlers)))
 
-    return list(requested_handlers)
+    return requested_handlers
 
 
 def set_options_by_config(context, _parameter, config_path):
@@ -93,7 +93,7 @@ def run_tests(paths, save_state, delta_iterations, processes, outputs, filter,
     if filter:
         # Add a tags filtering handler.
         TagsHandler.TAGS_PATTERN = filter
-        outputs.append('tags')
+        outputs.add('tags')
 
     runs_data = run(config=config_path,
                     test_class=AlmightySuite,
