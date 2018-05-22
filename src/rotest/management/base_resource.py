@@ -82,6 +82,7 @@ class BaseResource(object):
         else:
             self.data = AttrDict()
             self.name = "%s-%d" % (self.__class__.__name__, id(self))
+            self.data.name = self.name
 
         self.config = None
         self.parent = None
