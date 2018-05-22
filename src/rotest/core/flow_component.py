@@ -386,6 +386,8 @@ class AbstractFlowComponent(AbstractTest):
                                          name not in self._pipes):
 
                     self._pipes[name] = parameter_name
+                    if name in self.__dict__:
+                        delattr(self, name)
 
                 if not self.IS_COMPLEX and parameter_name not in self.inputs:
                     self.inputs = list(self.inputs) + [parameter_name]

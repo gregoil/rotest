@@ -441,6 +441,10 @@ class TestTestFlow(BasicRotestUnitTest):
         # Block to check that the correct value is wrote through the pipe
         ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
         ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
+        # Hack to pass the static inputs validation
+        setattr(WriteToCommonBlock,
+                WriteToCommonBlock.INJECT_NAME,
+                "wrong value")
 
         class FlowWithCommon(MockFlow):
             common = {'pipe_parameter': PipeTo(WriteToCommonBlock.INJECT_NAME)}
