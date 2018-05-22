@@ -387,7 +387,7 @@ class AbstractFlowComponent(AbstractTest):
 
                     self._pipes[name] = parameter_name
 
-                if parameter_name not in self.inputs:
+                if not self.IS_COMPLEX and parameter_name not in self.inputs:
                     self.inputs = list(self.inputs) + [parameter_name]
 
             else:
