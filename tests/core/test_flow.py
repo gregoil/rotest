@@ -465,9 +465,10 @@ class TestTestFlow(BasicRotestUnitTest):
         class FlowWithCommon(MockFlow):
             common = {'pipe_parameter': 'wrong value'}
 
-            blocks = (WriteToCommonBlock,
-                      ReadFromCommonBlock.params(pipe_parameter=
-                          PipeTo(WriteToCommonBlock.INJECT_NAME)))
+            blocks = (
+                WriteToCommonBlock,
+                ReadFromCommonBlock.params(
+                    pipe_parameter=PipeTo(WriteToCommonBlock.INJECT_NAME)))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -488,7 +489,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
             blocks = (WriteToCommonBlock,
                       ReadFromCommonBlock.params(
-                          READ_NAME=WriteToCommonBlock.INJECT_NAME))
+                          pipe_parameter=WriteToCommonBlock.INJECT_NAME))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
