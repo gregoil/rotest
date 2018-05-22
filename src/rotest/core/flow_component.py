@@ -382,14 +382,18 @@ class AbstractFlowComponent(AbstractTest):
         for name, value in parameters.iteritems():
             if isinstance(value, PipeTo):
                 parameter_name = value.parameter_name
-                if override_previous or name not in self._pipes:
+                if override_previous or (name not in self.__dict__ and
+                                         name not in self._pipes):
+
                     self._pipes[name] = parameter_name
 
                 if parameter_name not in self.inputs:
                     self.inputs = list(self.inputs) + [parameter_name]
 
             else:
-                if override_previous or name not in self.__dict__:
+                if override_previous or (name not in self.__dict__ and
+                                         name not in self._pipes):
+
                     setattr(self, name, value)
 
     def _validate_inputs(self, extra_inputs=[]):
