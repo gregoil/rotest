@@ -493,7 +493,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
             blocks = (WriteToCommonBlock,
                       ReadFromCommonBlock.params(
-                          pipe_parameter=WriteToCommonBlock.INJECT_NAME))
+                          pipe_parameter=WriteToCommonBlock.INJECT_VALUE))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
