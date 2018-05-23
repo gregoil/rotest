@@ -181,25 +181,17 @@ Let's run the Rotest server, using the :program:`rotest server` command:
 .. code-block:: console
 
     $ rotest server
+
     Running in attached mode
-    <2018-05-19 09:55:47,866>[DEBUG][main@91]: Starting resource manager, port:7777
-    <2018-05-19 09:55:47,867>[DEBUG][manager@101]: Resource manager main thread started
-
-.. warning::
-
-    The :option:`--daemon` option is not implemented in Windows.
-
-Also, run the Django server:
-
-.. code-block:: console
-
-    $ python manage.py runserver
+    Running the Django server as well
+    <2018-05-23 20:05:26,574>[DEBUG][main@91]: Starting resource manager, port:7777
+    <2018-05-23 20:05:26,575>[DEBUG][manager@101]: Resource manager main thread started
     Performing system checks...
 
     System check identified no issues (0 silenced).
-    May 19, 2018 - 14:59:07
+    May 23, 2018 - 20:05:28
     Django version 1.7.11, using settings 'rotest_demo.settings'
-    Starting development server at http://127.0.0.1:8000/
+    Starting development server at http://0.0.0.0:8000/
     Quit the server with CONTROL-C.
 
 Adding a Resource on Django Admin Panel
@@ -217,14 +209,14 @@ command to get access to the admin panel:
     Password (again): <type password again>
     Superuser created successfully.
 
-Now, Just enter the Django admin panel (via `<http://127.0.0.1:8080/admin>`_),
+Now, Just enter the Django admin panel (via `<http://127.0.0.1:8000/admin>`_),
 access it using the above credentials, and add a resource with the name
 ``calc`` and a local IP address like ``127.0.0.1``:
 
 .. figure:: adding_resource.png
     :target: ../_images/adding_resource.png
 
-    Adding a resource via Dango admin
+    Adding a resource via Django admin
 
 Writing a Resource-Based Test
 =============================

@@ -1,25 +1,4 @@
-"""Run resource manager server.
-
-Usage:
-    rotest server [--server-port <port>] [--run-django-server]
-                  [--django-port <port>] [-D | --daemon]
-
-Options:
-    -h --help
-        show this help message and exit
-
-    --server-port <port>
-        port for communicating with the client
-
-    --run-django-server
-        run the Django frontend as well
-
-    --django-port <port>
-        set Django's port [default: 8000]
-
-    -D --daemon
-        run as a daemon
-"""
+"""Run resource manager server."""
 import sys
 import logging
 

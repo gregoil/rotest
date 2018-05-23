@@ -5,6 +5,7 @@ Server Options
 .. program:: rotest server
 
 You can run the server using command :command:`rotest server`.
+The command by default runs Django's server as well, though it can be disabled.
 
 Getting Help
 ============
@@ -23,9 +24,12 @@ The :option:`--help` option is here to help:
       Run resource management server.
 
     Options:
-      --port INTEGER  Port for communicating with the client  [default: 7777]
-      -D, --daemon    Run as a daemon  [default: False]
-      -h, --help      Show this message and exit.
+      --port INTEGER         Port for communicating with the client  [default:
+                             7777]
+      --no-django            Skip running the Django web server as well
+      --django-port INTEGER  Django's web server port  [default: 8000]
+      -D, --daemon           Run as a daemon  [default: False]
+      -h, --help             Show this message and exit.
 
 Selecting Server's Port
 =======================
@@ -42,8 +46,53 @@ in use and you'd like to change it, use option :option:`--port`:
 
     $ rotest server --port 8888
     Running in attached mode
-    <2018-01-24 18:49:19,654>[DEBUG][main@98]: Starting resource manager, port:8888
-    <2018-01-24 18:49:19,655>[DEBUG][manager@101]: Resource manager main thread started
+    Running the Django server as well
+    <2018-05-23 19:54:54,550>[DEBUG][main@91]: Starting resource manager, port:8888
+    <2018-05-23 19:54:54,551>[DEBUG][manager@101]: Resource manager main thread started
+    Performing system checks...
+
+    System check identified no issues (0 silenced).
+    May 23, 2018 - 19:54:56
+    Django version 1.7.11, using settings 'rotest_demo.settings'
+    Starting development server at http://0.0.0.0:8000/
+    Quit the server with CONTROL-C.
+
+Skip running Django server
+==========================
+
+You can disable running Django server, using option :option:`--no-django`:
+
+.. code-block:: console
+
+    $ rotest server --no-django
+    Running in attached mode
+    <2018-05-23 19:54:54,550>[DEBUG][main@91]: Starting resource manager, port:7777
+    <2018-05-23 19:54:54,551>[DEBUG][manager@101]: Resource manager main thread started
+
+Selecting Django's Port
+=======================
+
+.. option:: --django-port <port>
+
+    Select Django's web server port.
+
+By default, the server uses port 8000 for running Django's server. If you'd
+like to change it, use option :option:`--django-port`:
+
+.. code-block:: console
+
+    $ rotest server --django-port 9000
+    Running in attached mode
+    Running the Django server as well
+    <2018-05-23 19:54:54,550>[DEBUG][main@91]: Starting resource manager, port:7777
+    <2018-05-23 19:54:54,551>[DEBUG][manager@101]: Resource manager main thread started
+    Performing system checks...
+
+    System check identified no issues (0 silenced).
+    May 23, 2018 - 19:54:56
+    Django version 1.7.11, using settings 'rotest_demo.settings'
+    Starting development server at http://0.0.0.0:9000/
+    Quit the server with CONTROL-C.
 
 Daemon Mode
 ===========
