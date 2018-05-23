@@ -5,6 +5,7 @@ from unittest.result import TestResult
 import pkg_resources
 
 from rotest.common import core_log
+from rotest.common.log import get_test_logger
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import AbstractFlowComponent
 
@@ -69,6 +70,7 @@ class Result(TestResult):
         if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).startTest(test)
 
+        test.logger = get_test_logger(repr(test.data), test.work_dir)
         test.logger.info("Test %r has started running", test.data)
         test.start()
 
@@ -136,9 +138,17 @@ class Result(TestResult):
             super(Result, self).stopTest(test)
 
         test.logger.debug("Test %r has stopped running", test.data)
+
         test.data.end()
         for result_handler in self.result_handlers:
             result_handler.stop_test(test)
+
+        # In order to avoid having too many open files we close the log file
+        # handlers at the end of each test.
+        handlers = test.logger.handlers[:]
+        for handler in handlers:
+            handler.close()
+            test.logger.removeHandler(handler)
 
     def startComposite(self, test):
         """Called when the given TestSuite is about to be run.
