@@ -436,6 +436,73 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=2)
 
+    def test_pipes_in_common(self):
+        """Validate parametrize behavior when using pipes in common."""
+        # Block to check that the correct value is wrote through the pipe
+        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
+        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
+        # Hack to pass the static inputs validation
+        setattr(WriteToCommonBlock,
+                WriteToCommonBlock.INJECT_NAME,
+                "wrong value")
+
+        class FlowWithCommon(MockFlow):
+            common = {'pipe_parameter': PipeTo(WriteToCommonBlock.INJECT_NAME)}
+
+            blocks = (WriteToCommonBlock,
+                      ReadFromCommonBlock)
+
+        test_flow = FlowWithCommon()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
+    def test_pipes_priority_over_common(self):
+        """Validate pipes priority in params is higher than common values."""
+        # Block to check that the correct value is wrote through the pipe
+        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
+        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
+
+        class FlowWithCommon(MockFlow):
+            common = {'pipe_parameter': 'wrong value'}
+
+            blocks = (
+                WriteToCommonBlock,
+                ReadFromCommonBlock.params(
+                    pipe_parameter=PipeTo(WriteToCommonBlock.INJECT_NAME)))
+
+        test_flow = FlowWithCommon()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
+    def test_pipes_override(self):
+        """Validate pipes priority in common is lower than params values."""
+        # Block to check that the correct value is wrote through the pipe
+        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
+        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
+
+        class FlowWithCommon(MockFlow):
+            common = {'pipe_parameter': PipeTo('mode')}
+
+            blocks = (WriteToCommonBlock,
+                      ReadFromCommonBlock.params(
+                          pipe_parameter=WriteToCommonBlock.INJECT_VALUE))
+
+        test_flow = FlowWithCommon()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
     def test_setup_flow(self):
         """Check that test-flows' setUp method is called before the blocks."""
         PARAMETER_VALUE = 'some_value2'
