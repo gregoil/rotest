@@ -29,10 +29,10 @@ def is_test_class(test):
 
 
 def guess_root_dir(path):
-    """Get the first upward directory not containing an __init__.py.
+    """Get the first upward directory which is not a package.
 
     Returns:
-        str: the first upward directory which is not a package.
+        str: the first upward directory not containing a __init__.py file.
     """
     path = os.path.dirname(path)
     while os.path.exists(os.path.join(path, "__init__.py")):

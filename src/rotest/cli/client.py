@@ -72,8 +72,6 @@ def set_options_by_config(context, _parameter, config_path):
 def run_tests(paths, save_state, delta_iterations, processes, outputs, filter,
               run_name, list, fail_fast, debug, skip_init, config_path,
               resources):
-    click.secho("Using config file at {}".format(os.path.relpath(config_path)))
-
     tests = discover_tests_under_paths(paths)
 
     if len(tests) == 0:
