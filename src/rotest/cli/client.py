@@ -1,5 +1,4 @@
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
-import os
 import sys
 import inspect
 
