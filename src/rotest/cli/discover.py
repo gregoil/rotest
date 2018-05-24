@@ -25,7 +25,7 @@ def is_test_class(test):
     return (isinstance(test, type) and
             issubclass(test, (TestCase, TestFlow)) and
             test not in (TestFlow, TestCase) and
-            getattr(test, "__test__", True))
+            ("__test__" not in test.__dict__ or getattr(test, "__test__")))
 
 
 def guess_root_dir(path):

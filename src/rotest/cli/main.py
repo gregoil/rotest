@@ -2,8 +2,8 @@
 import click
 import django
 
+from rotest.cli.client import run
 from rotest.cli.server import server
-from rotest.cli.client import main as run
 
 
 @click.group(
