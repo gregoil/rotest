@@ -308,10 +308,7 @@ class Pretty(object):
                         "unsupported type" % self.test)
 
     def _test_name_uncolored(self):
-        if hasattr(self.test, "name"):
-            return self.test.name
-
-        return self.test.__class__.__name__
+        return self.test.data.name
 
     def _test_result_uncolored(self):
         return str(self.result).capitalize()
