@@ -24,11 +24,11 @@ The :option:`--help` option is here to help:
       Run resource management server.
 
     Options:
-      --port INTEGER         Port for communicating with the client  [default:
+      --port INTEGER         Port for communicating with the client.  [default:
                              7777]
-      --no-django            Skip running the Django web server as well
-      --django-port INTEGER  Django's web server port  [default: 8000]
-      -D, --daemon           Run as a daemon  [default: False]
+      --no-django            Skip running the Django web server.
+      --django-port INTEGER  Django's web server port.  [default: 8000]
+      -D, --daemon           Run as a daemon.  [default: False]
       -h, --help             Show this message and exit.
 
 Selecting Server's Port
@@ -59,6 +59,10 @@ in use and you'd like to change it, use option :option:`--port`:
 
 Skip running Django server
 ==========================
+
+.. option:: --no-django
+
+    Skip running the Django web server.
 
 You can disable running Django server, using option :option:`--no-django`:
 

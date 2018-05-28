@@ -45,21 +45,21 @@ def start_server(server_port, run_django_server, django_port):
               type=int,
               default=RESOURCE_MANAGER_PORT,
               show_default=True,
-              help="Port for communicating with the client")
+              help="Port for communicating with the client.")
 @click.option("--no-django",
               is_flag=True,
               default=False,  # meaning, Django server is by default being ran
-              help="Skip running the Django web server as well")
+              help="Skip running the Django web server.")
 @click.option("--django-port",
               type=int,
               default=8000,
               show_default=True,
-              help="Django's web server port")
+              help="Django's web server port.")
 @click.option("run_as_daemon",
               "--daemon", "-D",
               is_flag=True,
               show_default=True,
-              help="Run as a daemon")
+              help="Run as a daemon.")
 def server(port, no_django, django_port, run_as_daemon):
     """Run the rotest resource manager server.
 
