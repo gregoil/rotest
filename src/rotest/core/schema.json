@@ -38,11 +38,11 @@
             "type": "boolean"
         },
         "debug": {
-            "description": "Specify resources to request by name",
+            "description": "Enter ipdb debug mode upon any test exception",
             "type": "boolean"
         },
         "resources": {
-            "description": "Enter ipdb debug mode upon any test exception",
+            "description": "Specify resources to request by name",
             "type": "string"
         }
     }
