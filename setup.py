@@ -29,7 +29,6 @@ requirements = [
     'django>=1.7,<1.8',
     'ipdb',
     'isort',
-    'click>=6',
     'ipdbugger>=1.1.2',
     'docopt',
     'lxml<4.0.0',
