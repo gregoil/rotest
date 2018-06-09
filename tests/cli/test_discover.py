@@ -6,7 +6,7 @@ import pytest
 from pyfakefs.fake_filesystem_unittest import Patcher
 
 from rotest.core import TestSuite, TestCase, TestBlock
-from rotest.cli.discover import (is_test_class, guess_root_dir,
+from rotest.cli.discover import (is_test_class,
                                  get_test_files, discover_tests_under_paths)
 
 
@@ -42,24 +42,6 @@ def test_dunderscore_test_attribute():
     assert is_test_class(NonAbstractCase)
 
 
-def test_guess_direct_dir_as_root_dir():
-    with Patcher() as patcher:
-        patcher.fs.create_file(os.path.join("root", "test.py"))
-        assert guess_root_dir(os.path.join("root", "test.py")) == "root"
-
-
-def test_guess_far_root_dir():
-    with Patcher() as patcher:
-        patcher.fs.create_file(
-            os.path.join("root", "dir1", "dir2", "test.py"))
-        patcher.fs.create_file(
-            os.path.join("root", "dir1", "dir2", "__init__.py"))
-        patcher.fs.create_file(
-            os.path.join("root", "dir1", "__init__.py"))
-        assert guess_root_dir(
-                     os.path.join("root", "dir1", "dir2", "test.py")) == "root"
-
-
 def test_yielding_test_files():
     with Patcher() as patcher:
         patcher.fs.create_dir("root")
@@ -89,17 +71,16 @@ def test_skipping_files_by_blacklist():
         assert set(get_test_files(["root"])) == set()
 
 
-@mock.patch("rotest.cli.discover.guess_root_dir",
-            mock.MagicMock(return_value=None))
 @mock.patch("rotest.cli.discover.get_test_files",
             mock.MagicMock(return_value=["some_test.py"]))
 @mock.patch("unittest.TestLoader")
+@mock.patch("py.path", mock.MagicMock())
 def test_discovering_tests(loader_mock):
     class Case(TestCase):
         def test(self):
             pass
 
-    loader_mock.return_value.loadTestsFromName.return_value = [Case]
+    loader_mock.return_value.loadTestsFromModule.return_value = [Case]
 
     with mock.patch("__builtin__.__import__"):
         assert discover_tests_under_paths(["some_test.py"]) == {Case}

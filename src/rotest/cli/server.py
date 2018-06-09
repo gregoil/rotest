@@ -1,8 +1,23 @@
+"""Run resource management server.
+
+Usage:
+    rotest server [options]
+
+Options:
+    -h,  --help
+                                Show help message and exit.
+    -p <port>, --port <port>    Port for communicating with the client.
+    --no-django                 Skip running the Django web server.
+    --django-port <port>        Django's web server port [default: 8000].
+    -D, --daemon                Run as a daemon (as a background process).
+"""
+from __future__ import print_function
+import os
 import sys
 import subprocess
 
-import click
 import django
+import docopt
 
 from rotest.common.config import RESOURCE_MANAGER_PORT
 from rotest.management.server.main import ResourceManagerServer
@@ -23,7 +38,7 @@ def start_server(server_port, run_django_server, django_port):
     django_process = None
     try:
         if run_django_server:
-            click.secho("Running the Django server as well")
+            print("Running the Django server as well")
             django_process = subprocess.Popen(
                 ["django-admin",
                  "runserver",
@@ -37,54 +52,32 @@ def start_server(server_port, run_django_server, django_port):
             django_process.kill()
 
 
-@click.command(help="Run resource management server.",
-               context_settings=dict(
-                   help_option_names=['-h', '--help'],
-               ))
-@click.option("--port",
-              type=int,
-              default=RESOURCE_MANAGER_PORT,
-              show_default=True,
-              help="Port for communicating with the client.")
-@click.option("--no-django",
-              is_flag=True,
-              default=False,  # meaning, Django server is by default being ran
-              help="Skip running the Django web server.")
-@click.option("--django-port",
-              type=int,
-              default=8000,
-              show_default=True,
-              help="Django's web server port.")
-@click.option("run_as_daemon",
-              "--daemon", "-D",
-              is_flag=True,
-              show_default=True,
-              help="Run as a daemon.")
-def server(port, no_django, django_port, run_as_daemon):
-    """Run the rotest resource manager server.
-
-    Args:
-        port (number): port to be exposed for the clients' usage.
-        no_django (book): not running the Django server as well.
-        django_port (number): port to be exposed by the Django server.
-        run_as_daemon (bool): whether to run the server in the background
-            or not.
-    """
+def server():
+    # Load django models before using the runner in tests.
     django.setup()
+
+    arguments = docopt.docopt(__doc__)
+    port = int(arguments["--port"] or RESOURCE_MANAGER_PORT)
+    no_django = arguments["--no-django"]
+    django_port = int(arguments["--django-port"])
+    run_as_daemon = arguments["--daemon"]
 
     if run_as_daemon:
         if sys.platform == "win32":
-            raise ValueError(
+            raise RuntimeError(
                 "Cannot run as daemon on Windows")  # pragma: no cover
 
-        click.secho("Running in detached mode (as daemon)", bold=True)
-        with daemon.DaemonContext(stdout=None):
+        print("Running in detached mode (as daemon)")
+        with daemon.DaemonContext(stdout=sys.stdout):
+            print("PID is {}".format(os.getpid()))
+            sys.stdout = None
+
             start_server(server_port=port,
                          run_django_server=not no_django,
                          django_port=django_port)
 
     else:
-        click.secho("Running in attached mode", bold=True)
+        print("Running in attached mode")
         start_server(server_port=port,
                      run_django_server=not no_django,
                      django_port=django_port)

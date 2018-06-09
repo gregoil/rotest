@@ -1,11 +1,12 @@
 # pylint: disable=protected-access
 import os
-import sys
 import unittest
 from fnmatch import fnmatch
 
+import py
 from isort.pie_slice import OrderedSet
 
+from rotest.common import core_log
 from rotest.core import TestCase, TestFlow
 
 
@@ -26,19 +27,6 @@ def is_test_class(test):
             issubclass(test, (TestCase, TestFlow)) and
             test not in (TestFlow, TestCase) and
             ("__test__" not in test.__dict__ or getattr(test, "__test__")))
-
-
-def guess_root_dir(path):
-    """Get the first upward directory which is not a package.
-
-    Returns:
-        str: the first upward directory not containing a __init__.py file.
-    """
-    path = os.path.dirname(path)
-    while os.path.exists(os.path.join(path, "__init__.py")):
-        path = os.path.dirname(path)
-
-    return path
 
 
 def get_test_files(paths):
@@ -81,24 +69,22 @@ def discover_tests_under_paths(paths):
         set: all discovered tests.
     """
     loader = unittest.TestLoader()
-
     loader.suiteClass = list
     loader.loadTestsFromTestCase = lambda test: test
 
     tests = OrderedSet()
 
     for path in get_test_files(paths):
-        top_level_dir = guess_root_dir(path)
-        loader._top_level_dir = top_level_dir
-        sys.path.insert(0, top_level_dir)
+        core_log.debug("Discovering tests in %s", path)
 
-        module_name = loader._get_name_from_path(path)
-
-        tests_discovered = loader.loadTestsFromName(module_name)
+        module = py.path.local(path).pyimport()
+        tests_discovered = loader.loadTestsFromModule(module)
         tests_discovered = [test
                             for test in tests_discovered
                             if is_test_class(test)]
 
+        core_log.debug("Discovered %d tests in %s",
+                       len(tests_discovered), path)
         tests.update(tests_discovered)
 
     return tests

@@ -28,6 +28,7 @@ result_handlers = [
 requirements = [
     'django>=1.7,<1.8',
     'ipdb',
+    'py',
     'isort',
     'ipdbugger>=1.1.2',
     'docopt',

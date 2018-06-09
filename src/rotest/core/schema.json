@@ -43,7 +43,7 @@
         },
         "resources": {
             "description": "Specify resources to request by name",
-            "type": "string"
+            "type": ["string", "null"]
         }
     }
 }

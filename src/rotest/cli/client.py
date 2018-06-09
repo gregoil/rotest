@@ -1,8 +1,49 @@
+"""Run tests in a module or directory.
+
+Usage:
+    rotest [<path>...] [options]
+
+Options:
+    -h,  --help
+            Show help message and exit.
+    -c <path>, --config <path>
+            Test configuration file path.
+    -s, --save-state
+            Enable saving state of resources.
+    -d <delta-iterations>, --delta <delta-iterations>
+            Enable run of failed tests only - enter the number of times the
+            failed tests should be run.
+    -p <processes>, --processes <processes>
+            Use multiprocess test runner - specify number of worker
+            processes to be created.
+    -o <outputs>, --outputs <outputs>
+            Output handlers separated by comma.
+    -f <query>, --filter <query>
+            Run only tests that match the filter expression,
+            e.g. 'Tag1* and not Tag13'.
+    -n <name>, --name <name>
+            Assign a name for current launch.
+    -l, --list
+            Print the tests hierarchy and quit,
+    -F, --failfast
+            Stop the run on first failure.
+    -D, --debug
+            Enter ipdb debug mode upon any test exception.
+    -S, --skip-init
+            Skip initialization and validation of resources.
+    -r <query>, --resources <query>
+            Specify resources to request by attributes,
+            e.g. '-r res1.group=QA,res2.comment=CI'.
+"""
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
+from __future__ import print_function
 import sys
 import inspect
+from itertools import chain
 
-import click
+import docopt
+import django
+from attrdict import AttrDict
 
 from rotest.core import TestSuite
 from rotest.core.utils.common import print_test_hierarchy
@@ -14,57 +55,31 @@ from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
                                 parse_resource_identifiers)
 
 
-def output_option_parser(context, _parameter, value):
-    """Parse the given CLI options for output handler.
+def parse_outputs_option(outputs):
+    """Parse value from CLI and validate all outputs are valid.
 
     Args:
-        context (click.Context): click context object.
-        _parameter: unused click parameter name.
-        value (str): given value in the CLI.
+        outputs (str): value gotten from CLI, e.g. "dots,excel".
 
     Returns:
-        set: requested output handler names.
-
-    Raises:
-        click.BadOptionUsage: if the user asked for non-existing handlers.
+        set: set of all parsed output handlers.
     """
-    # CLI is more prioritized than what config file has set
-    if value is not None:
-        requested_handlers = set(value.split(","))
-    else:
-        requested_handlers = set(context.params["outputs"])
+    if not outputs:
+        return None
+
+    requested_handlers = set(outputs.split(","))
 
     available_handlers = set(get_result_handler_options())
 
     non_existing_handlers = requested_handlers - available_handlers
 
     if non_existing_handlers:
-        raise click.BadOptionUsage(
-            "The following output handlers are not existing: {}.\n"
-            "Available options: {}.".format(
-                ", ".join(non_existing_handlers),
-                ", ".join(available_handlers)))
+        raise ValueError("The following output handlers are not "
+                         "existing: {}.\nAvailable options: {}.".format(
+                              ", ".join(non_existing_handlers),
+                              ", ".join(available_handlers)))
 
     return requested_handlers
-
-
-def set_options_by_config(context, _parameter, config_path):
-    """Set default CLI outputs based on the given configuration file.
-
-    Args:
-        context (click.Context): click context object.
-        _parameter: unused click parameter name.
-        config_path (str): given config file by the CLI.
-
-    Returns:
-        attrdict.AttrDict: configuration in a dict like object.
-    """
-    config = parse_config_file(config_path)
-
-    for key, value in config.items():
-        context.params[key] = value
-
-    return config_path
 
 
 def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
@@ -96,135 +111,86 @@ def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
     sys.exit(runs_data[-1].get_return_value())
 
 
-@click.command(
-    help="Run tests in a module or directory.",
-    context_settings=dict(
-        help_option_names=['-h', '--help'],
-    )
-)
-@click.argument("paths",
-                type=click.Path(exists=True),
-                nargs=-1)
-@click.option("config_path",
-              "--config-path", "--config", "-c",
-              is_eager=True,
-              default=DEFAULT_CONFIG_PATH,
-              type=click.Path(exists=True),
-              callback=set_options_by_config,
-              help="Test configuration file path.")
-@click.option("--save-state", "-s",
-              is_flag=True,
-              help="Enable saving state of resources.")
-@click.option("delta_iterations",
-              "--delta-iterations", "--delta", "-d",
-              type=int,
-              help="Enable run of failed tests only, enter the "
-                   "number of times the failed tests should be run.")
-@click.option("--processes", "-p",
-              type=int,
-              help="Use multiprocess test runner. "
-                   "Specify number of worker processes to be created.")
-@click.option("--outputs", "-o",
-              callback=output_option_parser,
-              help="Output handlers separated by comma. Options: {}."
-              .format(", ".join(get_result_handler_options())))
-@click.option("--filter", "-f",
-              help="Run only tests that match the filter expression, "
-                   "e.g 'Tag1* and not Tag13'.")
-@click.option("run_name",
-              "--name", "-n",
-              help="Assign a name for the current run.")
-@click.option("--list", "-l",
-              is_flag=True,
-              help="Print the tests hierarchy and quit.")
-@click.option("fail_fast",
-              "--failfast", "-F",
-              is_flag=True,
-              help="Stop the run on first failure.")
-@click.option("--debug", "-D",
-              is_flag=True,
-              help="Enter ipdb debug mode upon any test exception.")
-@click.option("--skip-init", "-S",
-              is_flag=True,
-              help="Skip initialization & validation of resources.")
-@click.option("--resources", "-r",
-              help="Specify resources to request by attributes, e.g.: "
-                   "'-r res1.group=QA,res2.comment=CI'.")
-def run(paths, **kwargs):
-    tests = discover_tests_under_paths(paths)
-    if len(tests) == 0:
-        click.secho("No test was found at given paths", bold=True)
-        sys.exit(1)
+def filter_valid_values(dictionary):
+    """Filter only values which are not None.
 
-    class AlmightySuite(TestSuite):
-        components = tests
+    Args:
+        dictionary (dict): the dictionary to be filtered.
 
-    run_tests(AlmightySuite, **kwargs)
-
-
-@click.argument("paths",
-                type=click.Path(exists=True),
-                nargs=-1)
-@click.option("config_path",
-              "--config-path", "--config", "-c",
-              is_eager=True,
-              default=DEFAULT_CONFIG_PATH,
-              type=click.Path(exists=True),
-              callback=set_options_by_config,
-              help="Test configuration file path.")
-@click.option("--save-state", "-s",
-              is_flag=True,
-              help="Enable saving state of resources.")
-@click.option("delta_iterations",
-              "--delta-iterations", "--delta", "-d",
-              type=int,
-              help="Enable run of failed tests only, enter the "
-                   "number of times the failed tests should be run.")
-@click.option("--processes", "-p",
-              type=int,
-              help="Use multiprocess test runner. "
-                   "Specify number of worker processes to be created.")
-@click.option("--outputs", "-o",
-              callback=output_option_parser,
-              help="Output handlers separated by comma. Options: {}."
-              .format(", ".join(get_result_handler_options())))
-@click.option("--filter", "-f",
-              help="Run only tests that match the filter expression, "
-                   "e.g 'Tag1* and not Tag13'.")
-@click.option("run_name",
-              "--name", "-n",
-              help="Assign a name for the current run.")
-@click.option("--list", "-l",
-              is_flag=True,
-              help="Print the tests hierarchy and quit.")
-@click.option("fail_fast",
-              "--failfast", "-F",
-              is_flag=True,
-              help="Stop the run on first failure.")
-@click.option("--debug", "-D",
-              is_flag=True,
-              help="Enter ipdb debug mode upon any test exception.")
-@click.option("--skip-init", "-S",
-              is_flag=True,
-              help="Skip initialization & validation of resources.")
-@click.option("--resources", "-r",
-              help="Specify resources to request by attributes, e.g.: "
-                   "'-r res1.group=QA,res2.comment=CI'.")
-def parse_options(*args, **kwargs):
-    return args, kwargs
+    Returns:
+        iterator: (key, value) tuples where the value isn't None.
+    """
+    return ((key, value)
+            for key, value in dictionary.iteritems()
+            if value is not None)
 
 
 def main(*tests):
-    if len(tests) == 0:
+    """Run the given tests.
+
+    Args:
+        *tests: either suites or tests to be run.
+    """
+    # Load django models before using the runner in tests.
+    django.setup()
+
+    if sys.argv[0].endswith("rotest"):
+        argv = sys.argv[1:]
+    else:
+        argv = sys.argv
+
+    arguments = docopt.docopt(__doc__, argv=argv)
+    arguments = dict(paths=arguments["<path>"] or ["."],
+                     config_path=arguments["--config"] or DEFAULT_CONFIG_PATH,
+                     save_state=arguments["--save-state"],
+                     delta_iterations=int(arguments["--delta"])
+                                      if arguments["--delta"] is not None
+                                      else None,
+                     processes=int(arguments["--processes"])
+                               if arguments["--processes"] is not None
+                               else None,
+                     outputs=parse_outputs_option(arguments["--outputs"]),
+                     filter=arguments["--filter"],
+                     run_name=arguments["--name"],
+                     list=arguments["--list"],
+                     fail_fast=arguments["--failfast"],
+                     debug=arguments["--debug"],
+                     skip_init=arguments["--skip-init"],
+                     resources=arguments["--resources"])
+
+    config = parse_config_file(arguments["config_path"])
+    default_config = parse_config_file(DEFAULT_CONFIG_PATH)
+
+    options = AttrDict(chain(
+        default_config.items(),
+        filter_valid_values(config),
+        filter_valid_values(arguments),
+    ))
+
+    if not sys.argv[0].endswith("rotest") and len(tests) == 0:
         main_module = inspect.getfile(__import__("__main__"))
-        tests = discover_tests_under_paths([main_module])
+        options.paths = (main_module,)
 
     if len(tests) == 0:
-        click.secho("No test was found at given paths", bold=True)
-        sys.exit(1)
+        tests = discover_tests_under_paths(options.paths)
+
+    if len(tests) == 0:
+        raise ValueError("No test was found at given paths: {}".format(
+            ", ".join(options.paths)))
 
     class AlmightySuite(TestSuite):
         components = tests
 
-    args, kwargs = parse_options()
-    run_tests(AlmightySuite, *args, **kwargs)
+    run_tests(test=AlmightySuite,
+              save_state=options.save_state,
+              delta_iterations=options.delta_iterations,
+              processes=options.processes,
+              outputs=set(options.outputs),
+              filter=options.filter,
+              run_name=options.run_name,
+              list=options.list,
+              fail_fast=options.fail_fast,
+              debug=options.debug,
+              skip_init=options.skip_init,
+              config_path=options.config_path,
+              resources=options.resources)

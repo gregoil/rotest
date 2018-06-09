@@ -8,5 +8,6 @@
   "list": false,
   "fail_fast": false,
   "debug": false,
-  "skip_init": false
+  "skip_init": false,
+  "resources": null
 }

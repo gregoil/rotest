@@ -1,21 +1,12 @@
 #!/usr/bin/env python
-import click
-import django
+import sys
 
-from rotest.cli.client import run
 from rotest.cli.server import server
+from rotest.cli.client import main as run
 
 
-@click.group(
-    context_settings=dict(
-        help_option_names=['-h', '--help'],
-    )
-)
-@click.version_option()
 def main():
-    # Load django models before using the runner in tests.
-    django.setup()
-
-
-main.add_command(run, name="run")
-main.add_command(server)
+    if len(sys.argv) > 1 and sys.argv[1] == "server":
+        server()
+    else:
+        run()
