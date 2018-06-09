@@ -124,8 +124,7 @@ def test_listing_and_filtering_given_tests(capsys):
 
 def test_giving_invalid_paths():
     sys.argv = ["rotest", "some_test.py"]
-    with pytest.raises(OSError,
-                       match="No such file or directory: .*some_test"):
+    with pytest.raises(OSError):
         main()
 
 
