@@ -41,11 +41,11 @@ Options:
 from __future__ import print_function
 import sys
 import inspect
-import pkg_resources
 from itertools import chain
 
 import docopt
 import django
+import pkg_resources
 from attrdict import AttrDict
 
 from rotest.core import TestSuite
