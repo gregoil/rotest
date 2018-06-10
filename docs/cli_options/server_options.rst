@@ -19,17 +19,17 @@ The :option:`--help` option is here to help:
 .. code-block:: console
 
     $ rotest server --help
-    Usage: rotest server [OPTIONS]
+    Run resource management server.
 
-      Run resource management server.
+    Usage:
+        rotest server [options]
 
     Options:
-      --port INTEGER         Port for communicating with the client.  [default:
-                             7777]
-      --no-django            Skip running the Django web server.
-      --django-port INTEGER  Django's web server port.  [default: 8000]
-      -D, --daemon           Run as a daemon.  [default: False]
-      -h, --help             Show this message and exit.
+        -h,  --help                 Show help message and exit.
+        -p <port>, --port <port>    Port for communicating with the client.
+        --no-django                 Skip running the Django web server.
+        --django-port <port>        Django's web server port [default: 8000].
+        -D, --daemon                Run as a background process.
 
 Selecting Server's Port
 =======================

@@ -4,12 +4,11 @@ Usage:
     rotest server [options]
 
 Options:
-    -h,  --help
-                                Show help message and exit.
+    -h,  --help                 Show help message and exit.
     -p <port>, --port <port>    Port for communicating with the client.
     --no-django                 Skip running the Django web server.
     --django-port <port>        Django's web server port [default: 8000].
-    -D, --daemon                Run as a daemon (as a background process).
+    -D, --daemon                Run as a background process.
 """
 from __future__ import print_function
 import os
