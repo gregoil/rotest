@@ -6,6 +6,8 @@ Usage:
 Options:
     -h,  --help
             Show help message and exit.
+    --version
+            Print version information and exit.
     -c <path>, --config <path>
             Test configuration file path.
     -s, --save-state
@@ -24,7 +26,7 @@ Options:
     -n <name>, --name <name>
             Assign a name for current launch.
     -l, --list
-            Print the tests hierarchy and quit,
+            Print the tests hierarchy and quit.
     -F, --failfast
             Stop the run on first failure.
     -D, --debug
@@ -39,6 +41,7 @@ Options:
 from __future__ import print_function
 import sys
 import inspect
+import pkg_resources
 from itertools import chain
 
 import docopt
@@ -139,7 +142,8 @@ def main(*tests):
     else:
         argv = sys.argv
 
-    arguments = docopt.docopt(__doc__, argv=argv)
+    version = pkg_resources.get_distribution("rotest").version
+    arguments = docopt.docopt(__doc__, argv=argv, version=version)
     arguments = dict(paths=arguments["<path>"] or ["."],
                      config_path=arguments["--config"] or DEFAULT_CONFIG_PATH,
                      save_state=arguments["--save-state"],

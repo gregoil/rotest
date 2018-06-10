@@ -115,34 +115,42 @@ Following, those are the options exposed when running the test:
 
 .. code-block:: console
 
-    $ rotest run --help
-    Usage: rotest run [OPTIONS] [PATHS]...
+    $ rotest -h
+    Run tests in a module or directory.
 
-      Run tests in a module or directory.
+    Usage:
+        rotest [<path>...] [options]
 
     Options:
-      -c, --config-path, --config PATH
-                                      Test configuration file path.
-      -s, --save-state                Enable saving state of resources.
-      -d, --delta-iterations, --delta INTEGER
-                                      Enable run of failed tests only, enter the
-                                      number of times the failed tests should be
-                                      run.
-      -p, --processes INTEGER         Use multiprocess test runner. Specify number
-                                      of worker processes to be created.
-      -o, --outputs TEXT              Output handlers separated by comma. Options:
-                                      dots, xml, full, remote, tree, excel, db,
-                                      artifact, pretty, signature, loginfo,
-                                      logdebug.
-      -f, --filter TEXT               Run only tests that match the filter
-                                      expression, e.g 'Tag1* and not Tag13'.
-      -n, --name TEXT                 Assign a name for the current run.
-      -l, --list                      Print the tests hierarchy and quit.
-      -F, --failfast                  Stop the run on first failure.
-      -D, --debug                     Enter ipdb debug mode upon any test
-                                      exception.
-      -S, --skip-init                 Skip initialization & validation of
-                                      resources.
-      -r, --resources TEXT            Specify resources to request by attributes,
-                                      e.g.: '-r res1.group=QA,res2.comment=CI'.
-      -h, --help                      Show this message and exit.
+        -h,  --help
+                Show help message and exit.
+        --version
+                Print version information and exit.
+        -c <path>, --config <path>
+                Test configuration file path.
+        -s, --save-state
+                Enable saving state of resources.
+        -d <delta-iterations>, --delta <delta-iterations>
+                Enable run of failed tests only - enter the number of times the
+                failed tests should be run.
+        -p <processes>, --processes <processes>
+                Use multiprocess test runner - specify number of worker
+                processes to be created.
+        -o <outputs>, --outputs <outputs>
+                Output handlers separated by comma.
+        -f <query>, --filter <query>
+                Run only tests that match the filter expression,
+                e.g. 'Tag1* and not Tag13'.
+        -n <name>, --name <name>
+                Assign a name for current launch.
+        -l, --list
+                Print the tests hierarchy and quit.
+        -F, --failfast
+                Stop the run on first failure.
+        -D, --debug
+                Enter ipdb debug mode upon any test exception.
+        -S, --skip-init
+                Skip initialization and validation of resources.
+        -r <query>, --resources <query>
+                Specify resources to request by attributes,
+                e.g. '-r res1.group=QA,res2.comment=CI'.

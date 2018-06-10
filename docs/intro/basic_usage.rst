@@ -151,6 +151,6 @@ and use the built-in tests discoverer:
 
 .. code-block:: console
 
-    $ rotest run test_math.py
+    $ rotest test_math.py
     or
-    $ rotest run <dir to search tests in>
+    $ rotest <dir to search tests in>
