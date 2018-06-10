@@ -67,10 +67,7 @@ def server():
                 "Cannot run as daemon on Windows")  # pragma: no cover
 
         print("Running in detached mode (as daemon)")
-        with daemon.DaemonContext(stdout=sys.stdout):
-            print("PID is {}".format(os.getpid()))
-            sys.stdout = None
-
+        with daemon.DaemonContext():
             start_server(server_port=port,
                          run_django_server=not no_django,
                          django_port=django_port)
