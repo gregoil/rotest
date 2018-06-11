@@ -28,6 +28,16 @@ class PipeTo(object):
         self.parameter_name = parameter_name
 
 
+class BlockInput(object):
+    """Used as declaration for an input for a block."""
+    def __init__(self, default=NotImplemented):
+        self.default = default
+
+    def is_optional(self):
+        """Return whether this input is optional or mandatory."""
+        return self.default is NotImplemented
+
+
 class ClassInstantiator(object):
     """Container that holds instantiation parameters for a flow component."""
     def __init__(self, component_class, **parameters):
@@ -388,9 +398,6 @@ class AbstractFlowComponent(AbstractTest):
                     self._pipes[name] = parameter_name
                     if name in self.__dict__:
                         delattr(self, name)
-
-                if not self.IS_COMPLEX and parameter_name not in self.inputs:
-                    self.inputs = list(self.inputs) + [parameter_name]
 
             else:
                 if override_previous or (name not in self.__dict__ and

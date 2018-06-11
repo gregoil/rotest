@@ -3,8 +3,9 @@
 from itertools import count
 
 from rotest.common.config import ROTEST_WORK_DIR
-from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
-                                        MODE_FINALLY, MODE_OPTIONAL)
+from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
+                                        MODE_FINALLY, MODE_CRITICAL,
+                                        BlockInput)
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -61,7 +62,6 @@ class TestBlock(AbstractFlowComponent):
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
-    inputs = ()
     outputs = ()
 
     IS_COMPLEX = False
@@ -85,6 +85,10 @@ class TestBlock(AbstractFlowComponent):
                                         force_initialize=force_initialize,
                                         resource_manager=resource_manager)
 
+        for input_name, value in self.get_inputs():
+            if value.is_optional():
+                setattr(self, input_name, value.default)
+
     @classmethod
     def get_name(cls, **parameters):
         """Return test name.
@@ -102,6 +106,24 @@ class TestBlock(AbstractFlowComponent):
         method_name = cls.get_test_method_name()
         return '.'.join((class_name, method_name))
 
+    @classmethod
+    def get_inputs(cls):
+        """Return a list of all the input instances of this block.
+
+        Returns:
+            dict. block's inputs (name: input placeholder instance).
+        """
+        all_inputs = {}
+        checked_class = cls
+        while checked_class is not TestBlock:
+            all_inputs.update({key: value
+                               for (key, value) in checked_class.__dict__
+                               if isinstance(value, BlockInput)})
+
+            checked_class = checked_class.__bases__[0]
+
+        return all_inputs
+
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
 
@@ -115,8 +137,11 @@ class TestBlock(AbstractFlowComponent):
         Raises:
             AttributeError: not all inputs were passed to the block.
         """
-        missing_inputs = [input_name for input_name in self.inputs
-                          if (not hasattr(self, input_name) and
+        block_inputs = [name for (name, value) in self.get_inputs().iteritems()
+                        if not value.is_optional()]
+
+        missing_inputs = [input_name for input_name in block_inputs
+                          if (input_name not in self.__dict__ and
                               input_name not in extra_inputs and
                               input_name not in self._pipes)]
 

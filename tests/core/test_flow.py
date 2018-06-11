@@ -2,8 +2,8 @@
 # pylint: disable=no-init,old-style-class,too-many-public-methods
 # pylint: disable=too-many-lines,too-many-arguments,too-many-locals
 from rotest.core.case import request
-from rotest.core.flow_component import PipeTo
 from rotest.core.models.case_data import TestOutcome
+from rotest.core.flow_component import PipeTo, BlockInput
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
@@ -276,9 +276,12 @@ class TestTestFlow(BasicRotestUnitTest):
         * The second block validates it has both the result and the shared
             value using the 'inputs' field.
         """
-        InputsValidationBlock.inputs = ('res1', WriteToCommonBlock.INJECT_NAME)
+        class BlockWithInputs(InputsValidationBlock):
+            res1 = BlockInput()
+
+        setattr(BlockWithInputs, WriteToCommonBlock.INJECT_NAME, BlockInput())
         MockFlow.blocks = (WriteToCommonBlock,
-                           InputsValidationBlock)
+                           BlockWithInputs)
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -288,15 +291,35 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=2)
 
+    def test_input_default_value(self):
+        """Test that blocks' inputs' default value is injected by default."""
+        class BlockWithOptionalField(ReadFromCommonBlock):
+            optional_input = BlockInput(default='default_value')
+
+        # Make the block read and assert the input's default value
+        BlockWithOptionalField.READ_NAME = 'optional_input'
+        BlockWithOptionalField.READ_VALUE = 'default_value'
+
+        MockFlow.blocks = (BlockWithOptionalField, )
+
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=1)
+
     def test_shared_data_priority(self):
         """Test that shared data has higher priority than class fields."""
         class BlockWithOptionalField(ReadFromCommonBlock):
             pass
 
-        # Set class field
+        # Set input's default value
         STATIC_VALUE = 'static_value'
         setattr(BlockWithOptionalField,
-                WriteToCommonBlock.INJECT_NAME, STATIC_VALUE)
+                WriteToCommonBlock.INJECT_NAME,
+                BlockInput(default=STATIC_VALUE))
 
         # Block to check that the correct value is injected into the block
         BlockWithOptionalField.READ_NAME = WriteToCommonBlock.INJECT_NAME
@@ -322,13 +345,16 @@ class TestTestFlow(BasicRotestUnitTest):
             common = {PARAMETER_NAME: PARAMETER_VALUE}
 
         # Block to check that input validates the parameter
-        InputsValidationBlock.inputs = ('res1', PARAMETER_NAME)
+        class BlockWithInputs(InputsValidationBlock):
+            res1 = BlockInput()
+
+        setattr(BlockWithInputs, PARAMETER_NAME, BlockInput())
 
         # Block to check that the correct value is injected into the block
         ReadFromCommonBlock.READ_NAME = PARAMETER_NAME
         ReadFromCommonBlock.READ_VALUE = PARAMETER_VALUE
 
-        FlowWithCommon.blocks = (InputsValidationBlock,
+        FlowWithCommon.blocks = (BlockWithInputs,
                                  ReadFromCommonBlock)
 
         test_flow = FlowWithCommon()
@@ -345,13 +371,31 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that expects an input it doesn't get,
         then expect it to have an error.
         """
-        missing_input_name = 'noinput'
-        InputsValidationBlock.inputs = (missing_input_name,)
+        class BlockWithInputs(InputsValidationBlock):
+            missinginput = BlockInput()
 
-        MockFlow.blocks = (InputsValidationBlock,)
+        MockFlow.blocks = (BlockWithInputs,)
 
         with self.assertRaises(AttributeError):
             MockFlow()
+
+    def test_optional_inputs_static_check(self):
+        """Test static check of optional inputs validation of blocks.
+
+        Run a flow with a block that has an optional input,
+        then expect it to succeed.
+        """
+        class BlockWithInputs(InputsValidationBlock):
+            someinput = BlockInput(default=5)
+
+        MockFlow.blocks = (BlockWithInputs,)
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=1)
 
     def test_inputs_dynamic_check(self):
         """Test runtime validation of inputs of blocks.
@@ -361,9 +405,11 @@ class TestTestFlow(BasicRotestUnitTest):
         """
         pass_value = 'not_exist_value'
         PretendToShareDataBlock.outputs = (pass_value,)
-        InputsValidationBlock.inputs = (pass_value,)
 
-        MockFlow.blocks = (PretendToShareDataBlock, InputsValidationBlock)
+        class BlockWithInputs(InputsValidationBlock):
+            not_exist_value = BlockInput()
+
+        MockFlow.blocks = (PretendToShareDataBlock, BlockWithInputs)
         test_flow = MockFlow()
 
         self.run_test(test_flow)
@@ -376,10 +422,10 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that expects an piped input it doesn't get,
         then expect it to have an error.
         """
-        missing_input_name = 'noinput'
-        InputsValidationBlock.inputs = (missing_input_name,)
+        class BlockWithInputs(InputsValidationBlock):
+            noinput = BlockInput()
 
-        MockFlow.blocks = (InputsValidationBlock.params(
+        MockFlow.blocks = (BlockWithInputs.params(
                             noinput=PipeTo(WriteToCommonBlock.INJECT_NAME)),)
 
         with self.assertRaises(AttributeError):
@@ -397,13 +443,16 @@ class TestTestFlow(BasicRotestUnitTest):
         parameters = {PARAMETER_NAME: PARAMETER_VALUE}
 
         # Block to check that input validates the parameter
-        InputsValidationBlock.inputs = ('res1', PARAMETER_NAME)
+        class BlockWithInputs(InputsValidationBlock):
+            res1 = BlockInput()
+
+        setattr(BlockWithInputs, PARAMETER_NAME, BlockInput())
 
         # Block to check that the correct value is injected into the block
         ReadFromCommonBlock.READ_NAME = PARAMETER_NAME
         ReadFromCommonBlock.READ_VALUE = PARAMETER_VALUE
 
-        MockFlow.blocks = (InputsValidationBlock.params(**parameters),
+        MockFlow.blocks = (BlockWithInputs.params(**parameters),
                            ReadFromCommonBlock.params(**parameters),
                            ReadFromCommonBlock)
 
@@ -913,16 +962,18 @@ class TestTestFlow(BasicRotestUnitTest):
         COMMON_PARAMETER_VALUE = 'some_value2'
 
         class ResourceCheckingBlock(AttributeCheckingBlock):
-            inputs = ('res1',)
+            res1 = BlockInput()
             ATTRIBUTE_NAME = 'res1'
 
         class CommonCheckingBlock(AttributeCheckingBlock):
-            inputs = (COMMON_PARAMETER_NAME,)
             ATTRIBUTE_NAME = COMMON_PARAMETER_NAME
 
+        setattr(CommonCheckingBlock, COMMON_PARAMETER_NAME, BlockInput())
+
         class ParametrizeCheckingBlock(AttributeCheckingBlock):
-            inputs = (FLOW_PARAMETER_NAME,)
             ATTRIBUTE_NAME = FLOW_PARAMETER_NAME
+
+        setattr(ParametrizeCheckingBlock, FLOW_PARAMETER_NAME, BlockInput())
 
         MockSubFlow.blocks = (ResourceCheckingBlock,
                               CommonCheckingBlock,
