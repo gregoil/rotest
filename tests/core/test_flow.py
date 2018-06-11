@@ -9,10 +9,10 @@ from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
                                                 InitializeErrorResource)
 
-from tests.core.utils import (FailureBlock, ErrorBlock, SuccessBlock, MockFlow,
+from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
                               UnexpectedSuccessBlock, NoMethodsBlock,
-                              InputsValidationBlock, WriteToCommonBlock,
+                              SuccessBlock, WriteToCommonBlock,
                               MultipleMethodsBlock, ReadFromCommonBlock,
                               BasicRotestUnitTest, PretendToShareDataBlock,
                               MockSubFlow, AttributeCheckingBlock, MockBlock,
@@ -276,7 +276,7 @@ class TestTestFlow(BasicRotestUnitTest):
         * The second block validates it has both the result and the shared
             value using the 'inputs' field.
         """
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             res1 = BlockInput()
 
         setattr(BlockWithInputs, WriteToCommonBlock.INJECT_NAME, BlockInput())
@@ -345,7 +345,7 @@ class TestTestFlow(BasicRotestUnitTest):
             common = {PARAMETER_NAME: PARAMETER_VALUE}
 
         # Block to check that input validates the parameter
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             res1 = BlockInput()
 
         setattr(BlockWithInputs, PARAMETER_NAME, BlockInput())
@@ -371,7 +371,7 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that expects an input it doesn't get,
         then expect it to have an error.
         """
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             missinginput = BlockInput()
 
         MockFlow.blocks = (BlockWithInputs,)
@@ -385,7 +385,7 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that has an optional input,
         then expect it to succeed.
         """
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             someinput = BlockInput(default=5)
 
         MockFlow.blocks = (BlockWithInputs,)
@@ -406,7 +406,7 @@ class TestTestFlow(BasicRotestUnitTest):
         pass_value = 'not_exist_value'
         PretendToShareDataBlock.outputs = (pass_value,)
 
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             not_exist_value = BlockInput()
 
         MockFlow.blocks = (PretendToShareDataBlock, BlockWithInputs)
@@ -422,7 +422,7 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that expects an piped input it doesn't get,
         then expect it to have an error.
         """
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             noinput = BlockInput()
 
         MockFlow.blocks = (BlockWithInputs.params(
@@ -443,7 +443,7 @@ class TestTestFlow(BasicRotestUnitTest):
         parameters = {PARAMETER_NAME: PARAMETER_VALUE}
 
         # Block to check that input validates the parameter
-        class BlockWithInputs(InputsValidationBlock):
+        class BlockWithInputs(SuccessBlock):
             res1 = BlockInput()
 
         setattr(BlockWithInputs, PARAMETER_NAME, BlockInput())

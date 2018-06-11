@@ -85,7 +85,7 @@ class TestBlock(AbstractFlowComponent):
                                         force_initialize=force_initialize,
                                         resource_manager=resource_manager)
 
-        for input_name, value in self.get_inputs():
+        for input_name, value in self.get_inputs().iteritems():
             if value.is_optional():
                 setattr(self, input_name, value.default)
 

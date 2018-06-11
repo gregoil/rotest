@@ -659,11 +659,6 @@ class SuccessBlock(MockBlock):
         pass
 
 
-class InputsValidationBlock(SuccessBlock):
-    """Mock test, change inputs definition to validate them."""
-    __test__ = False
-
-
 class PretendToShareDataBlock(SuccessBlock):
     """Mock test, pretend to inject data into the common object."""
     __test__ = False
