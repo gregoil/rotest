@@ -116,8 +116,8 @@ class TestBlock(AbstractFlowComponent):
         all_inputs = {}
         checked_class = cls
         while checked_class is not TestBlock:
-            all_inputs.update({key: value
-                               for (key, value) in checked_class.__dict__
+            all_inputs.update({key: value for (key, value) in
+                               checked_class.__dict__.iteritems()
                                if isinstance(value, BlockInput)})
 
             checked_class = checked_class.__bases__[0]
