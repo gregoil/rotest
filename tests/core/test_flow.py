@@ -372,8 +372,8 @@ class TestTestFlow(BasicRotestUnitTest):
             pretend_output = BlockOutput()
 
         MockFlow.blocks = (PretendToShareDataBlock,
-                           create_reader_block(inject_name=
-                                   'pretend_output').params(mode=MODE_FINALLY))
+                           create_reader_block(inject_name='pretend_output').
+                           params(mode=MODE_FINALLY))
         test_flow = MockFlow()
 
         self.run_test(test_flow)
@@ -437,11 +437,17 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_in_common(self):
         """Validate parametrize behavior when using pipes in common."""
+        # The params is just so the input validation can find the piped field
+        WritingBlock = create_writer_block(inject_name='some_name',
+                                           inject_value=5).params(some_name=3)
+        ReadingBlock = create_writer_block(inject_name='pipe_target',
+                                           inject_value=5)
+
         class FlowWithCommon(MockFlow):
             common = {'pipe_target': PipeTo('some_name')}
 
-            blocks = (create_writer_block(inject_name='some_name'),
-                      create_reader_block(inject_name='pipe_target'))
+            blocks = (WritingBlock,
+                      ReadingBlock)
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -471,7 +477,7 @@ class TestTestFlow(BasicRotestUnitTest):
     def test_pipes_override(self):
         """Validate pipes priority in common is lower than params values."""
         class FlowWithCommon(MockFlow):
-            common = {'pipe_target': PipeTo('mode')}
+            common = {'pipe_target': PipeTo('wrong_field')}
 
             blocks = (create_writer_block(inject_name='some_name',
                                           inject_value='some_value'),
@@ -479,7 +485,7 @@ class TestTestFlow(BasicRotestUnitTest):
                                           inject_value='some_value').params(
                           pipe_target='some_value'))
 
-        test_flow = FlowWithCommon()
+        test_flow = FlowWithCommon.params(wrong_field='wrong_value')()
         self.run_test(test_flow)
 
         self.assertTrue(self.result.wasSuccessful(),
@@ -494,7 +500,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         class FlowWithSetup(MockFlow):
             def setUp(self):
-                self.share_data(**{parameter_value: parameter_name})
+                self.share_data(**{parameter_name: parameter_value})
 
         FlowWithSetup.blocks = (create_reader_block(
                                             inject_name=parameter_name,
