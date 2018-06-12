@@ -256,6 +256,9 @@ class AbstractFlowComponent(AbstractTest):
                 raise
 
             try:
+                for pipe_name, pipe_target in self._pipes.iteritems():
+                    setattr(self, pipe_name, getattr(self, pipe_target))
+
                 if not self.is_main:
                     # Validate all required inputs were passed
                     self._validate_inputs()
@@ -401,8 +404,6 @@ class AbstractFlowComponent(AbstractTest):
                                          name not in self._pipes):
 
                     self._pipes[name] = parameter_name
-                    if name in self.__dict__:
-                        delattr(self, name)
 
             else:
                 if override_previous or (name not in self.__dict__ and

@@ -372,13 +372,15 @@ class TestTestFlow(BasicRotestUnitTest):
             pretend_output = BlockOutput()
 
         MockFlow.blocks = (PretendToShareDataBlock,
-                           create_reader_block(
-                       inject_name='pretend_output').params(mode=MODE_FINALLY))
+                           create_reader_block(inject_name=
+                                   'pretend_output').params(mode=MODE_FINALLY))
         test_flow = MockFlow()
 
         self.run_test(test_flow)
-        self.assertEqual(len(self.result.errors), 2,
-                         "Result didn't had the correct number of errors")
+        self.assertFalse(self.result.wasSuccessful(),
+                         'Flow succeeded when it should have failed')
+
+        self.validate_blocks(test_flow, errors=2)
 
     def test_inputs_static_check_with_pipe(self):
         """Test static check of inputs validation of blocks when using pipes.
