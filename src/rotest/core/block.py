@@ -24,10 +24,18 @@ class TestBlock(AbstractFlowComponent):
     and can't be skipped on account of 'run_delta' (passed in previous runs),
     tags filtering, etc.
 
+    declaring 'inputs': assign class fields to instances of BlockInput to
+    ask for values for the block (values get be passed via common, parametrize
+    or previous blocks passing them as outputs). You can pass a default value
+    to BlockInput to assign if non is supplied (making it an optional input).
+
+    declaring 'outputs': assign class fields to instances of BlockOutput to
+    share values from the instance (self) to the parent and siblings.
+    the block automatically shares the declared outputs after teardown.
+
     In case the blocks under a flow don't 'connect' properly (a block doesn't
-    get all its inputs from the previous, parametrize or the flow's resources)
-    a warning would be displayed to the user. This check is done on a static
-    level (i.e. before running any test).
+    have its declared output in self.__dict__ or a block doesn't get all its
+    inputs from) an error would be raised before the tests start.
 
     Test authors should subclass TestBlock for their own tests and override
     'inputs' tuple with the names of the fields required for the run of the
@@ -50,10 +58,6 @@ class TestBlock(AbstractFlowComponent):
             upon any exception in a test statement.
         resource_manager (ClientResourceManager): client resource manager.
         skip_init (bool): True to skip resources initialize and validation.
-
-        inputs (tuple): lists the names of fields the block expecteds to have
-            (locked resources, values set via 'parametrize' or 'share').
-        outputs (tuple): lists the names of fields the block shares.
         mode (number): running mode code. available modes are:
             CRITICAL: stop test flow on failure or error.
             FINALLY: always run this block, regardless of the others' result.
