@@ -38,6 +38,11 @@ class BlockInput(object):
         return self.default is not NotImplemented
 
 
+class BlockOutput(object):
+    """Used as declaration for an output for a block."""
+    pass
+
+
 class ClassInstantiator(object):
     """Container that holds instantiation parameters for a flow component."""
     def __init__(self, component_class, **parameters):

@@ -5,7 +5,7 @@ from itertools import count
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
                                         MODE_FINALLY, MODE_CRITICAL,
-                                        BlockInput)
+                                        BlockInput, BlockOutput)
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -62,8 +62,6 @@ class TestBlock(AbstractFlowComponent):
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
-    outputs = ()
-
     IS_COMPLEX = False
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
@@ -84,6 +82,8 @@ class TestBlock(AbstractFlowComponent):
                                         base_work_dir=base_work_dir,
                                         force_initialize=force_initialize,
                                         resource_manager=resource_manager)
+
+        self.addCleanup(self._share_outputs)
 
         for input_name, value in self.get_inputs().iteritems():
             if value.is_optional():
@@ -124,6 +124,36 @@ class TestBlock(AbstractFlowComponent):
 
         return all_inputs
 
+    @classmethod
+    def get_outputs(cls):
+        """Return a list of all the input instances of this block.
+
+        Returns:
+            dict. block's inputs (name: input placeholder instance).
+        """
+        all_outputs = {}
+        checked_class = cls
+        while checked_class is not TestBlock:
+            all_outputs.update({key: value for (key, value) in
+                                checked_class.__dict__.iteritems()
+                                if isinstance(value, BlockOutput)})
+
+            checked_class = checked_class.__bases__[0]
+
+        return all_outputs
+
+    def _share_outputs(self):
+        """Share all the declared outputs of the block."""
+        outputs_dict = {}
+        for output_name in self.get_outputs():
+            if output_name not in self.__dict__:
+                raise RuntimeError("Block %r didn't create output %r" %
+                                   (self.data.name, output_name))
+
+            outputs_dict[output_name] = getattr(self, output_name)
+
+        self.share_data(**outputs_dict)
+
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
 
@@ -139,6 +169,8 @@ class TestBlock(AbstractFlowComponent):
         """
         block_inputs = [name for (name, value) in self.get_inputs().iteritems()
                         if not value.is_optional()]
+
+        block_inputs.extend(self._pipes.itervalues())
 
         missing_inputs = [input_name for input_name in block_inputs
                           if (input_name not in self.__dict__ and

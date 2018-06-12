@@ -9,12 +9,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.flow import TestFlow
-from rotest.core.block import TestBlock
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.core.runner import BaseTestRunner
 from rotest.core.case import TestCase, request
 from rotest.management.models.ut_models import DemoResource
+from rotest.core.block import TestBlock, BlockOutput, BlockInput
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.common.errors import (ResourceDoesNotExistError,
                                              ResourceUnavailableError)
@@ -659,34 +659,31 @@ class SuccessBlock(MockBlock):
         pass
 
 
-class PretendToShareDataBlock(SuccessBlock):
-    """Mock test, pretend to inject data into the common object."""
-    __test__ = False
+def create_writer_block(inject_name='some_name', inject_value='some_value'):
+    class WriteToCommonBlock(MockBlock):
+        """Mock test, injects data into the common object."""
+        __test__ = False
+
+        def test_inject(self):
+            """Mock test function that injects data into the common object."""
+            setattr(self, inject_name, inject_value)
+
+    setattr(WriteToCommonBlock, inject_name, BlockOutput())
+    return WriteToCommonBlock
 
 
-class WriteToCommonBlock(MockBlock):
-    """Mock test, injects data into the common object."""
-    __test__ = False
+def create_reader_block(inject_name='some_name', inject_value='some_value',
+                        default=NotImplemented):
+    class ReadFromCommonBlock(MockBlock):
+        """Mock test, reads a value and asserts it common object."""
+        __test__ = False
 
-    INJECT_NAME = 'some_name'
-    INJECT_VALUE = 'some_value'
-    outputs = (INJECT_NAME,)
+        def test_inject(self):
+            """Mock test function that read from the block object data."""
+            self.assertEqual(getattr(self, inject_name), inject_value)
 
-    def test_inject(self):
-        """Mock test function that injects data into the common object."""
-        self.share_data(**{self.INJECT_NAME: self.INJECT_VALUE})
-
-
-class ReadFromCommonBlock(MockBlock):
-    """Mock test, reads a value and asserts it common object."""
-    __test__ = False
-
-    READ_NAME = NotImplemented
-    READ_VALUE = NotImplemented
-
-    def test_read(self):
-        """Mock test function that read from the block object data."""
-        self.assertEqual(getattr(self, self.READ_NAME), self.READ_VALUE)
+    setattr(ReadFromCommonBlock, inject_name, BlockInput(default=default))
+    return ReadFromCommonBlock
 
 
 class AttributeCheckingBlock(MockBlock):

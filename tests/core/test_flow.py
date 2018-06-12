@@ -3,7 +3,7 @@
 # pylint: disable=too-many-lines,too-many-arguments,too-many-locals
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome
-from rotest.core.flow_component import PipeTo, BlockInput
+from rotest.core.flow_component import PipeTo, BlockInput, BlockOutput
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
@@ -12,12 +12,11 @@ from rotest.management.models.ut_models import (DemoResource,
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
                               UnexpectedSuccessBlock, NoMethodsBlock,
-                              SuccessBlock, WriteToCommonBlock,
-                              MultipleMethodsBlock, ReadFromCommonBlock,
-                              BasicRotestUnitTest, PretendToShareDataBlock,
-                              MockSubFlow, AttributeCheckingBlock, MockBlock,
-                              DynamicResourceLockingBlock,
-                              StoreFailuresBlock)
+                              SuccessBlock, MultipleMethodsBlock,
+                              BasicRotestUnitTest, MockSubFlow,
+                              AttributeCheckingBlock, MockBlock,
+                              DynamicResourceLockingBlock, StoreFailuresBlock,
+                              create_reader_block, create_writer_block)
 
 
 class TestTestFlow(BasicRotestUnitTest):
@@ -276,12 +275,8 @@ class TestTestFlow(BasicRotestUnitTest):
         * The second block validates it has both the result and the shared
             value using the 'inputs' field.
         """
-        class BlockWithInputs(SuccessBlock):
-            res1 = BlockInput()
-
-        setattr(BlockWithInputs, WriteToCommonBlock.INJECT_NAME, BlockInput())
-        MockFlow.blocks = (WriteToCommonBlock,
-                           BlockWithInputs)
+        MockFlow.blocks = (create_writer_block(inject_value='some_value'),
+                           create_reader_block(inject_value='some_value'))
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -293,14 +288,8 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_input_default_value(self):
         """Test that blocks' inputs' default value is injected by default."""
-        class BlockWithOptionalField(ReadFromCommonBlock):
-            optional_input = BlockInput(default='default_value')
-
-        # Make the block read and assert the input's default value
-        BlockWithOptionalField.READ_NAME = 'optional_input'
-        BlockWithOptionalField.READ_VALUE = 'default_value'
-
-        MockFlow.blocks = (BlockWithOptionalField, )
+        MockFlow.blocks = (create_reader_block(inject_value='default_value',
+                                               default='default_value'), )
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -311,22 +300,10 @@ class TestTestFlow(BasicRotestUnitTest):
         self.validate_blocks(test_flow, successes=1)
 
     def test_shared_data_priority(self):
-        """Test that shared data has higher priority than class fields."""
-        class BlockWithOptionalField(ReadFromCommonBlock):
-            pass
-
-        # Set input's default value
-        STATIC_VALUE = 'static_value'
-        setattr(BlockWithOptionalField,
-                WriteToCommonBlock.INJECT_NAME,
-                BlockInput(default=STATIC_VALUE))
-
-        # Block to check that the correct value is injected into the block
-        BlockWithOptionalField.READ_NAME = WriteToCommonBlock.INJECT_NAME
-        BlockWithOptionalField.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
-
-        MockFlow.blocks = (WriteToCommonBlock,
-                           BlockWithOptionalField)
+        """Test that shared data has higher priority than default values."""
+        MockFlow.blocks = (create_writer_block(inject_value='some_value'),
+                           create_reader_block(inject_value='some_value',
+                                               default='default_value'))
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -336,26 +313,17 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=2)
 
-    def test_inputs_initial_data(self):
+    def test_common(self):
         """Check that test-flows' initial common data is injected at start."""
-        PARAMETER_VALUE = 'some_value2'
-        PARAMETER_NAME = 'some_parameter2'
+        parameter_value = 'some_value2'
+        parameter_name = 'some_parameter2'
 
         class FlowWithCommon(MockFlow):
-            common = {PARAMETER_NAME: PARAMETER_VALUE}
+            common = {parameter_name: parameter_value}
 
-        # Block to check that input validates the parameter
-        class BlockWithInputs(SuccessBlock):
-            res1 = BlockInput()
-
-        setattr(BlockWithInputs, PARAMETER_NAME, BlockInput())
-
-        # Block to check that the correct value is injected into the block
-        ReadFromCommonBlock.READ_NAME = PARAMETER_NAME
-        ReadFromCommonBlock.READ_VALUE = PARAMETER_VALUE
-
-        FlowWithCommon.blocks = (BlockWithInputs,
-                                 ReadFromCommonBlock)
+        FlowWithCommon.blocks = (create_reader_block(
+                                        inject_name=parameter_name,
+                                        inject_value=parameter_value), )
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -363,7 +331,7 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertTrue(self.result.wasSuccessful(),
                         'Flow failed when it should have succeeded')
 
-        self.validate_blocks(test_flow, successes=2)
+        self.validate_blocks(test_flow, successes=1)
 
     def test_inputs_static_check(self):
         """Test static check of inputs validation of blocks.
@@ -371,10 +339,8 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that expects an input it doesn't get,
         then expect it to have an error.
         """
-        class BlockWithInputs(SuccessBlock):
-            missinginput = BlockInput()
-
-        MockFlow.blocks = (BlockWithInputs,)
+        MockFlow.blocks = (create_reader_block(inject_name="missing_input",
+                                               inject_value=5), )
 
         with self.assertRaises(AttributeError):
             MockFlow()
@@ -385,35 +351,33 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that has an optional input,
         then expect it to succeed.
         """
-        class BlockWithInputs(SuccessBlock):
-            someinput = BlockInput(default=5)
-
-        MockFlow.blocks = (BlockWithInputs,)
+        MockFlow.blocks = (create_reader_block(inject_name="missing_input",
+                                               inject_value=4,
+                                               default=5), )
         test_flow = MockFlow()
         self.run_test(test_flow)
 
-        self.assertTrue(self.result.wasSuccessful(),
-                        'Flow failed when it should have succeeded')
+        self.assertFalse(self.result.wasSuccessful(),
+                         'Flow succeeded when it should have failed')
 
-        self.validate_blocks(test_flow, successes=1)
+        self.validate_blocks(test_flow, failures=1)
 
-    def test_inputs_dynamic_check(self):
+    def test_outputs_check(self):
         """Test runtime validation of inputs of blocks.
 
         Run a flow with a block that pretends to share data and a block that
         needs this data as an input.
         """
-        pass_value = 'not_exist_value'
-        PretendToShareDataBlock.outputs = (pass_value,)
+        class PretendToShareDataBlock(SuccessBlock):
+            pretend_output = BlockOutput()
 
-        class BlockWithInputs(SuccessBlock):
-            not_exist_value = BlockInput()
-
-        MockFlow.blocks = (PretendToShareDataBlock, BlockWithInputs)
+        MockFlow.blocks = (PretendToShareDataBlock,
+                           create_reader_block(
+                       inject_name='pretend_output').params(mode=MODE_FINALLY))
         test_flow = MockFlow()
 
         self.run_test(test_flow)
-        self.assertEqual(len(self.result.errors), 1,
+        self.assertEqual(len(self.result.errors), 2,
                          "Result didn't had the correct number of errors")
 
     def test_inputs_static_check_with_pipe(self):
@@ -426,7 +390,7 @@ class TestTestFlow(BasicRotestUnitTest):
             noinput = BlockInput()
 
         MockFlow.blocks = (BlockWithInputs.params(
-                            noinput=PipeTo(WriteToCommonBlock.INJECT_NAME)),)
+            noinput=PipeTo('pipe_target')), )
 
         with self.assertRaises(AttributeError):
             MockFlow()
@@ -438,44 +402,28 @@ class TestTestFlow(BasicRotestUnitTest):
         * Checks that the values set via parametrize are correct.
         * Checks that passing values via parametrize is local to the block.
         """
-        PARAMETER_VALUE = 'some_value'
-        PARAMETER_NAME = 'some_parameter'
-        parameters = {PARAMETER_NAME: PARAMETER_VALUE}
+        parameter_value = 'some_value'
+        parameter_name = 'some_parameter'
+        parameters = {parameter_name: parameter_value}
 
-        # Block to check that input validates the parameter
-        class BlockWithInputs(SuccessBlock):
-            res1 = BlockInput()
-
-        setattr(BlockWithInputs, PARAMETER_NAME, BlockInput())
-
-        # Block to check that the correct value is injected into the block
-        ReadFromCommonBlock.READ_NAME = PARAMETER_NAME
-        ReadFromCommonBlock.READ_VALUE = PARAMETER_VALUE
-
-        MockFlow.blocks = (BlockWithInputs.params(**parameters),
-                           ReadFromCommonBlock.params(**parameters),
-                           ReadFromCommonBlock)
+        MockFlow.blocks = (create_reader_block(
+                    inject_name=parameter_name,
+                    inject_value=parameter_value).params(**parameters), )
 
         test_flow = MockFlow()
         self.run_test(test_flow)
 
-        # The third block should get an error since it wasn't injected with
-        # the parameters and it tries to read them.
-        self.assertFalse(self.result.wasSuccessful(),
-                         'Flow succeeded when it should have failed')
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
 
-        self.validate_blocks(test_flow, successes=2, errors=1)
+        self.validate_blocks(test_flow, successes=1)
 
     def test_pipes_happy_flow(self):
         """Validate parametrize behavior when using pipes."""
-        # Block to check that the correct value is wrote through the pipe
-        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
-        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
-
         MockFlow.blocks = (
-            WriteToCommonBlock,
-            ReadFromCommonBlock.params(
-                pipe_parameter=PipeTo(WriteToCommonBlock.INJECT_NAME)))
+            create_writer_block(inject_name='some_name'),
+            create_reader_block(inject_name='pipe_target').params(
+                pipe_target=PipeTo('some_name')))
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -487,19 +435,11 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_in_common(self):
         """Validate parametrize behavior when using pipes in common."""
-        # Block to check that the correct value is wrote through the pipe
-        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
-        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
-        # Hack to pass the static inputs validation
-        setattr(WriteToCommonBlock,
-                WriteToCommonBlock.INJECT_NAME,
-                "wrong value")
-
         class FlowWithCommon(MockFlow):
-            common = {'pipe_parameter': PipeTo(WriteToCommonBlock.INJECT_NAME)}
+            common = {'pipe_target': PipeTo('some_name')}
 
-            blocks = (WriteToCommonBlock,
-                      ReadFromCommonBlock)
+            blocks = (create_writer_block(inject_name='some_name'),
+                      create_reader_block(inject_name='pipe_target'))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -511,17 +451,12 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_priority_over_common(self):
         """Validate pipes priority in params is higher than common values."""
-        # Block to check that the correct value is wrote through the pipe
-        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
-        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
-
         class FlowWithCommon(MockFlow):
-            common = {'pipe_parameter': 'wrong value'}
+            common = {'pipe_target': 'wrong_value'}
 
-            blocks = (
-                WriteToCommonBlock,
-                ReadFromCommonBlock.params(
-                    pipe_parameter=PipeTo(WriteToCommonBlock.INJECT_NAME)))
+            blocks = (create_writer_block(inject_name='some_name'),
+                      create_reader_block(inject_name='pipe_target').params(
+                          pipe_target=PipeTo('some_name')))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -533,16 +468,14 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_override(self):
         """Validate pipes priority in common is lower than params values."""
-        # Block to check that the correct value is wrote through the pipe
-        ReadFromCommonBlock.READ_NAME = 'pipe_parameter'
-        ReadFromCommonBlock.READ_VALUE = WriteToCommonBlock.INJECT_VALUE
-
         class FlowWithCommon(MockFlow):
-            common = {'pipe_parameter': PipeTo('mode')}
+            common = {'pipe_target': PipeTo('mode')}
 
-            blocks = (WriteToCommonBlock,
-                      ReadFromCommonBlock.params(
-                          pipe_parameter=WriteToCommonBlock.INJECT_VALUE))
+            blocks = (create_writer_block(inject_name='some_name',
+                                          inject_value='some_value'),
+                      create_reader_block(inject_name='pipe_target',
+                                          inject_value='some_value').params(
+                          pipe_target='some_value'))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -554,18 +487,17 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_setup_flow(self):
         """Check that test-flows' setUp method is called before the blocks."""
-        PARAMETER_VALUE = 'some_value2'
-        PARAMETER_NAME = 'some_parameter2'
+        parameter_value = 'some_value'
+        parameter_name = 'some_parameter'
 
         class FlowWithSetup(MockFlow):
             def setUp(self):
-                self.share_data(**{PARAMETER_NAME: PARAMETER_VALUE})
+                self.share_data(**{parameter_value: parameter_name})
 
-        # Block to check that the correct value is injected into the block
-        ReadFromCommonBlock.READ_NAME = PARAMETER_NAME
-        ReadFromCommonBlock.READ_VALUE = PARAMETER_VALUE
-
-        FlowWithSetup.blocks = (ReadFromCommonBlock,)
+        FlowWithSetup.blocks = (create_reader_block(
+                                            inject_name=parameter_name,
+                                            inject_value=parameter_value,
+                                            default='wrong_value'),)
 
         test_flow = FlowWithSetup()
         self.run_test(test_flow)
@@ -1013,28 +945,26 @@ class TestTestFlow(BasicRotestUnitTest):
         * Check that fields shared in the upper flow are available to all.
         * Check that fields shared in sub-flow are not available in the top.
         """
-        UPPER_FIELD_NAME = 'upper_field'
-        UPPER_FIELD_VALUE = 'some_value1'
+        upper_field_name = 'upper_field'
+        upper_field_value = 'some_value1'
 
-        SUB_FIELD_NAME = 'sub_field'
-        SUB_FIELD_VALUE = 'some_value2'
+        sub_field_name = 'sub_field'
+        sub_field_value = 'some_value2'
 
-        class UpperWritingBlock(WriteToCommonBlock):
-            INJECT_NAME = UPPER_FIELD_NAME
-            INJECT_VALUE = UPPER_FIELD_VALUE
+        UpperWritingBlock = create_writer_block(inject_name=upper_field_name,
+                                                inject_value=upper_field_value)
 
-        class SubWritingBlock(WriteToCommonBlock):
-            INJECT_NAME = SUB_FIELD_NAME
-            INJECT_VALUE = SUB_FIELD_VALUE
+        SubWritingBlock = create_writer_block(inject_name=sub_field_name,
+                                              inject_value=sub_field_value)
 
         class UpperCheckingBlock(AttributeCheckingBlock):
-            ATTRIBUTE_NAME = UPPER_FIELD_NAME
+            ATTRIBUTE_NAME = upper_field_name
 
         class SubCheckingBlock(AttributeCheckingBlock):
-            ATTRIBUTE_NAME = SUB_FIELD_NAME
+            ATTRIBUTE_NAME = sub_field_name
 
         class FailingSubCheckingBlock(MockBlock):
-            ATTRIBUTE_NAME = SUB_FIELD_NAME
+            ATTRIBUTE_NAME = sub_field_name
 
             def test_attr_doesnt_exists(self):
                 self.assertFalse(hasattr(self, self.ATTRIBUTE_NAME))
@@ -1075,13 +1005,13 @@ class TestTestFlow(BasicRotestUnitTest):
         parameter2_subflow_value = 'value_good'
         parameter2_common_value = 'value_bad1'
 
-        class CheckingParameter1Block(ReadFromCommonBlock):
-            READ_NAME = parameter1_name
-            READ_VALUE = parameter1_topflow_value
+        CheckingParameter1Block = create_reader_block(
+            inject_name=parameter1_name,
+            inject_value=parameter1_topflow_value)
 
-        class CheckingParameter2Block(ReadFromCommonBlock):
-            READ_NAME = parameter2_name
-            READ_VALUE = parameter2_subflow_value
+        CheckingParameter2Block = create_reader_block(
+            inject_name=parameter2_name,
+            inject_value=parameter2_subflow_value)
 
         class SubFlow(MockSubFlow):
             common = {parameter1_name: parameter1_common_value,
