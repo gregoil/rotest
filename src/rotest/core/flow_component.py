@@ -35,7 +35,7 @@ class BlockInput(object):
 
     def is_optional(self):
         """Return whether this input is optional or mandatory."""
-        return self.default is NotImplemented
+        return self.default is not NotImplemented
 
 
 class ClassInstantiator(object):
