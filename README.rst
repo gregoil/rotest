@@ -22,7 +22,7 @@ Rotest
     :alt: Read the Docs (version)
     :target: http://rotest.readthedocs.io/en/stable/
 
-`Watch the demo<https://asciinema.org/a/u3B3aMmkipUDLSgTiv1thiBpP>`_
+`Watch the demo <https://asciinema.org/a/u3B3aMmkipUDLSgTiv1thiBpP>`_
 
 Rotest is a resource oriented testing framework, for writing system or
 integration tests.
