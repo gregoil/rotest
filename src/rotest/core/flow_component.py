@@ -155,14 +155,6 @@ class AbstractFlowComponent(AbstractTest):
             self.resource_manager = self.create_resource_manager()
             self._is_client_local = True
 
-    def __getattr__(self, name):
-        """Try to get attribute from a pipe if it's not found in self."""
-        if '_pipes' in self.__dict__ and name in self.__dict__['_pipes']:
-            return getattr(self, self._pipes[name])
-
-        raise AttributeError("'%s' object has no attribute '%s'" %
-                             (self.__class__.__name__, name))
-
     @classmethod
     def parametrize(cls, **parameters):
         """Return a class instantiator for this class with the given args.
@@ -256,12 +248,12 @@ class AbstractFlowComponent(AbstractTest):
                 raise
 
             try:
-                for pipe_name, pipe_target in self._pipes.iteritems():
-                    setattr(self, pipe_name, getattr(self, pipe_target))
-
                 if not self.is_main:
                     # Validate all required inputs were passed
                     self._validate_inputs()
+
+                for pipe_name, pipe_target in self._pipes.iteritems():
+                    setattr(self, pipe_name, getattr(self, pipe_target))
 
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)

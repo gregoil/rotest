@@ -25,9 +25,10 @@ class TestBlock(AbstractFlowComponent):
     tags filtering, etc.
 
     declaring 'inputs': assign class fields to instances of BlockInput to
-    ask for values for the block (values get be passed via common, parametrize
-    or previous blocks passing them as outputs). You can pass a default value
-    to BlockInput to assign if non is supplied (making it an optional input).
+    ask for values for the block (values are passed via common, parametrize,
+    previous blocks passing them as outputs, or as requested resources).
+    You can pass a default value to BlockInput to assign if non is supplied
+    (making it an optional input).
 
     declaring 'outputs': assign class fields to instances of BlockOutput to
     share values from the instance (self) to the parent and siblings.
