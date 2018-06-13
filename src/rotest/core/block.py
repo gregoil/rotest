@@ -172,7 +172,8 @@ class TestBlock(AbstractFlowComponent):
         Raises:
             AttributeError: not all inputs were passed to the block.
         """
-        required_inputs = [name for (name, value) in self.get_inputs().iteritems()
+        required_inputs = [name
+                           for (name, value) in self.get_inputs().iteritems()
                            if not value.is_optional()]
 
         required_inputs.extend(self._pipes.itervalues())
