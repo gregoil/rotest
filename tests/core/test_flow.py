@@ -494,7 +494,7 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertTrue(self.result.wasSuccessful(),
                         'Flow failed when it should have succeeded')
 
-        self.validate_blocks(test_flow, successes=2)
+        self.validate_blocks(test_flow, successes=3)
 
     def test_setup_flow(self):
         """Check that test-flows' setUp method is called before the blocks."""
