@@ -252,8 +252,9 @@ class AbstractFlowComponent(AbstractTest):
                     # Validate all required inputs were passed
                     self._validate_inputs()
 
-                for pipe_name, pipe_target in self._pipes.iteritems():
-                    setattr(self, pipe_name, getattr(self, pipe_target))
+                if not self.IS_COMPLEX:
+                    for pipe_name, pipe_target in self._pipes.iteritems():
+                        setattr(self, pipe_name, getattr(self, pipe_target))
 
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
