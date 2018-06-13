@@ -179,8 +179,9 @@ def main(*tests):
         tests = discover_tests_under_paths(options.paths)
 
     if len(tests) == 0:
-        raise ValueError("No test was found at given paths: {}".format(
-            ", ".join(options.paths)))
+        print("No test was found at given paths: {}".format(
+              ", ".join(options.paths)))
+        sys.exit(1)
 
     class AlmightySuite(TestSuite):
         components = tests
