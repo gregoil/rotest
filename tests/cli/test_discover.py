@@ -23,9 +23,6 @@ def test_non_case_or_flow_are_not_test_classes():
 def test_abstract_tests_are_not_test_classes():
     assert not is_test_class(TestCase)
 
-    from rotest.core import TestFlow
-    assert not is_test_class(TestFlow)
-
 
 def test_dunderscore_test_attribute():
     class SimpleCase(TestCase):
