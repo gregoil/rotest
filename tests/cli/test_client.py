@@ -128,17 +128,18 @@ def test_giving_invalid_paths():
 
 @mock.patch("rotest.cli.client.discover_tests_under_paths",
             mock.MagicMock(return_value=set()))
-def test_finding_no_test():
+def test_finding_no_test(capsys):
     with Patcher() as patcher:
         patcher.fs.add_real_file(DEFAULT_CONFIG_PATH)
         patcher.fs.add_real_file(DEFAULT_SCHEMA_PATH)
         patcher.fs.create_file("some_test.py")
 
         sys.argv = ["rotest", "some_test.py"]
-        with pytest.raises(
-                ValueError,
-                match="No test was found at given paths: .*some_test.py"):
+        with pytest.raises(SystemExit):
             main()
+
+        out, _ = capsys.readouterr()
+        assert "No test was found at given paths:" in out
 
 
 def test_listing_tests(capsys):
