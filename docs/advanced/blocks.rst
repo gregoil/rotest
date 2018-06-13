@@ -51,7 +51,7 @@ TestBlock
     to ask for values for the block (values are passed via ``common``,
     ``parametrize``, previous blocks passing them as ``outputs``, or as
     requested resources of the block or its containers).
-    You can pass a default value to BlockInput to assign if non is supplied
+    You can define a default value to BlockInput to assign if non is supplied
     (making it an optional input). For example, defining in the block's scope
 
    .. code-block:: python

@@ -215,8 +215,8 @@ class AbstractTest(unittest.TestCase):
                                                 force_release=force_release)
 
         # Remove the resources from the test's resource to avoid double release
-        for key in resources_dict.itervalues():
-            self.locked_resources.pop(key, None)
+        for resource in resources_dict.itervalues():
+            self.locked_resources.pop(resource, None)
 
     def _get_parents_count(self):
         """Get the number of ancestors.

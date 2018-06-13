@@ -24,13 +24,13 @@ class TestBlock(AbstractFlowComponent):
     and can't be skipped on account of 'run_delta' (passed in previous runs),
     tags filtering, etc.
 
-    declaring 'inputs': assign class fields to instances of BlockInput to
+    Declaring 'inputs': assign class fields to instances of BlockInput to
     ask for values for the block (values are passed via common, parametrize,
     previous blocks passing them as outputs, or as requested resources).
     You can pass a default value to BlockInput to assign if non is supplied
     (making it an optional input).
 
-    declaring 'outputs': assign class fields to instances of BlockOutput to
+    Declaring 'outputs': assign class fields to instances of BlockOutput to
     share values from the instance (self) to the parent and siblings.
     the block automatically shares the declared outputs after teardown.
 
@@ -172,12 +172,12 @@ class TestBlock(AbstractFlowComponent):
         Raises:
             AttributeError: not all inputs were passed to the block.
         """
-        block_inputs = [name for (name, value) in self.get_inputs().iteritems()
-                        if not value.is_optional()]
+        required_inputs = [name for (name, value) in self.get_inputs().iteritems()
+                           if not value.is_optional()]
 
-        block_inputs.extend(self._pipes.itervalues())
+        required_inputs.extend(self._pipes.itervalues())
 
-        missing_inputs = [input_name for input_name in block_inputs
+        missing_inputs = [input_name for input_name in required_inputs
                           if (input_name not in self.__dict__ and
                               input_name not in extra_inputs and
                               input_name not in self._pipes)]
