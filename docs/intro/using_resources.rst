@@ -174,29 +174,25 @@ The first command creates a migrations file, that orders changing the database
 schemas or contents. The second command changes the database according to
 those orders. If the database does not already exist, it creates it.
 
-Let's run the Rotest server, using the :program:`rotest-server` command:
+Let's run the Rotest server, using the :program:`rotest server` command:
 
-.. program:: rotest-server
+.. program:: rotest server
 
 .. code-block:: console
 
-    $ rotest-server --run-django-server --django-port 8080 --daemon
-    Running in detached mode (as daemon)
+    $ rotest server
 
-.. warning::
+    Running in attached mode
+    Running the Django server as well
+    <2018-05-23 20:05:26,574>[DEBUG][main@91]: Starting resource manager, port:7777
+    <2018-05-23 20:05:26,575>[DEBUG][manager@101]: Resource manager main thread started
+    Performing system checks...
 
-    The :option:`--daemon` option is not implemented in Windows.
-
-A few explanations about this command:
-
-* If given the :option:`--run-django-server` option, it runs the Django admin
-  panel as well. We'll access it in the next section.
-
-* If given the :option:`--django-port` option, it uses this value as the
-  port of the Django admin panel. If not given, it defaults to ``8000``.
-
-* If given the :option:`--daemon` or :option:`-D` option, the program runs in
-  the background.
+    System check identified no issues (0 silenced).
+    May 23, 2018 - 20:05:28
+    Django version 1.7.11, using settings 'rotest_demo.settings'
+    Starting development server at http://0.0.0.0:8000/
+    Quit the server with CONTROL-C.
 
 Adding a Resource on Django Admin Panel
 =======================================
@@ -213,14 +209,14 @@ command to get access to the admin panel:
     Password (again): <type password again>
     Superuser created successfully.
 
-Now, Just enter the Django admin panel (via `<http://127.0.0.1:8080/admin>`_),
+Now, Just enter the Django admin panel (via `<http://127.0.0.1:8000/admin>`_),
 access it using the above credentials, and add a resource with the name
 ``calc`` and a local IP address like ``127.0.0.1``:
 
 .. figure:: adding_resource.png
     :target: ../_images/adding_resource.png
 
-    Adding a resource via Dango admin
+    Adding a resource via Django admin
 
 Writing a Resource-Based Test
 =============================
@@ -243,8 +239,8 @@ following content:
 
 .. code-block:: python
 
-    from rotest.core.runner import main
-    from rotest.core.case import TestCase
+    from rotest import main
+    from rotest.core import TestCase
 
     from resources.calculator import Calculator
 
@@ -258,7 +254,7 @@ following content:
 
 
     if __name__ == "__main__":
-        main(AddTest)
+        main()
 
 Now, let's run the test:
 

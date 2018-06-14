@@ -19,7 +19,7 @@
         "outputs": {
             "description": "List of output handler names",
             "type": "array",
-            "minItems":0
+            "minItems": 0
         },
         "filter": {
             "description": "Run only tests that match the filter expression",
@@ -38,17 +38,12 @@
             "type": "boolean"
         },
         "debug": {
-            "description": "Specify resources to request by name",
+            "description": "Enter ipdb debug mode upon any test exception",
             "type": "boolean"
         },
         "resources": {
-            "description": "Enter ipdb debug mode upon any test exception",
-            "type": "string"
-        },
-        "setup_mode": {
-            "description": "Force tests' setup's mode",
-            "type": "string",
-            "enum": ["direct", "partial", "simulating"]
+            "description": "Specify resources to request by name",
+            "type": ["string", "null"]
         }
     }
 }

@@ -5,7 +5,7 @@ from rotest.common import core_log
 from rotest.common.django_utils.settings import *
 
 
-if platform.system() == 'Windows':
+if platform.system() == 'Windows':  # pragma: no cover
     try:
         import win32file
 

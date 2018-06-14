@@ -22,6 +22,8 @@ Rotest
     :alt: Read the Docs (version)
     :target: http://rotest.readthedocs.io/en/stable/
 
+`Watch the demo <https://asciinema.org/a/u3B3aMmkipUDLSgTiv1thiBpP>`_
+
 Rotest is a resource oriented testing framework, for writing system or
 integration tests.
 
@@ -44,7 +46,7 @@ For a complete step-by-step explanation about the framework, you can read
 our documentation at `Read The Docs <http://rotest.rtfd.io>`_. If you just want
 to see how it looks, read further.
 
-For our example, let's look at an example for a `Calculator` resource:
+For our example, let's look at an example for a ``Calculator`` resource:
 
 .. code-block:: python
 
@@ -83,7 +85,7 @@ For our example, let's look at an example for a `Calculator` resource:
                 self._rpyc.close()
                 self._rpyc = None
 
-The `CalculatorData` class is a standard Django model that exposes IP
+The ``CalculatorData`` class is a standard Django model that exposes IP
 address of the calculator machine through the data attribute.
 Also, we're using `rpyc` for automating the access to those machines. Except
 from that, it's easy to notice how the `connect` method is making the
@@ -94,8 +96,8 @@ Now, an example for a test:
 
 .. code-block:: python
 
-    from rotest.core.runner import main
-    from rotest.core.case import TestCase
+    from rotest import main
+    from rotest.core import TestCase
 
 
     class SimpleCalculationTest(TestCase):
@@ -106,40 +108,51 @@ Now, an example for a test:
 
 
     if __name__ == "__main__":
-        main(SimpleCalculationTest)
+        main()
 
-The test can include the `setUp` and `tearDown` methods of `unittest` as
+The test may include the ``setUp`` and ``tearDown`` methods of `unittest` as
 well, and it differs only in the request for resources.
 
 Following, those are the options exposed when running the test:
 
 .. code-block:: console
 
-    $ python test.py --help
-    Usage: test.py [options]
+    $ rotest -h
+    Run tests in a module or directory.
+
+    Usage:
+        rotest [<path>...] [options]
 
     Options:
-      -h, --help            show this help message and exit
-      -c CONFIG_PATH, --config-path=CONFIG_PATH
-                            Tests' configuration file path
-      -s, --save-state      Enable save state
-      -d DELTA_ITERATIONS, --delta-iterations=DELTA_ITERATIONS
-                            Enable run of unsuccessful tests only, enter the
-                            number of times the failed tests should run
-      -p PROCESSES, --processes=PROCESSES
-                            Use multiprocess test runner
-      -o OUTPUTS, --outputs=OUTPUTS
-                            Output handlers separated by comma. Options: dots,
-                            xml, full, remote, tree, excel, db, artifact,
-                            signature, loginfo, logdebug, pretty
-      -f FILTER, --filter=FILTER
-                            Run only tests that match the filter expression, e.g
-                            "Tag1* and not Tag13"
-      -n RUN_NAME, --name=RUN_NAME
-                            Assign run name
-      -l, --list            Print the tests hierarchy and quit
-      -F, --failfast        Stop the run on first failure
-      -D, --debug           Enter ipdb debug mode upon any test exception
-      -S, --skip-init       Skip initialization and validation of resources
-      -r RESOURCES, --resources=RESOURCES
-                            Specific resources to request by name
+        -h,  --help
+                Show help message and exit.
+        --version
+                Print version information and exit.
+        -c <path>, --config <path>
+                Test configuration file path.
+        -s, --save-state
+                Enable saving state of resources.
+        -d <delta-iterations>, --delta <delta-iterations>
+                Enable run of failed tests only - enter the number of times the
+                failed tests should be run.
+        -p <processes>, --processes <processes>
+                Use multiprocess test runner - specify number of worker
+                processes to be created.
+        -o <outputs>, --outputs <outputs>
+                Output handlers separated by comma.
+        -f <query>, --filter <query>
+                Run only tests that match the filter expression,
+                e.g. 'Tag1* and not Tag13'.
+        -n <name>, --name <name>
+                Assign a name for current launch.
+        -l, --list
+                Print the tests hierarchy and quit.
+        -F, --failfast
+                Stop the run on first failure.
+        -D, --debug
+                Enter ipdb debug mode upon any test exception.
+        -S, --skip-init
+                Skip initialization and validation of resources.
+        -r <query>, --resources <query>
+                Specify resources to request by attributes,
+                e.g. '-r res1.group=QA,res2.comment=CI'.

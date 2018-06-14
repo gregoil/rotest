@@ -279,7 +279,7 @@ class BaseResource(object):
             BaseResource. locked and initialized resource, ready for work.
         """
         # These runtime imports are done to avoid cyclic imports.
-        from rotest.core.runner import _parse_config_file
+        from rotest.core.runner import parse_config_file
         from rotest.management.client.manager import (ClientResourceManager,
                                                       ResourceRequest)
 
@@ -292,7 +292,7 @@ class BaseResource(object):
 
         config_dict = None
         if config is not None:
-            config_dict = _parse_config_file(config)
+            config_dict = parse_config_file(config)
 
         result = BaseResource._SHELL_CLIENT.request_resources(
                                                         [resource_request],

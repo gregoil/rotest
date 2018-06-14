@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "2.8.7"
+__version__ = "3.0.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -28,6 +28,8 @@ result_handlers = [
 requirements = [
     'django>=1.7,<1.8',
     'ipdb',
+    'py',
+    'isort',
     'ipdbugger>=1.1.2',
     'docopt',
     'lxml<4.0.0',
@@ -59,7 +61,7 @@ setup(
     python_requires="~=2.7.0",
     entry_points={
         "console_scripts": [
-            "rotest-server = rotest.management.server.main:main"
+            "rotest = rotest.cli.main:main"
         ],
         "rotest.result_handlers": result_handlers},
     packages=find_packages("src"),
