@@ -3,8 +3,9 @@
 from itertools import count
 
 from rotest.common.config import ROTEST_WORK_DIR
-from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
-                                        MODE_FINALLY, MODE_OPTIONAL)
+from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
+                                        MODE_FINALLY, MODE_CRITICAL,
+                                        BlockInput, BlockOutput)
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -23,10 +24,19 @@ class TestBlock(AbstractFlowComponent):
     and can't be skipped on account of 'run_delta' (passed in previous runs),
     tags filtering, etc.
 
+    Declaring 'inputs': assign class fields to instances of BlockInput to
+    ask for values for the block (values are passed via common, parametrize,
+    previous blocks passing them as outputs, or as requested resources).
+    You can pass a default value to BlockInput to assign if non is supplied
+    (making it an optional input).
+
+    Declaring 'outputs': assign class fields to instances of BlockOutput to
+    share values from the instance (self) to the parent and siblings.
+    the block automatically shares the declared outputs after teardown.
+
     In case the blocks under a flow don't 'connect' properly (a block doesn't
-    get all its inputs from the previous, parametrize or the flow's resources)
-    a warning would be displayed to the user. This check is done on a static
-    level (i.e. before running any test).
+    have its declared output in self.__dict__ or a block doesn't get all its
+    inputs from) an error would be raised before the tests start.
 
     Test authors should subclass TestBlock for their own tests and override
     'inputs' tuple with the names of the fields required for the run of the
@@ -49,10 +59,6 @@ class TestBlock(AbstractFlowComponent):
             upon any exception in a test statement.
         resource_manager (ClientResourceManager): client resource manager.
         skip_init (bool): True to skip resources initialize and validation.
-
-        inputs (tuple): lists the names of fields the block expecteds to have
-            (locked resources, values set via 'parametrize' or 'share').
-        outputs (tuple): lists the names of fields the block shares.
         mode (number): running mode code. available modes are:
             CRITICAL: stop test flow on failure or error.
             FINALLY: always run this block, regardless of the others' result.
@@ -61,9 +67,6 @@ class TestBlock(AbstractFlowComponent):
         TAGS (list): list of tags by which the test may be filtered.
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
-    inputs = ()
-    outputs = ()
-
     IS_COMPLEX = False
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
@@ -85,6 +88,12 @@ class TestBlock(AbstractFlowComponent):
                                         force_initialize=force_initialize,
                                         resource_manager=resource_manager)
 
+        self.addCleanup(self._share_outputs)
+
+        for input_name, value in self.get_inputs().iteritems():
+            if value.is_optional():
+                setattr(self, input_name, value.default)
+
     @classmethod
     def get_name(cls, **parameters):
         """Return test name.
@@ -102,6 +111,54 @@ class TestBlock(AbstractFlowComponent):
         method_name = cls.get_test_method_name()
         return '.'.join((class_name, method_name))
 
+    @classmethod
+    def get_inputs(cls):
+        """Return a list of all the input instances of this block.
+
+        Returns:
+            dict. block's inputs (name: input placeholder instance).
+        """
+        all_inputs = {}
+        checked_class = cls
+        while checked_class is not TestBlock:
+            all_inputs.update({key: value for (key, value) in
+                               checked_class.__dict__.iteritems()
+                               if isinstance(value, BlockInput)})
+
+            checked_class = checked_class.__bases__[0]
+
+        return all_inputs
+
+    @classmethod
+    def get_outputs(cls):
+        """Return a list of all the input instances of this block.
+
+        Returns:
+            dict. block's inputs (name: input placeholder instance).
+        """
+        all_outputs = {}
+        checked_class = cls
+        while checked_class is not TestBlock:
+            all_outputs.update({key: value for (key, value) in
+                                checked_class.__dict__.iteritems()
+                                if isinstance(value, BlockOutput)})
+
+            checked_class = checked_class.__bases__[0]
+
+        return all_outputs
+
+    def _share_outputs(self):
+        """Share all the declared outputs of the block."""
+        outputs_dict = {}
+        for output_name in self.get_outputs():
+            if output_name not in self.__dict__:
+                raise RuntimeError("Block %r didn't create output %r" %
+                                   (self.data.name, output_name))
+
+            outputs_dict[output_name] = getattr(self, output_name)
+
+        self.share_data(**outputs_dict)
+
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
 
@@ -115,8 +172,14 @@ class TestBlock(AbstractFlowComponent):
         Raises:
             AttributeError: not all inputs were passed to the block.
         """
-        missing_inputs = [input_name for input_name in self.inputs
-                          if (not hasattr(self, input_name) and
+        required_inputs = [name
+                           for (name, value) in self.get_inputs().iteritems()
+                           if not value.is_optional()]
+
+        required_inputs.extend(self._pipes.itervalues())
+
+        missing_inputs = [input_name for input_name in required_inputs
+                          if (input_name not in self.__dict__ and
                               input_name not in extra_inputs and
                               input_name not in self._pipes)]
 
