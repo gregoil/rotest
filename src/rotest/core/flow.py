@@ -150,7 +150,7 @@ class TestFlow(AbstractFlowComponent):
         for block in self:
             block._validate_inputs(fields)
             if isinstance(block, TestBlock):
-                fields.extend(block.outputs)
+                fields.extend(block.get_outputs().keys())
 
     @classmethod
     def get_name(cls, **parameters):

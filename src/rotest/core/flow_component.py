@@ -28,6 +28,21 @@ class PipeTo(object):
         self.parameter_name = parameter_name
 
 
+class BlockInput(object):
+    """Used as declaration for an input for a block."""
+    def __init__(self, default=NotImplemented):
+        self.default = default
+
+    def is_optional(self):
+        """Return whether this input is optional or mandatory."""
+        return self.default is not NotImplemented
+
+
+class BlockOutput(object):
+    """Used as declaration for an output for a block."""
+    pass
+
+
 class ClassInstantiator(object):
     """Container that holds instantiation parameters for a flow component."""
     def __init__(self, component_class, **parameters):
@@ -140,14 +155,6 @@ class AbstractFlowComponent(AbstractTest):
             self.resource_manager = self.create_resource_manager()
             self._is_client_local = True
 
-    def __getattr__(self, name):
-        """Try to get attribute from a pipe if it's not found in self."""
-        if '_pipes' in self.__dict__ and name in self.__dict__['_pipes']:
-            return getattr(self, self._pipes[name])
-
-        raise AttributeError("'%s' object has no attribute '%s'" %
-                             (self.__class__.__name__, name))
-
     @classmethod
     def parametrize(cls, **parameters):
         """Return a class instantiator for this class with the given args.
@@ -244,6 +251,10 @@ class AbstractFlowComponent(AbstractTest):
                 if not self.is_main:
                     # Validate all required inputs were passed
                     self._validate_inputs()
+
+                if not self.IS_COMPLEX:
+                    for pipe_name, pipe_target in self._pipes.iteritems():
+                        setattr(self, pipe_name, getattr(self, pipe_target))
 
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
@@ -386,11 +397,6 @@ class AbstractFlowComponent(AbstractTest):
                                          name not in self._pipes):
 
                     self._pipes[name] = parameter_name
-                    if name in self.__dict__:
-                        delattr(self, name)
-
-                if not self.IS_COMPLEX and parameter_name not in self.inputs:
-                    self.inputs = list(self.inputs) + [parameter_name]
 
             else:
                 if override_previous or (name not in self.__dict__ and

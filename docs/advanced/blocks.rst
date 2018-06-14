@@ -47,35 +47,41 @@ TestFlow
 TestBlock
 ---------
 
-#. ``inputs``: define a static list or tuple in the new block's class of fields
-   the block needs to run. For example, defining in the block's scope
+#. ``inputs``: define class fields and assign them to instances of BlockInput
+    to ask for values for the block (values are passed via ``common``,
+    ``parametrize``, previous blocks passing them as ``outputs``, or as
+    requested resources of the block or its containers).
+    You can define a default value to BlockInput to assign if non is supplied
+    (making it an optional input). For example, defining in the block's scope
 
    .. code-block:: python
 
+       from rotest.core import TestBlock, BlockInput
        class DemoBlock(TestBlock):
-           inputs = ('field_name', 'other_field')
+           field_name = BlockInput()
+           other_field = BlockInput(default=1)
        ...
 
-   will validate that the block instance will have all those field before
-   running the parent flow.
-   The inputs validation (which happens before running the topmost flow) passes
-   if those fields are present in the block (e.g. the fields were set using
-   parametrize), or if a previous sibling component will share those fields in
-   runtime.
+   will validate that the block instance will have a value for 'field_name'
+   before running the parent flow (and unless another value is supplied,
+   set for the block's instance: self.other_field=1).
 
-#. ``outputs``: define a static list or tuple in the new block's class of
-   fields the block would share in its run. For example, defining in the
-   block's scope
+#. ``outputs``: define class fields and assign them to instances of BlockOutput
+    to share values from the instance (self) to the parent and siblings.
+    the block automatically shares the declared outputs after teardown.
+    For example, defining in the block's scope
 
    .. code-block:: python
 
+       from rotest.core import TestBlock, BlockOutput
        class DemoBlock(TestBlock):
-           outputs = ('field_name', 'other_field')
+           field_name = BlockOutput()
+           other_field = BlockOutput()
        ...
 
-   means declaring that the block would calculate and share (using the
-   ``share_data`` method) those fields, so that components following the block
-   would get those fields at runtime.
+   means declaring that the block would calculate a values for self.field_name
+   and self.other_field and share them (which happens automatically after its
+   teardown), so that components following the block can use those fields.
    Declaring inputs and outputs of blocks is not mandatory, but it's a good way
    to make sure that the blocks "click" together properly, and no block will be
    missing fields at runtime.
@@ -152,14 +158,7 @@ methods:
   E.g. if a flow locks a resource with name 'res1', then all its components
   would have the field 'res1' which points to the locked resource.
 
-* Sharing data - if one block writes somewhere in its test method:
-
-  .. code-block:: python
-
-      self.share_data(field_name=value)
-
-  then all the components under the parent flow are injected (into their
-  instance - self) where the field ``field_name`` is with value ``value``.
+* Declaring outputs - see TestBlock's ``outputs`` above.
 
 * Setting initial data to the test flow - you can set initial data to the
   components of flows by writing:
@@ -178,7 +177,7 @@ methods:
   method, using ``share_data()``.
 
 * Using parametrize - you can specify fields for blocks or flows by calling
-  their 'parametrize' class method.
+  their 'parametrize' or 'params' class method.
 
   For example:
 
@@ -200,6 +199,7 @@ Example
 
 .. code-block:: python
 
+    from rotest.core import TestBlock, BlockInput, BlockOutput
     class DoSomethingBlock(TestBlock):
         """A block that does something.
 
@@ -209,14 +209,18 @@ Example
             optional3 (object): optional input for the block.
         """
         mode = MODE_CRITICAL
-        inputs = ('resource1', 'input2')
 
-        optional3 = 0
+        resource1 = BlockInput()
+        input2 = BlockInput()
+        optional3 = BlockInput(default=0)
+
+        output1 = BlockOutput()
 
         def test_method(self):
             """Do something."""
             self.logger.info("Doing something")
-            self.resource1.do_something(self.input2, self.optional3)
+            value = self.resource1.do_something(self.input2, self.optional3)
+            self.output1 = value * 5  # This will be shared with siblings
 
     ...
 
@@ -312,52 +316,3 @@ The functions gets the following arguments:
                               blocks=[DoSomethingBlock,
                                       DoSomethingBlock.params(optional3=5)]),
                   DemoBlock1.params(mode=MODE_FINALLY))
-
-
-Optional inputs and fields
---------------------------
-
-Mainly for convenience purposes, we sometimes want to have default values for
-fields of blocks (inputs), just like we want default values for functions'
-arguments.
-Doing so is possible using the fact that passing inputs to blocks is done by
-injecting fields into their instance.
-For example:
-
-.. code-block:: python
-
-    class DemoBlock(TestBlock):
-        """Demo block.
-
-        Attributes:
-            argument1 (number): block's first argument.
-            argument2 (number): block's second argument.
-            argument3 (number): block's third argument.
-        """
-        mode = MODE_CRITICAL
-        inputs = ('argument1', 'argument2', 'argument3')
-
-        argument2 = 0  # Setting default value to 0
-        argument3 = 1  # Setting default value to 1
-
-        def test_method(self):
-            ...
-
-Defining the block so is equivalent to defining the following function:
-
-.. code-block:: python
-
-    def DemoBlock(argument1, argument2=0, argument3=1):
-        ...
-
-Doing so, means that you wouldn't have to pass values to the block for the
-parameters 'argument2' and 'argument3' (on ways of passing values to block's
-parameters, see the `Sharing data`_ section), meaning that all the following
-instantiations wouldn't raise an error due to input validation:
-
-.. code-block:: python
-
-    DemoBlock.params(argument1=5)  # arguments = 5,0,1
-    DemoBlock.params(argument1=5,argument2=3)  # arguments = 5,3,1
-    DemoBlock.params(argument1=5,argument3=4)  # arguments = 5,0,4
-    DemoBlock.params(argument1=5,argument2=3,argument3=6)  # arguments = 5,3,6
