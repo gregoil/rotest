@@ -258,6 +258,7 @@ class BaseResource(object):
 
     def enable_debug(self):
         """Wrap the resource methods with debugger."""
+        debug(self.connect, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.initialize, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.finalize, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.validate, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
