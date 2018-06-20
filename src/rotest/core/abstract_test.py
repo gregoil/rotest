@@ -179,6 +179,7 @@ class AbstractTest(unittest.TestCase):
                                         save_state=self.save_state,
                                         base_work_dir=self.work_dir,
                                         requests=resources_to_request,
+                                        enable_debug=self.enable_debug,
                                         force_initialize=self.force_initialize)
 
         self.add_resources(requested_resources)
