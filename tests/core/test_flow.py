@@ -1045,6 +1045,29 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertEqual(self.result.testsRun, 1,
                          "Result didn't run the correct number of tests")
 
+    def test_default_inputs_priority(self):
+        """Test that the priority of default inputs values are lowest."""
+        parameter1_name = 'field1'
+        parameter2_name = 'field2'
+
+        class FlowWithCommon(MockSubFlow):
+            common = {parameter1_name: "common_value"}
+
+            blocks = (create_reader_block(inject_name=parameter1_name,
+                                          inject_value="common_value",
+                                          default="default_value"),
+                      create_reader_block(inject_name=parameter2_name,
+                                          inject_value="params_value",
+                                          default="default_value").params(
+                          **{parameter2_name: "params_value"}))
+
+        test_flow = FlowWithCommon()
+        self.run_test(test_flow)
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
     def test_critical_flow(self):
         """Validate behavior of flow in CRITICAL mode.
 
