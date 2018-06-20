@@ -248,13 +248,18 @@ class AbstractFlowComponent(AbstractTest):
                 raise
 
             try:
+                if not self.IS_COMPLEX:
+                    self.share_data(override_previous=False,
+                                    **{input_name: value.default
+                                    for input_name, value in self.get_inputs()
+                                    if value.is_optional()})
+
+                    for pipe_name, pipe_target in self._pipes.iteritems():
+                        setattr(self, pipe_name, getattr(self, pipe_target))
+
                 if not self.is_main:
                     # Validate all required inputs were passed
                     self._validate_inputs()
-
-                if not self.IS_COMPLEX:
-                    for pipe_name, pipe_target in self._pipes.iteritems():
-                        setattr(self, pipe_name, getattr(self, pipe_target))
 
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
