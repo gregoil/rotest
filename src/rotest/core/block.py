@@ -90,10 +90,6 @@ class TestBlock(AbstractFlowComponent):
 
         self.addCleanup(self._share_outputs)
 
-        for input_name, value in self.get_inputs().iteritems():
-            if value.is_optional():
-                setattr(self, input_name, value.default)
-
     @classmethod
     def get_name(cls, **parameters):
         """Return test name.
