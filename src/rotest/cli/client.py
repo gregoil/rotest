@@ -41,9 +41,9 @@ Options:
 from __future__ import print_function
 import sys
 import inspect
+import argparse
 from itertools import chain
 
-import docopt
 import django
 import pkg_resources
 from attrdict import AttrDict
@@ -128,52 +128,83 @@ def filter_valid_values(dictionary):
             if value is not None)
 
 
+def create_client_options_parser():
+    """Create option parser for running tests.
+
+    Returns:
+        argparse.ArgumentParser: parser for CLI options.
+    """
+    version = pkg_resources.get_distribution("rotest").version
+
+    parser = argparse.ArgumentParser(
+        description="Run tests in a module or directory.")
+
+    parser.add_argument("paths", nargs="*", default=["."])
+    parser.add_argument("--version", action="version",
+                        version="rotest {}".format(version))
+    parser.add_argument("--config", "-c", dest="config_path", metavar="path",
+                        default=DEFAULT_CONFIG_PATH,
+                        help="Test configuration file path")
+    parser.add_argument("--save-state", "-s", action="store_true",
+                        help="Enable saving state of resources")
+    parser.add_argument("--delta", "-d", dest="delta_iterations",
+                        metavar="iterations", type=int,
+                        help="Enable run of failed tests only - enter the "
+                             "number of times the failed tests should be run.")
+    parser.add_argument("--processes", "-p", metavar="number", type=int,
+                        help="Use multiprocess test runner - specify number "
+                             "of worker processes to be created")
+    parser.add_argument("--outputs", "-o",
+                        type=parse_outputs_option,
+                        help="Output handlers separated by comma. Options: {}"
+                        .format(", ".join(get_result_handler_options())))
+    parser.add_argument("--filter", "-f", metavar="query",
+                        help="Run only tests that match the filter "
+                             "expression, e.g. 'Tag1* and not Tag13'")
+    parser.add_argument("--name", "-n", metavar="name",
+                        dest="run_name",
+                        help="Assign a name for current launch")
+    parser.add_argument("--list", "-l", action="store_true",
+                        help="Print the tests hierarchy and quit")
+    parser.add_argument("--failfast", "-F", action="store_true",
+                        dest="fail_fast",
+                        help="Stop the run on first failure")
+    parser.add_argument("--debug", "-D", action="store_true",
+                        help="Enter ipdb debug mode upon any test exception")
+    parser.add_argument("--skip-init", "-S", action="store_true",
+                        help="Skip initialization and validation of resources")
+    parser.add_argument("--resources", "-r", metavar="query",
+                        help="Specify resources to request be attributes, "
+                             "e.g. '-r res1.group=QA,res2.comment=CI'")
+
+    return parser
+
+
 def main(*tests):
     """Run the given tests.
 
     Args:
         *tests: either suites or tests to be run.
     """
-    # Load django models before using the runner in tests.
+    # Load django models
     django.setup()
 
-    if sys.argv[0].endswith("rotest"):
-        argv = sys.argv[1:]
-    else:
-        argv = sys.argv
+    parser = create_client_options_parser()
 
-    version = pkg_resources.get_distribution("rotest").version
-    arguments = docopt.docopt(__doc__, argv=argv, version=version)
-    arguments = dict(paths=arguments["<path>"] or ["."],
-                     config_path=arguments["--config"] or DEFAULT_CONFIG_PATH,
-                     save_state=arguments["--save-state"],
-                     delta_iterations=int(arguments["--delta"])
-                                      if arguments["--delta"] is not None
-                                      else None,
-                     processes=int(arguments["--processes"])
-                               if arguments["--processes"] is not None
-                               else None,
-                     outputs=parse_outputs_option(arguments["--outputs"]),
-                     filter=arguments["--filter"],
-                     run_name=arguments["--name"],
-                     list=arguments["--list"],
-                     fail_fast=arguments["--failfast"],
-                     debug=arguments["--debug"],
-                     skip_init=arguments["--skip-init"],
-                     resources=arguments["--resources"])
-
-    config = parse_config_file(arguments["config_path"])
+    arguments = parser.parse_args()
+    config = parse_config_file(arguments.config_path)
     default_config = parse_config_file(DEFAULT_CONFIG_PATH)
+
+    # In case we're called via 'python test.py ...'
+    if not sys.argv[0].endswith("rotest"):
+        main_module = inspect.getfile(__import__("__main__"))
+        arguments.paths = (main_module,)
 
     options = AttrDict(chain(
         default_config.items(),
-        filter_valid_values(config),
-        filter_valid_values(arguments),
+        config.items(),
+        filter_valid_values(vars(arguments)),
     ))
-
-    if not sys.argv[0].endswith("rotest") and len(tests) == 0:
-        main_module = inspect.getfile(__import__("__main__"))
-        options.paths = (main_module,)
 
     if len(tests) == 0:
         tests = discover_tests_under_paths(options.paths)

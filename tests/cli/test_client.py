@@ -55,6 +55,39 @@ def test_setting_options_by_config(run_tests):
     )
 
 
+@mock.patch("rotest.cli.client.run_tests")
+@mock.patch("rotest.cli.client.discover_tests_under_paths",
+            mock.MagicMock(return_value=["test"]))
+def test_setting_options_by_cli(run_tests):
+    with Patcher() as patcher:
+        patcher.fs.add_real_file(DEFAULT_SCHEMA_PATH)
+        patcher.fs.add_real_file(DEFAULT_CONFIG_PATH)
+        patcher.fs.create_file(
+            "config.json",
+            contents="""
+                {"delta_iterations": 5,
+                 "processes": 2,
+                 "outputs": ["xml", "remote"],
+                 "filter": "some filter",
+                 "run_name": "some name",
+                 "resources": "query"}
+            """)
+
+        sys.argv = ["rotest", "-c", "config.json",
+                    "-d", "4", "-p", "1", "-o", "pretty,full",
+                    "-f", "other filter", "-n", "other name",
+                    "-r", "other query", "-D", "-F", "-l", "-s", "-S"]
+        main()
+
+    run_tests.assert_called_once_with(
+        config_path="config.json",
+        delta_iterations=4, processes=1, outputs={"pretty", "full"},
+        filter="other filter", run_name="other name", resources="other query",
+        debug=True, fail_fast=True, list=True, save_state=True,
+        skip_init=True, test=mock.ANY
+    )
+
+
 @mock.patch("inspect.getfile", mock.MagicMock(return_value="script"))
 @mock.patch("rotest.cli.client.run_tests")
 @mock.patch("rotest.cli.client.discover_tests_under_paths",
