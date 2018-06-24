@@ -47,7 +47,7 @@ import docopt
 import django
 import pkg_resources
 from attrdict import AttrDict
-from rotest.core.test_filter import match_tags, get_tags
+from rotest.core.filter import match_tags, get_tags
 
 from rotest.core import TestSuite
 from rotest.core.utils.common import print_test_hierarchy
@@ -178,14 +178,15 @@ def main(*tests):
 
     if len(tests) == 0:
         tests = discover_tests_under_paths(options.paths)
-        if options.filter is not None:
-            tests = [test for test in tests
-                     if match_tags(get_tags(test), options.filter)]
 
     if len(tests) == 0:
         print("No test was found at given paths: {}".format(
               ", ".join(options.paths)))
         sys.exit(1)
+
+    if options.filter is not None:
+        tests = [test for test in tests
+                 if match_tags(get_tags(test), options.filter)]
 
     class AlmightySuite(TestSuite):
         components = tests
