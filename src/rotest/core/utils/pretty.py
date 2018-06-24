@@ -347,7 +347,9 @@ def get_columns():
     if sys.platform in ("linux", "linux2", "darwin"):
         # Both OS X (darwin) and Linux support the 'stty' command
         try:
-            _, columns = os.popen("stty size 2>/dev/null").read().split()
+            with os.popen("stty size 2>/dev/null") as pipe:
+                _, columns = pipe.read().split()
+
             columns = int(columns)
             return columns
 

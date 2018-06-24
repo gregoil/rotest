@@ -49,6 +49,7 @@ import pkg_resources
 from attrdict import AttrDict
 
 from rotest.core import TestSuite
+from rotest.core.filter import match_tags, get_tags
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.cli.discover import discover_tests_under_paths
 from rotest.core.result.handlers.tags_handler import TagsHandler
@@ -144,6 +145,7 @@ def main(*tests):
 
     version = pkg_resources.get_distribution("rotest").version
     arguments = docopt.docopt(__doc__, argv=argv, version=version)
+    supplied_filter = arguments["--filter"] or "*"
     arguments = dict(paths=arguments["<path>"] or ["."],
                      config_path=arguments["--config"] or DEFAULT_CONFIG_PATH,
                      save_state=arguments["--save-state"],
@@ -154,7 +156,7 @@ def main(*tests):
                                if arguments["--processes"] is not None
                                else None,
                      outputs=parse_outputs_option(arguments["--outputs"]),
-                     filter=arguments["--filter"],
+                     filter=supplied_filter,
                      run_name=arguments["--name"],
                      list=arguments["--list"],
                      fail_fast=arguments["--failfast"],
@@ -178,9 +180,13 @@ def main(*tests):
     if len(tests) == 0:
         tests = discover_tests_under_paths(options.paths)
 
+    # Filter tests by tags
+    tests = [test for test in tests if match_tags(get_tags(test),
+                                                  supplied_filter)]
+
     if len(tests) == 0:
-        print("No test was found at given paths: {}".format(
-              ", ".join(options.paths)))
+        print("No test was found at given paths: {} with filter {!r}".format(
+              ", ".join(options.paths), supplied_filter))
         sys.exit(1)
 
     class AlmightySuite(TestSuite):
