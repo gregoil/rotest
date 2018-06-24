@@ -35,7 +35,7 @@ def get_tags(test):
     Returns:
         list. tags of the test item.
     """
-    if isinstance(TestCase, TestSuite):
+    if isinstance(test, (TestCase, TestSuite)):
         if test._tags is not None:
             return test._tags
         tags = test.TAGS[:]
