@@ -145,7 +145,7 @@ def main(*tests):
 
     version = pkg_resources.get_distribution("rotest").version
     arguments = docopt.docopt(__doc__, argv=argv, version=version)
-    supplied_filter = arguments["--filter"] or "*"
+    supplied_filter = arguments["--filter"]
     arguments = dict(paths=arguments["<path>"] or ["."],
                      config_path=arguments["--config"] or DEFAULT_CONFIG_PATH,
                      save_state=arguments["--save-state"],
@@ -182,7 +182,9 @@ def main(*tests):
 
     # Filter tests by tags
     tests = [test for test in tests if match_tags(get_tags(test),
-                                                  supplied_filter)]
+                                                  supplied_filter
+                                                  if supplied_filter
+                                                  else "*")]
 
     if len(tests) == 0:
         print("No test was found at given paths: {} with filter {!r}".format(

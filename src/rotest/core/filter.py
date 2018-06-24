@@ -2,8 +2,7 @@
 # pylint: disable=protected-access,eval-used
 from fnmatch import fnmatch
 
-from rotest.core import TestSuite
-from rotest.core.case import TestCase
+from rotest.core import TestSuite, TestFlow, TestBlock, TestCase
 
 
 VALID_LITERALS = ["and", "or", "not", "(", ")", "True", "False"]
@@ -50,7 +49,16 @@ def get_tags(test):
         test._tags = tags
         return tags
 
-    return test.TAGS[:] + [test.get_name()]
+    if isinstance(test, type) and issubclass(test, (TestCase, TestSuite)):
+        return test.TAGS[:] + [test.__name__]
+
+    if isinstance(test, (TestBlock, TestFlow)):
+        return test.TAGS[:] + [test.get_name()]
+
+    if isinstance(test, type) and issubclass(test, (TestBlock, TestFlow)):
+        return test.TAGS[:] + [test.__name__]
+
+    return test
 
 
 def match_tags(tags_list, tags_filter):
