@@ -43,35 +43,6 @@ class BlockOutput(object):
     pass
 
 
-class ClassInstantiator(object):
-    """Container that holds instantiation parameters for a flow component."""
-    def __init__(self, component_class, **parameters):
-        self.component_class = component_class
-        self.parameters = parameters
-
-    def __call__(self, *args, **kwargs):
-        """Instantiate the block with the parameters."""
-        block = self.component_class(*args,
-                                     parameters=self.parameters,
-                                     **kwargs)
-
-        block._set_parameters(**self.parameters)
-
-        return block
-
-    def get_name(self, **parameters):
-        """Return test name.
-
-        Args:
-            method_name (str): name of the test method.
-
-        Returns:
-            str. test name.
-        """
-        parameters.update(self.parameters)
-        return self.component_class.get_name(**parameters)
-
-
 class AbstractFlowComponent(AbstractTest):
     """Define TestBlock, which is a part of a test.
 
@@ -126,6 +97,7 @@ class AbstractFlowComponent(AbstractTest):
     NO_RESOURCES_MESSAGE = 'Failed to request resources'
     PREVIOUS_FAILED_MESSAGE = 'Previous component failed'
 
+    common = {}
     mode = MODE_CRITICAL
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
@@ -166,7 +138,9 @@ class AbstractFlowComponent(AbstractTest):
             This class method does not instantiate the component, but states
             values be injected into it after it would be initialized.
         """
-        return ClassInstantiator(cls, **parameters)
+        new_common = cls.common.copy()
+        new_common.update(**parameters)
+        return type(cls.__name__, (cls,), {'common': new_common})
 
     # Shortcut
     params = parametrize

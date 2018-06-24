@@ -6,8 +6,7 @@ from itertools import count
 from rotest.core.block import TestBlock
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
-                                        MODE_FINALLY, MODE_OPTIONAL,
-                                        ClassInstantiator)
+                                        MODE_FINALLY, MODE_OPTIONAL)
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -71,7 +70,6 @@ class TestFlow(AbstractFlowComponent):
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
         TIMEOUT (number): timeout for flow run, None means no timeout.
     """
-    common = {}
     blocks = ()
 
     TAGS = []
@@ -104,8 +102,7 @@ class TestFlow(AbstractFlowComponent):
         self._tests = []
         for test_class in self.blocks:
             if not ((isinstance(test_class, type) and
-                     issubclass(test_class, (TestBlock, TestFlow))) or
-                    isinstance(test_class, ClassInstantiator)):
+                     issubclass(test_class, (TestBlock, TestFlow)))):
 
                 raise TypeError("Blocks under TestFlow must be classes "
                                 "inheriting from TestBlock or TestFlow, "

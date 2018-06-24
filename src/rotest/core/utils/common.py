@@ -8,7 +8,6 @@ from rotest.core.block import TestBlock
 from rotest.core.suite import TestSuite
 from rotest.core.filter import match_tags
 from rotest.common.constants import MAGENTA
-from rotest.core.flow_component import ClassInstantiator
 
 
 PASS_ALL_FILTER = "*"
@@ -54,9 +53,6 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
     tags = tags[:]
 
     actual_test = test
-    if isinstance(test, ClassInstantiator):
-        actual_test = test.component_class
-
     if issubclass(actual_test, TestCase):
         tags.extend(test.TAGS)
         for method_name in test.load_test_method_names():

@@ -89,6 +89,7 @@ class TestBlock(AbstractFlowComponent):
                                         resource_manager=resource_manager)
 
         self.addCleanup(self._share_outputs)
+        self.share_data(override_previous=False, **self.__class__.common)
 
     @classmethod
     def get_name(cls, **parameters):
