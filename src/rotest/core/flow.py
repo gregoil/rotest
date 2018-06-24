@@ -121,7 +121,7 @@ class TestFlow(AbstractFlowComponent):
 
             self._tests.append(test_item)
 
-        self.share_data(override_previous=False, **self.__class__.common)
+        self._set_parameters(override_previous=True, **self.__class__.common)
 
         if self.is_main:
             self._validate_inputs()

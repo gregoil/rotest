@@ -2,6 +2,7 @@
 # pylint: disable=dangerous-default-value,too-many-arguments
 from itertools import count
 
+from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
                                         MODE_FINALLY, MODE_CRITICAL,
@@ -89,7 +90,8 @@ class TestBlock(AbstractFlowComponent):
                                         resource_manager=resource_manager)
 
         self.addCleanup(self._share_outputs)
-        self.share_data(override_previous=False, **self.common)
+        self._set_parameters(override_previous=True, **self.__class__.common)
+        core_log.debug("common:%s", self.__class__.common)
 
     @classmethod
     def get_name(cls, **parameters):
