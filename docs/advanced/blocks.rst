@@ -94,11 +94,14 @@ Common features (for both flows and blocks)
    The resources of a flow will automatically propagate to the components under
    it.
 
+#. ``common``: used to set values to blocks or sub-flows, see example in the
+   `Sharing data`_ section.
+
 #. ``parametrize`` (also ``params``): used to pass values to blocks or
    sub-flows, see example in the `Sharing data`_ section.
    Note that calling ``parametrize()`` or ``params()`` doesn't actually
-   instantiate the component, but just saves values to be passed to it when it
-   will be run.
+   instantiate the component, but just create a copy of the class and sends
+   the parameters to it's common (overriding previous values).
 
 #. ``mode``: this field can be defined statically in the component's class or
    passed to the instance using 'parametrize' (parametrized fields override
@@ -160,8 +163,8 @@ methods:
 
 * Declaring outputs - see TestBlock's ``outputs`` above.
 
-* Setting initial data to the test flow - you can set initial data to the
-  components of flows by writing:
+* Setting initial data to the test - you can set initial data to the
+  component and its sub-components by writing:
 
   .. code-block:: python
 
@@ -170,11 +173,11 @@ methods:
                     'other_field': 'abc'}
       ...
 
-  This will inject ``field_name=5`` and ``other_field='abc'`` as fields of the flow and
-  its components before starting its run, so the blocks would also have access
-  to those fields.
-  This is the same as sharing those fields at the beginning of the flow's setUp
-  method, using ``share_data()``.
+  This will inject ``field_name=5`` and ``other_field='abc'`` as fields of the
+  flow and its components before starting its run, so the blocks would also
+  have access to those fields.
+  Note that you can also declare a ``common`` dict for blocks, but it's
+  generally recommended to use default values for inputs instead.
 
 * Using parametrize - you can specify fields for blocks or flows by calling
   their 'parametrize' or 'params' class method.
@@ -193,6 +196,17 @@ methods:
   by defining them as class fields for the block for example, see optional
   inputs and fields section), and a second ``DemoBlock`` with ``field_name=5``
   and ``other_field='abc'`` injected into the block instance (at runtime).
+
+  Regarding priorities hierarchy between the methods, it follow two rules:
+
+  #. For a single component, calling ``parametrize`` on it overrides the
+     values set through ``common``.
+
+  #. ``common`` and ``parametrize`` of sub-components are stronger than
+     the values passed by containing hierarchies.
+     E.g. ``common`` values of a flow are of lower priority than the
+     ``parametrize`` values passed to the blocks under it.
+
 
 Example
 -------
