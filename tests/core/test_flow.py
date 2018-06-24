@@ -1018,7 +1018,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         CheckingParameter1Block = create_reader_block(
             inject_name=parameter1_name,
-            inject_value=parameter1_topflow_value)
+            inject_value=parameter1_subflow_value)
 
         CheckingParameter2Block = create_reader_block(
             inject_name=parameter2_name,
