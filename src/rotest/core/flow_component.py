@@ -223,11 +223,11 @@ class AbstractFlowComponent(AbstractTest):
 
             try:
                 if not self.IS_COMPLEX:
-                    self.share_data(override_previous=False,
-                                    **{input_name: value.default
-                                       for (input_name, value) in
-                                       self.get_inputs().iteritems()
-                                       if value.is_optional()})
+                    self._set_parameters(override_previous=False,
+                                         **{input_name: value.default
+                                            for (input_name, value) in
+                                            self.get_inputs().iteritems()
+                                            if value.is_optional()})
 
                     for pipe_name, pipe_target in self._pipes.iteritems():
                         setattr(self, pipe_name, getattr(self, pipe_target))

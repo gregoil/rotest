@@ -101,7 +101,7 @@ Common features (for both flows and blocks)
    sub-flows, see example in the `Sharing data`_ section.
    Note that calling ``parametrize()`` or ``params()`` doesn't actually
    instantiate the component, but just create a copy of the class and sends
-   the parameters to it's common (overriding previous values).
+   the parameters to its common (overriding previous values).
 
 #. ``mode``: this field can be defined statically in the component's class or
    passed to the instance using 'parametrize' (parametrized fields override
@@ -197,7 +197,7 @@ methods:
   inputs and fields section), and a second ``DemoBlock`` with ``field_name=5``
   and ``other_field='abc'`` injected into the block instance (at runtime).
 
-  Regarding priorities hierarchy between the methods, it follow two rules:
+  Regarding priorities hierarchy between the methods, it follows two rules:
 
   #. For a single component, calling ``parametrize`` on it overrides the
      values set through ``common``.

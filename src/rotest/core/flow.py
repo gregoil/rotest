@@ -101,8 +101,8 @@ class TestFlow(AbstractFlowComponent):
 
         self._tests = []
         for test_class in self.blocks:
-            if not ((isinstance(test_class, type) and
-                     issubclass(test_class, (TestBlock, TestFlow)))):
+            if not (isinstance(test_class, type) and
+                    issubclass(test_class, (TestBlock, TestFlow))):
 
                 raise TypeError("Blocks under TestFlow must be classes "
                                 "inheriting from TestBlock or TestFlow, "
