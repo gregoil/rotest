@@ -81,7 +81,7 @@ class TestFlow(AbstractFlowComponent):
     def __init__(self, base_work_dir=ROTEST_WORK_DIR, save_state=True,
                  force_initialize=False, config=None, indexer=count(),
                  parent=None, run_data=None, enable_debug=False, is_main=True,
-                 skip_init=False, resource_manager=None, parameters={}):
+                 skip_init=False, resource_manager=None):
 
         super(TestFlow, self).__init__(parent=parent,
                                        config=config,
@@ -89,7 +89,6 @@ class TestFlow(AbstractFlowComponent):
                                        is_main=is_main,
                                        run_data=run_data,
                                        skip_init=skip_init,
-                                       parameters=parameters,
                                        save_state=save_state,
                                        enable_debug=enable_debug,
                                        base_work_dir=base_work_dir,
@@ -150,17 +149,16 @@ class TestFlow(AbstractFlowComponent):
                 fields.extend(block.get_outputs().keys())
 
     @classmethod
-    def get_name(cls, **parameters):
+    def get_name(cls):
         """Return test name.
 
-        This method gets gets instantiation arguments that are passed to the
-        block via 'parametrize' call, and can be overridden to give unique
-        names to blocks.
+        You can override this class method and use values from 'common' to
+        create a more indicative name for the test.
 
         Returns:
             str. test name.
         """
-        return parameters.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
+        return cls.common.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
     def _set_parameters(self, override_previous=True, **parameters):
         """Inject parameters into the component and sub components.

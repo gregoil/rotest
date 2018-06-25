@@ -103,8 +103,7 @@ class AbstractFlowComponent(AbstractTest):
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
                  parent=None, run_data=None, enable_debug=True,
-                 resource_manager=None, skip_init=False, is_main=True,
-                 parameters={}):
+                 resource_manager=None, skip_init=False, is_main=True):
 
         test_method_name = self.get_test_method_name()
         super(AbstractFlowComponent, self).__init__(indexer, test_method_name,
@@ -114,9 +113,8 @@ class AbstractFlowComponent(AbstractTest):
 
         self._pipes = {}
         self.is_main = is_main
-        self.parameters = parameters
 
-        name = self.get_name(**parameters)
+        name = self.get_name()
         core_log.debug("Initializing %r flow-component", name)
 
         core_log.debug("Creating database entry for %r test-block", name)
@@ -343,12 +341,11 @@ class AbstractFlowComponent(AbstractTest):
         return self.data.exception_type == TestOutcome.ERROR
 
     @classmethod
-    def get_name(cls, **parameters):
+    def get_name(cls):
         """Return test name.
 
-        This method gets instantiation arguments that are passed to the
-        component via 'parametrize' call, and can be overridden to give unique
-        names to components.
+        You can override this class method and use values from 'common' to
+        create a more indicative name for the test.
 
         Returns:
             str. test name.
