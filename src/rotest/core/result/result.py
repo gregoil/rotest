@@ -93,7 +93,7 @@ class Result(TestResult):
         Args:
             test (object): test item instance.
         """
-        test.logger.info("Test %r finished setup", test.data)
+        test.logger.info("Test %r started teardown", test.data)
         for result_handler in self.result_handlers:
             result_handler.start_teardown(test)
 

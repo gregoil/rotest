@@ -72,8 +72,7 @@ class TestBlock(AbstractFlowComponent):
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
                  parent=None, run_data=None, enable_debug=True,
-                 resource_manager=None, skip_init=False, is_main=True,
-                 parameters={}):
+                 resource_manager=None, skip_init=False, is_main=True):
 
         super(TestBlock, self).__init__(parent=parent,
                                         config=config,
@@ -81,7 +80,6 @@ class TestBlock(AbstractFlowComponent):
                                         is_main=is_main,
                                         run_data=run_data,
                                         skip_init=skip_init,
-                                        parameters=parameters,
                                         save_state=save_state,
                                         enable_debug=enable_debug,
                                         base_work_dir=base_work_dir,
@@ -89,21 +87,19 @@ class TestBlock(AbstractFlowComponent):
                                         resource_manager=resource_manager)
 
         self.addCleanup(self._share_outputs)
+        self._set_parameters(override_previous=False, **self.__class__.common)
 
     @classmethod
-    def get_name(cls, **parameters):
+    def get_name(cls):
         """Return test name.
 
-        This method gets gets instantiation arguments that are passed to the
-        block via 'parametrize' call, and can be overridden to give unique
-        names to blocks.
+        You can override this class method and use values from 'common' to
+        create a more indicative name for the test.
 
         Returns:
             str. test name.
         """
-        class_name = parameters.get(cls.COMPONENT_NAME_PARAMETER,
-                                    cls.__name__)
-
+        class_name = cls.common.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
         method_name = cls.get_test_method_name()
         return '.'.join((class_name, method_name))
 

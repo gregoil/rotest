@@ -43,35 +43,6 @@ class BlockOutput(object):
     pass
 
 
-class ClassInstantiator(object):
-    """Container that holds instantiation parameters for a flow component."""
-    def __init__(self, component_class, **parameters):
-        self.component_class = component_class
-        self.parameters = parameters
-
-    def __call__(self, *args, **kwargs):
-        """Instantiate the block with the parameters."""
-        block = self.component_class(*args,
-                                     parameters=self.parameters,
-                                     **kwargs)
-
-        block._set_parameters(**self.parameters)
-
-        return block
-
-    def get_name(self, **parameters):
-        """Return test name.
-
-        Args:
-            method_name (str): name of the test method.
-
-        Returns:
-            str. test name.
-        """
-        parameters.update(self.parameters)
-        return self.component_class.get_name(**parameters)
-
-
 class AbstractFlowComponent(AbstractTest):
     """Define TestBlock, which is a part of a test.
 
@@ -126,13 +97,13 @@ class AbstractFlowComponent(AbstractTest):
     NO_RESOURCES_MESSAGE = 'Failed to request resources'
     PREVIOUS_FAILED_MESSAGE = 'Previous component failed'
 
+    common = {}
     mode = MODE_CRITICAL
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
                  parent=None, run_data=None, enable_debug=True,
-                 resource_manager=None, skip_init=False, is_main=True,
-                 parameters={}):
+                 resource_manager=None, skip_init=False, is_main=True):
 
         test_method_name = self.get_test_method_name()
         super(AbstractFlowComponent, self).__init__(indexer, test_method_name,
@@ -142,9 +113,8 @@ class AbstractFlowComponent(AbstractTest):
 
         self._pipes = {}
         self.is_main = is_main
-        self.parameters = parameters
 
-        name = self.get_name(**parameters)
+        name = self.get_name()
         core_log.debug("Initializing %r flow-component", name)
 
         core_log.debug("Creating database entry for %r test-block", name)
@@ -166,7 +136,9 @@ class AbstractFlowComponent(AbstractTest):
             This class method does not instantiate the component, but states
             values be injected into it after it would be initialized.
         """
-        return ClassInstantiator(cls, **parameters)
+        new_common = cls.common.copy()
+        new_common.update(**parameters)
+        return type(cls.__name__, (cls,), {'common': new_common})
 
     # Shortcut
     params = parametrize
@@ -249,11 +221,11 @@ class AbstractFlowComponent(AbstractTest):
 
             try:
                 if not self.IS_COMPLEX:
-                    self.share_data(override_previous=False,
-                                    **{input_name: value.default
-                                       for (input_name, value) in
-                                       self.get_inputs().iteritems()
-                                       if value.is_optional()})
+                    self._set_parameters(override_previous=False,
+                                         **{input_name: value.default
+                                            for (input_name, value) in
+                                            self.get_inputs().iteritems()
+                                            if value.is_optional()})
 
                     for pipe_name, pipe_target in self._pipes.iteritems():
                         setattr(self, pipe_name, getattr(self, pipe_target))
@@ -369,12 +341,11 @@ class AbstractFlowComponent(AbstractTest):
         return self.data.exception_type == TestOutcome.ERROR
 
     @classmethod
-    def get_name(cls, **parameters):
+    def get_name(cls):
         """Return test name.
 
-        This method gets instantiation arguments that are passed to the
-        component via 'parametrize' call, and can be overridden to give unique
-        names to components.
+        You can override this class method and use values from 'common' to
+        create a more indicative name for the test.
 
         Returns:
             str. test name.
