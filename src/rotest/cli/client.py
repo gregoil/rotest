@@ -49,6 +49,7 @@ import pkg_resources
 from attrdict import AttrDict
 
 from rotest.core import TestSuite
+from rotest.common import core_log
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.cli.discover import discover_tests_under_paths
 from rotest.core.result.handlers.tags_handler import TagsHandler
@@ -86,7 +87,7 @@ def parse_outputs_option(outputs):
 
 
 def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
-              run_name, list, fail_fast, debug, skip_init, config_path,
+              run_name, list, fail_fast, debug, skip_init, config,
               resources):
     if list:
         print_test_hierarchy(test, filter)
@@ -96,11 +97,11 @@ def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
     update_resource_requests(test, resource_identifiers)
 
     if filter:
-        # Add a tags filtering handler.
+        # Add a tags filtering handler
         TagsHandler.TAGS_PATTERN = filter
         outputs.add('tags')
 
-    runs_data = rotest_runner(config=config_path,
+    runs_data = rotest_runner(config=config,
                               test_class=test,
                               outputs=outputs,
                               run_name=run_name,
@@ -186,47 +187,43 @@ def main(*tests):
     Args:
         *tests: either suites or tests to be run.
     """
-    # Load django models
     django.setup()
 
     parser = create_client_options_parser()
-
     arguments = parser.parse_args()
-    config = parse_config_file(arguments.config_path)
-    default_config = parse_config_file(DEFAULT_CONFIG_PATH)
+
+    config = AttrDict(chain(
+        parse_config_file(DEFAULT_CONFIG_PATH).items(),
+        parse_config_file(arguments.config_path).items(),
+        filter_valid_values(vars(arguments)),
+    ))
 
     # In case we're called via 'python test.py ...'
     if not sys.argv[0].endswith("rotest"):
         main_module = inspect.getfile(__import__("__main__"))
         arguments.paths = (main_module,)
 
-    options = AttrDict(chain(
-        default_config.items(),
-        config.items(),
-        filter_valid_values(vars(arguments)),
-    ))
-
     if len(tests) == 0:
-        tests = discover_tests_under_paths(options.paths)
+        tests = discover_tests_under_paths(config.paths)
 
     if len(tests) == 0:
         print("No test was found at given paths: {}".format(
-              ", ".join(options.paths)))
+              ", ".join(config.paths)))
         sys.exit(1)
 
     class AlmightySuite(TestSuite):
         components = tests
 
     run_tests(test=AlmightySuite,
-              save_state=options.save_state,
-              delta_iterations=options.delta_iterations,
-              processes=options.processes,
-              outputs=set(options.outputs),
-              filter=options.filter,
-              run_name=options.run_name,
-              list=options.list,
-              fail_fast=options.fail_fast,
-              debug=options.debug,
-              skip_init=options.skip_init,
-              config_path=options.config_path,
-              resources=options.resources)
+              save_state=config.save_state,
+              delta_iterations=config.delta_iterations,
+              processes=config.processes,
+              outputs=set(config.outputs),
+              filter=config.filter,
+              run_name=config.run_name,
+              list=config.list,
+              fail_fast=config.fail_fast,
+              debug=config.debug,
+              skip_init=config.skip_init,
+              config=config,
+              resources=config.resources)
