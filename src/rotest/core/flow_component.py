@@ -196,6 +196,7 @@ class AbstractFlowComponent(AbstractTest):
                 if skip_reason is not None:
                     self.skip_sub_components(skip_reason)
                     self.skipTest(skip_reason)
+                    return
 
             else:
                 if self.mode in (MODE_CRITICAL, MODE_OPTIONAL):
@@ -208,6 +209,7 @@ class AbstractFlowComponent(AbstractTest):
                             self.skip_sub_components(
                                                 self.PREVIOUS_FAILED_MESSAGE)
                             self.skipTest(self.PREVIOUS_FAILED_MESSAGE)
+                            return
 
             try:
                 self.request_resources(self.get_resource_requests(),
