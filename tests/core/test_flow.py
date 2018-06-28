@@ -1190,4 +1190,4 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow succeeded when it should have failed')
 
         self.validate_blocks(test_flow, successes=0, failures=1,
-                             errors =0, skips=2)
+                             errors=0, skips=2)
