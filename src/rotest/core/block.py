@@ -142,14 +142,11 @@ class TestBlock(AbstractFlowComponent):
 
     def _share_outputs(self):
         """Share all the declared outputs of the block."""
-        if self.data.exception_type == TestOutcome.SKIPPED:
-            return
-
         outputs_dict = {}
         for output_name in self.get_outputs():
             if output_name not in self.__dict__:
-                raise RuntimeError("Block %r didn't create output %r" %
-                                   (self.data.name, output_name))
+                self.logger.warn("Block %r didn't create output %r" %
+                                 (self.data.name, output_name))
 
             outputs_dict[output_name] = getattr(self, output_name)
 
