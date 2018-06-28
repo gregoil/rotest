@@ -3,7 +3,6 @@
 from itertools import count
 
 from rotest.common.config import ROTEST_WORK_DIR
-from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
                                         MODE_FINALLY, MODE_CRITICAL,
                                         BlockInput, BlockOutput)

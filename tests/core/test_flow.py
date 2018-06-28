@@ -380,7 +380,7 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertFalse(self.result.wasSuccessful(),
                          'Flow succeeded when it should have failed')
 
-        self.validate_blocks(test_flow, errors=2)
+        self.validate_blocks(test_flow, failures=1, successes=1)
 
     def test_inputs_static_check_with_pipe(self):
         """Test static check of inputs validation of blocks when using pipes.
