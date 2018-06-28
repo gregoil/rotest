@@ -362,7 +362,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, failures=1)
 
-    def test_outputs_check(self):
+    def test_inputs_check(self):
         """Test runtime validation of inputs of blocks.
 
         Run a flow with a block that pretends to share data and a block that
@@ -380,7 +380,7 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertFalse(self.result.wasSuccessful(),
                          'Flow succeeded when it should have failed')
 
-        self.validate_blocks(test_flow, failures=1, successes=1)
+        self.validate_blocks(test_flow, successes=1, failures=1)
 
     def test_inputs_static_check_with_pipe(self):
         """Test static check of inputs validation of blocks when using pipes.
@@ -1170,24 +1170,3 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
                          'Flow data status should have been failure')
-
-    def test_skipping_share_outputs_after_failure_block(self):
-        """Validate behavior of share_output after failed block.
-
-        We check that after block has been failed, skipped blocks don't try to
-            share data.
-        """
-        class PretendToShareDataBlock(SuccessBlock):
-            pretend_output = BlockOutput()
-
-        MockFlow.blocks = (FailureBlock,
-                           PretendToShareDataBlock,
-                           create_reader_block(inject_name='pretend_output'))
-        test_flow = MockFlow()
-
-        self.run_test(test_flow)
-        self.assertFalse(self.result.wasSuccessful(),
-                         'Flow succeeded when it should have failed')
-
-        self.validate_blocks(test_flow, successes=0, failures=1,
-                             errors=0, skips=2)
