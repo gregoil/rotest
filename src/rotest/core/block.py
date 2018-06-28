@@ -3,6 +3,7 @@
 from itertools import count
 
 from rotest.common.config import ROTEST_WORK_DIR
+from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
                                         MODE_FINALLY, MODE_CRITICAL,
                                         BlockInput, BlockOutput)
@@ -141,6 +142,9 @@ class TestBlock(AbstractFlowComponent):
 
     def _share_outputs(self):
         """Share all the declared outputs of the block."""
+        if self.data.exception_type == TestOutcome.SKIPPED:
+            return
+
         outputs_dict = {}
         for output_name in self.get_outputs():
             if output_name not in self.__dict__:

@@ -1171,34 +1171,23 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
                          'Flow data status should have been failure')
 
-    def test_skip_with_failure_block(self):
-        """Validate behavior of failed block that should be skipped.
+    def test_skipping_share_outputs_after_failure_block(self):
+        """Validate behavior of share_output after failed block.
 
-        We check that other blocks skipped after flow's failure without fail
-            status.
+        We check that after block has been failed, skipped blocks don't try to
+            share data.
         """
-        MockSubFlow.blocks = (FailureBlock.params(mode=MODE_CRITICAL),)
-        MockFlow.blocks = (FailureBlock.params(mode=MODE_CRITICAL),
-                           FailureBlock.params(mode=MODE_OPTIONAL),
-                           MockSubFlow.params(mode=MODE_OPTIONAL))
+        class PretendToShareDataBlock(SuccessBlock):
+            pretend_output = BlockOutput()
 
+        MockFlow.blocks = (FailureBlock,
+                           PretendToShareDataBlock,
+                           create_reader_block(inject_name='pretend_output'))
         test_flow = MockFlow()
-        self.run_test(test_flow)
 
+        self.run_test(test_flow)
         self.assertFalse(self.result.wasSuccessful(),
                          'Flow succeeded when it should have failed')
 
-        self.assertEqual(self.result.testsRun, 1,
-                         "Result didn't run the correct number of tests")
-
-        self.assertEqual(len(self.result.failures), 1,
-                         "Result didn't fail the correct number of tests")
-
-        self.validate_blocks(test_flow, successes=0, failures=1, skips=2)
-
-        # === Validate data object ===
-        self.assertFalse(test_flow.data.success,
-                         'Flow data result should have been False')
-
-        self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                         'Flow data status should have been failure')
+        self.validate_blocks(test_flow, successes=0, failures=1,
+                             errors =0, skips=2)
