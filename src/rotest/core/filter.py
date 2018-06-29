@@ -2,7 +2,7 @@
 # pylint: disable=protected-access,eval-used
 from fnmatch import fnmatch
 
-from rotest.core.case import TestCase
+from rotest.core import TestSuite, TestFlow, TestBlock, TestCase
 
 
 VALID_LITERALS = ["and", "or", "not", "(", ")", "True", "False"]
@@ -29,25 +29,36 @@ def get_tags(test):
     """Return the tags of a test item.
 
     Args:
-        test (TestSuite / TestCase): test item instance.
+        test (TestSuite / TestCase / TestFlow / TestBlock): test item instance.
 
     Returns:
         list. tags of the test item.
     """
-    if test._tags is not None:
-        return test._tags
+    if isinstance(test, (TestCase, TestSuite)):
+        if test._tags is not None:
+            return test._tags
+        tags = test.TAGS[:]
+        tags.append(test.__class__.__name__)
 
-    tags = test.TAGS[:]
-    tags.append(test.__class__.__name__)
+        if isinstance(test, TestCase):
+            tags.append(test._testMethodName)
 
-    if isinstance(test, TestCase):
-        tags.append(test._testMethodName)
+        if test.parent is not None:
+            tags.extend(get_tags(test.parent))
 
-    if test.parent is not None:
-        tags.extend(get_tags(test.parent))
+        test._tags = tags
+        return tags
 
-    test._tags = tags
-    return tags
+    if isinstance(test, type) and issubclass(test, (TestCase, TestSuite)):
+        return test.TAGS[:] + [test.__name__]
+
+    if isinstance(test, (TestBlock, TestFlow)):
+        return test.TAGS[:] + [test.get_name()]
+
+    if isinstance(test, type) and issubclass(test, (TestBlock, TestFlow)):
+        return test.TAGS[:] + [test.__name__]
+
+    return test
 
 
 def match_tags(tags_list, tags_filter):
