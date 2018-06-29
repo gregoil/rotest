@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "3.0.2"
+__version__ = "3.0.3"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
