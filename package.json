@@ -2,7 +2,7 @@
   "name": "rotest-fronend",
   "version": "0.1.0",
   "description": "Rotest frontend",
-  "main": "frontend/index.jsx",
+  "main": "frontend/index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode development"
   },
@@ -29,6 +29,9 @@
     "file-loader": "^1.1.11",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
     "webpack-css-loaders": "^1.0.0"
