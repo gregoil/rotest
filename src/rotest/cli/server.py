@@ -20,6 +20,7 @@ import docopt
 from rotest.common.config import RESOURCE_MANAGER_PORT
 from rotest.management.server.main import ResourceManagerServer
 
+
 if sys.platform != "win32":
     import daemon
 

@@ -4,13 +4,18 @@ import {Provider} from "react-redux";
 
 import { TextField } from "./components/fields/text_field";
 import store from "./store";
+import { CallbackWebSocket } from "./websocket";
 
 import "./index.css";
 
 export class App extends React.Component {
     constructor(props) {
         super(props);
+        new CallbackWebSocket((data)=>{
+            console.log(data);
+        });
     }
+
     render() {
         return (
         <div className="App">
@@ -24,3 +29,4 @@ ReactDOM.render(
             <App/>
         </Provider>
     , document.getElementById("App"));
+

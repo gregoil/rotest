@@ -1,6 +1,8 @@
 const initial_state = {
 };
 
-export const default_reducer = (state=initial_state, action) => {
+const default_reducer = (state=initial_state, action) => {
     return state;
 };
+
+export default default_reducer;

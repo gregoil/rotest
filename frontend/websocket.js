@@ -1,18 +1,13 @@
 const WEBSOCKET_PORT = 9000;
 
-class CustomWebSocket extends WebSocket {
-    constructor(...args) {
-        super(`ws://${location.hostname}:${WEBSOCKET_PORT}`, ...args);
-    }
-}
-
-export class CallbackWebSocket extends CustomWebSocket {
+export class CallbackWebSocket {
     constructor(callback, ...args) {
-        super(...args);
         this.callback = callback;
+        this.websocket = new WebSocket(`ws://${location.hostname}:${WEBSOCKET_PORT}`, ...args);
+        this.websocket.onmessage = this.onmessage.bind(this);
     }
 
     onmessage(event) {
-        this.callback(event.data);
+        this.callback(JSON.parse(event.data));
     }
 }

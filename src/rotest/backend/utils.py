@@ -100,12 +100,3 @@ def get_resource_data(resource_type):
 
     return data_dict
 
-
-def insert_resource_to_cache(cache, resource):
-    """Add the given resource to the cache.
-
-    Arguments:
-        resource (django.db.models.Model): a model to save in the cache.
-    """
-    resource_name = str(resource.__name__)
-    cache[resource_name] = get_resource_data(resource)
