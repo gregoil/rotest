@@ -100,6 +100,7 @@ def get_resource_data(resource_type):
 
     return data_dict
 
+
 def insert_resource_to_cache(cache, resource):
     """Add the given resource to the cache.
 

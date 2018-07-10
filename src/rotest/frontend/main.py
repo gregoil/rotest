@@ -1,5 +1,12 @@
 import json
 
+import os
+from django.contrib import admin
+from django.db.models.signals import post_save
+from twisted.internet import reactor
+
+from backend import actions
+
 from autobahn.twisted import WebSocketServerProtocol, WebSocketServerFactory
 
 
@@ -63,4 +70,30 @@ def initialize_backend(factory):
 
     factory = BroadcastServerFactory(u'ws://0.0.0.0:{}'.format(SERVER_PORT))
 
+    def initialize_resources(resources):
+        actions.initialize_resources(resources)
+        display_attrs = {
+            resource.__name__: admin.site._registry[resource].list_display
+            for resource in resources
+        }
+        actions.update_users_display_list(factory, display_attrs)
+        actions.update_users_cache(factory, cache)
+
+    def run():
+        initialize_resources(INIT_RESOURCES)
+
+        reactor.listenTCP(SERVER_PORT, factory)
+
+        threading.Thread(target=reacto.run, args=(False,)).start()
+
+
+    def send_to_server(sender, instance, **kwargs):
+        actions.update_resource(cache, factory, sender, instance, **kwargs)
+
+    post_save.connect(send_to_server)
+
+
+    def kill_thread():
+        reactor.stop()
+        os._exit(0)
 
