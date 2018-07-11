@@ -166,6 +166,11 @@ class AbstractClient(object):
                                    "seconds" %
                                    (request_msg, self._socket.gettimeout()))
 
+            if not isinstance(reply_msg, messages.AbstractReply):
+                raise TypeError("Server sent an illegal message."
+                                "Replies should be of type AbstractReply."
+                                "Received message is: %r" % reply_msg)
+
             if reply_msg.request_id != request_msg.msg_id:
                 self.logger.warning("Client expected a reply on message with "
                                     "id %r, got a reply with id %r, ignoring",
@@ -176,11 +181,6 @@ class AbstractClient(object):
             if isinstance(reply_msg, messages.ParsingFailure):
                 raise ParsingError("Server failed to parse a message. "
                                    "Failure Reason is: %r." % reply_msg.reason)
-
-            if not isinstance(reply_msg, messages.AbstractReply):
-                raise TypeError("Server sent an illegal message."
-                                "Replies should be of type AbstractReply."
-                                "Received message is: %r" % reply_msg)
 
             if isinstance(reply_msg, messages.ErrorReply):
                 raise ErrorFactory.build_error(reply_msg.code,
