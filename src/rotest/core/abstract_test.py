@@ -101,6 +101,8 @@ class AbstractTest(unittest.TestCase):
                     if isinstance(field, BaseResource):
                         yield (field_name, field)
 
+            checked_class = checked_class.__bases__[0]
+
     @classmethod
     def get_resource_requests(cls):
         """Return a list of all the resource requests this test makes.
