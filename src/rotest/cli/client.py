@@ -49,6 +49,7 @@ import pkg_resources
 from attrdict import AttrDict
 
 from rotest.core import TestSuite
+from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.cli.discover import discover_tests_under_paths
 from rotest.core.result.handlers.tags_handler import TagsHandler
@@ -83,6 +84,11 @@ def parse_outputs_option(outputs):
                               ", ".join(available_handlers)))
 
     return requested_handlers
+
+
+def get_tags_by_class(test_class):
+    return (test_class.TAGS +
+            [test_class.__name__])
 
 
 def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
@@ -177,6 +183,17 @@ def main(*tests):
 
     if len(tests) == 0:
         tests = discover_tests_under_paths(options.paths)
+
+    if options.filter not in (None, "*"):
+        new_tests = []
+        for test in tests:
+            test_tags = get_tags_by_class(test)
+            test_tags += [test.__name__]
+
+            if match_tags(test_tags, options.filter):
+                new_tests.append(test)
+
+        tests = new_tests
 
     if len(tests) == 0:
         print("No test was found at given paths: {}".format(
