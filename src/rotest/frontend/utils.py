@@ -36,12 +36,12 @@ def set_field(field_name):
         function. a function that allows to set a value of a given field.
     """
 
-    def set_resource_field(request, resource_name, value=""):
+    def set_resource_field(request, data_name, value=""):
         """"Entry point for removing any field from a resource.
 
         Args:
             request (HttpRequest): GET http request.
-            resource_name (str): the name of the resource.
+            data_name (str): the name of the resource.
             value (str): the value of the field to set to
                 (default: "" - clear field).
 
@@ -49,7 +49,7 @@ def set_field(field_name):
             JsonResponse. the components that were changed.
         """
         effected_resource_head = \
-            ResourceData.objects.filter(name=resource_name)[0]
+            ResourceData.objects.filter(name=data_name)[0]
         effected_resources = _field_set_recursively(effected_resource_head,
                                                     field_name,
                                                     value)
