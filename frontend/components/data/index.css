@@ -1,0 +1,47 @@
+.MainData {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 420px;
+    background-color: #f0eaed;
+    min-height: 200px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.Title {
+    cursor: pointer;
+    padding: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.Title .Type {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Title .Name {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+.Title .Indicators {
+    position: absolute;
+    display: flex;
+}
+
+.Content {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.Content .ContentDetails {
+    flex: 1;
+    max-width: 100%;
+}

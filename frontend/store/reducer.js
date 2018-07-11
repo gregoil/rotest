@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import default_reducer from "./reducers/default.js";
+import data_reducer from "./reducers/data_reducer";
 
 export default combineReducers({
-    default_reducer
+    cache: data_reducer
 });

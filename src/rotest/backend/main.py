@@ -1,6 +1,4 @@
 """
-crochet.setup()
-
 if sys.argv[1] == "runserver":
     if os.environ.get("RUN_MAIN") == "true":
         # dispatch resources to user
@@ -16,9 +14,10 @@ from twisted.internet import reactor
 
 from rotest.backend.management import BroadcastServerFactory
 
-
+crochet.setup()
 django.setup()
 SERVER_PORT = 9000
+
 
 class WebsocketService(object):
     def __init__(self):

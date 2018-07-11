@@ -15,11 +15,12 @@ module.exports = {
                 loader: "babel-loader"
             },
             {
-                test: /\.(jpe?g|png|gif)$/i,
+                test: /\.(jpe?g|png|gif|svg)$/i,
                 loader: "file-loader",
                 options: {
                     name: "[name].[ext]",
-                    outputPath: "static/img/"
+                    outputPath: "img/",
+                    publicPath: "static/img/"
                 }
             },
             {

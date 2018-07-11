@@ -1,0 +1,8 @@
+.Lock {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+}
