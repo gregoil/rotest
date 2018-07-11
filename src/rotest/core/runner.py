@@ -209,8 +209,6 @@ def _update_test_resources(test_element, identifiers_dict):
             field.kwargs.update(identifiers_dict[field_name])
             requests_found.add(resource_request.name)
 
-        checked_class = checked_class.__bases__[0]
-
     return requests_found
 
 
