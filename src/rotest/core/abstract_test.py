@@ -88,7 +88,7 @@ class AbstractTest(unittest.TestCase):
 
     @classmethod
     def get_resource_requests_fields(cls):
-        """Yields tuples of all the resource request fields of this test.
+        """Yield tuples of all the resource request fields of this test.
 
         Yields:
             tuple. (requests name,  request field) tuples of the test class.
