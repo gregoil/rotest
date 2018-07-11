@@ -87,6 +87,21 @@ class AbstractTest(unittest.TestCase):
         self.resource_manager = resource_manager
 
     @classmethod
+    def get_resource_requests_fields(cls):
+        """Yields tuples of all the resource request fields of this test.
+
+        Yields:
+            tuple. (requests name,  request field) tuples of the test class.
+        """
+        checked_class = cls
+        while checked_class is not AbstractTest:
+            for field_name in checked_class.__dict__:
+                if not field_name.startswith("_"):
+                    field = getattr(checked_class, field_name)
+                    if isinstance(field, BaseResource):
+                        yield (field_name, field)
+
+    @classmethod
     def get_resource_requests(cls):
         """Return a list of all the resource requests this test makes.
 
@@ -98,18 +113,13 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        checked_class = cls
-        while checked_class is not AbstractTest:
-            for field_name in checked_class.__dict__:
-                if not field_name.startswith("_"):
-                    field = getattr(checked_class, field_name)
-                    if isinstance(field, BaseResource):
-                        new_request = request(field_name,
-                                              field.__class__,
-                                              **field.kwargs)
+        for (field_name, field) in cls.get_resource_requests_fields():
+            new_request = request(field_name,
+                                  field.__class__,
+                                  **field.kwargs)
 
-                        if new_request not in all_requests:
-                            all_requests.append(new_request)
+            if new_request not in all_requests:
+                all_requests.append(new_request)
 
             checked_class = checked_class.__bases__[0]
 
