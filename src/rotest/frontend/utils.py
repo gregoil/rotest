@@ -20,7 +20,7 @@ def get_client_ip(request):
 def lock_resource(request, data_name):
     """"Lock a specific given resource."""
     lock_function = set_field("reserved")
-    user = gethostbyaddr(get_client_ip(request))
+    user = gethostbyaddr(get_client_ip(request))[0]
     data = json.loads(lock_function(request, data_name, user).content)
     data["user"] = user
     return JsonResponse(data)

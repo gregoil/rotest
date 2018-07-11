@@ -25,7 +25,7 @@ class App extends React.Component {
                     break;
 
                 default:
-                    console.log(`can't route the event: ${data.event_type}`)
+                    console.log(`can't route the event: ${data.event_type}`);
                     break;
             }
 
@@ -34,9 +34,9 @@ class App extends React.Component {
 
     render() {
         const datas = [];
-        if (this.props.cache.resources["TestClassData"]) {
-            for (let data of Object.values(this.props.cache.resources["TestClassData"])) {
-                datas.push(<Data key={data.id} id={data.id} cache_type="TestClassData"/>)
+        if (this.props.cache.resources["CalculatorData"]) {
+            for (let data of Object.values(this.props.cache.resources["CalculatorData"])) {
+                datas.push(<Data key={data.id} id={data.id} cache_type="CalculatorData"/>)
             }
         }
 

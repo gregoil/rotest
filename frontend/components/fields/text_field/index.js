@@ -13,13 +13,17 @@ class TextField extends React.Component {
     }
 
     render() {
-        const value = this.props.getFieldValue();
+        const value = typeof(this.props.field_name) === "function"?
+            this.props.resources_cache
+            [this.props.cache_type][this.props.object_id][this.props.field_name()] :
+            this.props.resources_cache
+            [this.props.cache_type][this.props.object_id][this.props.field_name];
         return (
             <div className="TextField">
                 <div className="Name">{this.props.name}</div>
                 <div className="Value">
                     <span style={{fontSize: this.state.fontSize}}>
-                        {value ? value : "-"}
+                        {value !== undefined && value !== "" ? value.toString() : "-"}
                     </span>
                 </div>
             </div>

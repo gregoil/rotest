@@ -11,29 +11,30 @@ export class Data extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            field_filter: this.props.field_filter ?
-                FIELD_FILTER_LIST.concat(this.props.field_filter) : FIELD_FILTER_LIST,
             name: this.props.name?
                 this.props.name : this.props.cache_type,
             indicators: this.props.indicators
-        }
+        };
         this.title_expension = [];
-        this.fields = [];
     }
-
+    get fields() {
+        return [];
+    }
+    get filter_list() {
+        return ["group"];
+    }
     getField(cache_type, object_id, field_name) {
         return <TextField key={field_name}
                           name={field_name}
-                          getFieldValue={()=>(this.props.resources_cache
-                                [cache_type][object_id][field_name])}
+                          field_name={field_name}
                           cache_type={cache_type}
                           object_id={object_id}/>;
     }
 
     getAllFields(fields_names) {
         const fields = [];
-        for(let field_name of fields_names) {
-            if(this.state.field_filter.indexOf(field_name) >= 0) {
+        for(let field_name of Object.values(fields_names)) {
+            if(this.filter_list.indexOf(field_name) >= 0) {
                 continue;
             }
             const field =
@@ -48,7 +49,7 @@ export class Data extends React.Component {
     }
 
     render() {
-        let fields = this.fields? this.fields : [];
+        let fields = this.fields;
         fields = fields.concat(
             this.getAllFields(
                 this.props.display_fields_cache[this.props.cache_type]

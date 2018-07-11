@@ -48,6 +48,9 @@ def expand_resource(resource):
     Returns:
         dict. the resource representation as a dict.
     """
+    # refresh object from db.
+    resource = resource.__class__.objects.get(id=resource.id)
+
     fields = get_fields(resource)
     for field_name, field_value in fields.items():
         if isinstance(field_value, models.Model):
@@ -77,6 +80,9 @@ def expand_resource(resource):
 
         except TypeError:
             fields[field_name] = str(fields[field_name])
+
+    if hasattr(resource, "is_available"):
+        fields["is_available"] = resource.is_available()
 
     return fields
 

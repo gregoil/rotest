@@ -35,5 +35,8 @@
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
     "webpack-css-loaders": "^1.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.18.0"
   }
 }

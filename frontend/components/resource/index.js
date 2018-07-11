@@ -7,36 +7,74 @@ import TextField from "../fields/text_field";
 //import "./index.css";
 
 //const FIELD_FILTER_LIST = ["group"];
-//const DEFAULT_TITLE_COLOR = "#96ff77";
+const AVAILABLE_TITLE_COLOR = "#96ff77";
+const RESERVED_TITLE_COLOR = "#ffd413";
+const OWNER_TITLE_COLOR = "#e13b39";
 
 export class Resource extends Data {
     constructor(props) {
         super(props);
 
         this.title_expension = this.title_expension.concat([
-            <Lock key="Lock"/>
-        ]);
-        this.fields = this.fields.concat([
-            <TextField name="User" key="User"
-                       getFieldValue={this.getUser.bind(this)}/>
+            <Lock key="Lock"
+                  resourceName={this.getName.bind(this)}
+                  isLocked={this.isLocked.bind(this)}/>
         ]);
     }
-
-    getUser() {
+    get filter_list() {
+        return ["owner", "reserved", "is_available"].concat(super.filter_list);
+    }
+    get fields() {
+        const class_fields = [
+            <TextField name="User"
+                       key="User"
+                       field_name={this.getUserFieldName.bind(this)}
+                       cache_type={this.props.cache_type}
+                       object_id={this.props.id}
+            />
+        ];
+        return class_fields.concat(super.fields);
+    }
+    getName() {
+        return this.props.resources_cache[this.props.cache_type][this.props.id].name;
+    }
+    isLocked() {
+        return (this.props.resources_cache[this.props.cache_type][this.props.id].owner ||
+                this.props.resources_cache[this.props.cache_type][this.props.id].reserved ||
+                !this.props.resources_cache[this.props.cache_type][this.props.id].is_available);
+    }
+    get titleColor() {
         const reserved =
             this.props.resources_cache
                 [this.props.cache_type][this.props.id].reserved;
         const owner =
             this.props.resources_cache
                 [this.props.cache_type][this.props.id].owner;
-        let user = "";
+        let title_color = AVAILABLE_TITLE_COLOR;
         if (owner) {
-            user = owner;
+            title_color = OWNER_TITLE_COLOR;
         } else if (reserved) {
-            user = reserved;
+            title_color = RESERVED_TITLE_COLOR;
         }
-        return user;
+        return title_color;
     }
+
+    getUserFieldName() {
+        const reserved =
+            this.props.resources_cache
+                [this.props.cache_type][this.props.id].reserved;
+        const owner =
+            this.props.resources_cache
+                [this.props.cache_type][this.props.id].owner;
+        let user_field = "undefined";
+        if (owner) {
+            user_field = "owner";
+        } else if (reserved) {
+            user_field = "reserved";
+        }
+        return user_field;
+    }
+
 }
 
 const mapStateToProps = (state) => {

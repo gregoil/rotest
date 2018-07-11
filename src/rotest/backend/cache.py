@@ -80,9 +80,9 @@ class Cache(object):
                     "content": {
                         resource_name: {
                             resource_id: utils.expand_resource(resource)
-                            }
                         }
                     }
+                }
                 ), False)
             return
 
@@ -99,9 +99,9 @@ class Cache(object):
                 "content": {
                     resource_name: {
                         resource_id: self.resources_cache[resource_name][resource_id]
-                        }
                     }
                 }
+            }
             ), False)
 
         print("Sent to all users")
