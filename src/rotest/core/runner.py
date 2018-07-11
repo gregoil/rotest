@@ -6,7 +6,6 @@ from collections import defaultdict
 
 from rotest.common import core_log
 from rotest.core.utils.json_parser import parse
-from rotest.core.abstract_test import AbstractTest
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core import TestCase, TestFlow, TestBlock, TestSuite
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner

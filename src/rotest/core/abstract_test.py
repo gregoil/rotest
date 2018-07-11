@@ -121,8 +121,6 @@ class AbstractTest(unittest.TestCase):
             if new_request not in all_requests:
                 all_requests.append(new_request)
 
-            checked_class = checked_class.__bases__[0]
-
         return all_requests
 
     def create_resource_manager(self):
