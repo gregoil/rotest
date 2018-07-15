@@ -86,6 +86,9 @@ class AbstractTest(unittest.TestCase):
         self._is_client_local = False
         self.resource_manager = resource_manager
 
+        if parent is not None:
+            parent.addTest(self)
+
     @classmethod
     def get_resource_requests_fields(cls):
         """Yield tuples of all the resource request fields of this test.

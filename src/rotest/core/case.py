@@ -73,7 +73,7 @@ class TestCase(AbstractTest):
         core_log.debug("Initializing %r test-case", name)
 
         core_log.debug("Creating database entry for %r test-case", name)
-        self.work_dir = get_work_dir(base_work_dir, name)
+        self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = CaseData(name=name, run_data=run_data)
 
         self.logger = get_test_logger(repr(self.data), self.work_dir)
