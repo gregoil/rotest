@@ -83,6 +83,7 @@ class TestFlow(AbstractFlowComponent):
                  parent=None, run_data=None, enable_debug=False, is_main=True,
                  skip_init=False, resource_manager=None):
 
+        self._tests = []
         super(TestFlow, self).__init__(parent=parent,
                                        config=config,
                                        indexer=indexer,
@@ -98,7 +99,6 @@ class TestFlow(AbstractFlowComponent):
         if len(self.blocks) == 0:
             raise AttributeError("Blocks list can't be empty")
 
-        self._tests = []
         for test_class in self.blocks:
             if not (isinstance(test_class, type) and
                     issubclass(test_class, (TestBlock, TestFlow))):
@@ -118,8 +118,6 @@ class TestFlow(AbstractFlowComponent):
                                    base_work_dir=self.work_dir,
                                    resource_manager=self.resource_manager)
 
-            self._tests.append(test_item)
-
         self._set_parameters(override_previous=False, **self.__class__.common)
 
         if self.is_main:
@@ -127,6 +125,9 @@ class TestFlow(AbstractFlowComponent):
 
     def __iter__(self):
         return iter(self._tests)
+
+    def addTest(self, test_item):
+        self._tests.append(test_item)
 
     def _validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
