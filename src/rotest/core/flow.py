@@ -107,16 +107,16 @@ class TestFlow(AbstractFlowComponent):
                                 "inheriting from TestBlock or TestFlow, "
                                 "got %r" % test_class)
 
-            test_item = test_class(parent=self,
-                                   config=config,
-                                   is_main=False,
-                                   indexer=indexer,
-                                   run_data=run_data,
-                                   skip_init=skip_init,
-                                   save_state=save_state,
-                                   enable_debug=enable_debug,
-                                   base_work_dir=self.work_dir,
-                                   resource_manager=self.resource_manager)
+            test_class(parent=self,
+                       config=config,
+                       is_main=False,
+                       indexer=indexer,
+                       run_data=run_data,
+                       skip_init=skip_init,
+                       save_state=save_state,
+                       enable_debug=enable_debug,
+                       base_work_dir=self.work_dir,
+                       resource_manager=self.resource_manager)
 
         self._set_parameters(override_previous=False, **self.__class__.common)
 

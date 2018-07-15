@@ -1,4 +1,5 @@
 """Common useful utils."""
+# pylint: disable=protected-access
 import os
 from shutil import copy
 from itertools import count
@@ -45,8 +46,7 @@ def get_work_dir(base_dir, test_name, test_item):
     Args:
         base_dir (str): base directory path.
         test_name (str): test name.
-        test_item (object): index of the test under its container, or None
-            if it is the topmost test.
+        test_item (object): test instance.
 
     Returns:
         str. path of the working directory.
@@ -57,7 +57,8 @@ def get_work_dir(base_dir, test_name, test_item):
     else:
         test_index = get_test_index(test_item)
         if test_index is None:
-            basic_work_dir = datetime.strftime(datetime.now(), DATE_TIME_FORMAT)
+            basic_work_dir = datetime.strftime(datetime.now(),
+                                               DATE_TIME_FORMAT)
 
         else:
             basic_work_dir = "%d_%s" % (test_index, test_name)
