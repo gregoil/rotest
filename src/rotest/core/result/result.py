@@ -5,8 +5,8 @@ from unittest.result import TestResult
 import pkg_resources
 
 from rotest.common import core_log
-from rotest.common.log import get_test_logger
 from rotest.core.models.case_data import TestOutcome
+from rotest.common.log import get_test_logger, get_tree_path
 from rotest.core.flow_component import AbstractFlowComponent
 
 
@@ -70,7 +70,7 @@ class Result(TestResult):
         if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).startTest(test)
 
-        test.logger = get_test_logger(test.get_tree_path(), test.work_dir)
+        test.logger = get_test_logger(get_tree_path(test), test.work_dir)
         test.logger.info("Test %r has started running", test.data)
         test.override_resource_loggers()
         test.start()
