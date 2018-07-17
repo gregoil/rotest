@@ -89,18 +89,6 @@ class AbstractTest(unittest.TestCase):
         if parent is not None:
             parent.addTest(self)
 
-    def get_tree_path(self):
-        """Get the identifiers tree path to the current test.
-
-        The hierarchical identifiers path is used to create inheritance between
-        the loggers of the tests.
-        """
-        path = str(self.identifier)
-        if self.parent is not None:
-            return self.parent.get_tree_path() + '.' + path
-
-        return path
-
     def override_resource_loggers(self):
         """Replace the resources' logger with the test's logger."""
         for resource in self.all_resources.itervalues():
