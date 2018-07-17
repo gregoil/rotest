@@ -70,8 +70,9 @@ class Result(TestResult):
         if not isinstance(test, AbstractFlowComponent) or test.is_main:
             super(Result, self).startTest(test)
 
-        test.logger = get_test_logger(repr(test.data), test.work_dir)
+        test.logger = get_test_logger(test.get_tree_path(), test.work_dir)
         test.logger.info("Test %r has started running", test.data)
+        test.override_resource_loggers()
         test.start()
 
         for result_handler in self.result_handlers:
@@ -140,6 +141,7 @@ class Result(TestResult):
         test.logger.debug("Test %r has stopped running", test.data)
 
         test.data.end()
+        test.release_resource_loggers()
         for result_handler in self.result_handlers:
             result_handler.stop_test(test)
 

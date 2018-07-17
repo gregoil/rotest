@@ -73,6 +73,7 @@ class BaseResource(object):
         # that resource is used outside case.
         self.kwargs = kwargs
         self.logger = core_log
+        self._prev_loggers = []
 
         if data is not None:
             self.data = data
@@ -255,6 +256,22 @@ class BaseResource(object):
             bool. True if validation succeeded, False otherwise.
         """
         return False
+
+    def override_logger(self, new_logger):
+        """Replace the resource's logger.
+
+        Args:
+            new_logger (logging.Logger): new logger to set.
+        """
+        if self.logger is new_logger:
+            return
+
+        self._prev_loggers.insert(0, self.logger)
+        self.logger = new_logger
+
+    def release_logger(self):
+        """Revert logger replacement."""
+        self.logger = self._prev_loggers.pop(0)
 
     def enable_debug(self):
         """Wrap the resource methods with debugger."""
