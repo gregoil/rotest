@@ -269,9 +269,14 @@ class BaseResource(object):
         self._prev_loggers.insert(0, self.logger)
         self.logger = new_logger
 
-    def release_logger(self):
-        """Revert logger replacement."""
-        self.logger = self._prev_loggers.pop(0)
+    def release_logger(self, logger):
+        """Revert logger replacement.
+
+        Args:
+            logger (logging.Logger): logger to release.
+        """
+        if self.logger is logger:
+            self.logger = self._prev_loggers.pop(0)
 
     def enable_debug(self):
         """Wrap the resource methods with debugger."""

@@ -97,7 +97,7 @@ class AbstractTest(unittest.TestCase):
     def release_resource_loggers(self):
         """Revert logger replacement."""
         for resource in self.all_resources.itervalues():
-            resource.release_logger()
+            resource.release_logger(self.logger)
 
     @classmethod
     def get_resource_requests_fields(cls):
