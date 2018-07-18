@@ -149,7 +149,7 @@ def get_tree_path(test):
     """
     path = str(test.identifier)
     if test.parent is not None:
-        return get_tree_path(test.parent) + '.' + path
+        return "%s.%s" % (get_tree_path(test.parent), path)
 
     return path
 

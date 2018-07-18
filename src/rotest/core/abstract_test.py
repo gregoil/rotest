@@ -207,7 +207,8 @@ class AbstractTest(unittest.TestCase):
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
-        self.override_resource_loggers()
+        for resource in requested_resources.itervalues():
+            resource.override_logger(self.logger)
 
         if self.result is not None:
             self.result.updateResources(self)
