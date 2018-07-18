@@ -118,7 +118,7 @@ class AbstractFlowComponent(AbstractTest):
         core_log.debug("Initializing %r flow-component", name)
 
         core_log.debug("Creating database entry for %r test-block", name)
-        self.work_dir = get_work_dir(base_work_dir, name)
+        self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = CaseData(name=name, run_data=run_data)
 
         if self.resource_manager is None:

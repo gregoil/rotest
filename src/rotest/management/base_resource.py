@@ -173,7 +173,7 @@ class BaseResource(object):
             resource_name (str): name of resource.
             containing_work_dir (str): root work directory.
         """
-        self.work_dir = get_work_dir(containing_work_dir, resource_name)
+        self.work_dir = get_work_dir(containing_work_dir, resource_name, None)
 
         for resource in self.get_sub_resources():
             resource.set_work_dir(resource.name, self.work_dir)
