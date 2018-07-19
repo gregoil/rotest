@@ -209,6 +209,7 @@ def test_discarding_all_tests(capsys):
 
             with pytest.raises(SystemExit):
                 main()
+
             out, _ = capsys.readouterr()
             assert "No test was found at given paths:" in out
             assert "Case1.test_something" not in out

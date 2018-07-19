@@ -16,12 +16,6 @@ def get_result_handlers():
             pkg_resources.iter_entry_points("rotest.result_handlers")}
 
 
-def get_result_handler_options():
-    return [handler_name
-            for handler_name in get_result_handlers()
-            if handler_name != "tags"]
-
-
 class Result(TestResult):
     """Manager class for handling tests' run information.
 
