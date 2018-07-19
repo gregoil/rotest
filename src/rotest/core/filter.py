@@ -2,8 +2,6 @@
 # pylint: disable=protected-access,eval-used
 from fnmatch import fnmatch
 
-from rotest.core.case import TestCase
-
 
 VALID_LITERALS = ["and", "or", "not", "(", ")", "True", "False"]
 
