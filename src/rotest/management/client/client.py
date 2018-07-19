@@ -109,6 +109,19 @@ class AbstractClient(object):
 
         self._socket.settimeout(timeout)
 
+    def _wait_for_reply(self):
+        """Receive and decode a message from the manager server.
+
+        Returns:
+            AbstractMessage. Server reply for given request.
+        """
+        encoded_reply = ""
+
+        while not encoded_reply.endswith(MESSAGE_DELIMITER):
+            encoded_reply += self._socket.recv(MESSAGE_MAX_LENGTH)
+
+        return self._parser.decode(encoded_reply)
+
     def _request(self, request_msg, timeout=_DEFAULT_REPLY_TIMEOUT):
         """Send a message to manager server and wait for an answer.
 
@@ -144,38 +157,36 @@ class AbstractClient(object):
         while sent_bytes < len(encoded_request):
             sent_bytes += self._socket.send(encoded_request[sent_bytes:])
 
-        encoded_reply = ""
+        while True:
+            try:
+                reply_msg = self._wait_for_reply()
 
-        try:
-            while not encoded_reply.endswith(MESSAGE_DELIMITER):
-                encoded_reply += self._socket.recv(MESSAGE_MAX_LENGTH)
+            except socket.timeout:
+                raise RuntimeError("Server failed to respond to %r after %r "
+                                   "seconds" %
+                                   (request_msg, self._socket.gettimeout()))
 
-            reply_msg = self._parser.decode(encoded_reply)
+            if not isinstance(reply_msg, messages.AbstractReply):
+                raise TypeError("Server sent an illegal message."
+                                "Replies should be of type AbstractReply."
+                                "Received message is: %r" % reply_msg)
 
-        except socket.timeout:
-            raise RuntimeError("Server failed to respond to %r after %r "
-                               "seconds" %
-                               (request_msg, self._socket.gettimeout()))
+            if reply_msg.request_id != request_msg.msg_id:
+                self.logger.warning("Client expected a reply on message with "
+                                    "id %r, got a reply with id %r, ignoring",
+                                    request_msg.msg_id, reply_msg.request_id)
 
-        if isinstance(reply_msg, messages.ParsingFailure):
-            raise ParsingError("Server failed to parse a message, assumed ID "
-                               "%r. Failure Reason is: %r."
-                               % (request_msg.msg_id, reply_msg.reason))
+                continue
 
-        if not isinstance(reply_msg, messages.AbstractReply):
-            raise TypeError("Server sent an illegal message. Replies should "
-                            "be of type AbstractReply. Received message is: %r"
-                            % reply_msg)
+            if isinstance(reply_msg, messages.ParsingFailure):
+                raise ParsingError("Server failed to parse a message. "
+                                   "Failure Reason is: %r." % reply_msg.reason)
 
-        if reply_msg.request_id != request_msg.msg_id:
-            raise RuntimeError("Client expect for reply on message with id %r,"
-                               " but got a reply on message with id %r" %
-                               (request_msg.msg_id, reply_msg.request_id))
+            if isinstance(reply_msg, messages.ErrorReply):
+                raise ErrorFactory.build_error(reply_msg.code,
+                                               reply_msg.content)
 
-        if isinstance(reply_msg, messages.ErrorReply):
-            raise ErrorFactory.build_error(reply_msg.code, reply_msg.content)
-
-        return reply_msg
+            return reply_msg
 
     def update_fields(self, model, filter_dict=None, **kwargs):
         """Update content in the server's DB.

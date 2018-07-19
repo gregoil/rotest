@@ -71,37 +71,16 @@ def test_skipping_files_by_blacklist():
 @mock.patch("rotest.cli.discover.get_test_files",
             mock.MagicMock(return_value=["some_test.py"]))
 @mock.patch("unittest.TestLoader")
-@mock.patch("py.path.local.pyimport",
-            mock.MagicMock(return_value=mock.MagicMock(__name__="the_module")))
+@mock.patch("py.path", mock.MagicMock())
 def test_discovering_tests(loader_mock):
     class Case(TestCase):
         def test(self):
             pass
 
-    Case.__module__ = "the_module"
-
     loader_mock.return_value.loadTestsFromModule.return_value = [Case]
 
     with mock.patch("__builtin__.__import__"):
         assert discover_tests_under_paths(["some_test.py"]) == {Case}
-
-
-@mock.patch("rotest.cli.discover.get_test_files",
-            mock.MagicMock(return_value=["some_test.py"]))
-@mock.patch("unittest.TestLoader")
-@mock.patch("py.path.local.pyimport",
-            mock.MagicMock(return_value=mock.MagicMock(__name__="the_module")))
-def test_not_discovering_tests_on_other_module(loader_mock):
-    class Case(TestCase):
-        def test(self):
-            pass
-
-    Case.__module__ = "other_module"
-
-    loader_mock.return_value.loadTestsFromModule.return_value = [Case]
-
-    with mock.patch("__builtin__.__import__"):
-        assert discover_tests_under_paths(["some_test.py"]) == {}
 
 
 def test_importing_bad_file():
