@@ -65,7 +65,6 @@ class TestSuite(unittest.TestSuite):
         """
         super(TestSuite, self).__init__()
 
-        self._tags = None
         self.parent = parent
         name = self.get_name()
         self.identifier = indexer.next()

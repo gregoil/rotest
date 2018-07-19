@@ -25,31 +25,6 @@ def validate_boolean_expression(expression):
             raise ValueError("Illegal boolean expression %r" % expression)
 
 
-def get_tags(test):
-    """Return the tags of a test item.
-
-    Args:
-        test (TestSuite / TestCase): test item instance.
-
-    Returns:
-        list. tags of the test item.
-    """
-    if test._tags is not None:
-        return test._tags
-
-    tags = test.TAGS[:]
-    tags.append(test.__class__.__name__)
-
-    if isinstance(test, TestCase):
-        tags.append(test._testMethodName)
-
-    if test.parent is not None:
-        tags.extend(get_tags(test.parent))
-
-    test._tags = tags
-    return tags
-
-
 def match_tags(tags_list, tags_filter):
     """Check whether a tags list answers a condition expressed in tags_filter.
 

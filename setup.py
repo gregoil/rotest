@@ -8,7 +8,6 @@ __version__ = "3.1.0"
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
     "xml = rotest.core.result.handlers.xml_handler:XMLHandler",
-    "tags = rotest.core.result.handlers.tags_handler:TagsHandler",
     "excel = rotest.core.result.handlers.excel_handler:ExcelHandler",
     "dots = rotest.core.result.handlers.stream.dots_handler:DotsHandler",
     "tree = rotest.core.result.handlers.stream.tree_handler:TreeHandler",

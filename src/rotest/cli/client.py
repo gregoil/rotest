@@ -52,7 +52,6 @@ from rotest.core import TestSuite
 from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.cli.discover import discover_tests_under_paths
-from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.result.result import get_result_handler_options
 from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
                                 update_resource_requests, run as rotest_runner,
@@ -99,11 +98,6 @@ def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
 
     resource_identifiers = parse_resource_identifiers(resources)
     update_resource_requests(test, resource_identifiers)
-
-    if filter:
-        # Add a tags filtering handler.
-        TagsHandler.TAGS_PATTERN = filter
-        outputs.add('tags')
 
     runs_data = rotest_runner(config=config_path,
                               test_class=test,
