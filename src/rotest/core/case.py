@@ -9,7 +9,6 @@ from itertools import count
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
-from rotest.common.log import get_test_logger
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.abstract_test import AbstractTest, request
 from rotest.core.models.case_data import TestOutcome, CaseData
@@ -76,7 +75,6 @@ class TestCase(AbstractTest):
         self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = CaseData(name=name, run_data=run_data)
 
-        self.logger = get_test_logger(repr(self.data), self.work_dir)
         core_log.debug("Initialized %r test-case successfully", name)
 
         if self.resource_manager is None:

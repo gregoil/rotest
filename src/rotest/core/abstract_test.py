@@ -89,6 +89,16 @@ class AbstractTest(unittest.TestCase):
         if parent is not None:
             parent.addTest(self)
 
+    def override_resource_loggers(self):
+        """Replace the resources' logger with the test's logger."""
+        for resource in self.all_resources.itervalues():
+            resource.override_logger(self.logger)
+
+    def release_resource_loggers(self):
+        """Revert logger replacement."""
+        for resource in self.all_resources.itervalues():
+            resource.release_logger(self.logger)
+
     @classmethod
     def get_resource_requests_fields(cls):
         """Yield tuples of all the resource request fields of this test.
@@ -197,6 +207,8 @@ class AbstractTest(unittest.TestCase):
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
+        for resource in requested_resources.itervalues():
+            resource.override_logger(self.logger)
 
         if self.result is not None:
             self.result.updateResources(self)
