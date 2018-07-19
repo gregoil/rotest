@@ -165,25 +165,6 @@ def test_finding_no_test(capsys):
         assert "No test was found at given paths:" in out
 
 
-def test_listing_tests(capsys):
-    class Case(TestCase):
-        def test_something(self):
-            pass
-
-    with Patcher() as patcher:
-        patcher.fs.add_real_file(DEFAULT_CONFIG_PATH)
-        patcher.fs.add_real_file(DEFAULT_SCHEMA_PATH)
-        patcher.fs.create_file("some_test.py")
-
-        with mock.patch("rotest.cli.client.discover_tests_under_paths",
-                        return_value={Case}):
-            sys.argv = ["rotest", "some_test.py", "--list"]
-
-            main()
-            out, _ = capsys.readouterr()
-            assert "Case.test_something" in out
-
-
 def test_discarding_all_tests(capsys):
     class Case1(TestCase):
         def test_something(self):
