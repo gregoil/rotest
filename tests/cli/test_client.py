@@ -2,12 +2,10 @@ import sys
 
 import mock
 import pytest
-from termcolor import colored
 from pyfakefs.fake_filesystem_unittest import Patcher
 
 from rotest.cli.main import main
 from rotest.core import TestCase, TestSuite
-from rotest.common.constants import MAGENTA
 from rotest.cli.client import main as client_main
 from rotest.cli.client import parse_outputs_option
 from rotest.core.runner import DEFAULT_SCHEMA_PATH, DEFAULT_CONFIG_PATH
@@ -42,7 +40,7 @@ def test_setting_options_by_config(run_tests):
                 {"delta_iterations": 5,
                  "processes": 2,
                  "outputs": ["xml", "remote"],
-                 "filter": "True",
+                 "filter": "MockCase",
                  "run_name": "some name",
                  "resources": "query"}
             """)
@@ -53,7 +51,7 @@ def test_setting_options_by_config(run_tests):
     run_tests.assert_called_once_with(
         config_path="config.json",
         delta_iterations=5, processes=2, outputs={"xml", "remote"},
-        filter="True", run_name="some name", resources="query",
+        filter="MockCase", run_name="some name", resources="query",
         debug=False, fail_fast=False, list=False, save_state=False,
         skip_init=False, test=mock.ANY
     )
@@ -120,8 +118,8 @@ def test_listing_and_filtering_given_tests_by_name(capsys):
     client_main(Case1, Case2)
 
     out, _ = capsys.readouterr()
-    assert colored(" |   Case1.test_first []", MAGENTA) in out
-    assert colored(" |   Case2.test_second []", MAGENTA) not in out
+    assert " |   Case1.test_first []" in out
+    assert " |   Case2.test_second []" not in out
 
 
 def test_listing_and_filtering_given_tests_by_tag(capsys):
@@ -141,8 +139,8 @@ def test_listing_and_filtering_given_tests_by_tag(capsys):
     client_main(Case1, Case2)
 
     out, _ = capsys.readouterr()
-    assert colored(" |   Case1.test_first ['Foo']", MAGENTA) in out
-    assert colored(" |   Case2.test_second ['Bar']", MAGENTA) not in out
+    assert " |   Case1.test_first ['Foo']" in out
+    assert " |   Case2.test_second ['Bar']" not in out
 
 
 def test_giving_invalid_paths():
@@ -236,8 +234,7 @@ def test_discarding_nothing_no_filter(capsys):
 
         with mock.patch("rotest.cli.client.discover_tests_under_paths",
                         return_value={MockSuite}):
-            sys.argv = ["rotest", "some_test.py",
-                        "--list"]
+            sys.argv = ["rotest", "some_test.py", "--list"]
 
             main()
             out, _ = capsys.readouterr()
@@ -261,9 +258,7 @@ def test_discarding_nothing_star_filter(capsys):
 
         with mock.patch("rotest.cli.client.discover_tests_under_paths",
                         return_value={Case1, Case2}):
-            sys.argv = ["rotest", "some_test.py",
-                        "--filter", "*",
-                        "--list"]
+            sys.argv = ["rotest", "some_test.py", "--filter", "*", "--list"]
 
             main()
             out, _ = capsys.readouterr()
