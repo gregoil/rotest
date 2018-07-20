@@ -10,7 +10,6 @@ from rotest.core.suite import TestSuite
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.core.models.case_data import CaseData, TestOutcome
-from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.result.handlers.remote_db_handler import RemoteDBHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
@@ -112,7 +111,6 @@ class ExcelHandler(AbstractResultHandler):
         (UNEXPECTED_SUCCESS, easyxf(CELL_STYLE % (UNEXPECTED_SUCCESS_COLOR,
                                                  BLACK_COLOR)))])
 
-    TAGS_SKIP_MESSAGE = TagsHandler.SKIP_MESSAGE
     LOCAL_DB_SKIP_MESSAGE = DBHandler.SKIP_DELTA_MESSAGE
     REMOTE_DB_SKIP_MESSAGE = RemoteDBHandler.SKIP_DELTA_MESSAGE
     PASSED_MESSAGES = (LOCAL_DB_SKIP_MESSAGE, REMOTE_DB_SKIP_MESSAGE)
@@ -366,32 +364,6 @@ class ExcelHandler(AbstractResultHandler):
         for header, col_width in self.HEADER_TO_WIDTH.items():
             self.sheet.col(self.HEADERS.index(header)).width = col_width
 
-    def _create_skipped_reason_summary(self):
-        """Create Skipped tests summary.
-
-        Describe amount of tests skipped since they were filtered by tags,
-        or noted as 'Already Passed' in the DB.
-        """
-        for skip_reason in (self.TAGS_SKIP_MESSAGE,):
-
-            self._write_to_cell(self.row_number,
-                                self.SUMMARY_RESULT_TYPE_COLUMN,
-                                self.DEFAULT_CELL_STYLE,
-                                self.SKIPPED_SUMMARY_PATTERN % skip_reason)
-
-            skip_count_formula = xlwt.Formula(self.FORMULA_PATTERN %
-                                              (self.TRACEBACK_COLUMN,
-                                               self.TRACEBACK_COLUMN,
-                                               self.row_number,
-                                               skip_reason))
-
-            self._write_to_cell(self.row_number,
-                                self.SUMMARY_RESULT_COUNTER_COLUMN,
-                                self.DEFAULT_CELL_STYLE,
-                                skip_count_formula)
-
-            self.row_number += 1
-
     def _create_result_summary(self):
         """Create result summary at the end of the Excel report."""
         self.row_number += self.ROWS_TO_SKIP
@@ -413,6 +385,3 @@ class ExcelHandler(AbstractResultHandler):
                                 result_type_count)
 
             self.row_number += 1
-
-            if result_type == self.SKIPPED:
-                self._create_skipped_reason_summary()

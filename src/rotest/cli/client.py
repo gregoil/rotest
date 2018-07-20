@@ -49,10 +49,10 @@ import pkg_resources
 from attrdict import AttrDict
 
 from rotest.core import TestSuite
+from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
+from rotest.core.result.result import get_result_handlers
 from rotest.cli.discover import discover_tests_under_paths
-from rotest.core.result.handlers.tags_handler import TagsHandler
-from rotest.core.result.result import get_result_handler_options
 from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
                                 update_resource_requests, run as rotest_runner,
                                 parse_resource_identifiers)
@@ -72,7 +72,7 @@ def parse_outputs_option(outputs):
 
     requested_handlers = set(outputs.split(","))
 
-    available_handlers = set(get_result_handler_options())
+    available_handlers = set(get_result_handlers())
 
     non_existing_handlers = requested_handlers - available_handlers
 
@@ -85,6 +85,10 @@ def parse_outputs_option(outputs):
     return requested_handlers
 
 
+def get_tags_by_class(test_class):
+    return test_class.TAGS + [test_class.__name__]
+
+
 def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
               run_name, list, fail_fast, debug, skip_init, config_path,
               resources):
@@ -94,11 +98,6 @@ def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
 
     resource_identifiers = parse_resource_identifiers(resources)
     update_resource_requests(test, resource_identifiers)
-
-    if filter:
-        # Add a tags filtering handler.
-        TagsHandler.TAGS_PATTERN = filter
-        outputs.add('tags')
 
     runs_data = rotest_runner(config=config_path,
                               test_class=test,
@@ -177,6 +176,10 @@ def main(*tests):
 
     if len(tests) == 0:
         tests = discover_tests_under_paths(options.paths)
+
+    if options.filter is not None:
+        tests = [test for test in tests
+                 if match_tags(get_tags_by_class(test), options.filter)]
 
     if len(tests) == 0:
         print("No test was found at given paths: {}".format(
