@@ -79,9 +79,10 @@ def discover_tests_under_paths(paths):
 
         module = py.path.local(path).pyimport()
         tests_discovered = loader.loadTestsFromModule(module)
-        tests_discovered = [test
-                            for test in tests_discovered
-                            if is_test_class(test)]
+        tests_discovered = [
+            test
+            for test in tests_discovered
+            if is_test_class(test) and test.__module__ == module.__name__]
 
         core_log.debug("Discovered %d tests in %s",
                        len(tests_discovered), path)
