@@ -97,7 +97,7 @@ def test_setting_options_by_cli(run_tests):
     )
 
 
-@mock.patch("inspect.getfile", mock.MagicMock(return_value="script"))
+@mock.patch("inspect.getfile", mock.MagicMock(return_value="script.py"))
 @mock.patch("rotest.cli.client.run_tests")
 @mock.patch("rotest.cli.client.discover_tests_under_paths",
             return_value=["test"])

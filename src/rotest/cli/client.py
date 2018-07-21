@@ -206,7 +206,7 @@ def main(*tests):
     # In case we're called via 'python test.py ...'
     if not sys.argv[0].endswith("rotest"):
         main_module = inspect.getfile(__import__("__main__"))
-        arguments.paths = (main_module,)
+        config.paths = (main_module,)
 
     if len(tests) == 0:
         tests = discover_tests_under_paths(config.paths)
