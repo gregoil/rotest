@@ -2,6 +2,7 @@ import sys
 
 import mock
 import pytest
+from attrdict import AttrDict
 from termcolor import colored
 from pyfakefs.fake_filesystem_unittest import Patcher
 
@@ -46,12 +47,15 @@ def test_setting_options_by_config(run_tests):
         sys.argv = ["rotest", "--config", "config.json"]
         main()
 
+    config = AttrDict(delta_iterations=5, processes=2,
+                      paths=(".",), config_path="config.json",
+                      outputs={"xml", "remote"}, filter="some filter",
+                      run_name="some name", resources="query", debug=False,
+                      fail_fast=False, list=False, save_state=False,
+                      skip_init=False)
+
     run_tests.assert_called_once_with(
-        config_path="config.json",
-        delta_iterations=5, processes=2, outputs={"xml", "remote"},
-        filter="some filter", run_name="some name", resources="query",
-        debug=False, fail_fast=False, list=False, save_state=False,
-        skip_init=False, test=mock.ANY
+        config=config, test=mock.ANY, **config
     )
 
 
@@ -79,12 +83,15 @@ def test_setting_options_by_cli(run_tests):
                     "-r", "other query", "-D", "-F", "-l", "-s", "-S"]
         main()
 
+    config = AttrDict(delta_iterations=4, processes=1,
+                      paths=(".",), config_path="config.json",
+                      outputs={"pretty", "full"}, filter="other filter",
+                      run_name="other name", resources="other query",
+                      debug=True, fail_fast=True, list=True, save_state=True,
+                      skip_init=True)
+
     run_tests.assert_called_once_with(
-        config_path="config.json",
-        delta_iterations=4, processes=1, outputs={"pretty", "full"},
-        filter="other filter", run_name="other name", resources="other query",
-        debug=True, fail_fast=True, list=True, save_state=True,
-        skip_init=True, test=mock.ANY
+        config=config, test=mock.ANY, **config
     )
 
 
@@ -96,12 +103,8 @@ def test_finding_tests_in_current_module(discover, run_tests):
     sys.argv = ["python", "script.py"]
     main()
 
-    discover.assert_called_once_with(("script",))
-    run_tests.assert_called_once_with(
-        test=mock.ANY, config_path=DEFAULT_CONFIG_PATH, debug=False,
-        delta_iterations=0, fail_fast=False, filter=None, list=False,
-        outputs={"excel", "pretty"}, processes=None, resources=None,
-        run_name=None, save_state=False, skip_init=False)
+    discover.assert_called_once_with(("script.py",))
+    run_tests.assert_called()
 
 
 @mock.patch("rotest.cli.client.run_tests")
@@ -112,11 +115,7 @@ def test_finding_tests_in_current_directory(discover, run_tests):
     main()
 
     discover.assert_called_once_with((".",))
-    run_tests.assert_called_once_with(
-        test=mock.ANY, config_path=DEFAULT_CONFIG_PATH, debug=False,
-        delta_iterations=0, fail_fast=False, filter=None, list=False,
-        outputs={"excel", "pretty"}, processes=None, resources=None,
-        run_name=None, save_state=False, skip_init=False)
+    run_tests.assert_called()
 
 
 def test_listing_given_tests(capsys):

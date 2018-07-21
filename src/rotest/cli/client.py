@@ -37,6 +37,7 @@ Options:
             Specify resources to request by attributes,
             e.g. '-r res1.group=QA,res2.comment=CI'.
 """
+# pylint: disable=unused-argument
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
 from __future__ import print_function
 import sys
@@ -86,9 +87,9 @@ def parse_outputs_option(outputs):
     return requested_handlers
 
 
-def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
-              run_name, list, fail_fast, debug, skip_init, config,
-              resources):
+def run_tests(paths, test, save_state, delta_iterations, processes, outputs,
+              filter, run_name, list, fail_fast, debug, skip_init, config,
+              config_path, resources):
     if list:
         print_test_hierarchy(test, filter)
         return
@@ -140,7 +141,7 @@ def create_client_options_parser():
     parser = argparse.ArgumentParser(
         description="Run tests in a module or directory.")
 
-    parser.add_argument("paths", nargs="*", default=["."])
+    parser.add_argument("paths", nargs="*", default=(".",))
     parser.add_argument("--version", action="version",
                         version="rotest {}".format(version))
     parser.add_argument("--config", "-c", dest="config_path", metavar="path",
@@ -178,6 +179,11 @@ def create_client_options_parser():
                         help="Specify resources to request be attributes, "
                              "e.g. '-r res1.group=QA,res2.comment=CI'")
 
+    for entry_point in \
+            pkg_resources.iter_entry_points("rotest.cli_client_parsers"):
+        core_log.debug("Applying entry point %s", entry_point.name)
+        entry_point.load()(parser)
+
     return parser
 
 
@@ -214,7 +220,8 @@ def main(*tests):
     class AlmightySuite(TestSuite):
         components = tests
 
-    run_tests(test=AlmightySuite,
+    run_tests(paths=config.paths,
+              test=AlmightySuite,
               save_state=config.save_state,
               delta_iterations=config.delta_iterations,
               processes=config.processes,
@@ -226,4 +233,5 @@ def main(*tests):
               debug=config.debug,
               skip_init=config.skip_init,
               config=config,
+              config_path=config.config_path,
               resources=config.resources)
