@@ -194,10 +194,7 @@ def _update_test_resources(test_element, identifiers_dict):
 
     Args:
         test_element (type): target test class inheriting from
-            :class:`rotest.core.case.TestCase or
-            :class:`rotest.core.Suite.TestSuite or
-            :class:`rotest.core.flow.TestFlow` or
-            :class:`rotest.core.block.TestBlock`.
+            :class:`rotest.core.abstract_test.AbstractTest`.
         identifiers_dict (dict): states the resources constraints in the
             form of <request name>: <resource constraints>.
     """
@@ -208,6 +205,11 @@ def _update_test_resources(test_element, identifiers_dict):
             resource_request.kwargs.update(
                 identifiers_dict[resource_request.name])
             requests_found.add(resource_request.name)
+
+    for (field_name, field) in test_element.get_resource_requests_fields():
+        if field_name in identifiers_dict:
+            field.kwargs.update(identifiers_dict[field_name])
+            requests_found.add(field_name)
 
     return requests_found
 

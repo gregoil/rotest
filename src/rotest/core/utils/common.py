@@ -1,14 +1,12 @@
 """Common result utils."""
 # pylint: disable=dangerous-default-value
-from termcolor import colored
+from __future__ import print_function
 
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.block import TestBlock
 from rotest.core.suite import TestSuite
 from rotest.core.filter import match_tags
-from rotest.common.constants import MAGENTA
-from rotest.core.flow_component import ClassInstantiator
 
 
 PASS_ALL_FILTER = "*"
@@ -31,20 +29,16 @@ def print_test_instance(test_name, depth, tag_filter, test_tags, all_tags):
     """
     test_format = " ".join([HIERARCHY_SEPARATOR * depth,
                            test_name, str(test_tags)])
+    print(test_format)
 
-    if tag_filter is not None and match_tags(all_tags, tag_filter):
-        print colored(test_format, MAGENTA)
-        return True
-
-    print test_format
-    return False
+    return tag_filter is not None and match_tags(all_tags, tag_filter)
 
 
 def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
     """Recursively print the test's hierarchy tree and tags.
 
     Args:
-        test (object): test to print.
+        test (rotest.core.AbstractTest): test to print.
         tag_filter (str): boolean expression composed of tags and boolean
             operators, e.g. "Tag1 and (Tag2 or Tag3 or Tag3)".
         tags (list): tags list to be verified against the tag_filter,
@@ -54,9 +48,6 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
     tags = tags[:]
 
     actual_test = test
-    if isinstance(test, ClassInstantiator):
-        actual_test = test.component_class
-
     if issubclass(actual_test, TestCase):
         tags.extend(test.TAGS)
         for method_name in test.load_test_method_names():
@@ -66,14 +57,13 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
                                 test.TAGS, method_tags)
 
     elif issubclass(actual_test, TestBlock):
-        print_test_instance(test.get_name(), depth, tag_filter,
-                            [], tags)
+        print_test_instance(test.get_name(), depth, tag_filter, [], tags)
 
     elif issubclass(actual_test, TestSuite):
         tags.extend(actual_test.TAGS)
         tags.append(actual_test.__name__)
         sub_tests = test.components
-        print HIERARCHY_SEPARATOR * depth, test.get_name(), test.TAGS
+        print(HIERARCHY_SEPARATOR * depth, test.get_name(), test.TAGS)
         for sub_test in sub_tests:
             print_test_hierarchy(sub_test, tag_filter, tags, depth + 1)
 

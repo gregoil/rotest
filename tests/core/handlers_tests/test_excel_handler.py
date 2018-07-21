@@ -138,8 +138,6 @@ class TestExcelHandler(BaseResultHandlerTest):
                           ExcelHandler.FAILED,
                           ExcelHandler.ERROR,
                           ExcelHandler.SKIPPED,
-                          ExcelHandler.SKIPPED_SUMMARY_PATTERN %
-                              ExcelHandler.TAGS_SKIP_MESSAGE,
                           ExcelHandler.EXPECTED_FAILURE,
                           ExcelHandler.UNEXPECTED_SUCCESS)
 

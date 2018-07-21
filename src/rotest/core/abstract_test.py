@@ -69,7 +69,6 @@ class AbstractTest(unittest.TestCase):
 
         super(AbstractTest, self).__init__(methodName)
 
-        self._tags = None
         self.result = None
         self.config = config
         self.parent = parent
@@ -86,6 +85,36 @@ class AbstractTest(unittest.TestCase):
         self._is_client_local = False
         self.resource_manager = resource_manager
 
+        if parent is not None:
+            parent.addTest(self)
+
+    def override_resource_loggers(self):
+        """Replace the resources' logger with the test's logger."""
+        for resource in self.all_resources.itervalues():
+            resource.override_logger(self.logger)
+
+    def release_resource_loggers(self):
+        """Revert logger replacement."""
+        for resource in self.all_resources.itervalues():
+            resource.release_logger(self.logger)
+
+    @classmethod
+    def get_resource_requests_fields(cls):
+        """Yield tuples of all the resource request fields of this test.
+
+        Yields:
+            tuple. (requests name,  request field) tuples of the test class.
+        """
+        checked_class = cls
+        while checked_class is not AbstractTest:
+            for field_name in checked_class.__dict__:
+                if not field_name.startswith("_"):
+                    field = getattr(checked_class, field_name)
+                    if isinstance(field, BaseResource):
+                        yield (field_name, field)
+
+            checked_class = checked_class.__bases__[0]
+
     @classmethod
     def get_resource_requests(cls):
         """Return a list of all the resource requests this test makes.
@@ -98,20 +127,13 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        checked_class = cls
-        while checked_class is not AbstractTest:
-            for field_name in checked_class.__dict__:
-                if not field_name.startswith("_"):
-                    field = getattr(checked_class, field_name)
-                    if isinstance(field, BaseResource):
-                        new_request = request(field_name,
-                                              field.__class__,
-                                              **field.kwargs)
+        for (field_name, field) in cls.get_resource_requests_fields():
+            new_request = request(field_name,
+                                  field.__class__,
+                                  **field.kwargs)
 
-                        if new_request not in all_requests:
-                            all_requests.append(new_request)
-
-            checked_class = checked_class.__bases__[0]
+            if new_request not in all_requests:
+                all_requests.append(new_request)
 
         return all_requests
 
@@ -184,6 +206,8 @@ class AbstractTest(unittest.TestCase):
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
+        for resource in requested_resources.itervalues():
+            resource.override_logger(self.logger)
 
         if self.result is not None:
             self.result.updateResources(self)
