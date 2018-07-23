@@ -16,8 +16,9 @@ import subprocess
 
 import django
 import docopt
+import os
 
-from rotest.common.config import RESOURCE_MANAGER_PORT
+from rotest.common.config import RESOURCE_MANAGER_PORT, search_config_file
 from rotest.management.server.main import ResourceManagerServer
 
 if sys.platform != "win32":
@@ -37,8 +38,11 @@ def start_server(server_port, run_django_server, django_port):
     try:
         if run_django_server:
             print("Running the Django server as well")
+            app_directory = os.path.dirname(search_config_file())
+            manage_py_location = os.path.join(app_directory, "manage.py")
             django_process = subprocess.Popen(
-                ["django-admin",
+                ["python",
+                 manage_py_location,
                  "runserver",
                  "0.0.0.0:{}".format(django_port)]
             )

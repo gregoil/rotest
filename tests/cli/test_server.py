@@ -23,7 +23,8 @@ def test_running_django_server(popen, capsys):
     sys.argv = ["rotest", "server"]
     main()
 
-    popen.assert_called_once_with(["django-admin",
+    popen.assert_called_once_with(["python",
+                                   "manage.py",
                                    "runserver",
                                    "0.0.0.0:8000"])
 
