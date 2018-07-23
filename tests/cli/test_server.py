@@ -1,7 +1,7 @@
+import os
 import sys
 
 import mock
-import os
 import pytest
 
 from rotest.cli.main import main
