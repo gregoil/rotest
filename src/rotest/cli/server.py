@@ -11,12 +11,12 @@ Options:
     -D, --daemon                Run as a background process.
 """
 from __future__ import print_function
+import os
 import sys
 import subprocess
 
 import django
 import docopt
-import os
 
 from rotest.common.config import RESOURCE_MANAGER_PORT, search_config_file
 from rotest.management.server.main import ResourceManagerServer
