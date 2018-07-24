@@ -64,6 +64,7 @@ setup(
         ],
         "rotest.result_handlers": result_handlers,
         "rotest.cli_client_parsers": [],
+        "rotest.cli_client_actions": [],
     },
     packages=find_packages("src"),
     package_dir={"": "src"},

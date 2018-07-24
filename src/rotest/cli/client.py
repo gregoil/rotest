@@ -179,7 +179,8 @@ def create_client_options_parser():
     for entry_point in \
             pkg_resources.iter_entry_points("rotest.cli_client_parsers"):
         core_log.debug("Applying entry point %s", entry_point.name)
-        entry_point.load()(parser)
+        extension_parser = entry_point.load()
+        extension_parser(parser)
 
     return parser
 
@@ -213,9 +214,14 @@ def main(*tests):
         tests = [test for test in tests
                  if match_tags(get_tags_by_class(test), config.filter)]
 
+    for entry_point in \
+            pkg_resources.iter_entry_points("rotest.cli_client_actions"):
+        core_log.debug("Applying entry point %s", entry_point.name)
+        extension_action = entry_point.load()
+        extension_action(tests, config)
+
     if len(tests) == 0:
-        print("No test was found at given paths: {}".format(
-              ", ".join(config.paths)))
+        print("No test was found")
         sys.exit(1)
 
     class AlmightySuite(TestSuite):
