@@ -56,9 +56,7 @@ def test_setting_options_by_config(run_tests):
                       fail_fast=False, list=False, save_state=False,
                       skip_init=False)
 
-    run_tests.assert_called_once_with(
-        config=config, test=mock.ANY, **config
-    )
+    run_tests.assert_called_once_with(config=config, test=mock.ANY)
 
 
 @mock.patch("rotest.cli.client.run_tests")
@@ -92,9 +90,7 @@ def test_setting_options_by_cli(run_tests):
                       debug=True, fail_fast=True, list=True, save_state=True,
                       skip_init=True)
 
-    run_tests.assert_called_once_with(
-        config=config, test=mock.ANY, **config
-    )
+    run_tests.assert_called_once_with(config=config, test=mock.ANY)
 
 
 @mock.patch("inspect.getfile", mock.MagicMock(return_value="script.py"))

@@ -91,26 +91,24 @@ def get_tags_by_class(test_class):
     return test_class.TAGS + [test_class.__name__]
 
 
-def run_tests(paths, test, save_state, delta_iterations, processes, outputs,
-              filter, run_name, list, fail_fast, debug, skip_init, config,
-              config_path, resources):
-    if list:
-        print_test_hierarchy(test, filter)
+def run_tests(test, config):
+    if config.list:
+        print_test_hierarchy(test, config.filter)
         return
 
-    resource_identifiers = parse_resource_identifiers(resources)
+    resource_identifiers = parse_resource_identifiers(config.resources)
     update_resource_requests(test, resource_identifiers)
 
     runs_data = rotest_runner(config=config,
                               test_class=test,
-                              outputs=outputs,
-                              run_name=run_name,
-                              enable_debug=debug,
-                              fail_fast=fail_fast,
-                              skip_init=skip_init,
-                              save_state=save_state,
-                              processes_number=processes,
-                              delta_iterations=delta_iterations)
+                              outputs=config.outputs,
+                              run_name=config.run_name,
+                              enable_debug=config.debug,
+                              fail_fast=config.fail_fast,
+                              skip_init=config.skip_init,
+                              save_state=config.save_state,
+                              processes_number=config.processes,
+                              delta_iterations=config.delta_iterations)
 
     sys.exit(runs_data[-1].get_return_value())
 
@@ -223,18 +221,4 @@ def main(*tests):
     class AlmightySuite(TestSuite):
         components = tests
 
-    run_tests(paths=config.paths,
-              test=AlmightySuite,
-              save_state=config.save_state,
-              delta_iterations=config.delta_iterations,
-              processes=config.processes,
-              outputs=set(config.outputs),
-              filter=config.filter,
-              run_name=config.run_name,
-              list=config.list,
-              fail_fast=config.fail_fast,
-              debug=config.debug,
-              skip_init=config.skip_init,
-              config=config,
-              config_path=config.config_path,
-              resources=config.resources)
+    run_tests(test=AlmightySuite, config=config)
