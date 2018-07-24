@@ -190,7 +190,7 @@ def test_finding_no_test(capsys):
             main()
 
         out, _ = capsys.readouterr()
-        assert "No test was found at given paths:" in out
+        assert "No test was found" in out
 
 
 def test_discarding_all_tests(capsys):
@@ -220,7 +220,7 @@ def test_discarding_all_tests(capsys):
                 main()
 
             out, _ = capsys.readouterr()
-            assert "No test was found at given paths:" in out
+            assert "No test was found" in out
             assert "Case1.test_something" not in out
             assert "Case2.test_something" not in out
 
