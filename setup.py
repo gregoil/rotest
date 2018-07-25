@@ -62,7 +62,10 @@ setup(
         "console_scripts": [
             "rotest = rotest.cli.main:main"
         ],
-        "rotest.result_handlers": result_handlers},
+        "rotest.result_handlers": result_handlers,
+        "rotest.cli_client_parsers": [],
+        "rotest.cli_client_actions": [],
+    },
     packages=find_packages("src"),
     package_dir={"": "src"},
     package_data={'': ['*.xls', '*.xsd', '*.json', '*.css', '*.xml', '*.rst']},

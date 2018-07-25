@@ -137,6 +137,9 @@ def parse_config_file(json_path, schema_path=DEFAULT_SCHEMA_PATH):
     config = parse(json_path=json_path,
                    schema_path=schema_path)
 
+    if "outputs" in config:
+        config.outputs = set(config.outputs)
+
     return config
 
 

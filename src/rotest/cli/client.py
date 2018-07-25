@@ -37,18 +37,20 @@ Options:
             Specify resources to request by attributes,
             e.g. '-r res1.group=QA,res2.comment=CI'.
 """
+# pylint: disable=unused-argument
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
 from __future__ import print_function
 import sys
 import inspect
+import argparse
 from itertools import chain
 
-import docopt
 import django
 import pkg_resources
 from attrdict import AttrDict
 
 from rotest.core import TestSuite
+from rotest.common import core_log
 from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.result.result import get_result_handlers
@@ -89,26 +91,24 @@ def get_tags_by_class(test_class):
     return test_class.TAGS + [test_class.__name__]
 
 
-def run_tests(test, save_state, delta_iterations, processes, outputs, filter,
-              run_name, list, fail_fast, debug, skip_init, config_path,
-              resources):
-    if list:
-        print_test_hierarchy(test, filter)
+def run_tests(test, config):
+    if config.list:
+        print_test_hierarchy(test, config.filter)
         return
 
-    resource_identifiers = parse_resource_identifiers(resources)
+    resource_identifiers = parse_resource_identifiers(config.resources)
     update_resource_requests(test, resource_identifiers)
 
-    runs_data = rotest_runner(config=config_path,
+    runs_data = rotest_runner(config=config,
                               test_class=test,
-                              outputs=outputs,
-                              run_name=run_name,
-                              enable_debug=debug,
-                              fail_fast=fail_fast,
-                              skip_init=skip_init,
-                              save_state=save_state,
-                              processes_number=processes,
-                              delta_iterations=delta_iterations)
+                              outputs=config.outputs,
+                              run_name=config.run_name,
+                              enable_debug=config.debug,
+                              fail_fast=config.fail_fast,
+                              skip_init=config.skip_init,
+                              save_state=config.save_state,
+                              processes_number=config.processes,
+                              delta_iterations=config.delta_iterations)
 
     sys.exit(runs_data[-1].get_return_value())
 
@@ -127,78 +127,104 @@ def filter_valid_values(dictionary):
             if value is not None)
 
 
+def create_client_options_parser():
+    """Create option parser for running tests.
+
+    Returns:
+        argparse.ArgumentParser: parser for CLI options.
+    """
+    version = pkg_resources.get_distribution("rotest").version
+
+    parser = argparse.ArgumentParser(
+        description="Run tests in a module or directory.")
+
+    parser.add_argument("paths", nargs="*", default=(".",))
+    parser.add_argument("--version", action="version",
+                        version="rotest {}".format(version))
+    parser.add_argument("--config", "-c", dest="config_path", metavar="path",
+                        default=DEFAULT_CONFIG_PATH,
+                        help="Test configuration file path")
+    parser.add_argument("--save-state", "-s", action="store_true",
+                        help="Enable saving state of resources")
+    parser.add_argument("--delta", "-d", dest="delta_iterations",
+                        metavar="iterations", type=int,
+                        help="Enable run of failed tests only - enter the "
+                             "number of times the failed tests should be run.")
+    parser.add_argument("--processes", "-p", metavar="number", type=int,
+                        help="Use multiprocess test runner - specify number "
+                             "of worker processes to be created")
+    parser.add_argument("--outputs", "-o",
+                        type=parse_outputs_option,
+                        help="Output handlers separated by comma. Options: {}"
+                        .format(", ".join(get_result_handlers())))
+    parser.add_argument("--filter", "-f", metavar="query",
+                        help="Run only tests that match the filter "
+                             "expression, e.g. 'Tag1* and not Tag13'")
+    parser.add_argument("--name", "-n", metavar="name",
+                        dest="run_name",
+                        help="Assign a name for current launch")
+    parser.add_argument("--list", "-l", action="store_true",
+                        help="Print the tests hierarchy and quit")
+    parser.add_argument("--failfast", "-F", action="store_true",
+                        dest="fail_fast",
+                        help="Stop the run on first failure")
+    parser.add_argument("--debug", "-D", action="store_true",
+                        help="Enter ipdb debug mode upon any test exception")
+    parser.add_argument("--skip-init", "-S", action="store_true",
+                        help="Skip initialization and validation of resources")
+    parser.add_argument("--resources", "-r", metavar="query",
+                        help="Specify resources to request be attributes, "
+                             "e.g. '-r res1.group=QA,res2.comment=CI'")
+
+    for entry_point in \
+            pkg_resources.iter_entry_points("rotest.cli_client_parsers"):
+        core_log.debug("Applying entry point %s", entry_point.name)
+        extension_parser = entry_point.load()
+        extension_parser(parser)
+
+    return parser
+
+
 def main(*tests):
     """Run the given tests.
 
     Args:
         *tests: either suites or tests to be run.
     """
-    # Load django models before using the runner in tests.
     django.setup()
 
-    if sys.argv[0].endswith("rotest"):
-        argv = sys.argv[1:]
-    else:
-        argv = sys.argv
+    parser = create_client_options_parser()
+    arguments = parser.parse_args()
 
-    version = pkg_resources.get_distribution("rotest").version
-    arguments = docopt.docopt(__doc__, argv=argv, version=version)
-    arguments = dict(paths=arguments["<path>"] or ["."],
-                     config_path=arguments["--config"] or DEFAULT_CONFIG_PATH,
-                     save_state=arguments["--save-state"],
-                     delta_iterations=int(arguments["--delta"])
-                                      if arguments["--delta"] is not None
-                                      else None,
-                     processes=int(arguments["--processes"])
-                               if arguments["--processes"] is not None
-                               else None,
-                     outputs=parse_outputs_option(arguments["--outputs"]),
-                     filter=arguments["--filter"],
-                     run_name=arguments["--name"],
-                     list=arguments["--list"],
-                     fail_fast=arguments["--failfast"],
-                     debug=arguments["--debug"],
-                     skip_init=arguments["--skip-init"],
-                     resources=arguments["--resources"])
-
-    config = parse_config_file(arguments["config_path"])
-    default_config = parse_config_file(DEFAULT_CONFIG_PATH)
-
-    options = AttrDict(chain(
-        default_config.items(),
-        filter_valid_values(config),
-        filter_valid_values(arguments),
+    config = AttrDict(chain(
+        parse_config_file(DEFAULT_CONFIG_PATH).items(),
+        parse_config_file(arguments.config_path).items(),
+        filter_valid_values(vars(arguments)),
     ))
 
-    if not sys.argv[0].endswith("rotest") and len(tests) == 0:
+    # In case we're called via 'python test.py ...'
+    if not sys.argv[0].endswith("rotest"):
         main_module = inspect.getfile(__import__("__main__"))
-        options.paths = (main_module,)
+        config.paths = (main_module,)
 
     if len(tests) == 0:
-        tests = discover_tests_under_paths(options.paths)
+        tests = discover_tests_under_paths(config.paths)
 
-    if options.filter is not None:
+    if config.filter is not None:
         tests = [test for test in tests
-                 if match_tags(get_tags_by_class(test), options.filter)]
+                 if match_tags(get_tags_by_class(test), config.filter)]
+
+    for entry_point in \
+            pkg_resources.iter_entry_points("rotest.cli_client_actions"):
+        core_log.debug("Applying entry point %s", entry_point.name)
+        extension_action = entry_point.load()
+        extension_action(tests, config)
 
     if len(tests) == 0:
-        print("No test was found at given paths: {}".format(
-              ", ".join(options.paths)))
+        print("No test was found")
         sys.exit(1)
 
     class AlmightySuite(TestSuite):
         components = tests
 
-    run_tests(test=AlmightySuite,
-              save_state=options.save_state,
-              delta_iterations=options.delta_iterations,
-              processes=options.processes,
-              outputs=set(options.outputs),
-              filter=options.filter,
-              run_name=options.run_name,
-              list=options.list,
-              fail_fast=options.fail_fast,
-              debug=options.debug,
-              skip_init=options.skip_init,
-              config_path=options.config_path,
-              resources=options.resources)
+    run_tests(test=AlmightySuite, config=config)
