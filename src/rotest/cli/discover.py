@@ -81,9 +81,6 @@ def discover_tests_under_paths(paths):
         tests_discovered = loader.loadTestsFromModule(module)
         tests_discovered = [test
                             for test in tests_discovered
-                            if test.__module__ == module.__name__]
-        tests_discovered = [test
-                            for test in tests_discovered
                             if is_test_class(test)]
 
         core_log.debug("Discovered %d tests in %s",

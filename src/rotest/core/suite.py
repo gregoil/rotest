@@ -63,22 +63,25 @@ class TestSuite(unittest.TestSuite):
                 classes inheriting from :class:`rotest.core.case.TestCase`,
                 :class:`rotest.core.suite.TestSuite`.
         """
-        self._tags = None
+        super(TestSuite, self).__init__()
+
         self.parent = parent
         name = self.get_name()
         self.identifier = indexer.next()
         self.resource_manager = resource_manager
         self.parents_count = self._get_parents_count()
 
+        if parent is not None:
+            parent.addTest(self)
+
         core_log.debug("Initializing %r test-suite", name)
         if len(self.components) == 0:
             raise AttributeError("%s: Components tuple can't be empty" % name)
 
         core_log.debug("Creating database entry for %r test-suite", name)
-        self.work_dir = get_work_dir(base_work_dir, name)
+        self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = SuiteData(name=name, run_data=run_data)
 
-        tests = []
         for test_component in self.components:
 
             if issubclass(test_component, TestCase):
@@ -95,7 +98,6 @@ class TestSuite(unittest.TestSuite):
                                         resource_manager=resource_manager)
 
                     core_log.debug("Adding %r to %r", test_item, self.data)
-                    tests.append(test_item)
 
             elif issubclass(test_component, TestFlow):
                 test_item = test_component(parent=self,
@@ -109,7 +111,6 @@ class TestSuite(unittest.TestSuite):
                                            resource_manager=resource_manager)
 
                 core_log.debug("Adding %r to %r", test_item, self.data)
-                tests.append(test_item)
 
             elif issubclass(test_component, TestSuite):
                 test_item = test_component(parent=self,
@@ -123,7 +124,6 @@ class TestSuite(unittest.TestSuite):
                                resource_manager=resource_manager)
 
                 core_log.debug("Adding %r to %r", test_item, self.data)
-                tests.append(test_item)
 
             else:
                 raise TypeError("Components under TestSuite must be classes "
@@ -131,7 +131,6 @@ class TestSuite(unittest.TestSuite):
                                 "got %r" % test_component)
 
         core_log.debug("Initialized %r test-suite successfully", self.data)
-        super(TestSuite, self).__init__(tests)
 
     @classmethod
     def get_name(cls):

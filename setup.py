@@ -3,12 +3,11 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "3.0.3"
+__version__ = "3.1.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
     "xml = rotest.core.result.handlers.xml_handler:XMLHandler",
-    "tags = rotest.core.result.handlers.tags_handler:TagsHandler",
     "excel = rotest.core.result.handlers.excel_handler:ExcelHandler",
     "dots = rotest.core.result.handlers.stream.dots_handler:DotsHandler",
     "tree = rotest.core.result.handlers.stream.tree_handler:TreeHandler",
@@ -65,7 +64,10 @@ setup(
         "console_scripts": [
             "rotest = rotest.cli.main:main"
         ],
-        "rotest.result_handlers": result_handlers},
+        "rotest.result_handlers": result_handlers,
+        "rotest.cli_client_parsers": [],
+        "rotest.cli_client_actions": [],
+    },
     packages=find_packages("src"),
     package_dir={"": "src"},
     package_data={'': ['*.xls', '*.xsd', '*.json', '*.css', '*.xml', '*.rst']},

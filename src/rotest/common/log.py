@@ -138,6 +138,22 @@ def define_core_logger(is_colored):
     return logger
 
 
+def get_tree_path(test):
+    """Get the identifiers tree path to the test.
+
+    The hierarchical identifiers path is used to create inheritance between
+    the loggers of the tests.
+
+    Args:
+        test (object): test instance to get the path for.
+    """
+    path = str(test.identifier)
+    if test.parent is not None:
+        return "%s.%s" % (get_tree_path(test.parent), path)
+
+    return path
+
+
 def get_test_logger(logger_basename, log_dir):
     """Define test_logger using define_logger method.
 

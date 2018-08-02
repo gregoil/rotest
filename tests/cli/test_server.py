@@ -1,3 +1,4 @@
+import os
 import sys
 
 import mock
@@ -23,9 +24,11 @@ def test_running_django_server(popen, capsys):
     sys.argv = ["rotest", "server"]
     main()
 
-    popen.assert_called_once_with(["django-admin",
-                                   "runserver",
-                                   "0.0.0.0:8000"])
+    popen.assert_called_once_with(
+        ["python",
+         os.path.join(os.path.abspath(os.path.curdir), "manage.py"),
+         "runserver",
+         "0.0.0.0:8000"])
 
     out, _ = capsys.readouterr()
     assert "Running the Django server as well" in out
