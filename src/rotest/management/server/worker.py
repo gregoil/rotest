@@ -109,43 +109,6 @@ class Worker(LineReceiver):
             reply_message = ParsingFailure(reason=str(err))
             self.respond(reply_message)
 
-    def _create_test_data(self, test_dict):
-        """Recursively create the test's datas and add them to 'all_tests'.
-
-        Args:
-            tests_tree (dict): containts the hierarchy of the tests in the run.
-
-        Returns:
-            GeneralData. the created test data object.
-        """
-        data_type = test_dict[TEST_CLASS_CODE_KEY]
-        test_data = data_type(name=test_dict[TEST_NAME_KEY])
-        test_data.run_data = self.run_data
-        test_data.save()
-        self.all_tests[test_dict[TEST_ID_KEY]] = test_data
-
-        if TEST_SUBTESTS_KEY in test_dict:
-            for sub_test_dict in test_dict[TEST_SUBTESTS_KEY]:
-                sub_test = self._create_test_data(sub_test_dict)
-                test_data.add_sub_test_data(sub_test)
-                sub_test.save()
-
-        return test_data
-
-    def initialize_test_run(self, tests_tree, run_data):
-        """Initialize the tests run data.
-
-        Args:
-            tests_tree (dict): containts the hierarchy of the tests in the run.
-            run_data (dict): containts additional data about the run.
-        """
-        self.run_data = RunData.objects.create(**run_data)
-        self.factory.logger.debug("Creating tests data tree")
-        self.main_test = self._create_test_data(tests_tree)
-        self.run_data.main_test = self.main_test
-        self.run_data.user_name = self.user_name
-        self.run_data.save()
-
     def update_run_data(self, run_data):
         """Initialize the tests run data.
 
@@ -153,16 +116,6 @@ class Worker(LineReceiver):
             run_data (dict): containts additional data about the run.
         """
         RunData.objects.filter(pk=self.run_data.pk).update(**run_data)
-
-    def start_test(self, test_id):
-        """Update the test data to 'in progress' state and set the start time.
-
-        Args:
-            test_id (number): the identifier of the test.
-        """
-        test_data = self.all_tests[test_id]
-        test_data.start()
-        test_data.save()
 
     def should_skip(self, test_id):
         """Check if the test passed in the last run according to results DB.
