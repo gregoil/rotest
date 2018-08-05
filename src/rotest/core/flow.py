@@ -254,8 +254,7 @@ class TestFlow(AbstractFlowComponent):
         """
         # We set the result default value as None because of the overridden
         # method signature, but the Rotest test case does not support it.
-        for block in self:
-            block.result = result
+        self._set_parameters(result=result)
 
         super(TestFlow, self).run(result)
 
