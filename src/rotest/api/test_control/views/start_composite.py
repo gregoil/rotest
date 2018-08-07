@@ -6,7 +6,7 @@ from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
-def start_test(request, sessions=None, *args, **kwargs):
+def start_composite(request, sessions=None, *args, **kwargs):
     """Update the test data to 'in progress' state and set the start time.
 
     Args:

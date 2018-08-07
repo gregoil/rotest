@@ -6,11 +6,11 @@ from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
-def start_test(request, sessions=None, *args, **kwargs):
-    """Update the test data to 'in progress' state and set the start time.
+def stop_test(request, sessions=None, *args, **kwargs):
+    """End a test run.
 
     Args:
-        test_id (number): the identifier of the test.
+        request (Request): StopTest request.
     """
     if request.method != "POST":
         return JsonResponse(RESPONSE_PAGE_NOT_IMPLEMENTED,
@@ -19,7 +19,7 @@ def start_test(request, sessions=None, *args, **kwargs):
     session_token = request.POST.get("token")
     session_data = sessions[session_token]
     test_data = session_data.all_tests[request.POST.get("test_id")]
-    test_data.start()
+    test_data.end()
     test_data.save()
 
     return JsonResponse({}, status=httplib.NO_CONTENT)

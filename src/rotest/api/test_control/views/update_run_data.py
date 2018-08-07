@@ -2,15 +2,16 @@ import httplib
 
 from django.http import JsonResponse
 
+from rotest.core.models import RunData
 from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
-def start_test(request, sessions=None, *args, **kwargs):
-    """Update the test data to 'in progress' state and set the start time.
+def update_run_data(request, sessions=None, *args, **kwargs):
+    """Initialize the tests run data.
 
     Args:
-        test_id (number): the identifier of the test.
+        run_data (dict): containts additional data about the run.
     """
     if request.method != "POST":
         return JsonResponse(RESPONSE_PAGE_NOT_IMPLEMENTED,
@@ -18,8 +19,7 @@ def start_test(request, sessions=None, *args, **kwargs):
 
     session_token = request.POST.get("token")
     session_data = sessions[session_token]
-    test_data = session_data.all_tests[request.POST.get("test_id")]
-    test_data.start()
-    test_data.save()
+    run_data = session_data.run_data
+    RunData.objects.filter(pk=run_data.pk).update(**run_data)
 
     return JsonResponse({}, status=httplib.NO_CONTENT)

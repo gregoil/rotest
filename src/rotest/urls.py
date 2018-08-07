@@ -1,6 +1,5 @@
-from django.conf.urls import include, url
-from rotest import api
+from django.conf.urls import include, url, patterns
 
-urlpatterns = [
-    url("^api/?", include(api.urls)),
-]
+urlpatterns = patterns("",
+    url("^api/?", include("rotest.api.urls")),
+)
