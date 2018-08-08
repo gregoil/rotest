@@ -23,6 +23,18 @@ LOCAL_IP = "127.0.0.1"
 LOCALHOST = "localhost"
 
 
+def get_client_ip(request):
+    """Get client's ip address."""
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")  # forward ip
+    if x_forwarded_for:
+        ip_address = x_forwarded_for.split(",")[0]
+
+    else:
+        ip_address = request.META.get("REMOTE_ADDR")
+
+    return ip_address
+
+
 def get_host_name(ip_address):
     """Return the host name for the given address.
 
@@ -38,6 +50,11 @@ def get_host_name(ip_address):
         host = LOCALHOST
 
     return host
+
+
+def get_username(request):
+    """Return the username."""
+    return get_host_name(get_client_ip(request))
 
 
 def extract_type(type_path):

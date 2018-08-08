@@ -1,6 +1,7 @@
 import httplib
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
@@ -9,6 +10,7 @@ from rotest.api.constants import \
 SKIP_DELTA_MESSAGE = "Previous run passed according to remote DB"
 
 
+@csrf_exempt
 def should_skip(request, sessions=None, *args, **kwargs):
     """Check if the test passed in the last run according to results DB.
 

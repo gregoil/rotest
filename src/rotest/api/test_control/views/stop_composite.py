@@ -1,11 +1,13 @@
 import httplib
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+@csrf_exempt
 def stop_composite(request, sessions=None, *args, **kwargs):
     """Save the composite test's data.
 

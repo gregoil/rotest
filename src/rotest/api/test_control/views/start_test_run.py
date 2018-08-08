@@ -2,6 +2,7 @@ import httplib
 from uuid import UUID
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
@@ -41,6 +42,7 @@ def _create_test_data(test_dict, run_data, all_tests):
     return test_data
 
 
+@csrf_exempt
 def start_test_run(request, sessions=None, *args, **kwargs):
     """Initialize the tests run data.
 

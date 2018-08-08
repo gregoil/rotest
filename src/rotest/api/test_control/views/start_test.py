@@ -1,11 +1,13 @@
 import httplib
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+@csrf_exempt
 def start_test(request, sessions=None, *args, **kwargs):
     """Update the test data to 'in progress' state and set the start time.
 

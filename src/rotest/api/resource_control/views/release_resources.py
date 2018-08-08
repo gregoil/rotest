@@ -1,8 +1,10 @@
 import httplib
+import json
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.common.django_utils.common import get_sub_model
 from rotest.management import ResourceData
@@ -10,6 +12,7 @@ from rotest.management.common.errors import ResourceAlreadyAvailableError, \
     ResourcePermissionError, ServerError, ResourceReleaseError, \
     ResourceDoesNotExistError
 from rotest.api.constants import RESPONSE_PAGE_NOT_IMPLEMENTED
+from rotest.management.common.utils import get_username
 
 
 def _release_resource(resource, user_name):
@@ -53,6 +56,7 @@ def _release_resource(resource, user_name):
         raise ResourceReleaseError(errors)
 
 
+@csrf_exempt
 @transaction.atomic
 def release_resources(request, *args, **kwargs):
     """Release the given resources one by one."""
@@ -61,7 +65,9 @@ def release_resources(request, *args, **kwargs):
                             status=httplib.BAD_REQUEST)
 
     errors = {}
-    for name in request.POST.get("requests"):
+    body = json.loads(request.body)
+    username = get_username(request)
+    for name in body["resources"]:
         try:
             resource_data = ResourceData.objects.get(name=name)
 
@@ -73,7 +79,7 @@ def release_resources(request, *args, **kwargs):
         resource = get_sub_model(resource_data)
 
         try:
-            _release_resource(resource, request.worker.name)
+            _release_resource(resource, username)
 
         except ServerError as ex:
             errors[name] = (ex.ERROR_CODE, ex.get_error_content())

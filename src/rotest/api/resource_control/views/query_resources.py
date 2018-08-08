@@ -1,17 +1,16 @@
 import httplib
-
-from datetime import datetime
+import json
 
 from django.core import serializers
 from django.db.models.query_utils import Q
 from django.db import transaction
 from django.http import JsonResponse
-from django.contrib.auth import models as auth_models
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.api.constants import RESPONSE_PAGE_NOT_IMPLEMENTED
 
-
+@csrf_exempt
 @transaction.atomic
 def query_resources(request, *args, **kwargs):
     """Find and return the resources that answer the client's query.
@@ -26,7 +25,8 @@ def query_resources(request, *args, **kwargs):
         return JsonResponse(RESPONSE_PAGE_NOT_IMPLEMENTED,
                             status=httplib.BAD_REQUEST)
 
-    desc = ResourceDescriptor.decode(request.GET.get("descriptors"))
+    body = json.loads(request.body)
+    desc = ResourceDescriptor.decode(body["descriptors"])
     # query for resources that are usable and match the descriptors
     query = (Q(is_usable=True, **desc.properties))
     matches = desc.type.objects.filter(query)

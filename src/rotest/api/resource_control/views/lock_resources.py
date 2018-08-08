@@ -1,15 +1,18 @@
 import httplib
+import json
 
 from datetime import datetime
 
-from django.core import serializers
 from django.db.models.query_utils import Q
 from django.db import transaction
 from django.http import JsonResponse
 from django.contrib.auth import models as auth_models
+from django.views.decorators.csrf import csrf_exempt
 
+from rotest.management.common.json_parser import JSONParser
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.api.constants import RESPONSE_PAGE_NOT_IMPLEMENTED
+from rotest.management.common.utils import get_username
 
 
 def _lock_resource(resource, user_name):
@@ -33,6 +36,7 @@ def _lock_resource(resource, user_name):
     resource.save()
 
 
+@csrf_exempt
 @transaction.atomic
 def lock_resources(request, *args, **kwargs):
     """Lock the given resources one by one.
@@ -46,10 +50,9 @@ def lock_resources(request, *args, **kwargs):
                             status=httplib.BAD_REQUEST)
 
     locked_resources = []
-    client = request.POST.get("username")
-    descriptors = request.POST.get("descriptors")
-
-    user_name, _ = client.split(":")  # splitting <user_name>:<port>
+    user_name = get_username(request)
+    body = json.loads(request.body)
+    descriptors = body["descriptors"]
 
     if not auth_models.User.objects.filter(username=user_name).exists():
         return JsonResponse({
@@ -78,12 +81,12 @@ def lock_resources(request, *args, **kwargs):
             }, status=httplib.BAD_REQUEST)
 
         availables = (resource for resource in matches
-                      if resource.is_available(client))
+                      if resource.is_available(user_name))
 
         try:
             resource = availables.next()
 
-            _lock_resource(resource, client)
+            _lock_resource(resource, user_name)
             locked_resources.append(resource)
 
         except StopIteration:
@@ -92,6 +95,8 @@ def lock_resources(request, *args, **kwargs):
                            "the requirements: {!r}".format(desc)
             }, status=httplib.BAD_REQUEST)
 
+    parser = JSONParser()
+    response = [parser.encode(resource) for resource in locked_resources]
     return JsonResponse({
-        "resources": serializers.serialize("json", locked_resources)
+        "resources": response
     }, status=httplib.OK)

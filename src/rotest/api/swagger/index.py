@@ -20,4 +20,4 @@ def swagger_file(request, *args, **kwargs):
 
 
 def index(request, *args, **kwargs):
-    return render(request, "index.html")
+    return render(request, "swagger.html")

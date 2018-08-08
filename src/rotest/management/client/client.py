@@ -10,6 +10,8 @@ from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.management.common.parsers.abstract_parser import ParsingError
 from rotest.common.config import (RESOURCE_REQUEST_TIMEOUT,
                                   RESOURCE_MANAGER_PORT)
+from rotest.management.common.requests import resources
+from rotest.management.common.requests.base_api import Requester
 from rotest.management.common.utils import (MESSAGE_DELIMITER,
                                             MESSAGE_MAX_LENGTH)
 
@@ -27,10 +29,12 @@ class AbstractClient(object):
         _messages_counter (itertools.count): msg_id counter.
         _parser (AbstractParser): messages parser.
     """
+    BASE_URI = "rotest/"
     REPLY_OVERHEAD_TIME = 2
     _DEFAULT_REPLY_TIMEOUT = 18
 
     def __init__(self, host, port=RESOURCE_MANAGER_PORT,
+                 base_uri=BASE_URI,
                  parser=DEFAULT_PARSER(),
                  lock_timeout=RESOURCE_REQUEST_TIMEOUT,
                  logger=core_log):
@@ -38,7 +42,6 @@ class AbstractClient(object):
 
         Args:
             host (str): Server's IP address.
-            port (number): Server's port.
             parser (AbstractParser): parser to parse the messages with.
             lock_timeout (number): default waiting time on requests.
             logger (logging.Logger): client's logger.
@@ -46,10 +49,15 @@ class AbstractClient(object):
         self._host = host
         self._port = port
         self._socket = None
+        self.base_uri = base_uri
         self.logger = logger
         self._parser = parser
         self._messages_counter = count()
         self.lock_timeout = lock_timeout
+        self.requester = Requester(host=self._host,
+                                   port="8000",
+                                   base_url=self.base_uri,
+                                   logger=self.logger)
 
     def connect(self, timeout=_DEFAULT_REPLY_TIMEOUT):
         """Connect to manager server.
@@ -200,8 +208,11 @@ class AbstractClient(object):
         if filter_dict is None:
             filter_dict = {}
 
-        msg = messages.UpdateFields(model=model,
-                                    filter=filter_dict,
-                                    kwargs=kwargs)
-
-        self._request(msg)
+        request_data = {
+            "model": model,
+            "filter": filter_dict,
+            "kwargs": kwargs
+        }
+        request = resources.UpdateFields(host=self._host,
+                                         base_url=self.BASE_URI,
+                                         data=request_data)

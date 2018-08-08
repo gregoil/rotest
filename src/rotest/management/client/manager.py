@@ -6,15 +6,21 @@ also for the resources cleanup procedure and release.
 # pylint: disable=invalid-name,too-many-instance-attributes
 # pylint: disable=too-few-public-methods,too-many-arguments
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
+import httplib
 from itertools import izip
 
+import pickle
 from attrdict import AttrDict
+from django.core import serializers
 
 from rotest.common import core_log
 from rotest.management.common import messages
 from rotest.management.client.client import AbstractClient
 from rotest.management.common.errors import ResourceDoesNotExistError
 from rotest.common.config import ROTEST_WORK_DIR, RESOURCE_MANAGER_HOST
+from rotest.management.common.json_parser import JSONParser
+from rotest.management.common.requests.resources import (ReleaseResources,
+                                                         LockResources)
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
@@ -31,6 +37,7 @@ class ResourceRequest(object):
             override the expected behavior.
         kwargs (dict): requested resource arguments.
     """
+
     def __init__(self, resource_name, resource_class,
                  force_initialize=False, save_state=True, **kwargs):
         """Initialize the required parameters of resource request."""
@@ -211,8 +218,8 @@ class ClientResourceManager(AbstractClient):
             resource.set_sub_resources()
 
             self._propagate_attributes(resource=resource, config=config,
-               save_state=request.save_state and save_state,
-               force_initialize=request.force_initialize or force_initialize)
+                                       save_state=request.save_state and save_state,
+                                       force_initialize=request.force_initialize or force_initialize)
 
             resource.set_work_dir(request.name, base_work_dir)
             resource.logger.debug("Resource %r work dir was created under %r",
@@ -298,14 +305,22 @@ class ClientResourceManager(AbstractClient):
             encoded_requests = [descriptor.encode() for descriptor in
                                 server_requests]
 
-            request = messages.LockResources(descriptors=encoded_requests,
-                                             timeout=timeout)
+            request_data = {
+                "descriptors": encoded_requests,
+                "timeout": timeout
+                }
+            response = self.requester.request(LockResources, request_data)
+            if response.status_code != httplib.OK:
+                raise Exception(response.json())
 
-            reply = self._request(request, timeout=timeout)
+            parser = JSONParser()
+            response_resources = \
+                [parser.decode(resource)
+                 for resource in response.json()["resources"]]
 
             resources.extend(descriptor.type(data=resource_data) for
                              (descriptor, resource_data) in
-                             zip(server_requests, reply.resources))
+                             zip(server_requests, response_resources))
 
         for index, descriptor in enumerate(descriptors):
             if descriptor.type.DATA_CLASS is None:
@@ -327,8 +342,10 @@ class ClientResourceManager(AbstractClient):
                             for res in resources if res.DATA_CLASS is not None]
 
         if len(release_requests) > 0:
-            request = messages.ReleaseResources(requests=release_requests)
-            self._request(request)
+            request_data = {
+                "resources": release_requests
+                }
+            response = self.requester.request(ReleaseResources, request_data)
 
         for resource in resources:
             if resource in self.locked_resources:
@@ -389,15 +406,15 @@ class ClientResourceManager(AbstractClient):
                    for resource in unused_locked_resources):
 
                 matching_resources = self._find_matching_resources(
-                                                    descriptor,
-                                                    unused_locked_resources)
+                    descriptor,
+                    unused_locked_resources)
 
                 if len(matching_resources) > 0:
                     previous_resource = matching_resources[0]
                     self.logger.info("Retrieved previously locked "
-                                      "resource %r for %r",
-                                      previous_resource,
-                                      request.name)
+                                     "resource %r for %r",
+                                     previous_resource,
+                                     request.name)
 
                     retrieved_resources[request.name] = previous_resource
 

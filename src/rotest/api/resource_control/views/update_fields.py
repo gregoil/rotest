@@ -1,11 +1,14 @@
 import httplib
+import json
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.management import ResourceData
 from rotest.api.constants import RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+@csrf_exempt
 def update_fields(request, *args, **kwargs):
     """Update content in the server's DB.
 
@@ -19,9 +22,10 @@ def update_fields(request, *args, **kwargs):
         return JsonResponse(RESPONSE_PAGE_NOT_IMPLEMENTED,
                             status=httplib.BAD_REQUEST)
 
-    model = request.POST.get("model")
-    filter_dict = request.POST.get("filter")
-    kwargs_vars = request.POST.get("kwargs")
+    body = json.loads(request.body)
+    model = body["model"]
+    filter_dict = body["filter"]
+    kwargs_vars = body["kwargs"]
     objects = model.objects
     if filter_dict is not None and len(filter_dict) > 0:
         objects.filter(**filter_dict).update(**kwargs_vars)

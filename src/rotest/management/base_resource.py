@@ -121,7 +121,6 @@ class BaseResource(object):
         """
         leaf = self.leaf  # 'leaf' is a property.
         if leaf == self:
-            user_name = user_name.split(HOST_PORT_SEPARATOR)[0]
             return self.reserved in [user_name, ""] and self.owner == ""
 
         return leaf.is_available(user_name)

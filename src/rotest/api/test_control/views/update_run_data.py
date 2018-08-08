@@ -1,12 +1,14 @@
 import httplib
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rotest.core.models import RunData
 from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+@csrf_exempt
 def update_run_data(request, sessions=None, *args, **kwargs):
     """Initialize the tests run data.
 
