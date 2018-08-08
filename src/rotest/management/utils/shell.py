@@ -1,4 +1,5 @@
 """Rotest shell module, which enables using resources and running blocks."""
+# pylint: disable=protected-access
 import sys
 
 import django
