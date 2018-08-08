@@ -85,7 +85,7 @@ def main():
     apps_start_index = sys.argv.index("shell")
     app_names = []
     if apps_start_index > 0:
-        app_names = sys.argv[apps_start_index+1:]
+        app_names = sys.argv[apps_start_index + 1:]
 
     django.setup()
     print "Creating client"
