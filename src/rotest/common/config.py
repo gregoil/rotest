@@ -217,7 +217,7 @@ CONFIGURATION_SCHEMA = {
     "discoverer_blacklist": Option(
         environment_variables=["DISCOVERER_BLACKLIST"],
         config_file_options=["discoverer_blacklist"],
-        default_value=""),
+        default_value=[]),
     "resource_request_timeout": Option(
         command_line_options=["--resource-request-timeout"],
         environment_variables=["ROTEST_RESOURCE_REQUEST_TIMEOUT",
@@ -256,7 +256,7 @@ RESOURCE_MANAGER_PORT = int(CONFIGURATION.port)
 RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
-DISCOVERER_BLACKLIST = CONFIGURATION.discoverer_blacklist.split(" ")
+DISCOVERER_BLACKLIST = CONFIGURATION.discoverer_blacklist
 
 if DJANGO_SETTINGS_MODULE is None:
     raise ValueError("No Django settings module was supplied")
