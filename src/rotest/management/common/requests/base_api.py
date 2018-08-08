@@ -9,6 +9,9 @@ BASE_API = "api/"
 class AbstractRequest(object):
     URI = NotImplemented
     METHOD = NotImplemented
+    TAGS = []
+    PARAMS = []
+    RESPONSES = {}
 
     def __init__(self, data):
         self.data = data
@@ -25,6 +28,23 @@ class AbstractRequest(object):
                      response.content)
 
         return response
+
+
+class AbstractField(object):
+    NAME = NotImplemented
+    TYPE = NotImplemented
+    REQUIRED = True
+
+
+class AbstractAPIModel(object):
+    TITLE = NotImplemented
+    PROPERTIES = []
+
+
+class AbstractAPIArray(AbstractField):
+    NAME = NotImplemented
+    TYPE = "array"
+    ITEMS_TYPE = NotImplemented
 
 
 class Requester(object):
