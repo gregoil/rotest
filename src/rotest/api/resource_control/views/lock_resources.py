@@ -2,6 +2,7 @@ import httplib
 
 from datetime import datetime
 
+from django.core import serializers
 from django.db.models.query_utils import Q
 from django.db import transaction
 from django.http import JsonResponse
@@ -92,5 +93,5 @@ def lock_resources(request, *args, **kwargs):
             }, status=httplib.BAD_REQUEST)
 
     return JsonResponse({
-        "resources": locked_resources
+        "resources": serializers.serialize("json", locked_resources)
     }, status=httplib.OK)

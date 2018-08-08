@@ -68,4 +68,4 @@ def start_test_run(request, sessions=None, *args, **kwargs):
     response = {
         "token": session_token
     }
-    return JsonResponse(response, status=httplib.NO_CONTENT)
+    return JsonResponse(response, status=httplib.OK)

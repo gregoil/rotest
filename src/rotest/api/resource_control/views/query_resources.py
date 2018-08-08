@@ -2,6 +2,7 @@ import httplib
 
 from datetime import datetime
 
+from django.core import serializers
 from django.db.models.query_utils import Q
 from django.db import transaction
 from django.http import JsonResponse
@@ -39,5 +40,5 @@ def query_resources(request, *args, **kwargs):
     query_result = [resource for resource in matches]
 
     return JsonResponse({
-        "result": query_result
+        "result": serializers.serialize("json", query_result)
     }, status=httplib.OK)

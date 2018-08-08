@@ -1,0 +1,660 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Rotest API",
+    "description": "Rotest Swagger for resource and test management",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "host": "",
+  "basePath": "/api/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/tests/start_test": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Update the test data to 'in progress' state and set the start time",
+        "operationID": "startTest",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "body",
+            "description": "the identifier of the test",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty return value",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/stop_test": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "End a test run",
+        "operationID": "endTest",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "body",
+            "description": "the identifier of the test",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty return value",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/start_test_run": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Initialize the tests run data",
+        "operationID": "startTestRun",
+        "parameters": [
+          {
+            "name": "tests",
+            "in": "body",
+            "description": "contains the hierarchy of the tests in the run",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/test"
+            }
+          },
+          {
+            "name": "rundata",
+            "in": "body",
+            "description": "contains additional data about the run",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/run_data"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/start_composite": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Update the test data to 'in progress' state and set the start time",
+        "operationID": "startComposite",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "body",
+            "description": "the identifier of the test",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty return value",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/stop_composite": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Save the composite test's data",
+        "operationID": "stopComposite",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "body",
+            "description": "the identifier of the test",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty return value",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/update_run_data": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Initialize the tests run data",
+        "operationID": "updateRunData",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty return value",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/add_test_result": {
+      "post": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Add a result to the test",
+        "operationID": "addTestResult",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "body",
+            "description": "the identifier of the test",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "result_code",
+            "in": "body",
+            "description": "code of the result as defined in TestOutcome",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "info",
+            "in": "body",
+            "description": "additional info (traceback / end reason etc)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty return value",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tests/should_skip": {
+      "get": {
+        "tags": [
+          "Tests"
+        ],
+        "description": "Check if the test passed in the last run according to results DB",
+        "operationID": "shouldSkip",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "token generated using start_run_test",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "body",
+            "description": "the identifier of the test",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "return if test should be skipped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/should_skip_response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/lock_resources": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "description": "Lock the given resources one by one",
+        "operationID": "lockResources",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "description": "username to be set as the resource owner",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "descriptors",
+            "in": "body",
+            "description": "descriptors of the tests",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/resource_descriptor"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "the request given is invalid/the resources couldn't be locked",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "200": {
+            "description": "return the locked resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/resource_descriptor"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/release_resources": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "description": "Release the given resources one by one",
+        "operationID": "releaseResources",
+        "parameters": [
+          {
+            "name": "requests",
+            "in": "body",
+            "description": "release requests",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "the request given is invalid/the resources couldn't be locked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object"
+                    },
+                    "details": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "empty content",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/update_fields": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "description": "Update content in the server's DB",
+        "operationID": "updateFields",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "body",
+            "description": "Django model to apply changes on",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "body",
+            "description": "arguments to filter by",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "kwargs_var",
+            "in": "body",
+            "description": "the additional arguments are the changes to apply on the filtered instances",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "empty content",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/cleanup_user": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "description": "Cleaning up user's requests and locked resources",
+        "operationID": "cleanupUser",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "description": "username to be set as the resource owner",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "details of the user cleanup",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "details": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/query_resources": {
+      "get": {
+        "tags": [
+          "Resources"
+        ],
+        "description": "Find and return the resources that answer the client's query",
+        "operationID": "queryResources",
+        "parameters": [
+          {
+            "name": "descriptors",
+            "in": "body",
+            "description": "descriptors of the tests",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/resource_descriptor"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "the request given is invalid/the resources couldn't be fetched",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "200": {
+            "description": "return the locked resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/resource_descriptor"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "resource_descriptor": {
+        "title": "Resource Descriptor",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object"
+          }
+        }
+      },
+      "should_skip_response": {
+        "title": "ShouldSkipResponse",
+        "type": "object",
+        "properties": {
+          "should_skip": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "token": {
+        "title": "TokenResponse",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "run_data": {
+        "title": "Run Data",
+        "type": "object",
+        "properties": {
+          "run_name": {
+            "type": "string"
+          }
+        }
+      },
+      "test": {
+        "title": "Test",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "subtests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/test"
+            }
+          }
+        }
+      }
+    }
+  }
+}

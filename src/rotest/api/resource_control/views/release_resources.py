@@ -55,17 +55,13 @@ def _release_resource(resource, user_name):
 
 @transaction.atomic
 def release_resources(request, *args, **kwargs):
-    """Release the given resources one by one.
-
-    Args:
-        request (Request): ReleaseResources request.
-    """
+    """Release the given resources one by one."""
     if request.method != "POST":
         return JsonResponse(RESPONSE_PAGE_NOT_IMPLEMENTED,
                             status=httplib.BAD_REQUEST)
 
     errors = {}
-    for name in request.message.requests:
+    for name in request.POST.get("requests"):
         try:
             resource_data = ResourceData.objects.get(name=name)
 
