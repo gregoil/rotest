@@ -4,11 +4,11 @@ from fnmatch import fnmatch
 
 import py
 import django
+from rotest.common.config import DISCOVERER_BLACKLIST
 from rotest.management.base_resource import BaseResource
 
 
 FILES_PATTERN = "*.py"
-# TODO: Read default blacklist to venv+rotest.yml
 
 
 def _is_resource_class(item):
@@ -42,11 +42,11 @@ def _import_resources_from_module(module_path):
             if _is_resource_class(item)}
 
 
-def get_all_resources(app_name, blacklist=()):
+def get_all_resources(app_name, blacklist=DISCOVERER_BLACKLIST):
     """Get all the resource classes under a Django app.
 
     Args:
-        app_path (str): application to search for resources inside.
+        app_name (str): application to search for resources inside.
         blacklist (tuple): module patterns to ignore.
 
     Returns:

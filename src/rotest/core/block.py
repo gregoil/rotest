@@ -152,7 +152,7 @@ class TestBlock(AbstractFlowComponent):
 
         self.share_data(**outputs_dict)
 
-    def _validate_inputs(self, extra_inputs=[]):
+    def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
 
         All names under the 'inputs' list must be attributes of the test-block

@@ -7,7 +7,7 @@ from attrdict import AttrDict
 from rotest.core.result.result import Result
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ClientResourceManager
-from rotest.core.runner import parse_config_file,DEFAULT_CONFIG_PATH
+from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
 from rotest.management.utils.resources_discoverer import get_all_resources
 from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 
@@ -77,7 +77,7 @@ def run_block(block_class, **kwargs):
                         is_main=False)
 
     parent.work_dir = block.work_dir
-    block._validate_inputs()
+    block.validate_inputs()
     block.run(blocks_result)
 
 
@@ -91,7 +91,7 @@ def main():
         app_names = sys.argv[apps_start_index+1:]
 
     django.setup()
-    print "Creating client..."
+    print "Creating client"
     BaseResource._SHELL_CLIENT = ClientResourceManager()
     BaseResource._SHELL_CLIENT.connect()
     LogDebugHandler(None, sys.stdout, None)  # Activate log to screen
@@ -104,13 +104,18 @@ def main():
     """
     try:
         for app_name in app_names:
+            print "Loading resources from app", app_name
             resources = get_all_resources(app_name)
             globals().update(resources)
 
         IPython.embed(header=header,
                       module=sys.modules["__main__"],
-                      user_ns=sys.modules["__main__"].__dict__)
+                      user_ns=globals())
 
     finally:
         print "Releasing locked resources..."
         BaseResource._SHELL_CLIENT.disconnect()
+
+
+if __name__ == "__main__":
+    main()
