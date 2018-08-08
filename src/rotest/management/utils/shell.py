@@ -28,7 +28,7 @@ shared_data = {}
 ENABLE_DEBUG = False
 
 
-class MockFlow(object):
+class ShellMockFlow(object):
     """Mock class used for sharing data between blocks."""
     parents_count = 0
 
@@ -67,7 +67,7 @@ def run_block(block_class, **kwargs):
     """
     shared_kwargs = shared_data.copy()
     shared_kwargs.update(kwargs)
-    parent = MockFlow()
+    parent = ShellMockFlow()
     block_class = block_class.params(**shared_kwargs)
 
     block = block_class(config=blocks_config,
@@ -82,9 +82,6 @@ def run_block(block_class, **kwargs):
 
 
 def main():
-    # TODO: check that you can run flows and cases as well
-    # TODO: check and add dynamic reloading
-    # TODO: decide if the next part is ok
     apps_start_index = sys.argv.index("shell")
     app_names = []
     if apps_start_index > 0:
