@@ -72,7 +72,7 @@ class JSONParser(object):
     _SCHEME_PATH = os.path.join(os.path.dirname(__file__), "schemas",
                                 _SCHEME_FILE_NAME)
 
-    def __init__(self):
+    def  __init__(self):
         super(JSONParser, self).__init__()
 
         self.complex_decoders = {
@@ -100,7 +100,7 @@ class JSONParser(object):
                             % resource_data)
 
         try:
-            return json.dumps(self._encode_resource_data(resource_data))
+            return self._encode_resource_data(resource_data)
 
         except Exception as err:
             raise ParsingError("Encoding resource %r has failed. Reason: %s." %
@@ -120,7 +120,7 @@ class JSONParser(object):
             ParsingError: decoding failure.
         """
         # try:
-        return self._decode(json.loads(data))
+        return self._decode(data)
         #
         # except Exception as err:
         #     raise ParsingError("Decoding data %r has failed. Reason: %s." %
@@ -148,7 +148,7 @@ class JSONParser(object):
         if isinstance(data, basestring):
             # Strings are surrounded by "" in order to prevent decoding errors.
             # Without "", the string '5' will be wrongly decoded as number 5.
-            return '"%s"' % data
+            return data
 
         if isinstance(data, bool):
             # objectify identify only lower case (true / false) as bool type
@@ -284,10 +284,8 @@ class JSONParser(object):
             if value == self._NONE_TYPE:
                 return None
 
-            # Strings are encoded with "" surrounding them, therefore when
-            # decoding a string the "" are removed.
             if isinstance(value, basestring):
-                return value[1:-1]
+                return value
 
             if isinstance(value, (bool, Number)):
                 return value

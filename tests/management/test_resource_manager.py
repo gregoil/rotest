@@ -294,7 +294,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          % (self.NON_EXISTING_NAME1, resources_num))
 
         descriptor = Descriptor(DemoResource, name=self.NON_EXISTING_NAME1)
-        self.assertRaises(ResourceDoesNotExistError,
+        self.assertRaises(ResourceUnavailableError,
                           self.client._lock_resources,
                           descriptors=[descriptor],
                           timeout=self.LOCK_TIMEOUT)
@@ -311,7 +311,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
         descriptor.properties[self.NON_EXISTING_FIELD] = 0
 
-        self.assertRaises(ServerError,
+        self.assertRaises(ResourceUnavailableError,
                           self.client._lock_resources,
                           descriptors=[descriptor],
                           timeout=self.LOCK_TIMEOUT)
@@ -435,7 +435,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
     def test_wait_for_unavailable_resource_with_timeout(self):
         """Wait for a locked resource with timeout & validate success."""
-        self._test_wait_for_unavailable_resource(self.LOCK_TIMEOUT, 2)
+        self._test_wait_for_unavailable_resource(self.LOCK_TIMEOUT, 3)
 
     def test_lock_multiple_matches(self):
         """Lock a resource, parameters matching more then one result.
@@ -904,7 +904,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
 
-        with self.assertRaises(UnknownUserError):
+        with self.assertRaises(ResourceUnavailableError):
             self.client._lock_resources(descriptors=[descriptor],
                                         timeout=self.LOCK_TIMEOUT)
 
@@ -1002,7 +1002,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                           (resource2.version, 2))
 
         # Change version of a single resource.
-        self.client.update_fields(DemoResourceData,
+        self.client.update_fields(DemoResource,
                                   {'name': 'available_resource1'},
                                   version=3)
 
@@ -1017,7 +1017,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                           (resource2.version, 2))
 
         # Change version of all resources.
-        self.client.update_fields(DemoResourceData,
+        self.client.update_fields(DemoResource,
                                   version=4)
 
         # Validate change.

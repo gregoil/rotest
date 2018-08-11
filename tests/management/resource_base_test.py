@@ -21,19 +21,6 @@ class BaseResourceManagementTest(TransactionTestCase):
     """
     SERVER_STARTUP_TIME = 0.5
 
-    def setUp(self):
-        """Start ResourceManagerServer in an independent thread."""
-        self.server = ResourceManagerServer(log_to_screen=False)
-        self._server_thread = Thread(target=self.server.start)
-
-        self._server_thread.start()
-        time.sleep(self.SERVER_STARTUP_TIME)
-
-    def tearDown(self):
-        """Stop resource manager server."""
-        self.server.stop()
-        self._server_thread.join()
-
     @staticmethod
     def create_result(main_test):
         """Create a result object for the test and starts it.

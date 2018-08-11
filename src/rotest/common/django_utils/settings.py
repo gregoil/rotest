@@ -6,7 +6,6 @@ import os
 INSTALLED_APPS = (
     'rotest.core',
     'rotest.management',
-    'rotest.frontend',
 
     # Administrator Related Applications
     'django.contrib.auth',
@@ -21,7 +20,7 @@ INSTALLED_APPS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'rotest_ut',
+        'NAME': 'rotest_ut_test',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',

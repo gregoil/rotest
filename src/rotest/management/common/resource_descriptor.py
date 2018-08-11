@@ -69,7 +69,6 @@ class ResourceDescriptor(object):
             if key not in descriptor:
                 raise ValueError("'descriptor' %r missing key %r" %
                                  (descriptor, key))
-
         type_name = descriptor[TYPE_NAME]
         resource_type = extract_type(type_name)
 

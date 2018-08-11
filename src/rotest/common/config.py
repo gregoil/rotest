@@ -213,7 +213,7 @@ CONFIGURATION_SCHEMA = {
     "port": Option(
         environment_variables=["ROTEST_SERVER_PORT"],
         config_file_options=["port"],
-        default_value="7777"),
+        default_value="8000"),
     "resource_request_timeout": Option(
         command_line_options=["--resource-request-timeout"],
         environment_variables=["ROTEST_RESOURCE_REQUEST_TIMEOUT",

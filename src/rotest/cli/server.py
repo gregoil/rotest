@@ -48,7 +48,7 @@ def start_server(server_port, run_django_server, django_port):
                  "0.0.0.0:{}".format(django_port)]
             )
 
-        ResourceManagerServer(port=server_port).start()
+        # ResourceManagerServer(port=django_port).start()
 
     finally:
         if django_process is not None:

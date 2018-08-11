@@ -6,21 +6,22 @@ also for the resources cleanup procedure and release.
 # pylint: disable=invalid-name,too-many-instance-attributes
 # pylint: disable=too-few-public-methods,too-many-arguments
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
-import httplib
 from itertools import izip
 
-import pickle
+import time
 from attrdict import AttrDict
-from django.core import serializers
+from rotest.api.resource_control import ReleaseResources, LockResources
 
+from rotest.api.common.models import (DescribedResourcesPostModel,
+                                      ResourcesModel)
+from rotest.api.common.responses import BadRequestResponseModel
 from rotest.common import core_log
-from rotest.management.common import messages
+from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.client.client import AbstractClient
-from rotest.management.common.errors import ResourceDoesNotExistError
-from rotest.common.config import ROTEST_WORK_DIR, RESOURCE_MANAGER_HOST
+from rotest.management.common import messages
+from rotest.management.common.errors import (ResourceDoesNotExistError,
+                                             ResourceUnavailableError)
 from rotest.management.common.json_parser import JSONParser
-from rotest.management.common.requests.resources import (ReleaseResources,
-                                                         LockResources)
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
@@ -218,7 +219,8 @@ class ClientResourceManager(AbstractClient):
             resource.set_sub_resources()
 
             self._propagate_attributes(resource=resource, config=config,
-                                       save_state=request.save_state and save_state,
+                                       save_state=request.save_state and
+                                                  save_state,
                                        force_initialize=request.force_initialize or force_initialize)
 
             resource.set_work_dir(request.name, base_work_dir)
@@ -305,18 +307,42 @@ class ClientResourceManager(AbstractClient):
             encoded_requests = [descriptor.encode() for descriptor in
                                 server_requests]
 
-            request_data = {
+            request_data = DescribedResourcesPostModel({
                 "descriptors": encoded_requests,
                 "timeout": timeout
-                }
-            response = self.requester.request(LockResources, request_data)
-            if response.status_code != httplib.OK:
-                raise Exception(response.json())
+            })
+            start_time = time.time()
+            response = None
+            last_error = ""
+            while True:
+                try:
+                    response = self.requester.request(LockResources,
+                                                      data=request_data,
+                                                      method="post")
+                    if isinstance(response, BadRequestResponseModel):
+                        raise ResourceUnavailableError(response.details)
+
+                    break
+
+                except Exception as e:
+                    last_error = e.message
+
+                if time.time() - start_time <= timeout:
+                    time.sleep(0.5)
+
+                else:
+                    break
+
+            if response is None:
+                raise ResourceUnavailableError(last_error)
+
+            if isinstance(response, BadRequestResponseModel):
+                raise ResourceUnavailableError(response.details)
 
             parser = JSONParser()
             response_resources = \
                 [parser.decode(resource)
-                 for resource in response.json()["resources"]]
+                 for resource in response.resource_descriptors]
 
             resources.extend(descriptor.type(data=resource_data) for
                              (descriptor, resource_data) in
@@ -342,10 +368,15 @@ class ClientResourceManager(AbstractClient):
                             for res in resources if res.DATA_CLASS is not None]
 
         if len(release_requests) > 0:
-            request_data = {
+            request_data = ResourcesModel({
                 "resources": release_requests
-                }
-            response = self.requester.request(ReleaseResources, request_data)
+            })
+            response = self.requester.request(ReleaseResources,
+                                              data=request_data,
+                                              method="post")
+
+            if isinstance(response, BadRequestResponseModel):
+                raise Exception(response.details)
 
         for resource in resources:
             if resource in self.locked_resources:
