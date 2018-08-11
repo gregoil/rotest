@@ -22,7 +22,6 @@ class QueryResources(RequestView):
     DEFAULT_MODEL = ResourceDescriptorModel
     DEFAULT_RESPONSES =  {
         httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {
         "post": ["Resources"]

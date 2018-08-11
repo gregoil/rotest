@@ -22,7 +22,6 @@ class UpdateFields(RequestView):
     DEFAULT_MODEL = ChangeResourcePostModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: EmptyResponse,
-        httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {
         "post": ["Resources"]

@@ -27,7 +27,6 @@ class LockResources(RequestView):
     DEFAULT_MODEL = DescribedResourcesPostModel
     DEFAULT_RESPONSES = {
         httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {
         "post": ["Resources"]

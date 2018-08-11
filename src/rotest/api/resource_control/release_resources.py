@@ -31,7 +31,6 @@ class ReleaseResources(RequestView):
     DEFAULT_MODEL = ResourcesModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: EmptyResponse,
-        httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {
         "post": ["Resources"]

@@ -13,7 +13,6 @@ class CleanupUser(RequestView):
     URI = "resources/cleanup_user"
     DEFAULT_RESPONSES =  {
         httplib.OK: DetailedResponseModel,
-        httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {
         "post": ["Resources"]
