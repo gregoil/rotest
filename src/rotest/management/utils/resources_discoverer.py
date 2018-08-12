@@ -28,7 +28,7 @@ def _import_resources_from_module(module_path):
     """Return all resources in the module.
 
     Args:
-        module_path(str): relative path to the module.
+        module_path (str): relative path to the module.
 
     Returns:
         dict. all resource classes found in the module {name: class}.
