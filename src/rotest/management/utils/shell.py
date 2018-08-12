@@ -5,6 +5,7 @@ import sys
 import django
 import IPython
 from attrdict import AttrDict
+from rotest.common.config import SHELL_APPS
 from rotest.core.result.result import Result
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ClientResourceManager
@@ -83,11 +84,6 @@ def run_block(block_class, **kwargs):
 
 
 def main():
-    apps_start_index = sys.argv.index("shell")
-    app_names = []
-    if apps_start_index > 0:
-        app_names = sys.argv[apps_start_index + 1:]
-
     django.setup()
     print "Creating client"
     BaseResource._SHELL_CLIENT = ClientResourceManager()
@@ -101,7 +97,7 @@ def main():
     run_block(ResourceBlock.params(parameter=6), resource=resource2)
     """
     try:
-        for app_name in app_names:
+        for app_name in SHELL_APPS:
             print "Loading resources from app", app_name
             resources = get_all_resources(app_name)
             globals().update(resources)
