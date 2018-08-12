@@ -232,7 +232,7 @@ class AbstractFlowComponent(AbstractTest):
 
                 if not self.is_main:
                     # Validate all required inputs were passed
-                    self._validate_inputs()
+                    self.validate_inputs()
 
                 setup_method(*args, **kwargs)
                 self.result.setupFinished(self)
@@ -381,7 +381,7 @@ class AbstractFlowComponent(AbstractTest):
 
                     setattr(self, name, value)
 
-    def _validate_inputs(self, extra_inputs=[]):
+    def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.
 
         Args:
