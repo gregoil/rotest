@@ -1,6 +1,6 @@
 from rotest.api.common import EmptyModel
 from swagapi.api.base_api import (StringField,
-                                  ArrayField, AbstractResponse)
+                                  ArrayField, AbstractResponse, ModelField)
 
 
 class EmptyResponse(AbstractResponse):
@@ -25,7 +25,8 @@ class DetailedResponseModel(AbstractResponse):
 class BadRequestResponseModel(AbstractResponse):
     "Invalid request given"
     PROPERTIES = [
-        StringField(name="details", required=True)
+        StringField(name="details", required=True),
+        ModelField(name="errors", model=EmptyModel)
     ]
 
 

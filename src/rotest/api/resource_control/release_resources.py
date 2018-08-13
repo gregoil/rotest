@@ -31,6 +31,7 @@ class ReleaseResources(RequestView):
     DEFAULT_MODEL = ResourcesModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: EmptyResponse,
+        httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -99,9 +100,9 @@ class ReleaseResources(RequestView):
                 errors[name] = (ex.ERROR_CODE, ex.get_error_content())
 
         if len(errors) > 0:
-            raise BadRequest({
+            return Response({
                 "errors": errors,
                 "details": "errors occurred while releasing resource"
-            })
+            }, status=httplib.BAD_REQUEST)
 
         return Response({}, status=httplib.NO_CONTENT)

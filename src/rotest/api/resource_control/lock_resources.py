@@ -74,7 +74,11 @@ class LockResources(RequestView):
         groups = list(user.groups.all())
 
         for descriptor_dict in descriptors:
-            desc = ResourceDescriptor.decode(descriptor_dict)
+            try:
+                desc = ResourceDescriptor.decode(descriptor_dict)
+
+            except Exception as e:
+                raise BadRequest({"details": e.message})
             # query for resources that are usable and match the user's
             # preference, which are either belong to a group he's in or
             # don't belong to any group.
@@ -84,7 +88,7 @@ class LockResources(RequestView):
                 matches = desc.type.objects.filter(query).order_by('-reserved')
 
             except FieldError as e:
-                raise BadRequest(e.message)
+                raise BadRequest({"details": e.message})
 
             if matches.count() == 0:
                 raise BadRequest({

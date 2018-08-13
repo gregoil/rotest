@@ -10,17 +10,18 @@ from itertools import izip
 
 import time
 from attrdict import AttrDict
-from rotest.api.resource_control import ReleaseResources, LockResources
+from rotest.api.resource_control import (ReleaseResources,
+                                         LockResources,
+                                         QueryResources)
 
 from rotest.api.common.models import (DescribedResourcesPostModel,
-                                      ResourcesModel)
+                                      ResourcesModel, ResourceDescriptorModel)
 from rotest.api.common.responses import BadRequestResponseModel
 from rotest.common import core_log
 from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.client.client import AbstractClient
-from rotest.management.common import messages
-from rotest.management.common.errors import (ResourceDoesNotExistError,
-                                             ResourceUnavailableError)
+from rotest.management.common.errors import (ResourceUnavailableError,
+                                             ResourceReleaseError)
 from rotest.management.common.json_parser import JSONParser
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
@@ -89,18 +90,19 @@ class ClientResourceManager(AbstractClient):
             host = RESOURCE_MANAGER_HOST
 
         self.locked_resources = []
+        self.all_locked_resources = []
         self.keep_resources = keep_resources
 
         super(ClientResourceManager, self).__init__(logger=logger, host=host)
 
     def _release_locked_resources(self):
         """Release the locked resources of the client."""
-        if len(self.locked_resources) > 0:
+        if len(self.all_locked_resources) > 0:
             self.logger.debug("Releasing locked resources %r",
-                              self.locked_resources)
+                              self.all_locked_resources)
 
             self.release_resources({res.name: res for
-                                    res in self.locked_resources},
+                                    res in self.all_locked_resources},
                                    force_release=True)
 
     def disconnect(self):
@@ -344,15 +346,19 @@ class ClientResourceManager(AbstractClient):
                 [parser.decode(resource)
                  for resource in response.resource_descriptors]
 
-            resources.extend(descriptor.type(data=resource_data) for
-                             (descriptor, resource_data) in
-                             zip(server_requests, response_resources))
+            for (descriptor, resource_data) in zip(server_requests,
+                                                   response_resources):
+                current_resource = descriptor.type(data=resource_data)
+                current_resource.set_sub_resources()
+                resources.append(current_resource)
 
         for index, descriptor in enumerate(descriptors):
             if descriptor.type.DATA_CLASS is None:
                 # it's a service
                 resources.insert(index,
                                  descriptor.type(**descriptor.properties))
+
+        self.all_locked_resources.extend(resources)
 
         return resources
 
@@ -376,11 +382,14 @@ class ClientResourceManager(AbstractClient):
                                               method="post")
 
             if isinstance(response, BadRequestResponseModel):
-                raise Exception(response.details)
+                raise ResourceReleaseError(response.errors)
 
         for resource in resources:
             if resource in self.locked_resources:
                 self.locked_resources.remove(resource)
+
+            if resource in self.all_locked_resources:
+                self.all_locked_resources.remove(resource)
 
     def _find_matching_resources(self, descriptor, resources):
         """Get all similar resources that match the resource descriptor.
@@ -404,6 +413,9 @@ class ClientResourceManager(AbstractClient):
 
         else:
             matching_query = self.query_resources(descriptor)
+            parser = JSONParser()
+            matching_query = [parser.decode(resource)
+                              for resource in matching_query]
             matching_resources = [resource for resource in resources
                                   if resource.data in matching_query]
 
@@ -427,7 +439,7 @@ class ClientResourceManager(AbstractClient):
             AttrDict. resources AttrDict {name: BaseResource}.
         """
         retrieved_resources = AttrDict()
-        unused_locked_resources = self.locked_resources[:]
+        unused_locked_resources = self.all_locked_resources[:]
         if len(unused_locked_resources) == 0:
             return retrieved_resources
 
@@ -567,11 +579,11 @@ class ClientResourceManager(AbstractClient):
             descriptor (ResourceDescriptor): descriptor of the query
                 (containing model class and query filter kwargs).
         """
-        request = messages.QueryResources(descriptors=descriptor.encode())
-        try:
-            reply = self._request(request)
+        request_data = ResourceDescriptorModel(descriptor.encode())
+        response = self.requester.request(QueryResources,
+                                          data=request_data,
+                                          method="post")
+        if isinstance(response, BadRequestResponseModel):
+            raise Exception(response.details)
 
-        except ResourceDoesNotExistError:
-            return []
-
-        return reply.resources
+        return response.resource_descriptors

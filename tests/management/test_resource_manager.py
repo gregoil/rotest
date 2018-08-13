@@ -26,9 +26,7 @@ from rotest.management.models.ut_models import (DemoService,
                                                 DemoResourceData,
                                                 DemoComplexResource,
                                                 DemoComplexResourceData)
-from rotest.management.common.errors import (ServerError,
-                                             UnknownUserError,
-                                             ResourceReleaseError,
+from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourcePermissionError,
                                              ResourceUnavailableError,
                                              ResourceDoesNotExistError,
@@ -933,7 +931,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.FREE1_NAME, resource.name))
 
         expected_host = LOCALHOST
-        actual_host, _ = resource.owner.split(":")
+        actual_host = resource.owner
         self.assertEquals(actual_host, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
                           "Got %r" % (expected_host, actual_host))
@@ -950,7 +948,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         descriptor = Descriptor(DemoResource, name=self.OTHER_GROUP_RESOURCE)
 
-        with self.assertRaises(ResourceDoesNotExistError):
+        with self.assertRaises(ResourceUnavailableError):
             self.client._lock_resources(descriptors=[descriptor],
                                         timeout=self.LOCK_TIMEOUT)
 
@@ -979,7 +977,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.NO_GROUP_RESOURCE, resource.name))
 
         expected_host = LOCALHOST
-        actual_host, _ = resource.owner.split(":")
+        actual_host = resource.owner
         self.assertEquals(actual_host, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
                           "Got %r" % (expected_host, actual_host))

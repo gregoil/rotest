@@ -37,7 +37,12 @@ class QueryResources(RequestView):
         Returns:
             ResourcesReply. a reply containing matching resources.
         """
-        desc = ResourceDescriptor.decode(request.model.obj)
+        try:
+            desc = ResourceDescriptor.decode(request.model.obj)
+
+        except Exception as e:
+            raise BadRequest({"details": e.message})
+
         # query for resources that are usable and match the descriptors
         query = (Q(is_usable=True, **desc.properties))
         matches = desc.type.objects.filter(query)

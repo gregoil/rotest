@@ -10,6 +10,7 @@ import os
 from numbers import Number
 
 from django.db import models
+from django.db.models import ForeignKey
 
 from rotest.management import ResourceData
 from rotest.management.base_resource import BaseResource
@@ -99,12 +100,7 @@ class JSONParser(object):
             raise TypeError("resource %r type is not of ResourceData."
                             % resource_data)
 
-        try:
-            return self._encode_resource_data(resource_data)
-
-        except Exception as err:
-            raise ParsingError("Encoding resource %r has failed. Reason: %s." %
-                               (resource_data, err))
+        return self._encode_resource_data(resource_data)
 
     def decode(self, data):
         """Decode a message.
@@ -152,10 +148,10 @@ class JSONParser(object):
 
         if isinstance(data, bool):
             # objectify identify only lower case (true / false) as bool type
-            return str(data).lower()
+            return data
 
         if isinstance(data, Number):
-            return str(data)
+            return data
 
         if isinstance(data, dict):
             return self._encode_dict(data)
@@ -202,6 +198,7 @@ class JSONParser(object):
             ElementTree. XML element represent a resource.
         """
         type_name = extract_type_path(type(resource_data))
+
         return {
             self._RESOURCE_DATA_TYPE: {
                 TYPE_NAME: self._encode(type_name),
@@ -320,6 +317,13 @@ class JSONParser(object):
                        for field_name in list_field_names]
 
         resource = resource_type(**resource_properties)
+        for field in resource._meta.fields:
+            if isinstance(field, ForeignKey):
+                if hasattr(resource, field.name):
+                    field_value = getattr(resource, field.name)
+                    if field_value:
+                        setattr(resource, "{}_id".format(field.name),
+                                field_value.id)
 
         for field_name, field_values in list_fields:
             # Set the related fields' values.

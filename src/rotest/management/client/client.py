@@ -55,6 +55,7 @@ class AbstractClient(object):
         self.logger = logger
         self._messages_counter = count()
         self.lock_timeout = lock_timeout
+        self._is_connected = False
         self.requester = Requester(host=self._host,
                                    port=self._port,
                                    base_url=self.base_uri,
@@ -66,7 +67,7 @@ class AbstractClient(object):
         Args:
             timeout (number): time to wait for a reply from the server.
         """
-        pass
+        self._is_connected = True
 
     def is_connected(self):
         """Check if the socket is connected or not.
@@ -74,7 +75,7 @@ class AbstractClient(object):
         Returns:
             bool. True if the socket is connected, False otherwise.
         """
-        return False
+        return self._is_connected
 
     def disconnect(self):
         """Disconnect from manager server.
@@ -82,7 +83,7 @@ class AbstractClient(object):
         Raises:
             RuntimeError: wasn't connected in the first place.
         """
-        pass
+        self._is_connected = False
 
     def __enter__(self):
         """Connect to manager server."""
