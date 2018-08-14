@@ -106,9 +106,9 @@ def main():
     for app_name in SHELL_APPS:
         startup_commands.append("load_resources(%r)" % app_name)
 
-    startup_commands.extends(SHELL_STARTUP_COMMANDS)
+    startup_commands.extend(SHELL_STARTUP_COMMANDS)
     try:
-        IPython.start_ipython("-i", "-c", *startup_commands)
+        IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])
 
     finally:
         print "Releasing locked resources..."
