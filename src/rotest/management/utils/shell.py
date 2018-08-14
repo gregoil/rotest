@@ -1,16 +1,17 @@
 """Rotest shell module, which enables using resources and running blocks."""
 # pylint: disable=protected-access
+from __future__ import print_function
+
 import sys
 
 import django
 import IPython
 from attrdict import AttrDict
-from rotest.common.config import SHELL_APPS
 from rotest.core.result.result import Result
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ClientResourceManager
+from rotest.common.config import SHELL_APPS, SHELL_STARTUP_COMMANDS
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
-from rotest.management.utils.resources_discoverer import get_all_resources
 from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 
 
@@ -28,6 +29,10 @@ shared_data = {}
 
 
 ENABLE_DEBUG = False
+IMPORT_BLOCK_UTILS = \
+    "from rotest.management.utils.shell import shared_data, run_block"
+IMPORT_RESOURCE_LOADER = \
+    "from rotest.management.utils.resources_discoverer import load_resources"
 
 
 class ShellMockFlow(object):
@@ -67,7 +72,8 @@ def run_block(block_class, **kwargs):
         kwargs (dict): additional arguments that will be passed as parameters
             to the block (overriding shared data).
     """
-    shared_kwargs = shared_data.copy()
+    shared_kwargs = block_class.common.copy()
+    shared_kwargs.update(shared_data)
     shared_kwargs.update(kwargs)
     parent = ShellMockFlow()
     block_class = block_class.params(**shared_kwargs)
@@ -85,29 +91,30 @@ def run_block(block_class, **kwargs):
 
 def main():
     django.setup()
-    print "Creating client"
+
+    print("Creating client")
     BaseResource._SHELL_CLIENT = ClientResourceManager()
     BaseResource._SHELL_CLIENT.connect()
     LogDebugHandler(None, sys.stdout, None)  # Activate log to screen
-    header = """Done! You can now lock resources and run tests, e.g.
+
+    print("""Done! You can now lock resources and run tests, e.g.
     resource1 = ResourceClass.lock(skip_init=True, name='resource_name')
     resource2 = ResourceClass.lock(name='resource_name', config='config.json')
     shared_data['resource'] = resource1
     run_block(ResourceBlock, parameter=5)
     run_block(ResourceBlock.params(parameter=6), resource=resource2)
-    """
-    try:
-        for app_name in SHELL_APPS:
-            print "Loading resources from app", app_name
-            resources = get_all_resources(app_name)
-            globals().update(resources)
+    """)
 
-        IPython.embed(header=header,
-                      module=sys.modules["__main__"],
-                      user_ns=globals())
+    startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
+    for app_name in SHELL_APPS:
+        startup_commands.append("load_resources(%r)" % app_name)
+
+    startup_commands.extend(SHELL_STARTUP_COMMANDS)
+    try:
+        IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])
 
     finally:
-        print "Releasing locked resources..."
+        print("Releasing locked resources...")
         BaseResource._SHELL_CLIENT.disconnect()
 
 

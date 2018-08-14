@@ -71,3 +71,15 @@ def get_all_resources(app_name, blacklist=DISCOVERER_BLACKLIST):
                 resources.update(module_resources)
 
     return resources
+
+
+def load_resources(app_name, blacklist=DISCOVERER_BLACKLIST):
+    """Import all resources from an app and add them to the globals.
+
+    Args:
+        app_name (str): application to search for resources inside.
+        blacklist (tuple): module patterns to ignore.
+    """
+    print "Loading resources from app", app_name
+    resources = get_all_resources(app_name, blacklist=blacklist)
+    globals().update(resources)
