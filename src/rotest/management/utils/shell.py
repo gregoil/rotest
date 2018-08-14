@@ -32,7 +32,7 @@ ENABLE_DEBUG = False
 IMPORT_BLOCK_UTILS = \
     "from rotest.management.utils.shell import shared_data, run_block"
 IMPORT_RESOURCE_LOADER = \
-    "from rotest.management.utils.resources_discoverer import load_resources"
+    "from rotest.management.utils.resources_discoverer import get_resources"
 
 
 class ShellMockFlow(object):
@@ -107,7 +107,8 @@ def main():
 
     startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
     for app_name in SHELL_APPS:
-        startup_commands.append("load_resources(%r)" % app_name)
+        startup_commands.append("globals().update(get_resources(%r))" %
+                                app_name)
 
     startup_commands.extend(SHELL_STARTUP_COMMANDS)
     try:
