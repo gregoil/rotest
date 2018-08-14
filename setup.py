@@ -40,9 +40,7 @@ requirements = [
     'colorama',
     'termcolor',
     'jsonschema',
-    'basicstruct',
-    'crochet',
-    'autobahn'
+    'basicstruct'
 ]
 
 if not sys.platform.startswith("win32"):
