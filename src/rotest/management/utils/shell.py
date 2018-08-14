@@ -1,5 +1,7 @@
 """Rotest shell module, which enables using resources and running blocks."""
 # pylint: disable=protected-access
+from __future__ import print_function
+
 import sys
 
 import django
@@ -89,20 +91,21 @@ def run_block(block_class, **kwargs):
 
 def main():
     django.setup()
-    print "Creating client"
+
+    print("Creating client")
     BaseResource._SHELL_CLIENT = ClientResourceManager()
     BaseResource._SHELL_CLIENT.connect()
     LogDebugHandler(None, sys.stdout, None)  # Activate log to screen
-    print """Done! You can now lock resources and run tests, e.g.
+
+    print("""Done! You can now lock resources and run tests, e.g.
     resource1 = ResourceClass.lock(skip_init=True, name='resource_name')
     resource2 = ResourceClass.lock(name='resource_name', config='config.json')
     shared_data['resource'] = resource1
     run_block(ResourceBlock, parameter=5)
     run_block(ResourceBlock.params(parameter=6), resource=resource2)
-    """
-    startup_commands = []
-    startup_commands.append(IMPORT_BLOCK_UTILS)
-    startup_commands.append(IMPORT_RESOURCE_LOADER)
+    """)
+
+    startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
     for app_name in SHELL_APPS:
         startup_commands.append("load_resources(%r)" % app_name)
 
@@ -111,7 +114,7 @@ def main():
         IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])
 
     finally:
-        print "Releasing locked resources..."
+        print("Releasing locked resources...")
         BaseResource._SHELL_CLIENT.disconnect()
 
 

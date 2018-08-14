@@ -190,7 +190,7 @@ in the following ways:
 * Use the default, which is ``~/.rotest/artifacts``.
 
 Shell Apps
--------------------
+----------
 
 ``rotest shell`` automatically attempts to load resources classes into
 the environment to save the user the need to do so.
@@ -206,7 +206,7 @@ Define the default rotest applications to be loaded in the following ways:
 * Use the default, which is ``[]``.
 
 Shell Startup Commands
--------------------
+----------------------
 
 ``rotest shell`` enables defining startup commands, to save the user the need
 to write them every time. The commands must be simple one-liners.
@@ -222,12 +222,13 @@ Define it in the following ways:
 * Use the default, which is ``[]``.
 
 Discoverer Blacklist
--------------------
+--------------------
 
 Rotest enables loading resources from an app, a thing that happens automatically
-when running "rotest shell", but some files can/must be skipped when searching
+when running "rotest shell", but some files can / must be skipped when searching
 for the resources. The methods (under ``rotest.management.utils.resources_discoverer``)
 do get a `blacklist` argument, but the default value is extracted from the config.
+
 Define it in the following ways:
 
 * Define ``discoverer_blacklist`` in the configuration file:
