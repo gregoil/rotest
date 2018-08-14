@@ -12,7 +12,6 @@ from attrdict import AttrDict
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
-from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
 class ConvertToKwargsMeta(type):

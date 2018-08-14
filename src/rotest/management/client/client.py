@@ -1,5 +1,5 @@
 """Define an abstract client."""
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-instance-attributes
 from itertools import count
 
 from swaggapi.api.builder.client.requester import Requester
@@ -10,7 +10,6 @@ from rotest.api.resource_control import UpdateFields
 from rotest.common import core_log
 from rotest.common.config import (RESOURCE_MANAGER_PORT,
                                   RESOURCE_REQUEST_TIMEOUT)
-from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
@@ -32,14 +31,12 @@ class AbstractClient(object):
 
     def __init__(self, host, port=RESOURCE_MANAGER_PORT,
                  base_uri=BASE_URI,
-                 parser=DEFAULT_PARSER(),
                  lock_timeout=RESOURCE_REQUEST_TIMEOUT,
                  logger=core_log):
         """Initialize a socket connection to the server.
 
         Args:
             host (str): Server's IP address.
-            parser (AbstractParser): parser to parse the messages with.
             lock_timeout (number): default waiting time on requests.
             logger (logging.Logger): client's logger.
         """
@@ -55,7 +52,7 @@ class AbstractClient(object):
                                    base_url=self.base_uri,
                                    logger=self.logger)
 
-    def connect(self, timeout=_DEFAULT_REPLY_TIMEOUT):
+    def connect(self):
         """Connect to manager server.
 
         Args:

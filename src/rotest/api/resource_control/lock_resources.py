@@ -5,15 +5,18 @@ from django.db import transaction
 from django.db.models.query_utils import Q
 from django.core.exceptions import FieldError
 from django.contrib.auth import models as auth_models
+from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
-from swaggapi.api.builder.server.response import Response
 
 from rotest.management.common.utils import get_username
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import DescribedResourcesPostModel
 from rotest.api.common.responses import InfluencedResourcesResponseModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
+
+
+# pylint: disable=unused-argument, no-self-use, too-many-locals
 
 
 class LockResources(DjangoRequestView):
@@ -68,7 +71,7 @@ class LockResources(DjangoRequestView):
         if not auth_models.User.objects.filter(username=user_name).exists():
             raise BadRequest({
                 "details": "User {} has no matching object in the "
-                              "DB".format(user_name)})
+                           "DB".format(user_name)})
 
         user = auth_models.User.objects.get(username=user_name)
 
@@ -111,8 +114,8 @@ class LockResources(DjangoRequestView):
                                "the requirements: {!r}".format(desc)})
 
         encoder = JSONParser()
-        response = [encoder.encode(resource)
-                    for resource in locked_resources]
+        response = [encoder.encode(_resource)
+                    for _resource in locked_resources]
         return Response({
             "resource_descriptors": response
         }, status=httplib.OK)

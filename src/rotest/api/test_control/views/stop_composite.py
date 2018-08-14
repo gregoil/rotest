@@ -7,6 +7,9 @@ from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 @csrf_exempt
 def stop_composite(request, sessions=None, *args, **kwargs):
     """Save the composite test's data.

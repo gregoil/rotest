@@ -39,4 +39,3 @@ class InfluencedResourcesResponseModel(AbstractResponse):
         ArrayField(name="resource_descriptors", items_type=EmptyModel,
                    required=True)
     ]
-

@@ -3,8 +3,8 @@
 Responsible for locking resources and preparing them for work,
 also for the resources cleanup procedure and release.
 """
-# pylint: disable=invalid-name,too-many-instance-attributes
-# pylint: disable=too-few-public-methods,too-many-arguments
+# pylint: disable=invalid-name,too-many-instance-attributes, too-many-branches
+# pylint: disable=too-few-public-methods,too-many-arguments, too-many-locals
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from itertools import izip
 
@@ -220,10 +220,10 @@ class ClientResourceManager(AbstractClient):
 
             resource.set_sub_resources()
 
-            self._propagate_attributes(resource=resource, config=config,
-                                       save_state=request.save_state and
-                                                  save_state,
-                                       force_initialize=request.force_initialize or force_initialize)
+            self._propagate_attributes(
+                resource=resource, config=config,
+                save_state=request.save_state and save_state,
+                force_initialize=request.force_initialize or force_initialize)
 
             resource.set_work_dir(request.name, base_work_dir)
             resource.logger.debug("Resource %r work dir was created under %r",

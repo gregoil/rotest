@@ -8,14 +8,17 @@ from rotest.management.common.utils import extract_type
 from rotest.api.common.models import ChangeResourcePostModel
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 class UpdateFields(DjangoRequestView):
     """Update content in the server's DB.
 
     Args:
         model (str): Django model to apply changes on.
         filter (dict): arguments to filter by.
-        kwargs_vars (dict): the additional arguments are the changes to apply on
-            the filtered instances.
+        kwargs_vars (dict): the additional arguments are the changes to
+            apply on the filtered instances.
     """
     URI = "resources/update_fields"
     DEFAULT_MODEL = ChangeResourcePostModel

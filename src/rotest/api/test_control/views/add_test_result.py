@@ -7,6 +7,9 @@ from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 @csrf_exempt
 def add_test_result(request, sessions=None, *args, **kwargs):
     """Add a result to the test.

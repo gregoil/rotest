@@ -1,13 +1,9 @@
 """Abstract TestCase for all resources related tests."""
 # pylint: disable=too-many-public-methods,invalid-name
-import time
-from threading import Thread
-
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.result.result import Result
 from rotest.core.result.handlers.db_handler import DBHandler
-from rotest.management.server.main import ResourceManagerServer
 
 
 class BaseResourceManagementTest(TransactionTestCase):

@@ -8,6 +8,9 @@ from rotest.api.constants import \
     RESPONSE_PAGE_NOT_IMPLEMENTED
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 @csrf_exempt
 def update_run_data(request, sessions=None, *args, **kwargs):
     """Initialize the tests run data.

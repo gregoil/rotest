@@ -8,10 +8,13 @@ from rotest.management.common.utils import get_username
 from rotest.api.common.responses import DetailedResponseModel
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 class CleanupUser(DjangoRequestView):
     """Cleaning up user's requests and locked resources."""
     URI = "resources/cleanup_user"
-    DEFAULT_RESPONSES =  {
+    DEFAULT_RESPONSES = {
         httplib.OK: DetailedResponseModel,
     }
     TAGS = {
@@ -34,8 +37,7 @@ class CleanupUser(DjangoRequestView):
                 "details": "User {} didn't lock any resource".format(user_name)
             }, status=httplib.OK)
 
-        else:
-            resources.update(owner="", owner_time=None)
-            return Response({
-                "details": "User {} was successfully cleaned".format(user_name)
-            }, status=httplib.OK)
+        resources.update(owner="", owner_time=None)
+        return Response({
+            "details": "User {} was successfully cleaned".format(user_name)
+        }, status=httplib.OK)

@@ -10,6 +10,9 @@ from rotest.api.test_control.views.session_data import SessionData
 from rotest.core.models import RunData
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 TEST_ID_KEY = 'id'
 TEST_NAME_KEY = 'name'
 TEST_CLASS_CODE_KEY = 'class'

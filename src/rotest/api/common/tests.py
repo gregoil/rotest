@@ -11,6 +11,9 @@ from rotest.api.test_control.views.start_composite import start_composite
 from rotest.api.test_control.views.add_test_result import add_test_result
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 class ShouldSkip(Request):
     """Check if the test passed in the last run according to results DB."""
     URI = "tests/should_skip"

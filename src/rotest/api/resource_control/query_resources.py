@@ -12,6 +12,9 @@ from rotest.api.common.responses import InfluencedResourcesResponseModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 class QueryResources(DjangoRequestView):
     """Find and return the resources that answer the client's query.
 
@@ -20,7 +23,7 @@ class QueryResources(DjangoRequestView):
     """
     URI = "resources/query_resources"
     DEFAULT_MODEL = ResourceDescriptorModel
-    DEFAULT_RESPONSES =  {
+    DEFAULT_RESPONSES = {
         httplib.OK: InfluencedResourcesResponseModel,
     }
     TAGS = {
@@ -59,4 +62,3 @@ class QueryResources(DjangoRequestView):
         return Response({
             "resource_descriptors": query_result
         }, status=httplib.OK)
-

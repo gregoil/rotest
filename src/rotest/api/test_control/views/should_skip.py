@@ -10,6 +10,9 @@ from rotest.api.constants import \
 SKIP_DELTA_MESSAGE = "Previous run passed according to remote DB"
 
 
+# pylint: disable=unused-argument, no-self-use
+
+
 @csrf_exempt
 def should_skip(request, sessions=None, *args, **kwargs):
     """Check if the test passed in the last run according to results DB.

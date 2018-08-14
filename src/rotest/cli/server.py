@@ -18,19 +18,17 @@ import subprocess
 import django
 import docopt
 
-from rotest.common.config import RESOURCE_MANAGER_PORT, search_config_file
-from rotest.management.server.main import ResourceManagerServer
+from rotest.common.config import search_config_file
 
 
 if sys.platform != "win32":
     import daemon
 
 
-def start_server(server_port, run_django_server, django_port):
+def start_server(run_django_server, django_port):
     """Run the resource management server, and optionally the Django server.
 
     Args:
-        server_port (number): port for the resource management server.
         run_django_server (bool): whether to run the Django server as well,
             or not.
         django_port (number): port for the Django server.
@@ -48,8 +46,6 @@ def start_server(server_port, run_django_server, django_port):
                  "0.0.0.0:{}".format(django_port)]
             )
 
-        # ResourceManagerServer(port=django_port).start()
-
     finally:
         if django_process is not None:
             django_process.kill()
@@ -60,7 +56,6 @@ def server():
     django.setup()
 
     arguments = docopt.docopt(__doc__)
-    port = int(arguments["--port"] or RESOURCE_MANAGER_PORT)
     no_django = arguments["--no-django"]
     django_port = int(arguments["--django-port"])
     run_as_daemon = arguments["--daemon"]
@@ -72,12 +67,10 @@ def server():
 
         print("Running in detached mode (as daemon)")
         with daemon.DaemonContext():
-            start_server(server_port=port,
-                         run_django_server=not no_django,
+            start_server(run_django_server=not no_django,
                          django_port=django_port)
 
     else:
         print("Running in attached mode")
-        start_server(server_port=port,
-                     run_django_server=not no_django,
+        start_server(run_django_server=not no_django,
                      django_port=django_port)

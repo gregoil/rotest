@@ -2,8 +2,8 @@ import httplib
 
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
-from swaggapi.api.builder.server.request import DjangoRequestView
 from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management import ResourceData
 from rotest.api.common.models import ResourcesModel
@@ -16,6 +16,9 @@ from rotest.management.common.errors import (ResourceAlreadyAvailableError,
                                              ResourcePermissionError,
                                              ResourceReleaseError,
                                              ServerError)
+
+
+# pylint: disable=unused-argument, no-self-use
 
 
 class ReleaseResources(DjangoRequestView):

@@ -5,8 +5,6 @@ Note:
     base class of unicode and str type.
 """
 # pylint: disable=too-many-return-statements,protected-access,too-many-locals
-import json
-import os
 from numbers import Number
 
 from django.db import models
@@ -20,7 +18,7 @@ from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
 
 
 class JSONParser(object):
-    """XML messages parser.
+    """json messages parser.
 
     This message parser allow to encode & decode resource management messages.
     Each message should be composed from basic-types (such as numbers, strings
@@ -28,37 +26,19 @@ class JSONParser(object):
     :class:`BaseResource`).
 
     Any other object type may cause an error during the encoding process.
-    The result of successful encoding process is an XML string, represent the
+    The result of successful encoding process is an json string, represent the
     encoded message.
 
     For instance, the inner message object:
         [False, {'key1': 5, 'key2': 'google'}, [1, 2, 3]]
     will be encoded as:
 
-    <List>
-        <Item>false</Item>
-        <Item>
-            <Dictionary>
-                <key1>5</key1>
-                <key2>"google"</key2>
-            </Dictionary>
-        </Item>
-        <Item>
-            <List>
-                <Item>1</item>
-                <Item>2</item>
-                <Item>3</item>
-            </List>
-        </Item>
-    </List>
-
-    When decoding data (an XML string), the parser validates it using the
+    When decoding data (an json string), the parser validates it using the
     parser's scheme. Failure in the validation case will cause a raise of
     ParsingError exception.
 
 
     Attributes:
-        scheme (lxml.etree.XMLSchema): a scheme to validate messages with.
         complex_decoders (dict): map element type to its decoding method.
     """
     _NONE_TYPE = 'None'
@@ -69,19 +49,15 @@ class JSONParser(object):
     _RESOURCE_TYPE = 'Resource'
     _RESOURCE_DATA_TYPE = 'ResourceData'
 
-    _SCHEME_FILE_NAME = "xml_parser_scheme.xsd"
-    _SCHEME_PATH = os.path.join(os.path.dirname(__file__), "schemas",
-                                _SCHEME_FILE_NAME)
-
-    def  __init__(self):
+    def __init__(self):
         super(JSONParser, self).__init__()
-
         self.complex_decoders = {
-                         self._LIST_TYPE: self._decode_list,
-                         self._DICT_TYPE: self._decode_dict,
-                         self._CLASS_TYPE: self._decode_class,
-                         self._RESOURCE_TYPE: self._decode_resource,
-                         self._RESOURCE_DATA_TYPE: self._decode_resource_data}
+            self._LIST_TYPE: self._decode_list,
+            self._DICT_TYPE: self._decode_dict,
+            self._CLASS_TYPE: self._decode_class,
+            self._RESOURCE_TYPE: self._decode_resource,
+            self._RESOURCE_DATA_TYPE: self._decode_resource_data
+        }
 
     def encode(self, resource_data):
         """Encode a resource.
@@ -171,13 +147,13 @@ class JSONParser(object):
         raise TypeError("Type %r isn't supported by the parser" % type(data))
 
     def _encode_resource(self, resource):
-        """Encode a resource to an XML string.
+        """Encode a resource to an json string.
 
         Args:
             resource (BaseResource): resource to encode.
 
         Returns:
-            ElementTree. XML element represent a resource.
+            dict. json element represent a resource.
         """
         type_name = extract_type_path(type(resource))
 
@@ -189,13 +165,13 @@ class JSONParser(object):
         }
 
     def _encode_resource_data(self, resource_data):
-        """Encode resource data to an XML string.
+        """Encode resource data to an json string.
 
         Args:
             resource_data (ResourceData): resource to encode.
 
         Returns:
-            ElementTree. XML element represent a resource.
+            dict. json element represent a resource.
         """
         type_name = extract_type_path(type(resource_data))
 
@@ -207,13 +183,13 @@ class JSONParser(object):
         }
 
     def _encode_class(self, data_type):
-        """Encode a class to an XML string.
+        """Encode a class to an json string.
 
         Args:
             data_type (type): class to encode.
 
         Returns:
-            ElementTree. XML element represent the class.
+            dict. json element represent the class.
         """
         return {
             self._CLASS_TYPE: {
@@ -222,13 +198,13 @@ class JSONParser(object):
         }
 
     def _encode_dict(self, dict_data):
-        """Encode a dictionary to an XML string.
+        """Encode a dictionary to an json string.
 
         Args:
             dict_data (dict): dictionary to encode.
 
         Returns:
-            ElementTree. XML element represent a dictionary.
+            dict. json element represent a dictionary.
 
         Raises:
             ParsingError: one of the keys is not of type str.
@@ -247,13 +223,13 @@ class JSONParser(object):
         }
 
     def _encode_list(self, list_data):
-        """Encode a list to an XML string.
+        """Encode a list to an json string.
 
         Args:
             list_data (list): list to encode.
 
         Returns:
-            ElementTree. XML element represent a list.
+            dict. json element represent a list.
         """
         list_data = \
             [{self._LIST_ITEM_TYPE: self._encode(item)} for item in list_data]
@@ -275,7 +251,7 @@ class JSONParser(object):
         """
 
         if not isinstance(element, dict) or \
-                        not (element.keys()[0] in self.complex_decoders):
+                        element.keys()[0] not in self.complex_decoders:
             value = element
 
             if value == self._NONE_TYPE:
@@ -296,7 +272,7 @@ class JSONParser(object):
         """Decode a resource element.
 
         Args:
-            resource_element (ElementTree): an XML element that represent a
+            resource_element (dict): an json element that represent a
                 resource.
 
         Returns:
@@ -348,7 +324,7 @@ class JSONParser(object):
         """Decode a resource element.
 
         Args:
-            resource_element (ElementTree): an XML element that represent a
+            resource_element (dict): an json element that represent a
                 resource.
 
         Returns:
@@ -369,7 +345,8 @@ class JSONParser(object):
         """Decode a class element.
 
         Args:
-            class_element (ElementTree): an XML element that represent a class.
+            class_element (dict): an json element that represent a
+                class.
 
         Returns:
             type. decoded class.
@@ -382,7 +359,7 @@ class JSONParser(object):
         """Decode a dictionary element.
 
         Args:
-            dict_element (ElementTree): an XML element that represent a dict.
+            dict_element (dict): an json element that represent a dict.
 
         Returns:
             dict. decoded dictionary.
@@ -397,7 +374,7 @@ class JSONParser(object):
         """Decode a list element.
 
         Args:
-            list_element (ElementTree): an XML element that represent a list.
+            list_element (list): an json element that represent a list.
 
         Returns:
             list. decoded list.

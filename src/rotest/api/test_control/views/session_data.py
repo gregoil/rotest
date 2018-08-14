@@ -1,3 +1,7 @@
+"""Session data class."""
+
+# pylint: disable=unused-argument, no-self-use
+
 
 class SessionData(object):
     def __init__(self, all_tests, run_data, main_test, user_name):
