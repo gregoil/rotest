@@ -220,6 +220,9 @@ CONFIGURATION_SCHEMA = {
     "shell_apps": Option(
         config_file_options=["shell_apps"],
         default_value=[]),
+    "shell_startup_commands": Option(
+        config_file_options=["shell_startup_commands"],
+        default_value=[]),
     "resource_request_timeout": Option(
         command_line_options=["--resource-request-timeout"],
         environment_variables=["ROTEST_RESOURCE_REQUEST_TIMEOUT",
@@ -260,6 +263,7 @@ DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
 DISCOVERER_BLACKLIST = CONFIGURATION.discoverer_blacklist
 SHELL_APPS = CONFIGURATION.shell_apps
+SHELL_STARTUP_COMMANDS = CONFIGURATION.shell_startup_commands
 
 if DJANGO_SETTINGS_MODULE is None:
     raise ValueError("No Django settings module was supplied")
