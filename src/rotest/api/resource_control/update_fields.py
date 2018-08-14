@@ -1,11 +1,11 @@
 import httplib
 
-from swagapi.api.builder.server.request import DjangoRequestView
-from swagapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.models import (ChangeResourcePostModel)
 from rotest.api.common.responses import EmptyResponse
 from rotest.management.common.utils import extract_type
+from rotest.api.common.models import ChangeResourcePostModel
 
 
 class UpdateFields(DjangoRequestView):

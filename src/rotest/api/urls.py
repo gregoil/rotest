@@ -1,10 +1,10 @@
 import httplib
 
-from swagapi.build import Swagger
+from swaggapi.build import Swagger
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.conf.urls import patterns, url
-from swagapi.api.openapi.models import Info, License, Tag
+from swaggapi.api.openapi.models import Info, License, Tag
 from rotest.api.resource_control import (CleanupUser,
                                          LockResources,
                                          ReleaseResources,

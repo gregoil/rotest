@@ -1,7 +1,7 @@
 import httplib
 
-from swagapi.api.builder.server.response import Response
-from swagapi.api.builder.server.request import DjangoRequestView
+from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management import ResourceData
 from rotest.management.common.utils import get_username

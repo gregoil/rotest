@@ -1,7 +1,7 @@
-from swagapi.api.builder.common.fields import (StringField,
+from swaggapi.api.builder.common.fields import (StringField,
                                                ModelField,
                                                ArrayField)
-from swagapi.api.builder.common.response import AbstractResponse
+from swaggapi.api.builder.common.response import AbstractResponse
 
 from rotest.api.common import EmptyModel
 

@@ -1,19 +1,19 @@
 import httplib
 from datetime import datetime
 
-from django.contrib.auth import models as auth_models
-from django.core.exceptions import FieldError
 from django.db import transaction
 from django.db.models.query_utils import Q
-from swagapi.api.builder.server.exceptions import BadRequest
-from swagapi.api.builder.server.request import DjangoRequestView
-from swagapi.api.builder.server.response import Response
+from django.core.exceptions import FieldError
+from django.contrib.auth import models as auth_models
+from swaggapi.api.builder.server.exceptions import BadRequest
+from swaggapi.api.builder.server.request import DjangoRequestView
+from swaggapi.api.builder.server.response import Response
 
+from rotest.management.common.utils import get_username
+from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import DescribedResourcesPostModel
 from rotest.api.common.responses import InfluencedResourcesResponseModel
-from rotest.management.common.json_parser import JSONParser
 from rotest.management.common.resource_descriptor import ResourceDescriptor
-from rotest.management.common.utils import get_username
 
 
 class LockResources(DjangoRequestView):

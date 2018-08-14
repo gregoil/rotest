@@ -1,4 +1,4 @@
-from swagapi.api.builder.server.request import Request
+from swaggapi.api.builder.server.request import Request
 
 from rotest.api.test_control.views.stop_test import stop_test
 from rotest.api.test_control.views.start_test import start_test

@@ -1,21 +1,21 @@
 import httplib
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from swagapi.api.builder.server.request import DjangoRequestView
-from swagapi.api.builder.server.response import Response
+from django.core.exceptions import ObjectDoesNotExist
+from swaggapi.api.builder.server.request import DjangoRequestView
+from swaggapi.api.builder.server.response import Response
 
-from rotest.api.common.models import (ResourcesModel)
-from rotest.api.common.responses import \
-    (BadRequestResponseModel, EmptyResponse)
-from rotest.common.django_utils.common import get_sub_model
 from rotest.management import ResourceData
+from rotest.api.common.models import ResourcesModel
+from rotest.management.common.utils import get_username
+from rotest.common.django_utils.common import get_sub_model
+from rotest.api.common.responses import (BadRequestResponseModel,
+                                         EmptyResponse)
 from rotest.management.common.errors import (ResourceAlreadyAvailableError,
                                              ResourceDoesNotExistError,
                                              ResourcePermissionError,
                                              ResourceReleaseError,
                                              ServerError)
-from rotest.management.common.utils import get_username
 
 
 class ReleaseResources(DjangoRequestView):

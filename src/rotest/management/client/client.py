@@ -2,7 +2,7 @@
 # pylint: disable=too-many-arguments
 from itertools import count
 
-from swagapi.api.builder.client.requester import Requester
+from swaggapi.api.builder.client.requester import Requester
 
 from rotest.api.common import ChangeResourcePostModel
 from rotest.api.common.responses import BadRequestResponseModel

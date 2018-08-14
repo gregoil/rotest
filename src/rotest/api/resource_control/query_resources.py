@@ -1,11 +1,10 @@
 import httplib
 
 from django.db import transaction
-from django.http import JsonResponse
 from django.db.models.query_utils import Q
-from swagapi.api.builder.server.exceptions import BadRequest
-from swagapi.api.builder.server.request import DjangoRequestView
-from swagapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.exceptions import BadRequest
+from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import ResourceDescriptorModel
