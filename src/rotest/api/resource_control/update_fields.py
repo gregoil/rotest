@@ -1,15 +1,14 @@
 import httplib
 
-from django.http import JsonResponse
-from swagapi.api.wrapper import RequestView
+from swagapi.api.builder.server.request import DjangoRequestView
+from swagapi.api.builder.server.response import Response
 
 from rotest.api.common.models import (ChangeResourcePostModel)
-from rotest.api.common.responses import (BadRequestResponseModel,
-                                         EmptyResponse)
+from rotest.api.common.responses import EmptyResponse
 from rotest.management.common.utils import extract_type
 
 
-class UpdateFields(RequestView):
+class UpdateFields(DjangoRequestView):
     """Update content in the server's DB.
 
     Args:
@@ -46,4 +45,4 @@ class UpdateFields(RequestView):
         else:
             objects.all().update(**kwargs_vars)
 
-        return JsonResponse({}, status=httplib.NO_CONTENT)
+        return Response({}, status=httplib.NO_CONTENT)

@@ -1,14 +1,14 @@
 import httplib
 
-from swagapi.api.wrapper import RequestView, Response
+from swagapi.api.builder.server.response import Response
+from swagapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.responses import (BadRequestResponseModel,
-                                         DetailedResponseModel)
 from rotest.management import ResourceData
 from rotest.management.common.utils import get_username
+from rotest.api.common.responses import DetailedResponseModel
 
 
-class CleanupUser(RequestView):
+class CleanupUser(DjangoRequestView):
     """Cleaning up user's requests and locked resources."""
     URI = "resources/cleanup_user"
     DEFAULT_RESPONSES =  {

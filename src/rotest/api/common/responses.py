@@ -1,6 +1,9 @@
+from swagapi.api.builder.common.fields import (StringField,
+                                               ModelField,
+                                               ArrayField)
+from swagapi.api.builder.common.response import AbstractResponse
+
 from rotest.api.common import EmptyModel
-from swagapi.api.base_api import (StringField,
-                                  ArrayField, AbstractResponse, ModelField)
 
 
 class EmptyResponse(AbstractResponse):

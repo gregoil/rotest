@@ -1,9 +1,8 @@
 """Define an abstract client."""
 # pylint: disable=too-many-arguments
-import socket
 from itertools import count
 
-from swagapi.api.base_api import Requester
+from swagapi.api.builder.client.requester import Requester
 
 from rotest.api.common import ChangeResourcePostModel
 from rotest.api.common.responses import BadRequestResponseModel
@@ -11,13 +10,8 @@ from rotest.api.resource_control import UpdateFields
 from rotest.common import core_log
 from rotest.common.config import (RESOURCE_MANAGER_PORT,
                                   RESOURCE_REQUEST_TIMEOUT)
-from rotest.management.common import messages
-from rotest.management.common.errors import ErrorFactory
 from rotest.management.common.parsers import DEFAULT_PARSER
-from rotest.management.common.parsers.abstract_parser import ParsingError
 from rotest.management.common.resource_descriptor import ResourceDescriptor
-from rotest.management.common.utils import (MESSAGE_DELIMITER,
-                                            MESSAGE_MAX_LENGTH)
 
 
 class AbstractClient(object):
@@ -32,7 +26,7 @@ class AbstractClient(object):
         _port (number): server's port.
         _messages_counter (itertools.count): msg_id counter.
     """
-    BASE_URI = "rotest/"
+    BASE_URI = "rotest/api/"
     REPLY_OVERHEAD_TIME = 2
     _DEFAULT_REPLY_TIMEOUT = 18
 

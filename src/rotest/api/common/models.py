@@ -1,6 +1,8 @@
-from swagapi.api.base_api import (AbstractAPIModel,
-                                  NumberField,
-                                  StringField, ArrayField, ModelField)
+from swagapi.api.builder.common.fields import (NumberField,
+                                               StringField,
+                                               ArrayField,
+                                               ModelField)
+from swagapi.api.builder.common.model import AbstractAPIModel
 
 
 class TestModel(AbstractAPIModel):

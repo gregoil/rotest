@@ -2,7 +2,8 @@ import httplib
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from swagapi.api.wrapper import RequestView, Response, BadRequest
+from swagapi.api.builder.server.request import DjangoRequestView
+from swagapi.api.builder.server.response import Response
 
 from rotest.api.common.models import (ResourcesModel)
 from rotest.api.common.responses import \
@@ -17,7 +18,7 @@ from rotest.management.common.errors import (ResourceAlreadyAvailableError,
 from rotest.management.common.utils import get_username
 
 
-class ReleaseResources(RequestView):
+class ReleaseResources(DjangoRequestView):
     """Release the given resources one by one.
 
     For complex resource, marks also its sub-resources as free.

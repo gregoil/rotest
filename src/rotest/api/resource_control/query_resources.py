@@ -1,18 +1,19 @@
 import httplib
 
 from django.db import transaction
-from django.db.models.query_utils import Q
 from django.http import JsonResponse
-from swagapi.api.wrapper import RequestView, BadRequest
+from django.db.models.query_utils import Q
+from swagapi.api.builder.server.exceptions import BadRequest
+from swagapi.api.builder.server.request import DjangoRequestView
+from swagapi.api.builder.server.response import Response
 
-from rotest.api.common.models import ResourceDescriptorModel
-from rotest.api.common.responses import (BadRequestResponseModel,
-                                         InfluencedResourcesResponseModel)
 from rotest.management.common.json_parser import JSONParser
+from rotest.api.common.models import ResourceDescriptorModel
+from rotest.api.common.responses import InfluencedResourcesResponseModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
-class QueryResources(RequestView):
+class QueryResources(DjangoRequestView):
     """Find and return the resources that answer the client's query.
 
     Returns:
@@ -56,6 +57,7 @@ class QueryResources(RequestView):
         encoder = JSONParser()
         query_result = [encoder.encode(resource) for resource in matches]
 
-        return JsonResponse({
+        return Response({
             "resource_descriptors": query_result
         }, status=httplib.OK)
+

@@ -5,17 +5,18 @@ from django.contrib.auth import models as auth_models
 from django.core.exceptions import FieldError
 from django.db import transaction
 from django.db.models.query_utils import Q
-from swagapi.api.wrapper import RequestView, Response, BadRequest
+from swagapi.api.builder.server.exceptions import BadRequest
+from swagapi.api.builder.server.request import DjangoRequestView
+from swagapi.api.builder.server.response import Response
 
 from rotest.api.common.models import DescribedResourcesPostModel
-from rotest.api.common.responses import \
-    (BadRequestResponseModel, InfluencedResourcesResponseModel)
+from rotest.api.common.responses import InfluencedResourcesResponseModel
 from rotest.management.common.json_parser import JSONParser
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.common.utils import get_username
 
 
-class LockResources(RequestView):
+class LockResources(DjangoRequestView):
     """Lock the given resources one by one.
 
     Note:
