@@ -6,7 +6,6 @@ import re
 
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome, CaseData
-from rotest.management.client.manager import ClientResourceManager
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
                                                 NonExistingResource)
@@ -129,7 +128,7 @@ class TestTestCase(BasicRotestUnitTest):
         self.version = 1
         self.ip_address = '1.1.1.1'
 
-    def _run_case(self, test_case):
+    def _run_case(self, test_case, **kwargs):
         """Run given case and return it.
 
         Args:
@@ -142,6 +141,10 @@ class TestTestCase(BasicRotestUnitTest):
             components = (test_case,)
 
         test_suite = InternalSuite()
+        case = test_suite._tests[0]
+        for name, value in kwargs.iteritems():
+            setattr(case, name, value)
+
         self.run_test(test_suite)
         return next(iter(test_suite))
 
@@ -756,15 +759,14 @@ class TestTestCase(BasicRotestUnitTest):
         * Validate store_state method was called (it writes a file).
         """
         resource_name = 'store_resource'
-        TempSuccessCase.resources = (request(resource_name=resource_name,
-                                             resource_class=DemoResource,
-                                             name=RESOURCE_NAME),)
+        TempErrorCase.resources = (request(resource_name=resource_name,
+                                           resource_class=DemoResource,
+                                           name=RESOURCE_NAME),)
 
-        case = self._run_case(TempSuccessCase)
+        case = self._run_case(TempErrorCase, save_state=True)
 
-        test_resource = case.all_resources.values()[0]
-        expected_state_path = os.path.join(test_resource.work_dir,
-                                       ClientResourceManager.DEFAULT_STATE_DIR)
+        expected_state_path = os.path.join(case.work_dir,
+                                           TempErrorCase.STATE_DIR_NAME)
 
         self.assertTrue(os.path.exists(expected_state_path))
 
@@ -778,12 +780,11 @@ class TestTestCase(BasicRotestUnitTest):
         resource_name = 'save_state_resource'
         TempSuccessCase.resources = (request(resource_name=resource_name,
                                              resource_class=DemoResource,
-                                             name=RESOURCE_NAME,
-                                             save_state=False),)
+                                             name=RESOURCE_NAME),)
 
-        case = self._run_case(TempSuccessCase)
+        case = self._run_case(TempSuccessCase, save_state=True)
         expected_state_path = os.path.join(case.work_dir,
-                                       ClientResourceManager.DEFAULT_STATE_DIR)
+                                           TempSuccessCase.STATE_DIR_NAME)
 
         self.assertFalse(os.path.exists(expected_state_path))
 

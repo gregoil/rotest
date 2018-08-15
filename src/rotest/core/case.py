@@ -2,7 +2,6 @@
 # pylint: disable=too-many-public-methods,too-many-arguments
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
 # pylint: disable=no-member,method-hidden,broad-except,bare-except,invalid-name
-import sys
 import unittest
 from functools import wraps
 from itertools import count
@@ -10,8 +9,8 @@ from itertools import count
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
 from rotest.common.config import ROTEST_WORK_DIR
+from rotest.core.models.case_data import CaseData
 from rotest.core.abstract_test import AbstractTest, request
-from rotest.core.models.case_data import TestOutcome, CaseData
 
 
 assert request
@@ -136,40 +135,6 @@ class TestCase(AbstractTest):
                 raise
 
         return setup_method_wrapper
-
-    def _decorate_teardown(self, teardown_method, result):
-        """Decorate the tearDown method to handle resource release.
-
-        Args:
-            test_method (method): the original tearDown method.
-            result (rotest.core.result.result.Result): test result information.
-
-        Returns:
-            method. the wrapped tearDown method.
-        """
-        @wraps(teardown_method)
-        def teardown_method_wrapper(*args, **kwargs):
-            """tearDown method wrapper.
-
-            * Executes the original tearDown method.
-            * Releases the test resources.
-            """
-            self.result.startTeardown(self)
-            try:
-                teardown_method(*args, **kwargs)
-
-            except Exception:
-                result.addError(self, sys.exc_info())
-
-            finally:
-                self.release_resources(
-                          dirty=self.data.exception_type == TestOutcome.ERROR,
-                          force_release=False)
-
-                if self._is_client_local:
-                    self.resource_manager.disconnect()
-
-        return teardown_method_wrapper
 
     def run(self, result=None):
         """Run the test case.
