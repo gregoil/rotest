@@ -183,7 +183,7 @@ class BaseResource(object):
             state_dir_path (str): path of state directory to be saved.
         """
         self.logger.debug("Storing resource %r state", self.name)
-        self._safe_execute([resource.store_state_dir for resource
+        self._safe_execute([resource.store_state for resource
                             in self.get_sub_resources()], state_dir_path)
 
     def initialize(self):

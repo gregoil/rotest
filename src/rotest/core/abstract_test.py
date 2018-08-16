@@ -296,16 +296,6 @@ class AbstractTest(unittest.TestCase):
                 result.addError(self, sys.exc_info())
 
             finally:
-                status = self.data.exception_type
-                if (self.save_state and
-                        status is not None and
-                        status not in TestOutcome.POSITIVE_RESULTS):
-
-                    self.store_state()
-
-                else:
-                    self.logger.debug("Skipping saving error state")
-
                 self.release_resources(
                        dirty=status == TestOutcome.ERROR,
                        force_release=False)
@@ -319,6 +309,13 @@ class AbstractTest(unittest.TestCase):
 
     def store_state(self):
         """Store the state of the resources in the work dir."""
+        status = self.data.exception_type
+        if (not self.save_state or status is None or
+                status in TestOutcome.POSITIVE_RESULTS):
+
+            self.logger.debug("Skipping saving error state")
+            return
+
         store_dir = os.path.join(self.work_dir, self.STATE_DIR_NAME)
 
         # In case a state dir already exists, create a new one.
