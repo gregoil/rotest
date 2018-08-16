@@ -296,6 +296,7 @@ class AbstractTest(unittest.TestCase):
                 result.addError(self, sys.exc_info())
 
             finally:
+                self.store_state()
                 self.release_resources(
                        dirty=self.data.exception_type == TestOutcome.ERROR,
                        force_release=False)
