@@ -3,17 +3,20 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
+import os
+import sys
 import unittest
 from bdb import BdbQuit
+from functools import wraps
 from itertools import count
 
 from ipdbugger import debug
 from attrdict import AttrDict
 
+from rotest.core.models.case_data import TestOutcome
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
-
 
 request = ResourceRequest
 
@@ -46,13 +49,13 @@ class AbstractTest(unittest.TestCase):
     TEARDOWN_METHOD_NAME = 'tearDown'
 
     TIMEOUT = 1800  # 30 minutes
-    SETUP_METHOD_NAME = 'setUp'
-    TEARDOWN_METHOD_NAME = 'tearDown'
 
     resources = ()
 
     TAGS = []
     IS_COMPLEX = False
+
+    STATE_DIR_NAME = "state"
 
     def __init__(self, indexer=count(), methodName='runTest', save_state=True,
                  force_initialize=False, config=None, parent=None,
@@ -198,7 +201,6 @@ class AbstractTest(unittest.TestCase):
                                         config=self.config,
                                         skip_init=self.skip_init,
                                         use_previous=use_previous,
-                                        save_state=self.save_state,
                                         base_work_dir=self.work_dir,
                                         requests=resources_to_request,
                                         enable_debug=self.enable_debug,
@@ -267,3 +269,66 @@ class AbstractTest(unittest.TestCase):
             details (str): details of the result (traceback/skip reason).
         """
         self.data.update_result(test_outcome, details)
+
+    def _decorate_teardown(self, teardown_method, result):
+        """Decorate the tearDown method to handle resource release.
+
+        Args:
+            teardown_method (function): the original tearDown method.
+            result (rotest.core.result.result.Result): test result information.
+
+        Returns:
+            function. the wrapped tearDown method.
+        """
+        @wraps(teardown_method)
+        def teardown_method_wrapper(*args, **kwargs):
+            """tearDown method wrapper.
+
+            * Executes the original tearDown method.
+            * Releases the test resources.
+            * Closes the client if needed
+            """
+            self.result.startTeardown(self)
+            try:
+                teardown_method(*args, **kwargs)
+
+            except Exception:
+                result.addError(self, sys.exc_info())
+
+            finally:
+                self.store_state()
+                self.release_resources(
+                       dirty=self.data.exception_type == TestOutcome.ERROR,
+                       force_release=False)
+
+                if (self._is_client_local and
+                        self.resource_manager.is_connected()):
+
+                    self.resource_manager.disconnect()
+
+        return teardown_method_wrapper
+
+    def store_state(self):
+        """Store the state of the resources in the work dir."""
+        status = self.data.exception_type
+        if (not self.save_state or status is None or
+                status in TestOutcome.POSITIVE_RESULTS):
+
+            self.logger.debug("Skipping saving error state")
+            return
+
+        store_dir = os.path.join(self.work_dir, self.STATE_DIR_NAME)
+
+        # In case a state dir already exists, create a new one.
+        state_dir_index = 1
+        while os.path.exists(store_dir):
+            state_dir_index += 1
+            store_dir = os.path.join(self.work_dir,
+                                     self.STATE_DIR_NAME + str(
+                                         state_dir_index))
+
+        self.logger.debug("Creating state dir %r", store_dir)
+        os.makedirs(store_dir)
+
+        for resource in self.all_resources.itervalues():
+            resource.store_state(store_dir)

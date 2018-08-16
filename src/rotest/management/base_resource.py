@@ -4,7 +4,6 @@ Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
-import os
 from bdb import BdbQuit
 
 from ipdbugger import debug
@@ -57,7 +56,6 @@ class BaseResource(object):
         data (ResourceData): assigned data instance.
         config (AttrDict): run configuration.
         work_dir (str): working directory for this resource.
-        save_state (bool): flag to indicate if the resource is a duplication.
         force_initialize (bool): a flag to determine if the resource will be
             initialized even if the validation succeeds.
     """
@@ -88,7 +86,6 @@ class BaseResource(object):
         self.config = None
         self.parent = None
         self.work_dir = None
-        self.save_state = None
         self.force_initialize = None
 
         self._sub_resources = None
@@ -185,33 +182,9 @@ class BaseResource(object):
         Args:
             state_dir_path (str): path of state directory to be saved.
         """
-        self._safe_execute([resource.store_state_dir for resource
-                            in self.get_sub_resources()], state_dir_path)
-
-    def store_state_dir(self, dir_name):
-        """Store the resource state under a sub-directory of the work_dir.
-
-        Create a directory under the resource work directory and calls
-        store_state on that directory.
-
-        Args:
-            dir_name (str): sub-directory name.
-        """
-        store_dir = os.path.join(self.work_dir, dir_name)
-        self.logger.debug("Creating dir %r", store_dir)
-
-        # In case a state dir already exists, create a new one.
-        state_dir_index = 1
-        while os.path.exists(store_dir):
-            state_dir_index += 1
-            store_dir = os.path.join(self.work_dir,
-                                     dir_name + str(state_dir_index))
-
-        os.makedirs(store_dir)
-
         self.logger.debug("Storing resource %r state", self.name)
-        self.store_state(store_dir)
-        self.logger.debug("Resource %r state stored", self.name)
+        self._safe_execute([resource.store_state for resource
+                            in self.get_sub_resources()], state_dir_path)
 
     def initialize(self):
         """Hook method for setting up the resource before using it.

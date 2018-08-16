@@ -3,7 +3,6 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
-import sys
 import unittest
 from functools import wraps
 from itertools import count
@@ -243,45 +242,14 @@ class AbstractFlowComponent(AbstractTest):
 
         return setup_method_wrapper
 
-    def _decorate_teardown(self, teardown_method, result):
-        """Decorate the tearDown method to handle resource release.
-
-        Args:
-            teardown_method (method): the original tearDown method.
-            result (rotest.core.result.result.Result): test result information.
-
-        Returns:
-            method. the wrapped tearDown method.
-        """
-        @wraps(teardown_method)
-        def teardown_method_wrapper(*args, **kwargs):
-            """tearDown method wrapper.
-
-            * Executes the original tearDown method.
-            * Releases the test resources.
-            """
-            self.result.startTeardown(self)
-            try:
-                teardown_method(*args, **kwargs)
-
-            except Exception:
-                result.addError(self, sys.exc_info())
-
-            finally:
-                self.release_resources(
-                       dirty=self.data.exception_type == TestOutcome.ERROR,
-                       force_release=False)
-
-                if (self._is_client_local and
-                        self.resource_manager.is_connected()):
-
-                    self.resource_manager.disconnect()
-
-        return teardown_method_wrapper
-
     def tearDown(self):
         """TearDown method."""
         pass
+
+    def store_state(self):
+        """Store the state of the resources in the work dir."""
+        if self.is_main:
+            super(AbstractFlowComponent, self).store_state()
 
     def run(self, result=None):
         """Run the test component.
