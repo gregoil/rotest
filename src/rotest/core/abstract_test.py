@@ -297,7 +297,7 @@ class AbstractTest(unittest.TestCase):
 
             finally:
                 self.release_resources(
-                       dirty=status == TestOutcome.ERROR,
+                       dirty=self.data.exception_type == TestOutcome.ERROR,
                        force_release=False)
 
                 if (self._is_client_local and
