@@ -106,10 +106,10 @@ class TestCase(AbstractTest):
         """Decorate setUp method to handle link skips, and resources requests.
 
         Args:
-            setup_method (method): the original setUp method.
+            setup_method (function): the original setUp method.
 
         Returns:
-            method. the wrapped setUp method.
+            function. the wrapped setUp method.
         """
         @wraps(setup_method)
         def setup_method_wrapper(*args, **kwargs):

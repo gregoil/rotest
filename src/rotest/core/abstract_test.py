@@ -274,11 +274,11 @@ class AbstractTest(unittest.TestCase):
         """Decorate the tearDown method to handle resource release.
 
         Args:
-            teardown_method (method): the original tearDown method.
+            teardown_method (function): the original tearDown method.
             result (rotest.core.result.result.Result): test result information.
 
         Returns:
-            method. the wrapped tearDown method.
+            function. the wrapped tearDown method.
         """
         @wraps(teardown_method)
         def teardown_method_wrapper(*args, **kwargs):
