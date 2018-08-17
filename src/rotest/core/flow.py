@@ -121,7 +121,7 @@ class TestFlow(AbstractFlowComponent):
         self._set_parameters(override_previous=False, **self.__class__.common)
 
         if self.is_main:
-            self._validate_inputs()
+            self.validate_inputs()
 
     def __iter__(self):
         return iter(self._tests)
@@ -129,7 +129,7 @@ class TestFlow(AbstractFlowComponent):
     def addTest(self, test_item):
         self._tests.append(test_item)
 
-    def _validate_inputs(self, extra_inputs=[]):
+    def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
 
         All names under the 'inputs' list must be attributes of the test-blocks
@@ -145,7 +145,7 @@ class TestFlow(AbstractFlowComponent):
         fields = [request.name for request in self.get_resource_requests()]
         fields.extend(extra_inputs)
         for block in self:
-            block._validate_inputs(fields)
+            block.validate_inputs(fields)
             if isinstance(block, TestBlock):
                 fields.extend(block.get_outputs().keys())
 
@@ -254,8 +254,7 @@ class TestFlow(AbstractFlowComponent):
         """
         # We set the result default value as None because of the overridden
         # method signature, but the Rotest test case does not support it.
-        for block in self:
-            block.result = result
+        self._set_parameters(result=result)
 
         super(TestFlow, self).run(result)
 

@@ -34,18 +34,14 @@ class ResourceRequest(object):
         resource_class (type): resource type.
         force_initialize (bool): a flag to determine if the resources will be
             initialized even if their validation succeeds.
-        save_state (bool): flag to determine if the resource saves its state.
-            Notice that if the case's save_state flag set to False it will
-            override the expected behavior.
         kwargs (dict): requested resource arguments.
     """
 
     def __init__(self, resource_name, resource_class,
-                 force_initialize=False, save_state=True, **kwargs):
+                 force_initialize=False, **kwargs):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
-        self.save_state = save_state
         self.force_initialize = force_initialize
 
         self.kwargs = kwargs
@@ -62,7 +58,7 @@ class ResourceRequest(object):
     def clone(self):
         """Create a copy of the request."""
         return ResourceRequest(self.name, self.type, self.force_initialize,
-                               self.save_state, **self.kwargs)
+                               **self.kwargs)
 
 
 class ClientResourceManager(AbstractClient):
@@ -72,7 +68,6 @@ class ClientResourceManager(AbstractClient):
     also for the resources cleanup procedure and release.
 
     Preparation includes validating, reseting and initializing resources.
-    Cleanup includes storing state, and finalizing resources.
 
     Attributes:
         locked_resources (list): resources locked and initialized by the client
@@ -80,7 +75,6 @@ class ClientResourceManager(AbstractClient):
         keep_resources (bool): whether to keep the resources locked until
             they are not needed.
     """
-    DEFAULT_STATE_DIR = "state"
     DEFAULT_KEEP_RESOURCES = True
 
     def __init__(self, host=None, logger=core_log,
@@ -167,30 +161,26 @@ class ClientResourceManager(AbstractClient):
             self.logger.debug("Resource %r skipped initialization",
                               resource.name)
 
-    def _propagate_attributes(self, resource, config, save_state,
-                              force_initialize):
+    def _propagate_attributes(self, resource, config, force_initialize):
         """Update the resource's config dictionary recursively.
 
         Args:
             resource (BaseResource): resource to update.
             config (dict): run configuration dictionary.
-            save_state (bool): determine if storing state is required.
             force_initialize (bool): determines if the resources will be
                 initialized even if their validation succeeds.
         """
         resource.config = config
         resource.logger = self.logger
-        resource.save_state = save_state
         resource.force_initialize = force_initialize
 
         for sub_resource in resource.get_sub_resources():
             if sub_resource is not None:
                 self._propagate_attributes(sub_resource, config,
-                                           save_state, force_initialize)
+                                           force_initialize)
 
-    def _setup_resources(self, requests, resources, save_state,
-                         force_initialize, base_work_dir, config,
-                         enable_debug, skip_init):
+    def _setup_resources(self, requests, resources, force_initialize,
+                         base_work_dir, config, enable_debug, skip_init):
         """Prepare the resources for work.
 
         Iterates over the resources and tries to prepare them for
@@ -221,8 +211,8 @@ class ClientResourceManager(AbstractClient):
             resource.set_sub_resources()
 
             self._propagate_attributes(
-                resource=resource, config=config,
-                save_state=request.save_state and save_state,
+                resource=resource,
+                config=config,
                 force_initialize=request.force_initialize or force_initialize)
 
             resource.set_work_dir(request.name, base_work_dir)
@@ -241,7 +231,6 @@ class ClientResourceManager(AbstractClient):
 
         Iterates over the resources dictionary and tries to cleanup each
         resource then releases them.
-        Cleanup includes storing state, and finalizing resources.
 
         Args:
             resources (AttrDict): dictionary of resources {name: BaseResource}.
@@ -256,16 +245,6 @@ class ClientResourceManager(AbstractClient):
         for name, resource in resources.iteritems():
 
             try:
-                if resource.save_state:
-
-                    try:
-                        resource.store_state_dir(self.DEFAULT_STATE_DIR)
-
-                    except Exception as err:
-                        exceptions.append("%s: %s" % (str(err), name))
-                        self.logger.exception("Resource %r failed to store "
-                                              "state", name)
-
                 resource.logger.debug("Finalizing resource %r", name)
                 resource.finalize()
                 resource.logger.debug("Resource %r Finalized", name)
@@ -478,7 +457,6 @@ class ClientResourceManager(AbstractClient):
     def request_resources(self, requests,
                           config=None,
                           skip_init=False,
-                          save_state=False,
                           use_previous=True,
                           enable_debug=False,
                           force_initialize=False,
@@ -493,7 +471,6 @@ class ClientResourceManager(AbstractClient):
             requests (tuple): List of the ResourceRequest.
             config (dict): run configuration dictionary.
             skip_init (bool): True to skip resources initialize and validation.
-            save_state (bool): Determine if storing state is required.
             use_previous (bool): whether to use previously locked resources and
                 release the unused ones.
             enable_debug (bool): True to wrap the resource's method with debug.
@@ -527,7 +504,6 @@ class ClientResourceManager(AbstractClient):
 
             for name, resource in self._setup_resources(requests,
                                                         locked_resources,
-                                                        save_state,
                                                         force_initialize,
                                                         base_work_dir,
                                                         config,
@@ -551,7 +527,6 @@ class ClientResourceManager(AbstractClient):
 
         Iterates over the resources dictionary and tries to cleanup each
         resource then releases them.
-        Cleanup includes storing state, and finalizing resources.
 
         Args:
             resources (AttrDict): resources AttrDict {name: BaseResource}.
