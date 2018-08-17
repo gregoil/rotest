@@ -22,7 +22,7 @@ test_script:
     - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
     - "SET PYTHONPATH=%APPVEYOR_BUILD_FOLDER%/src"
     - "%PYTHON%\\python.exe manage.py migrate"
-    - ps: $Server = Start-Process "%PYTHON%\\python.exe manage.py runserver"
+    - ps: $Server = Start-Process "C:\\Python27\\python.exe manage.py runserver" -PassThru
     - '%PYTHON%\\python.exe -c "import sys; print sys.platform"'
     - "%PYTHON%\\Scripts\\tox.exe"
 
