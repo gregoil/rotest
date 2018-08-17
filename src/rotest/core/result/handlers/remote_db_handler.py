@@ -18,14 +18,18 @@ class RemoteDBHandler(AbstractResultHandler):
         super(RemoteDBHandler, self).__init__(*args, **kwargs)
         self.client = ClientResultManager()
         self.client.connect()
+        self.token = None
 
     def start_test_run(self):
         """Save all the test datas and the run data in the remote db."""
-        self.client.start_test_run(self.main_test)
+        self.token = self.client.start_test_run(self.main_test)
 
     def stop_test_run(self):
         """Disconnect from the result server."""
-        self.client.update_run_data(self.main_test.data.run_data)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.update_run_data(self.main_test.data.run_data, self.token)
         self.client.disconnect()
 
     def start_test(self, test):
@@ -34,7 +38,10 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
-        self.client.start_test(test)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.start_test(test, self.token)
 
     def should_skip(self, test):
         """Check if the test passed in the last run according to the remote DB.
@@ -48,8 +55,11 @@ class RemoteDBHandler(AbstractResultHandler):
         Returns:
             str. Skip reason if the test should be skipped, None otherwise.
         """
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
         if (test.data.run_data is not None and test.data.run_data.run_delta and
-                self.client.should_skip(test)):
+                self.client.should_skip(test, self.token)):
 
             return self.SKIP_DELTA_MESSAGE
 
@@ -61,7 +71,10 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
-        self.client.update_resources(test)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.update_resources(test, self.token)
 
     def stop_test(self, test):
         """Finalize the remote test's data.
@@ -69,7 +82,10 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
-        self.client.stop_test(test)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.stop_test(test, self.token)
 
     def start_composite(self, test):
         """Update the remote test data to 'in progress' and set the start time.
@@ -77,7 +93,10 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (rotest.core.suite.TestSuite): test item instance.
         """
-        self.client.start_composite(test)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.start_composite(test, self.token)
 
     def stop_composite(self, test):
         """Save the remote composite test's data.
@@ -85,7 +104,10 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (rotest.core.suite.TestSuite): test item instance.
         """
-        self.client.stop_composite(test)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.stop_composite(test, self.token)
 
     def add_success(self, test):
         """Save the remote test data result as success.
@@ -93,7 +115,10 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
-        self.client.add_result(test, TestOutcome.SUCCESS)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.add_result(test, TestOutcome.SUCCESS, self.token)
 
     def add_skip(self, test, reason):
         """Save the remote test data result as skip.
@@ -102,7 +127,10 @@ class RemoteDBHandler(AbstractResultHandler):
             test (object): test item instance.
             reason (str): skip reason description.
         """
-        self.client.add_result(test, TestOutcome.SKIPPED, reason)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.add_result(test, TestOutcome.SKIPPED, self.token, reason)
 
     def add_failure(self, test, exception_str):
         """Save the remote test data result as failure.
@@ -111,7 +139,11 @@ class RemoteDBHandler(AbstractResultHandler):
             test (object): test item instance.
             exception_str (str): exception traceback string.
         """
-        self.client.add_result(test, TestOutcome.FAILED, exception_str)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.add_result(test, TestOutcome.FAILED, self.token,
+                               exception_str)
 
     def add_error(self, test, exception_str):
         """Save the remote test data result as error.
@@ -120,7 +152,11 @@ class RemoteDBHandler(AbstractResultHandler):
             test (object): test item instance.
             exception_str (str): exception traceback string.
         """
-        self.client.add_result(test, TestOutcome.ERROR, exception_str)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.add_result(test, TestOutcome.ERROR, self.token,
+                               exception_str)
 
     def add_expected_failure(self, test, exception_str):
         """Save the remote test data result as expected failure.
@@ -129,7 +165,11 @@ class RemoteDBHandler(AbstractResultHandler):
             test (object): test item instance.
             exception_str (str): exception traceback string.
         """
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
         self.client.add_result(test, TestOutcome.EXPECTED_FAILURE,
+                               self.token,
                                exception_str)
 
     def add_unexpected_success(self, test):
@@ -138,4 +178,8 @@ class RemoteDBHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
-        self.client.add_result(test, TestOutcome.UNEXPECTED_SUCCESS)
+        if self.token is None:
+            raise RuntimeError("start_test_run should be called first!")
+
+        self.client.add_result(test, TestOutcome.UNEXPECTED_SUCCESS,
+                               self.token)

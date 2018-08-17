@@ -13,15 +13,34 @@ from rotest.api.resource_control import (CleanupUser,
                                          QueryResources,
                                          UpdateFields)
 
-
 # pylint: disable=unused-argument, no-self-use
+from rotest.api.test_control import (StartTestRun,
+                                     UpdateRunData,
+                                     StopTest,
+                                     StartTest,
+                                     StopComposite,
+                                     StartComposite,
+                                     ShouldSkip,
+                                     AddTestResult, UpdateResources)
 
-
-requests = [LockResources,
-            ReleaseResources,
-            CleanupUser,
-            QueryResources,
-            UpdateFields]
+requests = [
+    # resources
+    LockResources,
+    ReleaseResources,
+    CleanupUser,
+    QueryResources,
+    UpdateFields,
+    # tests
+    StartTestRun,
+    UpdateRunData,
+    StopTest,
+    StartTest,
+    StopComposite,
+    StartComposite,
+    ShouldSkip,
+    AddTestResult,
+    UpdateResources
+]
 
 info = Info(title="Rotest OpenAPI",
             version="0.1.0",
@@ -44,7 +63,7 @@ def index(request, *args, **kwargs):
 
 
 urlpatterns = patterns("",
-    url("^$", index),
-    url("^swagger.json$", swagger_file),
-    *swagger.get_django_urls()
-)
+                       url("^$", index),
+                       url("^swagger.json$", swagger_file),
+                       *swagger.get_django_urls()
+                       )

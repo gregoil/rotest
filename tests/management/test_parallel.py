@@ -75,6 +75,10 @@ class AbstractManagerParallelCase(BaseResourceManagementTest):
                 client.result = self.SERVER_ERROR_CODE
 
             except Exception as ex:
+                print ("An error occurred while running action %r on "
+                      "client %r. Error type: '%s'. Error was: %s"
+                           % (action.__name__, client,
+                              ex.__class__.__name__, ex))
                 core_log.debug("An error occurred while running action %r on "
                            "client %r. Error type: '%s'. Error was: %s",
                            action.__name__, client, ex.__class__.__name__, ex)
@@ -177,7 +181,7 @@ class TwoClientsParallelCase(AbstractManagerParallelCase):
 
         results = (self.client1.result, self.client2.result)
         expected_names = (self.RESOURCE1_NAME, self.RESOURCE2_NAME)
-
+        import ipdb;ipdb.set_trace()
         for result, expected_name in zip(results, expected_names):
             resource = DemoResourceData.objects.get(name=expected_name)
             self.assertFalse(resource.is_available(), "%r should be "

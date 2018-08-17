@@ -10,7 +10,6 @@ from numbers import Number
 from django.db import models
 from django.db.models import ForeignKey
 
-from rotest.management import ResourceData
 from rotest.management.base_resource import BaseResource
 from rotest.management.common.parsers.abstract_parser import ParsingError
 from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
@@ -72,11 +71,8 @@ class JSONParser(object):
             TypeError: given 'resource' is not of type 'ResourceData'.
             ParsingError: encoding failure.
         """
-        if not isinstance(resource_data, ResourceData):
-            raise TypeError("resource %r type is not of ResourceData."
-                            % resource_data)
 
-        return self._encode_resource_data(resource_data)
+        return self._encode(resource_data)
 
     def decode(self, data):
         """Decode a message.

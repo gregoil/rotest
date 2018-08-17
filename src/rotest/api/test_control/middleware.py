@@ -1,9 +1,8 @@
-class SessionMiddleware(object):
-    SESSIONS = {}
+SESSIONS = {}
 
-    def __init__(self, get_response):
-        self.get_response = get_response
 
-    def __call__(self, request, *args, **kwargs):
-        return self.get_response(request, sessions=self.SESSIONS,
-                                 *args, **kwargs)
+def session_middleware(get_response):
+    def middleware(request, *args, **kwargs):
+        return get_response(request, sessions=SESSIONS, *args, **kwargs)
+
+    return middleware
