@@ -2,10 +2,25 @@ environment:
     matrix:
         - PYTHON: "C:\\Python27"
 
+services:
+  - postgresql101
+
 build: off
 
 install:
     - "%PYTHON%\\python.exe -m pip install tox"
+    - SET PGUSER=postgres
+    - SET PGPASSWORD=Password12!
+    - SET PATH=C:\Program Files\PostgreSQL\9.3\bin\;%PATH%
+    - psql -c "create user rotest with password 'rotest';" -U postgres
+    - psql -c "create database rotest_db OWNER rotest;" -U postgres
+    - "pip install -r requirements"
+    - "SET PYTHONPATH=%APPVEYOR_BUILD_FOLDER%/src"
+    - %PYTHON%\\python.exe manage.py migrate
+    - $Server = Start-Process "%PYTHON%\\python.exe manage.py runserver"
+
+on_finish:
+  - ps: Stop-Process -Id $Server.Id
 
 test_script:
     - '%PYTHON%\\python.exe -c "import sys; print sys.platform"'
