@@ -19,16 +19,13 @@ INSTALLED_APPS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test.sqlite3',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'rotest_db',
+        'USER': 'rotest',
+        'PASSWORD': 'rotest',
+        'HOST': 'localhost',
         'PORT': '',
-        'TEST_NAME': 'test.sqlite3',
-        'OPTIONS': {
-            'timeout': 20000,
-        }
+        'TEST_NAME': 'rotest_db',
     },
 
 }

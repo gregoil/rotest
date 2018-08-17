@@ -181,7 +181,6 @@ class TwoClientsParallelCase(AbstractManagerParallelCase):
 
         results = (self.client1.result, self.client2.result)
         expected_names = (self.RESOURCE1_NAME, self.RESOURCE2_NAME)
-        import ipdb;ipdb.set_trace()
         for result, expected_name in zip(results, expected_names):
             resource = DemoResourceData.objects.get(name=expected_name)
             self.assertFalse(resource.is_available(), "%r should be "

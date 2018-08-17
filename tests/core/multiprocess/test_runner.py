@@ -164,7 +164,6 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
                                  ResourceIdRegistrationCase)
 
         self.runner.run(MockSuite1)
-
         resources_locked = len(set(self.get_pids()))
         self.assertEqual(resources_locked, 1,
                          "Number of resource locks was %d instead of 1" %

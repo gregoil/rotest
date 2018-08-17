@@ -30,7 +30,6 @@ class QueryResources(DjangoRequestView):
         "post": ["Resources"]
     }
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         """Find and return the resources that answer the client's query.
 
@@ -48,16 +47,18 @@ class QueryResources(DjangoRequestView):
 
         # query for resources that are usable and match the descriptors
         query = (Q(is_usable=True, **desc.properties))
-        matches = desc.type.objects.filter(query)
+        query_result = []
+        with transaction.atomic():
+            matches = desc.type.objects.select_for_update().filter(query)
 
-        if matches.count() == 0:
-            raise BadRequest({
-                "details": "No existing resource meets "
-                           "the requirements: {!r}".format(desc)
-            })
+            if matches.count() == 0:
+                raise BadRequest({
+                    "details": "No existing resource meets "
+                               "the requirements: {!r}".format(desc)
+                })
 
-        encoder = JSONParser()
-        query_result = [encoder.encode(resource) for resource in matches]
+            encoder = JSONParser()
+            query_result = [encoder.encode(resource) for resource in matches]
 
         return Response({
             "resource_descriptors": query_result

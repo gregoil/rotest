@@ -1,5 +1,6 @@
 import httplib
 
+from django.db import transaction
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
@@ -31,13 +32,17 @@ class CleanupUser(DjangoRequestView):
             SuccessReply. a reply indicating on a successful operation.
         """
         user_name = get_username(request)
-        resources = ResourceData.objects.filter(owner=user_name)
-        if resources.count() == 0:
-            return Response({
-                "details": "User {} didn't lock any resource".format(user_name)
-            }, status=httplib.OK)
+        with transaction.atomic():
+            resources = ResourceData.objects.select_for_update().filter(
+                owner=user_name)
 
-        resources.update(owner="", owner_time=None)
+            if resources.count() == 0:
+                return Response({
+                    "details": "User {} didn't lock any resource".format(
+                        user_name)
+                }, status=httplib.OK)
+
+            resources.update(owner="", owner_time=None)
         return Response({
             "details": "User {} was successfully cleaned".format(user_name)
         }, status=httplib.OK)

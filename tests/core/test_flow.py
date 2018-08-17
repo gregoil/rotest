@@ -1077,7 +1077,6 @@ class TestTestFlow(BasicRotestUnitTest):
         MockFlow.blocks = (SuccessBlock.params(mode=MODE_CRITICAL),
                            MockSubFlow.params(mode=MODE_CRITICAL),
                            SuccessBlock.params(mode=MODE_CRITICAL))
-
         test_flow = MockFlow()
         self.run_test(test_flow)
 

@@ -37,6 +37,7 @@ pexpect==4.2.1
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 psutil==5.3.1
+psycopg2==2.7.5
 ptyprocess==0.5.2
 py==1.4.34
 pycodestyle==2.3.1
@@ -54,7 +55,7 @@ scandir==1.5
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0
-swaggapi==0.2.3
+swaggapi==0.2.5
 termcolor==1.1.0
 traitlets==4.3.2
 Twisted==17.5.0

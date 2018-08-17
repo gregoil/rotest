@@ -1,5 +1,6 @@
 import httplib
 
+from django.db import transaction
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
@@ -41,11 +42,12 @@ class UpdateFields(DjangoRequestView):
         model = extract_type(request.model.resource_descriptor.type)
         filter_dict = request.model.resource_descriptor.properties
         kwargs_vars = request.model.changes
-        objects = model.objects
-        if filter_dict is not None and len(filter_dict) > 0:
-            objects.filter(**filter_dict).update(**kwargs_vars)
+        with transaction.atomic():
+            objects = model.objects.select_for_update()
+            if filter_dict is not None and len(filter_dict) > 0:
+                objects.filter(**filter_dict).update(**kwargs_vars)
 
-        else:
-            objects.all().update(**kwargs_vars)
+            else:
+                objects.all().update(**kwargs_vars)
 
         return Response({}, status=httplib.NO_CONTENT)

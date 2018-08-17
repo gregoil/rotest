@@ -13,6 +13,7 @@ from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.core.runner import BaseTestRunner
 from rotest.core.case import TestCase, request
+from rotest.management.common.json_parser import JSONParser
 from rotest.management.models.ut_models import DemoResource
 from rotest.core.block import TestBlock, BlockOutput, BlockInput
 from rotest.management.client.manager import ClientResourceManager
@@ -251,6 +252,8 @@ class MockResourceClient(ClientResourceManager):
 
             resources.append(resource)
 
+        self.all_locked_resources.extend(resources)
+
         return resources
 
     def _release_resources(self, resources):
@@ -272,8 +275,8 @@ class MockResourceClient(ClientResourceManager):
         """
         matches = descriptor.type.DATA_CLASS.objects.filter(is_usable=True,
                                                     **descriptor.properties)
-
-        return [data for data in matches]
+        parser = JSONParser()
+        return [parser.encode(data) for data in matches]
 
 
 def override_client_creator():

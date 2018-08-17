@@ -81,27 +81,28 @@ class ReleaseResources(DjangoRequestView):
         if len(errors) != 0:
             raise ResourceReleaseError(errors)
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         """Release the given resources one by one."""
         errors = {}
         username = get_username(request)
-        for name in request.model.resources:
-            try:
-                resource_data = ResourceData.objects.get(name=name)
+        with transaction.atomic():
+            for name in request.model.resources:
+                try:
+                    resource_data = ResourceData.objects.select_for_update() \
+                        .get(name=name)
 
-            except ObjectDoesNotExist:
-                errors[name] = (ResourceDoesNotExistError.ERROR_CODE,
-                                "Resource %r doesn't exist" % name)
-                continue
+                except ObjectDoesNotExist:
+                    errors[name] = (ResourceDoesNotExistError.ERROR_CODE,
+                                    "Resource %r doesn't exist" % name)
+                    continue
 
-            resource = get_sub_model(resource_data)
+                resource = get_sub_model(resource_data)
 
-            try:
-                self._release_resource(resource, username)
+                try:
+                    self._release_resource(resource, username)
 
-            except ServerError as ex:
-                errors[name] = (ex.ERROR_CODE, ex.get_error_content())
+                except ServerError as ex:
+                    errors[name] = (ex.ERROR_CODE, ex.get_error_content())
 
         if len(errors) > 0:
             return Response({

@@ -56,7 +56,6 @@ class LockResources(DjangoRequestView):
         resource.owner_time = datetime.now()
         resource.save()
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         """Lock the given resources one by one.
 
@@ -76,42 +75,43 @@ class LockResources(DjangoRequestView):
         user = auth_models.User.objects.get(username=user_name)
 
         groups = list(user.groups.all())
+        with transaction.atomic():
+            for descriptor_dict in descriptors:
+                try:
+                    desc = ResourceDescriptor.decode(descriptor_dict)
 
-        for descriptor_dict in descriptors:
-            try:
-                desc = ResourceDescriptor.decode(descriptor_dict)
+                except Exception as e:
+                    raise BadRequest({"details": e.message})
+                # query for resources that are usable and match the user's
+                # preference, which are either belong to a group he's in or
+                # don't belong to any group.
+                query = (Q(is_usable=True, **desc.properties) &
+                         (Q(group__isnull=True) | Q(group__in=groups)))
 
-            except Exception as e:
-                raise BadRequest({"details": e.message})
-            # query for resources that are usable and match the user's
-            # preference, which are either belong to a group he's in or
-            # don't belong to any group.
-            query = (Q(is_usable=True, **desc.properties) &
-                     (Q(group__isnull=True) | Q(group__in=groups)))
-            try:
-                matches = desc.type.objects.filter(query).order_by('-reserved')
+                try:
+                    matches = desc.type.objects.select_for_update()\
+                        .filter(query).order_by('-reserved')
 
-            except FieldError as e:
-                raise BadRequest({"details": e.message})
+                except FieldError as e:
+                    raise BadRequest({"details": e.message})
 
-            if matches.count() == 0:
-                raise BadRequest({
-                    "details": "No existing resource meets "
-                               "the requirements: {!r}".format(desc)})
+                if matches.count() == 0:
+                    raise BadRequest({
+                        "details": "No existing resource meets "
+                                   "the requirements: {!r}".format(desc)})
 
-            availables = (resource for resource in matches
-                          if resource.is_available(user_name))
+                availables = (resource for resource in matches
+                              if resource.is_available(user_name))
 
-            try:
-                resource = availables.next()
+                try:
+                    resource = availables.next()
+                    self._lock_resource(resource, user_name)
+                    locked_resources.append(resource)
 
-                self._lock_resource(resource, user_name)
-                locked_resources.append(resource)
-
-            except StopIteration:
-                raise BadRequest({
-                    "details": "No available resource meets "
-                               "the requirements: {!r}".format(desc)})
+                except StopIteration:
+                    raise BadRequest({
+                        "details": "No available resource meets "
+                                   "the requirements: {!r}".format(desc)})
 
         encoder = JSONParser()
         response = [encoder.encode(_resource)
