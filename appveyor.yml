@@ -16,7 +16,7 @@ install:
     - psql -c "create database rotest_db OWNER rotest;" -U postgres
     - "pip install -r requirements"
     - "SET PYTHONPATH=%APPVEYOR_BUILD_FOLDER%/src"
-    - %PYTHON%\\python.exe manage.py migrate
+    - "%PYTHON%\\python.exe manage.py migrate"
     - $Server = Start-Process "%PYTHON%\\python.exe manage.py runserver"
 
 on_finish:
