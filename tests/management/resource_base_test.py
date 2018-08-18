@@ -5,6 +5,7 @@ import sys
 import signal
 import subprocess
 
+import time
 from django.test.testcases import TransactionTestCase
 
 from rotest.common.config import search_config_file
@@ -31,6 +32,7 @@ class BaseResourceManagementTest(TransactionTestCase):
         cls.django_process = subprocess.Popen(
             "python {} runserver 0.0.0.0:{}".format(manage_py_location, 8000),
             shell=True)
+        time.sleep(cls.SERVER_STARTUP_TIME)
 
     @classmethod
     def tearDownClass(cls):
