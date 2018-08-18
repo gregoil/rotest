@@ -45,6 +45,23 @@ class TestLockResources(TransactionTestCase):
         self.assertEqual(response.status_code, httplib.OK)
         self.assertEqual(len(content.resource_descriptors), 1)
 
+    def test_invalid_resource_field(self):
+        """Assert invalid resource field filter requested."""
+        response, _ = self.requester(
+            json_data={
+                "descriptors": [
+                    {
+                        "type": "rotest.management.models.ut_models."
+                                "DemoResourceData",
+                        "properties": {
+                            "invalid_field": "field1"
+                        }
+                    }
+                ],
+                "timeout": 0
+            })
+        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+
     def test_lock_complex(self):
         """Assert trying to lock complex resource."""
         resources = DemoComplexResourceData.objects.filter(

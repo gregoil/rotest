@@ -6,6 +6,7 @@ This module contains tests for the multiprocess runner timeout functionality.
 import sys
 
 import pytest
+import time
 
 from tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
 from tests.core.multiprocess.test_runner import AbstractMultiprocessRunnerTest
@@ -131,7 +132,7 @@ class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
         self.assertFalse(self.post_timeout_event.is_set(),
                          "Process continued when it should have been "
                          "terminated due to timeout")
-
+        time.sleep(0.5)
         self.validate_test_processes(2)
 
     def test_subprocess_killed_timeout(self):

@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.db import transaction
 from django.db.models.query_utils import Q
+from django.core.exceptions import FieldError
 from django.contrib.auth import models as auth_models
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
@@ -87,8 +88,12 @@ class LockResources(DjangoRequestView):
                 query = (Q(is_usable=True, **desc.properties) &
                          (Q(group__isnull=True) | Q(group__in=groups)))
 
-                matches = desc.type.objects.select_for_update()\
-                    .filter(query).order_by('-reserved')
+                try:
+                    matches = desc.type.objects.select_for_update()\
+                        .filter(query).order_by('-reserved')
+
+                except FieldError as e:
+                    raise BadRequest({"details": e.message})
 
                 if matches.count() == 0:
                     raise BadRequest({
