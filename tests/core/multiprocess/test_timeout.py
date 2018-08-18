@@ -131,7 +131,7 @@ class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
         self.assertFalse(self.post_timeout_event.is_set(),
                          "Process continued when it should have been "
                          "terminated due to timeout")
-        
+
         self.validate_test_processes(2)
 
     def test_subprocess_killed_timeout(self):
