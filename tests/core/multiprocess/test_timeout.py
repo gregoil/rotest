@@ -4,9 +4,9 @@ This module contains tests for the multiprocess runner timeout functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import sys
+import time
 
 import pytest
-import time
 
 from tests.core.utils import MockSuite1, MockSuite2, MockTestSuite
 from tests.core.multiprocess.test_runner import AbstractMultiprocessRunnerTest
