@@ -8,6 +8,9 @@ multiple clients.
 import unittest
 from threading import Thread
 
+import mock
+from swaggapi.api.builder.client import requester
+
 from rotest.common import core_log
 from rotest.management.common.utils import LOCALHOST
 from rotest.management.common.errors import ServerError
@@ -103,6 +106,8 @@ class AbstractManagerParallelCase(BaseResourceManagementTest):
 class TwoClientsParallelCase(AbstractManagerParallelCase):
     """Tests the resource-manager when 2 clients works in parallel."""
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize two clients and connect them to resource manager."""
         super(TwoClientsParallelCase, self).setUp()
@@ -201,6 +206,8 @@ class MultipleClientsParallelCase(AbstractManagerParallelCase):
     """Tests the resource-manager when multiple clients works in parallel."""
     NUM_OF_CLIENTS = 10
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize clients and connect them to the resource manager."""
         super(MultipleClientsParallelCase, self).setUp()

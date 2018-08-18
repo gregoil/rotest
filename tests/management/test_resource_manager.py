@@ -13,8 +13,11 @@ import time
 from itertools import izip
 from threading import Thread
 
+import mock
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
+from swaggapi.api.builder.client import requester
+
 from rotest.management.common.utils import LOCALHOST
 from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
@@ -53,6 +56,8 @@ class TestResourceManagement(BaseResourceManagementTest):
     LOCK_TIMEOUT = 4
     CLEANUP_TIME = 1.5
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize and connect a client to the resource manager."""
         super(TestResourceManagement, self).setUp()
@@ -362,6 +367,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                                 "resources took %.2f seconds, but should take "
                                 "at least %d" % (duration, self.LOCK_TIMEOUT))
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def _test_wait_for_unavailable_resource(self, timeout, release_time):
         """Lock a locked resource, wait for it to release & validate success.
 

@@ -1,5 +1,8 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
+import mock
+from swaggapi.api.builder.client import requester
+
 from rotest.core.models import GeneralData
 from rotest.core.models.run_data import RunData
 from rotest.management.common.utils import LOCALHOST
@@ -17,6 +20,8 @@ class TestResultManagement(BaseResourceManagementTest):
     """Result management tests."""
     fixtures = ['resource_ut.json']
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize and connect a client to the server."""
         super(TestResultManagement, self).setUp()
