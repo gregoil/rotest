@@ -4,7 +4,6 @@ This module contains tests for the multiprocess runner timeout functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
 import sys
-import time
 
 import pytest
 
@@ -132,7 +131,7 @@ class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
         self.assertFalse(self.post_timeout_event.is_set(),
                          "Process continued when it should have been "
                          "terminated due to timeout")
-        time.sleep(0.5)
+        
         self.validate_test_processes(2)
 
     def test_subprocess_killed_timeout(self):
