@@ -22,7 +22,7 @@ class BaseResourceManagementTest(TransactionTestCase):
     from this class will start the resource manager server in an independent
     thread on the setUp of each test and stop in on the tearDown.
     """
-    SERVER_STARTUP_TIME = 2
+    SERVER_STARTUP_TIME = 5
 
     @classmethod
     def setUpClass(cls):
