@@ -21,7 +21,6 @@ from rotest.management.common.errors import (ResourceDoesNotExistError,
 
 django.setup()
 
-
 NAME1 = 'test_res1'
 NAME2 = 'test_res2'
 
@@ -71,7 +70,7 @@ class BasicRotestUnitTest(TransactionTestCase):
         result = Result(outputs=[], main_test=main_test)
         for handler_class in cls.RESULT_OUTPUTS:
             result.result_handlers.append(handler_class(
-                    main_test=result.main_test))
+                main_test=result.main_test))
 
         result.startTestRun()
         return result
@@ -105,15 +104,18 @@ class BasicRotestUnitTest(TransactionTestCase):
             AssertionError: the validation failed.
         """
         self.assertEqual(len(result.failures), fails, "Unexpected number of "
-                         "failures (got %d, expected %d)" %
+                                                      "failures (got %d, "
+                                                      "expected %d)" %
                          (len(result.failures), fails))
 
         self.assertEqual(len(result.skipped), skips, "Unexpected number of "
-                         "skipps (got %d, expected %d)" %
+                                                     "skipps (got %d, "
+                                                     "expected %d)" %
                          (len(result.skipped), skips))
 
         self.assertEqual(len(result.errors), errors, "Unexpected number of "
-                         "errors (got %d, expected %d)" %
+                                                     "errors (got %d, "
+                                                     "expected %d)" %
                          (len(result.errors), errors))
 
         self.assertEqual(len(result.expectedFailures), expected_failures,
@@ -128,20 +130,22 @@ class BasicRotestUnitTest(TransactionTestCase):
                           unexpected_successes))
 
         actual_successes = result.testsRun - sum(map(len,
-                                                 (result.failures,
-                                                  result.skipped,
-                                                  result.errors,
-                                                  result.expectedFailures,
-                                                  result.unexpectedSuccesses)))
+                                                     (result.failures,
+                                                      result.skipped,
+                                                      result.errors,
+                                                      result.expectedFailures,
+                                                      result.unexpectedSuccesses)))
 
         self.assertEqual(actual_successes, successes, "Unexpected number of "
-                         "successes (got %d, expected %d)" %
+                                                      "successes (got %d, "
+                                                      "expected %d)" %
                          (actual_successes, successes))
 
         actual_success = result.main_test.data.success
         self.assertEqual(success, actual_success, "Expected success value %r "
-                         "differs from actual value %r"
-                        % (success, actual_success))
+                                                  "differs from actual value "
+                                                  "%r"
+                         % (success, actual_success))
 
     def validate_resource(self, resource, validated=True,
                           initialized=True, finalized=True):
@@ -173,6 +177,7 @@ class BasicRotestUnitTest(TransactionTestCase):
 
 class MockResourceClient(ClientResourceManager):
     """Mock resource client."""
+
     def __init__(self, *args, **kwargs):
         """Suppress connecting/disconnecting to/from the server."""
         super(MockResourceClient, self).__init__(*args, **kwargs)
@@ -231,7 +236,7 @@ class MockResourceClient(ClientResourceManager):
 
                 try:
                     available_resources = data_type.objects.filter(
-                                    is_usable=True, **descriptor.properties)
+                        is_usable=True, **descriptor.properties)
 
                     prev_locks = [prev.name for prev in resources]
                     available_resources = [resource
@@ -272,10 +277,8 @@ class MockResourceClient(ClientResourceManager):
             descriptor (ResourceDescriptor): descriptor of the query
                 (containing model class and query filter kwargs).
         """
-        matches = descriptor.type.DATA_CLASS.objects.filter(is_usable=True,
-                                                    **descriptor.properties)
-
-        return [self.parser.encode(data) for data in matches]
+        return descriptor.type.DATA_CLASS.objects.filter(
+            is_usable=True, **descriptor.properties)
 
 
 def override_client_creator():
