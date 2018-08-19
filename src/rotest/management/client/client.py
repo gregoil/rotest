@@ -6,7 +6,7 @@ from swaggapi.api.builder.client.requester import Requester
 
 from rotest.common import core_log
 from rotest.api.resource_control import UpdateFields
-from rotest.api.common import ChangeResourcePostModel
+from rotest.api.common import UpdateFieldsParamsModel
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.responses import BadRequestResponseModel
 from rotest.common.config import (RESOURCE_MANAGER_PORT,
@@ -102,7 +102,7 @@ class AbstractClient(object):
 
         desc = ResourceDescriptor(resource_type=model, **filter_dict)
 
-        request_data = ChangeResourcePostModel({
+        request_data = UpdateFieldsParamsModel({
             "resource_descriptor": desc.encode(),
             "changes": kwargs
         })

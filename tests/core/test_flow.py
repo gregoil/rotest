@@ -29,38 +29,44 @@ class TestTestFlow(BasicRotestUnitTest):
         """Validate the result of the blocks under a flow."""
         blocks = list(test_flow)
 
-        actual_successes = len([block for block in blocks if
-                                block.data.exception_type == TestOutcome.SUCCESS])
+        actual_successes = \
+            len([block for block in blocks if
+                 block.data.exception_type == TestOutcome.SUCCESS])
         self.assertEqual(actual_successes, successes,
                          "Wrong number of successes (got %d, expected %d)" %
                          (actual_successes, successes))
 
-        actual_failures = len([block for block in blocks if
-                               block.data.exception_type == TestOutcome.FAILED])
+        actual_failures = \
+            len([block for block in blocks if
+                 block.data.exception_type == TestOutcome.FAILED])
         self.assertEqual(actual_failures, failures,
                          "Wrong number of failures (got %d, expected %d)" %
                          (actual_failures, failures))
 
-        actual_errors = len([block for block in blocks if
-                             block.data.exception_type == TestOutcome.ERROR])
+        actual_errors = \
+            len([block for block in blocks if
+                 block.data.exception_type == TestOutcome.ERROR])
         self.assertEqual(actual_errors, errors,
                          "Wrong number of errors (got %d, expected %d)" %
                          (actual_errors, errors))
 
-        actual_skips = len([block for block in blocks if
-                            block.data.exception_type == TestOutcome.SKIPPED])
+        actual_skips = \
+            len([block for block in blocks if
+                 block.data.exception_type == TestOutcome.SKIPPED])
         self.assertEqual(actual_skips, skips,
                          "Wrong number of skips (got %d, expected %d)" %
                          (actual_skips, skips))
 
-        actual_expected_failures = len([block for block in blocks if
-                                        block.data.exception_type == TestOutcome.EXPECTED_FAILURE])
+        actual_expected_failures = \
+            len([block for block in blocks if
+                 block.data.exception_type == TestOutcome.EXPECTED_FAILURE])
         self.assertEqual(actual_expected_failures, expected_failures,
                          "Wrong number of skips (got %d, expected %d)" %
                          (actual_expected_failures, expected_failures))
 
-        actual_unexpected_successes = len([block for block in blocks if
-                                           block.data.exception_type == TestOutcome.UNEXPECTED_SUCCESS])
+        actual_unexpected_successes = \
+            len([block for block in blocks if
+                 block.data.exception_type == TestOutcome.UNEXPECTED_SUCCESS])
         self.assertEqual(actual_unexpected_successes, unexpected_successes,
                          "Wrong number of skips (got %d, expected %d)" %
                          (actual_unexpected_successes, unexpected_successes))

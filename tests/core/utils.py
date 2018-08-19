@@ -13,7 +13,6 @@ from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.core.runner import BaseTestRunner
 from rotest.core.case import TestCase, request
-from rotest.management.common.json_parser import JSONParser
 from rotest.management.models.ut_models import DemoResource
 from rotest.core.block import TestBlock, BlockOutput, BlockInput
 from rotest.management.client.manager import ClientResourceManager
@@ -251,6 +250,8 @@ class MockResourceClient(ClientResourceManager):
                     raise ResourceUnavailableError()
 
             resources.append(resource)
+
+        self.all_locked_resources.extend(resources)
 
         return resources
 

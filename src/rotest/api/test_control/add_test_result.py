@@ -5,7 +5,7 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.api.common.responses import SuccessResponse
-from rotest.api.common.models import AddTestResultModel
+from rotest.api.common.models import AddTestResultParamsModel
 from rotest.api.test_control.middleware import session_middleware
 
 
@@ -18,7 +18,7 @@ class AddTestResult(DjangoRequestView):
         info (str): additional info (traceback / end reason etc).
     """
     URI = "tests/add_test_result"
-    DEFAULT_MODEL = AddTestResultModel
+    DEFAULT_MODEL = AddTestResultParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
     }

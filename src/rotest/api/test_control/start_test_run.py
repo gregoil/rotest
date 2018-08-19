@@ -6,7 +6,7 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.core.models import RunData
-from rotest.api.common.models import StartTestRunModel
+from rotest.api.common.models import StartTestRunParamsModel
 from rotest.api.common.responses import TokenResponseModel
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.test_control.middleware import session_middleware, SessionData
@@ -26,7 +26,7 @@ class StartTestRun(DjangoRequestView):
         run_data (dict): contains additional data about the run.
     """
     URI = "tests/start_test_run"
-    DEFAULT_MODEL = StartTestRunModel
+    DEFAULT_MODEL = StartTestRunParamsModel
     DEFAULT_RESPONSES = {
         httplib.OK: TokenResponseModel,
     }
@@ -79,8 +79,7 @@ class StartTestRun(DjangoRequestView):
         session_token = str(uuid.uuid4())
         sessions[session_token] = SessionData(all_tests=all_tests,
                                               run_data=run_data,
-                                              main_test=main_test,
-                                              user_name=run_data.user_name)
+                                              main_test=main_test)
         response = {
             "token": session_token
         }

@@ -1,6 +1,6 @@
 from .models import (TestModel,
-                     EmptyModel,
-                     ResourcesModel,
+                     GenericModel,
+                     ReleaseResourcesParamsModel,
                      ResourceDescriptorModel,
-                     ChangeResourcePostModel,
-                     DescribedResourcesPostModel)
+                     UpdateFieldsParamsModel,
+                     LockResourcesParamsModel)

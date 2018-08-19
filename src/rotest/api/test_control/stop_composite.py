@@ -4,9 +4,9 @@ import httplib
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.models import TestOperation
 from rotest.api.common.responses import SuccessResponse
 from rotest.api.test_control.middleware import session_middleware
+from rotest.api.common.models import TestControlOperationParamsModel
 
 
 class StopComposite(DjangoRequestView):
@@ -17,7 +17,7 @@ class StopComposite(DjangoRequestView):
         token (str): token of the session.
     """
     URI = "tests/stop_composite"
-    DEFAULT_MODEL = TestOperation
+    DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
     }

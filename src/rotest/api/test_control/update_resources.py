@@ -5,7 +5,7 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.api.common.responses import SuccessResponse
-from rotest.api.common.models import UpdateResourcesModel
+from rotest.api.common.models import UpdateResourcesParamsModel
 from rotest.api.test_control.middleware import session_middleware
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
@@ -19,7 +19,7 @@ class UpdateResources(DjangoRequestView):
         token (str): token of the session.
     """
     URI = "tests/update_resources"
-    DEFAULT_MODEL = UpdateResourcesModel
+    DEFAULT_MODEL = UpdateResourcesParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
     }

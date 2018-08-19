@@ -4,9 +4,9 @@ import httplib
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.models import TestOperation
 from rotest.api.common.responses import ShouldSkipResponse
 from rotest.api.test_control.middleware import session_middleware
+from rotest.api.common.models import TestControlOperationParamsModel
 
 
 SKIP_DELTA_MESSAGE = "Previous run passed according to remote DB"
@@ -20,7 +20,7 @@ class ShouldSkip(DjangoRequestView):
         token (str): token of the session.
     """
     URI = "tests/should_skip"
-    DEFAULT_MODEL = TestOperation
+    DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
         httplib.OK: ShouldSkipResponse,
     }

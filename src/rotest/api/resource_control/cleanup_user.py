@@ -7,14 +7,14 @@ from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management import ResourceData
 from rotest.management.common.utils import get_username
-from rotest.api.common.responses import DetailedResponseModel
+from rotest.api.common.responses import CleanupUserResponseModel
 
 
 class CleanupUser(DjangoRequestView):
     """Cleaning up user's requests and locked resources."""
     URI = "resources/cleanup_user"
     DEFAULT_RESPONSES = {
-        httplib.OK: DetailedResponseModel,
+        httplib.OK: CleanupUserResponseModel,
     }
     TAGS = {
         "post": ["Resources"]

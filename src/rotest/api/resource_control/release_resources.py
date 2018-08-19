@@ -7,9 +7,9 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management import ResourceData
-from rotest.api.common.models import ResourcesModel
 from rotest.management.common.utils import get_username
 from rotest.common.django_utils.common import get_sub_model
+from rotest.api.common.models import ReleaseResourcesParamsModel
 from rotest.api.common.responses import (BadRequestResponseModel,
                                          SuccessResponse)
 from rotest.management.common.errors import (ResourceAlreadyAvailableError,
@@ -30,7 +30,7 @@ class ReleaseResources(DjangoRequestView):
         ResourceAlreadyAvailableError: if resource was already available.
     """
     URI = "resources/release_resources"
-    DEFAULT_MODEL = ResourcesModel
+    DEFAULT_MODEL = ReleaseResourcesParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
         httplib.BAD_REQUEST: BadRequestResponseModel

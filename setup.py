@@ -42,7 +42,7 @@ requirements = [
     'jsonschema',
     'basicstruct',
     'psycopg2',
-    'swaggapi==0.3.2'
+    'swaggapi==0.5.0'
 ]
 
 if not sys.platform.startswith("win32"):

@@ -6,11 +6,11 @@ tell what and when tests and tests containers were run (including their
 hierarchial structure), what were their results and error descriptions, and
 additional data about the run.
 """
-from rotest.api.common.models import (StartTestRunModel,
-                                      UpdateRunDataModel,
-                                      AddTestResultModel,
-                                      TestOperation,
-                                      UpdateResourcesModel)
+from rotest.api.common.models import (StartTestRunParamsModel,
+                                      UpdateRunDataParamsModel,
+                                      AddTestResultParamsModel,
+                                      TestControlOperationParamsModel,
+                                      UpdateResourcesParamsModel)
 from rotest.api.common.responses import BadRequestResponseModel
 from rotest.api.test_control import (StartTestRun,
                                      UpdateRunData,
@@ -77,7 +77,7 @@ class ClientResultManager(AbstractClient):
         """
         tests_tree_dict = self._create_test_dict(main_test)
         run_data = {'run_name': main_test.data.run_data.run_name}
-        request_data = StartTestRunModel({
+        request_data = StartTestRunParamsModel({
             "tests": tests_tree_dict,
             "run_data": run_data
         })
@@ -95,7 +95,7 @@ class ClientResultManager(AbstractClient):
         Args:
             run_data (RunData): the run data instance.
         """
-        request_data = UpdateRunDataModel({
+        request_data = UpdateRunDataParamsModel({
             "run_data": run_data.get_fields(),
             "token": token
         })
@@ -114,7 +114,7 @@ class ClientResultManager(AbstractClient):
             result_code (number): the code of the result (TestOutcome code).
             info (str): additional data about the test outcome.
         """
-        request_data = AddTestResultModel({
+        request_data = AddTestResultParamsModel({
             "test_details": {
                 "test_id": test_item.identifier,
                 "token": token
@@ -137,7 +137,7 @@ class ClientResultManager(AbstractClient):
         Args:
             test_item (rotest.core.case.TestCase): the test to update about.
         """
-        request_data = TestOperation({
+        request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
             "token": token
         })
@@ -157,7 +157,7 @@ class ClientResultManager(AbstractClient):
         Returns:
             bool. True if the test should be skipped, False otherwise.
         """
-        request_data = TestOperation({
+        request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
             "token": token
         })
@@ -176,7 +176,7 @@ class ClientResultManager(AbstractClient):
         Args:
             test_item (rotest.core.case.TestCase): the test to update about.
         """
-        request_data = TestOperation({
+        request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
             "token": token
         })
@@ -200,7 +200,7 @@ class ClientResultManager(AbstractClient):
                          for resource in
                          test_item.locked_resources.itervalues()]
 
-        request_data = UpdateResourcesModel({
+        request_data = UpdateResourcesParamsModel({
             "test_details": {
                 "test_id": test_item.identifier,
                 "token": token
@@ -220,7 +220,7 @@ class ClientResultManager(AbstractClient):
         Args:
             test_item (rotest.core.suite.TestSuite): the test to update about.
         """
-        request_data = TestOperation({
+        request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
             "token": token
         })
@@ -237,7 +237,7 @@ class ClientResultManager(AbstractClient):
         Args:
             test_item (rotest.core.suite.TestSuite): the test to update about.
         """
-        request_data = TestOperation({
+        request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
             "token": token
         })

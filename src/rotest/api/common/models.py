@@ -1,3 +1,4 @@
+"""Parameters models of the view requests."""
 from swaggapi.api.builder.common.model import AbstractAPIModel
 from swaggapi.api.builder.common.fields import (NumberField,
                                                 StringField,
@@ -6,90 +7,137 @@ from swaggapi.api.builder.common.fields import (NumberField,
                                                 DynamicType, BoolField)
 
 
-class EmptyModel(AbstractAPIModel):
+class GenericModel(AbstractAPIModel):
+    """Generic model can be any dict object."""
     TITLE = "Generic Object"
     PROPERTIES = []
     EXAMPLE = {}
 
 
 class ResourceDescriptorModel(AbstractAPIModel):
+    """Descriptor of a resource.
+
+    Args:
+        type (str): the type of the resource.
+        properties (dict): django filter properties of the model.
+    """
     TITLE = "Resource Descriptor"
     PROPERTIES = [
         StringField(name="type", required=True,
                     example="resources.models.CalculatorData"),
-        ModelField(name="properties", model=EmptyModel, required=True),
+        ModelField(name="properties", model=GenericModel, required=True),
     ]
 
-    EXAMPLE = {
-        "type": "resources.models.CalculatorData",
-        "properties": {}
-    }
 
+class UpdateFieldsParamsModel(AbstractAPIModel):
+    """Update fields of a given resource.
 
-class ChangeResourcePostModel(AbstractAPIModel):
+    Args:
+        resource_descriptor (ResourceDescriptorModel): describes the
+            resources to change.
+        changes (dict): keys are the object's fields and values are the
+            values to change the fields into.
+    """
     PROPERTIES = [
         ModelField(name="resource_descriptor", required=True,
                    model=ResourceDescriptorModel),
-        ModelField(name="changes", required=True, model=EmptyModel)
+        ModelField(name="changes", required=True, model=GenericModel)
     ]
 
 
-class DescribedResourcesPostModel(AbstractAPIModel):
+class LockResourcesParamsModel(AbstractAPIModel):
+    """Lock the given described resources.
+
+    Args:
+        descriptors (list): list of ResourceDescriptorModel - the required
+            resource to be locked.
+    """
     PROPERTIES = [
         ArrayField(name="descriptors", items_type=ResourceDescriptorModel,
-                   required=True),
-        NumberField(name="timeout", required=True)
+                   required=True)
     ]
 
 
-class ResourcesModel(AbstractAPIModel):
+class ReleaseResourcesParamsModel(AbstractAPIModel):
+    """Release the given resources names.
+
+    Args:
+        resources (list): list of str. the names of the resources to be
+            released.
+    """
     PROPERTIES = [
         ArrayField(name="resources", items_type=StringField("resource_name"),
                    example=["calc1", "calc2"], required=True)
     ]
-    EXAMPLE = {
-        "resources": ["calc1", "calc2"]
-    }
 
 
 class TestResultModel(AbstractAPIModel):
+    """Describes the result of a test.
+
+    Args:
+        result_code (number): the end result code of the test.
+        info (str): additional info of th test run.
+    """
     PROPERTIES = [
         NumberField(name="result_code", required=True),
         StringField(name="info", required=True)
     ]
-    EXAMPLE = {
-        "result_code": 100,
-        "info": "test failed to finish correctly"
-    }
 
 
-class TestOperation(AbstractAPIModel):
+class TestControlOperationParamsModel(AbstractAPIModel):
+    """Generic data structure of test control operations.
+
+    Args:
+        token (str): the session token of the current test run.
+        test_id (number): the relevant test to be influenced by the operation.
+    """
     PROPERTIES = [
         StringField(name="token", required=True),
         NumberField(name="test_id", required=True)
     ]
-    EXAMPLE = {
-        "token": "token",
-        "test_id": 0
-    }
 
 
-class UpdateResourcesModel(AbstractAPIModel):
+class UpdateResourcesParamsModel(AbstractAPIModel):
+    """Update the given resources test data.
+
+    Args:
+        descriptors (list): list of ResourceDescriptorModel. the resources
+            to be updated.
+        test_details (TestControlOperationParamsModel): the details of the
+            relevant session datas.
+    """
     PROPERTIES = [
         ArrayField(name="descriptors", items_type=ResourceDescriptorModel,
                    required=True),
-        ModelField(name="test_details", model=TestOperation, required=True)
+        ModelField(name="test_details",
+                   model=TestControlOperationParamsModel, required=True)
     ]
 
 
-class AddTestResultModel(AbstractAPIModel):
+class AddTestResultParamsModel(AbstractAPIModel):
+    """Add a test result to a given test.
+
+    Args:
+        test_details (TestControlOperationParamsModel): the details of the
+            relevant session datas.
+        result (TestResultModel): the result of the test.
+    """
     PROPERTIES = [
-        ModelField(name="test_details", model=TestOperation, required=True),
+        ModelField(name="test_details",
+                   model=TestControlOperationParamsModel, required=True),
         ModelField(name="result", model=TestResultModel, required=True)
     ]
 
 
 class TestModel(AbstractAPIModel):
+    """Test model structure.
+
+    Args:
+        id (number): the id of the test.
+        name (str): the name of the test.
+        class (str): the classname of the test.
+        subtests (list): list of TestModel. the subtests of the current test.
+    """
     TITLE = "Test"
     PROPERTIES = [
         NumberField(name="id"),
@@ -102,6 +150,7 @@ class TestModel(AbstractAPIModel):
 
 
 class RunDataModel(AbstractAPIModel):
+    """Run data model structure."""
     TITLE = "RunData"
     PROPERTIES = [
         StringField(name="run_name"),
@@ -111,14 +160,26 @@ class RunDataModel(AbstractAPIModel):
     ]
 
 
-class UpdateRunDataModel(AbstractAPIModel):
+class UpdateRunDataParamsModel(AbstractAPIModel):
+    """Update run data of a given session run.
+
+    Args:
+        run_data (RunDataModel): the new run data to update to.
+        token (str): the token of the current session run.
+    """
     PROPERTIES = [
         ModelField(name="run_data", model=RunDataModel, required=True),
         StringField(name="token", required=True)
     ]
 
 
-class StartTestRunModel(AbstractAPIModel):
+class StartTestRunParamsModel(AbstractAPIModel):
+    """Start a new run session.
+
+    Args:
+        tests (TestModel): the main test to build the run suite from.
+        run_data (RunDataModel): the run data details of the current run.
+    """
     PROPERTIES = [
         ModelField(name="tests", model=TestModel, required=True),
         ModelField(name="run_data", model=RunDataModel, required=True)

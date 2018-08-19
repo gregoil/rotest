@@ -6,7 +6,7 @@ from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.core.models import RunData
 from rotest.api.common.responses import SuccessResponse
-from rotest.api.common.models import UpdateRunDataModel
+from rotest.api.common.models import UpdateRunDataParamsModel
 from rotest.api.test_control.middleware import session_middleware
 
 
@@ -18,7 +18,7 @@ class UpdateRunData(DjangoRequestView):
         run_data (dict): properties of run data to update.
     """
     URI = "tests/update_run_data"
-    DEFAULT_MODEL = UpdateRunDataModel
+    DEFAULT_MODEL = UpdateRunDataParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
     }

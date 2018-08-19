@@ -1,4 +1,4 @@
-""""""
+"""URLs of all the django views."""
 # pylint: disable=unused-argument, no-self-use
 from django.conf.urls import patterns
 

@@ -7,7 +7,7 @@ from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.api.common.responses import SuccessResponse
 from rotest.management.common.utils import extract_type
-from rotest.api.common.models import ChangeResourcePostModel
+from rotest.api.common.models import UpdateFieldsParamsModel
 
 
 class UpdateFields(DjangoRequestView):
@@ -20,7 +20,7 @@ class UpdateFields(DjangoRequestView):
             apply on the filtered instances.
     """
     URI = "resources/update_fields"
-    DEFAULT_MODEL = ChangeResourcePostModel
+    DEFAULT_MODEL = UpdateFieldsParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
     }
