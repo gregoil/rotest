@@ -129,12 +129,12 @@ class BasicRotestUnitTest(TransactionTestCase):
                          (len(result.unexpectedSuccesses),
                           unexpected_successes))
 
-        actual_successes = result.testsRun - sum(map(len,
-                                                     (result.failures,
-                                                      result.skipped,
-                                                      result.errors,
-                                                      result.expectedFailures,
-                                                      result.unexpectedSuccesses)))
+        actual_successes = \
+            result.testsRun - sum(map(len, (result.failures,
+                                            result.skipped,
+                                            result.errors,
+                                            result.expectedFailures,
+                                            result.unexpectedSuccesses)))
 
         self.assertEqual(actual_successes, successes, "Unexpected number of "
                                                       "successes (got %d, "
