@@ -30,37 +30,37 @@ class TestTestFlow(BasicRotestUnitTest):
         blocks = list(test_flow)
 
         actual_successes = len([block for block in blocks if
-                          block.data.exception_type == TestOutcome.SUCCESS])
+                                block.data.exception_type == TestOutcome.SUCCESS])
         self.assertEqual(actual_successes, successes,
                          "Wrong number of successes (got %d, expected %d)" %
                          (actual_successes, successes))
 
         actual_failures = len([block for block in blocks if
-                          block.data.exception_type == TestOutcome.FAILED])
+                               block.data.exception_type == TestOutcome.FAILED])
         self.assertEqual(actual_failures, failures,
                          "Wrong number of failures (got %d, expected %d)" %
                          (actual_failures, failures))
 
         actual_errors = len([block for block in blocks if
-                          block.data.exception_type == TestOutcome.ERROR])
+                             block.data.exception_type == TestOutcome.ERROR])
         self.assertEqual(actual_errors, errors,
                          "Wrong number of errors (got %d, expected %d)" %
                          (actual_errors, errors))
 
         actual_skips = len([block for block in blocks if
-                          block.data.exception_type == TestOutcome.SKIPPED])
+                            block.data.exception_type == TestOutcome.SKIPPED])
         self.assertEqual(actual_skips, skips,
                          "Wrong number of skips (got %d, expected %d)" %
                          (actual_skips, skips))
 
         actual_expected_failures = len([block for block in blocks if
-                  block.data.exception_type == TestOutcome.EXPECTED_FAILURE])
+                                        block.data.exception_type == TestOutcome.EXPECTED_FAILURE])
         self.assertEqual(actual_expected_failures, expected_failures,
                          "Wrong number of skips (got %d, expected %d)" %
                          (actual_expected_failures, expected_failures))
 
         actual_unexpected_successes = len([block for block in blocks if
-              block.data.exception_type == TestOutcome.UNEXPECTED_SUCCESS])
+                                           block.data.exception_type == TestOutcome.UNEXPECTED_SUCCESS])
         self.assertEqual(actual_unexpected_successes, unexpected_successes,
                          "Wrong number of skips (got %d, expected %d)" %
                          (actual_unexpected_successes, unexpected_successes))
@@ -82,6 +82,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_invalid_type(self):
         """Test invalid block type raises TypeError."""
+
         class BadTestType():
             pass
 
@@ -112,7 +113,7 @@ class TestTestFlow(BasicRotestUnitTest):
                         'Flow data result should have been True')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
-                        'Flow data status should have been success')
+                         'Flow data status should have been success')
 
     def test_skip_alone(self):
         """Create test flow with only skipped blocks and test its behavior."""
@@ -131,10 +132,10 @@ class TestTestFlow(BasicRotestUnitTest):
 
         # === Validate data object ===
         self.assertEqual(test_flow.data.success, True,
-                        'Flow data result should have been None')
+                         'Flow data result should have been None')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
-                        'Flow data status should have been success')
+                         'Flow data status should have been success')
 
     def test_skip_and_success(self):
         """Validate test flow with success and skipped blocks."""
@@ -156,7 +157,7 @@ class TestTestFlow(BasicRotestUnitTest):
                         'Flow data result should have been True')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
-                        'Flow data status should have been success')
+                         'Flow data status should have been success')
 
     def test_flow_failure(self):
         """Create test flow with failed component & validate its behavior.
@@ -184,7 +185,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
     def test_flow_error(self):
         """Create test flow with error component & validate its behavior.
@@ -212,7 +213,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
-                        'Flow data status should have been error')
+                         'Flow data status should have been error')
 
     def test_expected_failure(self):
         """Create test flow with expected failure block and validate behavior.
@@ -237,7 +238,7 @@ class TestTestFlow(BasicRotestUnitTest):
                         'Flow data result should have been True')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
-                        'Flow data status should have been success')
+                         'Flow data status should have been success')
 
     def test_unexpected_success(self):
         """Create test flow with unexpected success block and check behavior.
@@ -265,7 +266,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
     def test_inputs_happy_flow(self):
         """Test behavior of inputs validation of blocks in positive case.
@@ -289,7 +290,7 @@ class TestTestFlow(BasicRotestUnitTest):
     def test_input_default_value(self):
         """Test that blocks' inputs' default value is injected by default."""
         MockFlow.blocks = (create_reader_block(inject_value='default_value',
-                                               default='default_value'), )
+                                               default='default_value'),)
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -322,8 +323,8 @@ class TestTestFlow(BasicRotestUnitTest):
             common = {parameter_name: parameter_value}
 
         FlowWithCommon.blocks = (create_reader_block(
-                                        inject_name=parameter_name,
-                                        inject_value=parameter_value), )
+            inject_name=parameter_name,
+            inject_value=parameter_value),)
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -340,7 +341,7 @@ class TestTestFlow(BasicRotestUnitTest):
         then expect it to have an error.
         """
         MockFlow.blocks = (create_reader_block(inject_name="missing_input",
-                                               inject_value=5), )
+                                               inject_value=5),)
 
         with self.assertRaises(AttributeError):
             MockFlow()
@@ -353,7 +354,7 @@ class TestTestFlow(BasicRotestUnitTest):
         """
         MockFlow.blocks = (create_reader_block(inject_name="missing_input",
                                                inject_value=4,
-                                               default=5), )
+                                               default=5),)
         test_flow = MockFlow()
         self.run_test(test_flow)
 
@@ -368,6 +369,7 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that pretends to share data and a block that
         needs this data as an input.
         """
+
         class PretendToShareDataBlock(SuccessBlock):
             pretend_output = BlockOutput()
 
@@ -388,11 +390,12 @@ class TestTestFlow(BasicRotestUnitTest):
         Run a flow with a block that expects an piped input it doesn't get,
         then expect it to have an error.
         """
+
         class BlockWithInputs(SuccessBlock):
             noinput = BlockInput()
 
         MockFlow.blocks = (BlockWithInputs.params(
-            noinput=PipeTo('pipe_target')), )
+            noinput=PipeTo('pipe_target')),)
 
         with self.assertRaises(AttributeError):
             MockFlow()
@@ -409,8 +412,8 @@ class TestTestFlow(BasicRotestUnitTest):
         parameters = {parameter_name: parameter_value}
 
         MockFlow.blocks = (create_reader_block(
-                    inject_name=parameter_name,
-                    inject_value=parameter_value).params(**parameters), )
+            inject_name=parameter_name,
+            inject_value=parameter_value).params(**parameters),)
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -459,6 +462,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_priority_over_common(self):
         """Validate pipes priority in params is higher than common values."""
+
         class FlowWithCommon(MockFlow):
             common = {'pipe_target': 'wrong_value'}
 
@@ -476,12 +480,13 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_override(self):
         """Validate pipes priority in common is lower than params values."""
+
         class FlowWithCommon(MockFlow):
             common = {'pipe_target': PipeTo('wrong_field')}
 
             blocks = (create_writer_block(inject_name='wrong_field',
                                           inject_value='wrong_value').params(
-                        wrong_field='wrong_value'),  # To pass input validation
+                wrong_field='wrong_value'),  # To pass input validation
                       create_writer_block(inject_name='some_name',
                                           inject_value='some_value'),
                       create_reader_block(inject_name='pipe_target',
@@ -506,9 +511,9 @@ class TestTestFlow(BasicRotestUnitTest):
                 self.share_data(**{parameter_name: parameter_value})
 
         FlowWithSetup.blocks = (create_reader_block(
-                                            inject_name=parameter_name,
-                                            inject_value=parameter_value,
-                                            default='wrong_value'),)
+            inject_name=parameter_name,
+            inject_value=parameter_value,
+            default='wrong_value'),)
 
         test_flow = FlowWithSetup()
         self.run_test(test_flow)
@@ -553,6 +558,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         We test that the blocks were not run and that the result was error.
         """
+
         class FlowWithSetupError(MockFlow):
             def setUp(self):
                 raise RuntimeError('Intentional error in setUp')
@@ -626,7 +632,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow succeeded when it should have failed')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
-                        'Flow data status should have been error')
+                         'Flow data status should have been error')
 
         # === Validate case data object ===
         self.assertFalse(test_flow.data.success,
@@ -642,6 +648,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         We validate the blocks ran successfuly and the flow result was error.
         """
+
         class FlowWithTeardownError(MockFlow):
             def tearDown(self):
                 raise RuntimeError('Intentional error in tearDown')
@@ -667,7 +674,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
-                        'Flow data status should have been error')
+                         'Flow data status should have been error')
 
     def test_local_dynamic_resources_locking(self):
         """Test that cases can dynamically lock resources.
@@ -714,7 +721,7 @@ class TestTestFlow(BasicRotestUnitTest):
         test_resource = DemoResourceData.objects.get(name=global_resource_name)
         self.validate_resource(test_resource)
         test_resource = DemoResourceData.objects.get(
-                                                 name=dynamic_resource_name)
+            name=dynamic_resource_name)
         self.validate_resource(test_resource)
 
     def test_shared_dynamic_resources_locking(self):
@@ -745,7 +752,7 @@ class TestTestFlow(BasicRotestUnitTest):
         self.run_test(test_flow)
 
         self.assertTrue(self.result.wasSuccessful(),
-                         'Flow succeeded when it should have failed')
+                        'Flow succeeded when it should have failed')
 
         self.assertEqual(self.result.testsRun, 1,
                          "Result didn't run the correct number of tests")
@@ -759,7 +766,7 @@ class TestTestFlow(BasicRotestUnitTest):
         test_resource = DemoResourceData.objects.get(name=global_resource_name)
         self.validate_resource(test_resource)
         test_resource = DemoResourceData.objects.get(
-                                                 name=dynamic_resource_name)
+            name=dynamic_resource_name)
         self.validate_resource(test_resource)
 
     def test_critical_blocks(self):
@@ -790,7 +797,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
     def test_optional_blocks(self):
         """Validate behavior of block in OPTIONAL mode.
@@ -824,7 +831,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
-                        'Flow data status should have been error')
+                         'Flow data status should have been error')
 
     def test_finally_blocks(self):
         """Validate behavior of block in FINALLY mode.
@@ -856,7 +863,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
     def test_finally_failure_blocks(self):
         """Validate behavior of blocks after FINALLY block failure.
@@ -887,7 +894,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
     def test_sub_flow_inputs(self):
         """Test behavior of inputs validation of sub-flows in positive case.
@@ -938,7 +945,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         # Parametrizing the sub-flow
         MainFlow.blocks = (MockSubFlow.params(**{FLOW_PARAMETER_NAME:
-                                                 FLOW_PARAMETER_VALUE}),)
+                                                     FLOW_PARAMETER_VALUE}),)
 
         # Got all fields needed
         test_flow = MainFlow()
@@ -1029,13 +1036,13 @@ class TestTestFlow(BasicRotestUnitTest):
                       parameter2_name: parameter2_common_value}
 
             blocks = (CheckingParameter1Block.parametrize(
-                            **{parameter1_name: parameter1_subflow_value}),
+                **{parameter1_name: parameter1_subflow_value}),
                       CheckingParameter2Block.parametrize(
-                            **{parameter2_name: parameter2_subflow_value}))
+                          **{parameter2_name: parameter2_subflow_value}))
 
         class MainFlow(MockFlow):
             blocks = (SubFlow.parametrize(
-                            **{parameter1_name: parameter1_topflow_value}),)
+                **{parameter1_name: parameter1_topflow_value}),)
 
         test_flow = MainFlow()
         self.run_test(test_flow)
@@ -1077,6 +1084,7 @@ class TestTestFlow(BasicRotestUnitTest):
         MockFlow.blocks = (SuccessBlock.params(mode=MODE_CRITICAL),
                            MockSubFlow.params(mode=MODE_CRITICAL),
                            SuccessBlock.params(mode=MODE_CRITICAL))
+
         test_flow = MockFlow()
         self.run_test(test_flow)
 
@@ -1096,7 +1104,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.FAILED,
-                        'Flow data status should have been failure')
+                         'Flow data status should have been failure')
 
     def test_optional_flow(self):
         """Validate behavior of flow in OPTIONAL mode.
@@ -1135,7 +1143,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data result should have been False')
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.ERROR,
-                        'Flow data status should have been error')
+                         'Flow data status should have been error')
 
     def test_finally_flow(self):
         """Validate behavior of flow in FINALLY mode.

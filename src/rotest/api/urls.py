@@ -1,19 +1,15 @@
-import httplib
-
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.conf.urls import patterns, url
+""""""
+# pylint: disable=unused-argument, no-self-use
+from django.conf.urls import patterns
 
 from swaggapi.build import Swagger
-from swaggapi.api.openapi.models import (Info, License, Tag)
+from swaggapi.api.openapi.models import Info, License, Tag
 
 from rotest.api.resource_control import (CleanupUser,
                                          LockResources,
                                          ReleaseResources,
                                          QueryResources,
                                          UpdateFields)
-
-# pylint: disable=unused-argument, no-self-use
 from rotest.api.test_control import (StartTestRun,
                                      UpdateRunData,
                                      StopTest,
@@ -53,17 +49,4 @@ tags = [Tag(name="Tests",
 swagger = Swagger(info, mount_url="api", requests=requests, tags=tags)
 
 
-def swagger_file(request, *args, **kwargs):
-    swagger.configure_base_url(request)
-    return JsonResponse(swagger.api.json(), status=httplib.OK)
-
-
-def index(request, *args, **kwargs):
-    return render(request, "swagger.html")
-
-
-urlpatterns = patterns("",
-                       url("^$", index),
-                       url("^swagger.json$", swagger_file),
-                       *swagger.get_django_urls()
-                       )
+urlpatterns = patterns("", *swagger.get_django_urls())

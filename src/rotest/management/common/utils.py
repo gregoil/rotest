@@ -5,7 +5,6 @@ from socket import gethostbyaddr
 
 from rotest.management.common.errors import ResourceTypeError
 
-HOST_PORT_SEPARATOR = ':'
 
 MESSAGE_DELIMITER = '\r\n'
 MESSAGE_MAX_LENGTH = 240000
@@ -25,9 +24,9 @@ LOCALHOST = "localhost"
 
 def get_client_ip(request):
     """Get client's ip address."""
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")  # forward ip
-    if x_forwarded_for:
-        ip_address = x_forwarded_for.split(",")[0]
+    ip_chain = request.META.get("HTTP_X_FORWARDED_FOR")  # forward ip
+    if ip_chain:
+        ip_address = ip_chain.split(",")[0]
 
     else:
         ip_address = request.META.get("REMOTE_ADDR")

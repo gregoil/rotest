@@ -1,14 +1,13 @@
+# pylint: disable=unused-argument, no-self-use
 import httplib
 
-from django.http import JsonResponse
+from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.responses import EmptyResponse
+from rotest.api.common.responses import SuccessResponse
 from rotest.api.common.models import UpdateResourcesModel
 from rotest.api.test_control.middleware import session_middleware
 from rotest.management.common.resource_descriptor import ResourceDescriptor
-
-# pylint: disable=unused-argument, no-self-use
 
 
 class UpdateResources(DjangoRequestView):
@@ -22,7 +21,7 @@ class UpdateResources(DjangoRequestView):
     URI = "tests/update_resources"
     DEFAULT_MODEL = UpdateResourcesModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: EmptyResponse,
+        httplib.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "post": ["Tests"]
@@ -48,4 +47,4 @@ class UpdateResources(DjangoRequestView):
 
         test_data.save()
 
-        return JsonResponse({}, status=httplib.NO_CONTENT)
+        return Response({}, status=httplib.NO_CONTENT)

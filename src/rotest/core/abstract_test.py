@@ -196,6 +196,7 @@ class AbstractTest(unittest.TestCase):
         if len(resources_to_request) == 0:
             # No resources to requested
             return
+
         requested_resources = self.resource_manager.request_resources(
                                         config=self.config,
                                         skip_init=self.skip_init,
@@ -204,6 +205,7 @@ class AbstractTest(unittest.TestCase):
                                         requests=resources_to_request,
                                         enable_debug=self.enable_debug,
                                         force_initialize=self.force_initialize)
+        
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
         for resource in requested_resources.itervalues():

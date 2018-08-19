@@ -4,10 +4,11 @@ from itertools import count
 
 from swaggapi.api.builder.client.requester import Requester
 
-from rotest.api.common import ChangeResourcePostModel
-from rotest.api.common.responses import BadRequestResponseModel
-from rotest.api.resource_control import UpdateFields
 from rotest.common import core_log
+from rotest.api.resource_control import UpdateFields
+from rotest.api.common import ChangeResourcePostModel
+from rotest.management.common.json_parser import JSONParser
+from rotest.api.common.responses import BadRequestResponseModel
 from rotest.common.config import (RESOURCE_MANAGER_PORT,
                                   RESOURCE_REQUEST_TIMEOUT)
 from rotest.management.common.resource_descriptor import ResourceDescriptor
@@ -28,6 +29,8 @@ class AbstractClient(object):
     BASE_URI = "rotest/api/"
     REPLY_OVERHEAD_TIME = 2
     _DEFAULT_REPLY_TIMEOUT = 18
+
+    parser = JSONParser()
 
     def __init__(self, host, port=RESOURCE_MANAGER_PORT,
                  base_uri=BASE_URI,

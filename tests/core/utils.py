@@ -252,8 +252,6 @@ class MockResourceClient(ClientResourceManager):
 
             resources.append(resource)
 
-        self.all_locked_resources.extend(resources)
-
         return resources
 
     def _release_resources(self, resources):
@@ -275,8 +273,8 @@ class MockResourceClient(ClientResourceManager):
         """
         matches = descriptor.type.DATA_CLASS.objects.filter(is_usable=True,
                                                     **descriptor.properties)
-        parser = JSONParser()
-        return [parser.encode(data) for data in matches]
+
+        return [self.parser.encode(data) for data in matches]
 
 
 def override_client_creator():

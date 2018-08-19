@@ -6,7 +6,7 @@ from swaggapi.api.builder.common.response import AbstractResponse
 from rotest.api.common import EmptyModel
 
 
-class EmptyResponse(AbstractResponse):
+class SuccessResponse(AbstractResponse):
     PROPERTIES = []
 
 
@@ -20,7 +20,7 @@ class TokenResponseModel(AbstractResponse):
 
 
 class DetailedResponseModel(AbstractResponse):
-    "Details about the executed request"
+    """Details about the executed request"""
     PROPERTIES = [
         StringField(name="details", required=True)
     ]

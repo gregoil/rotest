@@ -4,6 +4,6 @@ from django.conf.urls import include, url
 
 admin.autodiscover()
 urlpatterns = [
-    url(r'^rotest/?', include("rotest.urls")),
+    url(r'^rotest/api/', include("rotest.api.urls")),
     url(r'^admin/', include(admin.site.urls)),
 ]

@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument, no-self-use, too-many-locals
 import httplib
 from datetime import datetime
 
@@ -16,16 +17,12 @@ from rotest.api.common.responses import InfluencedResourcesResponseModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
-# pylint: disable=unused-argument, no-self-use, too-many-locals
-
-
 class LockResources(DjangoRequestView):
     """Lock the given resources one by one.
 
     Note:
         If one of the resources fails to lock, all the resources
-        that has
-        been locked until that resource will be released.
+        that has been locked until that resource will be released.
     """
     URI = "resources/lock_resources"
     DEFAULT_MODEL = DescribedResourcesPostModel

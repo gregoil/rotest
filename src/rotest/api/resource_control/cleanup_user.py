@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument, no-self-use
 import httplib
 
 from django.db import transaction
@@ -7,9 +8,6 @@ from swaggapi.api.builder.server.request import DjangoRequestView
 from rotest.management import ResourceData
 from rotest.management.common.utils import get_username
 from rotest.api.common.responses import DetailedResponseModel
-
-
-# pylint: disable=unused-argument, no-self-use
 
 
 class CleanupUser(DjangoRequestView):

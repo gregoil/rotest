@@ -108,7 +108,3 @@ rotest_ut_test
 rotest_ut_test-journal
 nohup.out
 /.project
-
-# node
-node_modules/
-package-lock.json

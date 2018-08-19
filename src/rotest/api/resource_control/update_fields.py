@@ -1,15 +1,13 @@
+# pylint: disable=unused-argument, no-self-use
 import httplib
 
 from django.db import transaction
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.responses import EmptyResponse
+from rotest.api.common.responses import SuccessResponse
 from rotest.management.common.utils import extract_type
 from rotest.api.common.models import ChangeResourcePostModel
-
-
-# pylint: disable=unused-argument, no-self-use
 
 
 class UpdateFields(DjangoRequestView):
@@ -24,7 +22,7 @@ class UpdateFields(DjangoRequestView):
     URI = "resources/update_fields"
     DEFAULT_MODEL = ChangeResourcePostModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: EmptyResponse,
+        httplib.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "post": ["Resources"]

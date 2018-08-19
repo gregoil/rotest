@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument, no-self-use
 import httplib
 
 from django.db import transaction
@@ -10,9 +11,6 @@ from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import ResourceDescriptorModel
 from rotest.api.common.responses import InfluencedResourcesResponseModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
-
-
-# pylint: disable=unused-argument, no-self-use
 
 
 class QueryResources(DjangoRequestView):

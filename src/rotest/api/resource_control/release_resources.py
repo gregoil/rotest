@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument, no-self-use
 import httplib
 
 from django.db import transaction
@@ -10,15 +11,12 @@ from rotest.api.common.models import ResourcesModel
 from rotest.management.common.utils import get_username
 from rotest.common.django_utils.common import get_sub_model
 from rotest.api.common.responses import (BadRequestResponseModel,
-                                         EmptyResponse)
+                                         SuccessResponse)
 from rotest.management.common.errors import (ResourceAlreadyAvailableError,
                                              ResourceDoesNotExistError,
                                              ResourcePermissionError,
                                              ResourceReleaseError,
                                              ServerError)
-
-
-# pylint: disable=unused-argument, no-self-use
 
 
 class ReleaseResources(DjangoRequestView):
@@ -34,7 +32,7 @@ class ReleaseResources(DjangoRequestView):
     URI = "resources/release_resources"
     DEFAULT_MODEL = ResourcesModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: EmptyResponse,
+        httplib.NO_CONTENT: SuccessResponse,
         httplib.BAD_REQUEST: BadRequestResponseModel
     }
     TAGS = {

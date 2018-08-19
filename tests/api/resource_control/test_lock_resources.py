@@ -90,8 +90,8 @@ class TestLockResources(TransactionTestCase):
         sub_resource = resource.demo1
 
         self.assertEqual(response.status_code, httplib.OK)
-        self.assertTrue(not resource.is_available())
-        self.assertTrue(not sub_resource.is_available())
+        self.assertFalse(resource.is_available())
+        self.assertFalse(sub_resource.is_available())
 
     def test_lock_complex_sub_resource_unavailable(self):
         """Assert trying to lock resource with sub-resource unavailable."""
@@ -123,12 +123,12 @@ class TestLockResources(TransactionTestCase):
 
         self.assertEqual(response.status_code, httplib.BAD_REQUEST)
         # no reserved nor owner for main resource
-        self.assertTrue(not resource.reserved)
-        self.assertTrue(not resource.owner)
-        self.assertTrue(not resource.is_available())
+        self.assertFalse(resource.reserved)
+        self.assertFalse(resource.owner)
+        self.assertFalse(resource.is_available())
 
         # sub resource left untouched
-        self.assertTrue(not sub_resource.is_available())
+        self.assertFalse(sub_resource.is_available())
         self.assertEqual(sub_resource.reserved, "unknown_person")
 
 

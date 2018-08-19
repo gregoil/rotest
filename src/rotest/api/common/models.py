@@ -1,9 +1,9 @@
+from swaggapi.api.builder.common.model import AbstractAPIModel
 from swaggapi.api.builder.common.fields import (NumberField,
                                                 StringField,
                                                 ArrayField,
                                                 ModelField,
                                                 DynamicType, BoolField)
-from swaggapi.api.builder.common.model import AbstractAPIModel
 
 
 class EmptyModel(AbstractAPIModel):

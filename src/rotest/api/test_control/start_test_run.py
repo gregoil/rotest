@@ -1,16 +1,15 @@
+# pylint: disable=unused-argument, no-self-use
 import uuid
 import httplib
 
-from django.http import JsonResponse
+from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.core.models import RunData
 from rotest.api.common.models import StartTestRunModel
 from rotest.api.common.responses import TokenResponseModel
 from rotest.management.common.json_parser import JSONParser
-from rotest.api.test_control.session_data import SessionData
-from rotest.api.test_control.middleware import session_middleware
-# pylint: disable=unused-argument, no-self-use
+from rotest.api.test_control.middleware import session_middleware, SessionData
 
 
 TEST_ID_KEY = 'id'
@@ -85,4 +84,4 @@ class StartTestRun(DjangoRequestView):
         response = {
             "token": session_token
         }
-        return JsonResponse(response, status=httplib.OK)
+        return Response(response, status=httplib.OK)

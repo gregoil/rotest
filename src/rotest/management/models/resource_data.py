@@ -14,7 +14,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from rotest.common.django_utils.fields import NameField
 from rotest.common.django_utils.common import get_fields
-from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.common.django_utils import get_sub_model, linked_unicode
 
 
@@ -100,7 +99,6 @@ class ResourceData(models.Model):
         """
         leaf = self.leaf  # 'leaf' is a property.
         if leaf == self:
-            user_name = user_name.split(HOST_PORT_SEPARATOR)[0]
             leaf_available = (self.reserved in [user_name, ""] and
                               self.owner == "")
 

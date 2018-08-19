@@ -1,15 +1,7 @@
 language: python
 python:
 - '2.7'
-services:
-  - postgresql
 install: pip install tox coveralls
-before_script:
-  - psql -c "create user rotest with password 'rotest';" -U postgres
-  - psql -c "create database rotest_db OWNER rotest;" -U postgres
-  - pip install -r requirements.txt
-  - export PYTHONPATH=`pwd`/src
-  - python manage.py migrate
 script: tox
 after_success: coveralls
 deploy:
