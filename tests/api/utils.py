@@ -1,5 +1,5 @@
 """API test utilities."""
-# pylint: too-many-arguments
+# pylint: disable=too-many-arguments
 import os
 import json
 import urllib
