@@ -41,7 +41,6 @@ requirements = [
     'termcolor',
     'jsonschema',
     'basicstruct',
-    'psycopg2',
     'swaggapi==0.5.0'
 ]
 

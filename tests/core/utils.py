@@ -256,8 +256,6 @@ class MockResourceClient(ClientResourceManager):
 
             resources.append(resource)
 
-        self.all_locked_resources.extend(resources)
-
         return resources
 
     def _release_resources(self, resources):

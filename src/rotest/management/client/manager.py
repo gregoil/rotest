@@ -24,10 +24,10 @@ from rotest.management.common.errors import (ResourceReleaseError,
                                              UnknownUserError)
 from rotest.api.resource_control import (LockResources,
                                          QueryResources,
-                                         ReleaseResources)
+                                         ReleaseResources, CleanupUser)
 from rotest.api.common.models import (ReleaseResourcesParamsModel,
                                       ResourceDescriptorModel,
-                                      LockResourcesParamsModel)
+                                      LockResourcesParamsModel, GenericModel)
 
 SLEEP_TIME_BETWEEN_REQUESTS = 0.25
 
@@ -90,19 +90,18 @@ class ClientResourceManager(AbstractClient):
             host = RESOURCE_MANAGER_HOST
 
         self.locked_resources = []
-        self.all_locked_resources = []
         self.keep_resources = keep_resources
 
         super(ClientResourceManager, self).__init__(logger=logger, host=host)
 
     def _release_locked_resources(self):
         """Release the locked resources of the client."""
-        if len(self.all_locked_resources) > 0:
+        if len(self.locked_resources) > 0:
             self.logger.debug("Releasing locked resources %r",
-                              self.all_locked_resources)
+                              self.locked_resources)
 
             self.release_resources({res.name: res for
-                                    res in self.all_locked_resources},
+                                    res in self.locked_resources},
                                    force_release=True)
 
     def disconnect(self):
@@ -112,6 +111,8 @@ class ClientResourceManager(AbstractClient):
             RuntimeError: wasn't connected in the first place.
         """
         self._release_locked_resources()
+        self.requester.request(CleanupUser, method="post",
+                               data=GenericModel({}))
         if self.is_connected():
             super(ClientResourceManager, self).disconnect()
 
@@ -298,7 +299,6 @@ class ClientResourceManager(AbstractClient):
                 "descriptors": encoded_requests
             })
             start_time = time.time()
-            response = None
             while True:
                 response = self.requester.request(LockResources,
                                                   data=request_data,
@@ -319,19 +319,15 @@ class ClientResourceManager(AbstractClient):
                 [self.parser.decode(resource)
                  for resource in response.resource_descriptors]
 
-            for (descriptor, resource_data) in zip(server_requests,
-                                                   response_resources):
-                current_resource = descriptor.type(data=resource_data)
-                current_resource.set_sub_resources()  # need to check further
-                resources.append(current_resource)
+            resources.extend(descriptor.type(data=resource_data)
+                             for (descriptor, resource_data) in
+                             zip(server_requests, response_resources))
 
         for index, descriptor in enumerate(descriptors):
             if descriptor.type.DATA_CLASS is None:
                 # it's a service
                 resources.insert(index,
                                  descriptor.type(**descriptor.properties))
-
-        self.all_locked_resources.extend(resources)
 
         return resources
 
@@ -360,9 +356,6 @@ class ClientResourceManager(AbstractClient):
         for resource in resources:
             if resource in self.locked_resources:
                 self.locked_resources.remove(resource)
-
-            if resource in self.all_locked_resources:
-                self.all_locked_resources.remove(resource)
 
     def _find_matching_resources(self, descriptor, resources):
         """Get all similar resources that match the resource descriptor.
@@ -409,7 +402,7 @@ class ClientResourceManager(AbstractClient):
             AttrDict. resources AttrDict {name: BaseResource}.
         """
         retrieved_resources = AttrDict()
-        unused_locked_resources = self.all_locked_resources[:]
+        unused_locked_resources = self.locked_resources[:]
         if len(unused_locked_resources) == 0:
             return retrieved_resources
 

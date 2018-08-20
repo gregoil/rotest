@@ -938,10 +938,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.FREE1_NAME, resource.name))
 
         expected_host = LOCALHOST
-        actual_host = resource.owner
-        self.assertEquals(actual_host, expected_host,
+        self.assertEquals(resource.owner, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, actual_host))
+                          "Got %r" % (expected_host, resource.owner))
 
     def test_locking_other_group_resource(self):
         """Lock another group resource & validate failure.
@@ -984,10 +983,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.NO_GROUP_RESOURCE, resource.name))
 
         expected_host = LOCALHOST
-        actual_host = resource.owner
-        self.assertEquals(actual_host, expected_host,
+        self.assertEquals(resource.owner, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, actual_host))
+                          "Got %r" % (expected_host, resource.owner))
 
     def test_update_fields(self):
         """Test the UpdateFields message.
