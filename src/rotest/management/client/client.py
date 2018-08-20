@@ -99,10 +99,10 @@ class AbstractClient(object):
         if filter_dict is None:
             filter_dict = {}
 
-        desc = ResourceDescriptor(resource_type=model, **filter_dict)
+        descriptor = ResourceDescriptor(resource_type=model, **filter_dict)
 
         request_data = UpdateFieldsParamsModel({
-            "resource_descriptor": desc.encode(),
+            "resource_descriptor": descriptor.encode(),
             "changes": kwargs
         })
         response = self.requester.request(UpdateFields,

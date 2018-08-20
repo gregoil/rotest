@@ -41,20 +41,20 @@ class QueryResources(DjangoRequestView):
             ResourcesReply. a reply containing matching resources.
         """
         try:
-            desc = ResourceDescriptor.decode(request.model.obj)
+            descriptor = ResourceDescriptor.decode(request.model.obj)
 
         except ResourceTypeError as e:
             raise BadRequest(e.message)
 
         # query for resources that are usable and match the descriptors
-        query = (Q(is_usable=True, **desc.properties))
+        query = (Q(is_usable=True, **descriptor.properties))
         query_result = []
         with transaction.atomic():
-            matches = desc.type.objects.select_for_update().filter(query)
+            matches = descriptor.type.objects.select_for_update().filter(query)
 
             if matches.count() == 0:
                 raise BadRequest("No existing resource meets "
-                                 "the requirements: {!r}".format(desc))
+                                 "the requirements: {!r}".format(descriptor))
 
             encoder = JSONParser()
             query_result = [encoder.encode(resource) for resource in matches]
