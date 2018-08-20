@@ -57,6 +57,14 @@ class JSONParser(object):
             self._RESOURCE_TYPE: self._decode_resource,
             self._RESOURCE_DATA_TYPE: self._decode_resource_data
         }
+        self.complex_encoders = {
+            dict: self._encode_dict,
+            list: self._encode_list,
+            tuple: self._encode_list,
+            type: self._encode_class,
+            models.Model: self._encode_resource_data,
+            BaseResource: self._encode_resource
+        }
 
     def encode(self, resource_data):
         """Encode a resource.
@@ -113,34 +121,17 @@ class JSONParser(object):
         if data is None:
             return self._NONE_TYPE
 
-        if isinstance(data, basestring):
-            # Strings are surrounded by "" in order to prevent decoding errors.
-            # Without "", the string '5' will be wrongly decoded as number 5.
-            return data
+        base_types = [basestring, bool, Number]
 
-        if isinstance(data, bool):
-            # objectify identify only lower case (true / false) as bool type
-            return data
+        for encoder_type in base_types:
+            if isinstance(data, encoder_type):
+                return data
 
-        if isinstance(data, Number):
-            return data
+        for encoder_type, encoder_handler in self.complex_encoders.items():
+            if isinstance(data, encoder_type):
+                return encoder_handler(data)
 
-        if isinstance(data, dict):
-            return self._encode_dict(data)
-
-        if isinstance(data, (list, tuple)):
-            return self._encode_list(data)
-
-        if isinstance(data, type):
-            return self._encode_class(data)
-
-        if isinstance(data, models.Model):
-            return self._encode_resource_data(data)
-
-        if isinstance(data, BaseResource):
-            return self._encode_resource(data)
-
-        raise TypeError("Type %r isn't supported by the parser" % type(data))
+        raise TypeError("Type %r isn't supported by the parser", type(data))
 
     def _encode_resource(self, resource):
         """Encode a resource to an json string.
