@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
 from rotest.management.common.utils import LOCALHOST
+from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
@@ -131,7 +132,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                          name=self.FREE1_NAME)
 
         resources = [resource for resource in resources
-                     if resource.owner == host]
+                     if resource.owner.split(HOST_PORT_SEPARATOR)[0] == host]
 
         self.assertEquals(len(resources), 1, "Expected 1 locked resource "
                           "with name %r and owner %r in DB, found %d"
