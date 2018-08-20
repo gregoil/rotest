@@ -21,7 +21,7 @@ class CleanupUser(DjangoRequestView):
     }
 
     def post(self, request, *args, **kwargs):
-        """Cleaning up user's requests and locked resources.
+        """Clean up user's requests and locked resources.
 
         Args:
             username (str): the username to cleanup.
@@ -29,18 +29,18 @@ class CleanupUser(DjangoRequestView):
         Returns:
             SuccessReply. a reply indicating on a successful operation.
         """
-        user_name = get_username(request)
+        username = get_username(request)
         with transaction.atomic():
             resources = ResourceData.objects.select_for_update().filter(
-                owner=user_name)
+                owner=username)
 
             if resources.count() == 0:
                 return Response({
                     "details": "User {} didn't lock any resource".format(
-                        user_name)
+                        username)
                 }, status=httplib.OK)
 
             resources.update(owner="", owner_time=None)
         return Response({
-            "details": "User {} was successfully cleaned".format(user_name)
+            "details": "User {} was successfully cleaned".format(username)
         }, status=httplib.OK)

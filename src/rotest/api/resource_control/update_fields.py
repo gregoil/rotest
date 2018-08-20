@@ -25,10 +25,10 @@ class UpdateFields(DjangoRequestView):
         httplib.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
-        "post": ["Resources"]
+        "put": ["Resources"]
     }
 
-    def post(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         """Update content in the server's DB.
 
         Args:

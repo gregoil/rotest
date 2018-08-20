@@ -10,7 +10,7 @@ from rotest.management import ResourceData
 from rotest.management.common.utils import get_username
 from rotest.common.django_utils.common import get_sub_model
 from rotest.api.common.models import ReleaseResourcesParamsModel
-from rotest.api.common.responses import (BadRequestResponseModel,
+from rotest.api.common.responses import (FailureResponseModel,
                                          SuccessResponse)
 from rotest.management.common.errors import (ResourceAlreadyAvailableError,
                                              ResourceDoesNotExistError,
@@ -33,20 +33,20 @@ class ReleaseResources(DjangoRequestView):
     DEFAULT_MODEL = ReleaseResourcesParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
-        httplib.BAD_REQUEST: BadRequestResponseModel
+        httplib.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
     }
 
-    def _release_resource(self, resource, user_name):
+    def _release_resource(self, resource, username):
         """Mark the resource as free.
 
         For complex resource, marks also its sub-resources as free.
 
         Args:
             resource (ResourceData): resource to release.
-            user_name (str): name of the releasing user.
+            username (str): name of the releasing user.
 
         Raises:
             ResourceReleaseError: if resource is a complex resource and fails.
@@ -57,17 +57,17 @@ class ReleaseResources(DjangoRequestView):
 
         for sub_resource in resource.get_sub_resources():
             try:
-                self._release_resource(sub_resource, user_name)
+                self._release_resource(sub_resource, username)
 
             except ServerError as ex:
                 errors[sub_resource.name] = (ex.ERROR_CODE, str(ex))
 
-        if resource.is_available(user_name):
+        if resource.is_available(username):
             raise ResourceAlreadyAvailableError("Failed releasing resource "
                                                 "%r, it was not locked"
                                                 % resource.name)
 
-        if resource.owner != user_name:
+        if resource.owner != username:
             raise ResourcePermissionError("Failed releasing resource %r, "
                                           "it is locked by %r"
                                           % (resource.name, resource.owner))

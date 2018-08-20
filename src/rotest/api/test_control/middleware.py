@@ -4,7 +4,11 @@ SESSIONS = {}
 
 
 def session_middleware(get_response):
-    """Inject sessions to all test control views."""
+    """Inject sessions to all test control views.
+
+    Args:
+        get_response (func): the response view to add the middleware to.
+    """
     def middleware(request, *args, **kwargs):
         return get_response(request, sessions=SESSIONS, *args, **kwargs)
 

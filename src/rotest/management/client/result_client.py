@@ -11,7 +11,7 @@ from rotest.api.common.models import (StartTestRunParamsModel,
                                       AddTestResultParamsModel,
                                       TestControlOperationParamsModel,
                                       UpdateResourcesParamsModel)
-from rotest.api.common.responses import BadRequestResponseModel
+from rotest.api.common.responses import FailureResponseModel
 from rotest.api.test_control import (StartTestRun,
                                      UpdateRunData,
                                      AddTestResult,
@@ -84,7 +84,7 @@ class ClientResultManager(AbstractClient):
         response = self.requester.request(StartTestRun,
                                           data=request_data,
                                           method="post")
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
         return response.token
@@ -103,7 +103,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
     def add_result(self, test_item, result_code, token, info=None):
@@ -128,7 +128,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
     def start_test(self, test_item, token):
@@ -145,7 +145,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
     def should_skip(self, test_item, token):
@@ -165,7 +165,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
         return response.should_skip
@@ -184,7 +184,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
     def update_resources(self, test_item, token):
@@ -211,7 +211,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
     def start_composite(self, test_item, token):
@@ -228,7 +228,7 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
     def stop_composite(self, test_item, token):
@@ -245,5 +245,5 @@ class ClientResultManager(AbstractClient):
                                           data=request_data,
                                           method="post")
 
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)

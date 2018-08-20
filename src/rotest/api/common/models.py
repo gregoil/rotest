@@ -76,7 +76,7 @@ class TestResultModel(AbstractAPIModel):
 
     Args:
         result_code (number): the end result code of the test.
-        info (str): additional info of th test run.
+        info (str): additional info of the test run.
     """
     PROPERTIES = [
         NumberField(name="result_code", required=True),
@@ -101,8 +101,8 @@ class UpdateResourcesParamsModel(AbstractAPIModel):
     """Update the given resources test data.
 
     Args:
-        descriptors (list): list of ResourceDescriptorModel. the resources
-            to be updated.
+        descriptors (list): list of ResourceDescriptorModel.
+            The resources to be updated.
         test_details (TestControlOperationParamsModel): the details of the
             relevant session datas.
     """
@@ -136,7 +136,7 @@ class TestModel(AbstractAPIModel):
         id (number): the id of the test.
         name (str): the name of the test.
         class (str): the classname of the test.
-        subtests (list): list of TestModel. the subtests of the current test.
+        subtests (list): list of TestModel. Sub-tests of the current test.
     """
     TITLE = "Test"
     PROPERTIES = [

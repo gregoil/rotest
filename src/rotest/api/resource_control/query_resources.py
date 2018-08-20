@@ -7,11 +7,12 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
+from rotest.management.common.errors import ResourceTypeError
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import ResourceDescriptorModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.api.common.responses import (InfluencedResourcesResponseModel,
-                                         BadRequestResponseModel)
+                                         FailureResponseModel)
 
 
 class QueryResources(DjangoRequestView):
@@ -24,7 +25,7 @@ class QueryResources(DjangoRequestView):
     DEFAULT_MODEL = ResourceDescriptorModel
     DEFAULT_RESPONSES = {
         httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: BadRequestResponseModel
+        httplib.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -42,7 +43,7 @@ class QueryResources(DjangoRequestView):
         try:
             desc = ResourceDescriptor.decode(request.model.obj)
 
-        except Exception as e:
+        except ResourceTypeError as e:
             raise BadRequest(e.message)
 
         # query for resources that are usable and match the descriptors

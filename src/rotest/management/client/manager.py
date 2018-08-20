@@ -9,15 +9,19 @@ also for the resources cleanup procedure and release.
 from itertools import izip
 
 import time
+
+import re
 from attrdict import AttrDict
 
+from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
-from rotest.api.common.responses import BadRequestResponseModel
+from rotest.api.common.responses import FailureResponseModel
 from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.common.errors import (ResourceReleaseError,
-                                             ResourceUnavailableError)
+                                             ResourceUnavailableError,
+                                             UnknownUserError)
 from rotest.api.resource_control import (LockResources,
                                          QueryResources,
                                          ReleaseResources)
@@ -299,7 +303,12 @@ class ClientResourceManager(AbstractClient):
                 response = self.requester.request(LockResources,
                                                   data=request_data,
                                                   method="post")
-                if isinstance(response, BadRequestResponseModel):
+                if isinstance(response, FailureResponseModel):
+                    match = re.match(USER_NOT_EXIST.format(".*"),
+                                 response.details)
+                    if match:
+                        raise UnknownUserError(response.details)
+
                     if time.time() - start_time > timeout:
                         raise ResourceUnavailableError(response.details)
 
@@ -345,7 +354,7 @@ class ClientResourceManager(AbstractClient):
                                               data=request_data,
                                               method="post")
 
-            if isinstance(response, BadRequestResponseModel):
+            if isinstance(response, FailureResponseModel):
                 raise ResourceReleaseError(response.errors)
 
         for resource in resources:
@@ -540,7 +549,7 @@ class ClientResourceManager(AbstractClient):
         response = self.requester.request(QueryResources,
                                           data=request_data,
                                           method="post")
-        if isinstance(response, BadRequestResponseModel):
+        if isinstance(response, FailureResponseModel):
             raise Exception(response.details)
 
         return [self.parser.decode(resource)

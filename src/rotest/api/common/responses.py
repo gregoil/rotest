@@ -22,13 +22,13 @@ class TokenResponseModel(AbstractResponse):
 
 
 class CleanupUserResponseModel(AbstractResponse):
-    """Return details about the executed request."""
+    """Returns details about the executed request."""
     PROPERTIES = [
         StringField(name="details", required=True)
     ]
 
 
-class BadRequestResponseModel(AbstractResponse):
+class FailureResponseModel(AbstractResponse):
     "Returns when an invalid request is received."
     PROPERTIES = [
         StringField(name="details", required=True),
@@ -45,7 +45,7 @@ class InfluencedResourcesResponseModel(AbstractResponse):
 
 
 class ShouldSkipResponse(AbstractResponse):
-    """Return if the test should skip and the reason why."""
+    """Returns if the test should be skip and the reason why."""
     PROPERTIES = [
         BoolField(name="should_skip", required=True),
         StringField(name="reason", required=True)

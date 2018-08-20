@@ -32,7 +32,8 @@ from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourcePermissionError,
                                              ResourceUnavailableError,
                                              ResourceDoesNotExistError,
-                                             ResourceAlreadyAvailableError)
+                                             ResourceAlreadyAvailableError,
+                                             UnknownUserError)
 
 from tests.management.resource_base_test import BaseResourceManagementTest
 
@@ -908,7 +909,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
 
-        with self.assertRaises(ResourceUnavailableError):
+        with self.assertRaises(UnknownUserError):
             self.client._lock_resources(descriptors=[descriptor],
                                         timeout=self.LOCK_TIMEOUT)
 
@@ -1006,7 +1007,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                           (resource2.version, 2))
 
         # Change version of a single resource.
-        self.client.update_fields(DemoResource,
+        self.client.update_fields(DemoResourceData,
                                   {'name': 'available_resource1'},
                                   version=3)
 
@@ -1021,7 +1022,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                           (resource2.version, 2))
 
         # Change version of all resources.
-        self.client.update_fields(DemoResource,
+        self.client.update_fields(DemoResourceData,
                                   version=4)
 
         # Validate change.

@@ -17,7 +17,8 @@ class TestUpdateFields(TransactionTestCase):
         """Setup test environment."""
         self.client = Client()
         self.requester = partial(request, client=self.client,
-                                 path="resources/update_fields")
+                                 path="resources/update_fields",
+                                 method="put")
 
     def test_update_all_resources_fields(self):
         """Assert that updating all resources when no filter exists - works."""

@@ -1,4 +1,7 @@
 """Represent a descriptor of a resource."""
+from inspect import isclass
+
+from rotest.management import ResourceData
 from rotest.management.common.errors import ResourceBuildError
 from rotest.management.common.utils import (TYPE_NAME,
                                             PROPERTIES,
@@ -47,7 +50,11 @@ class ResourceDescriptor(object):
         Returns:
             dict. the corresponding dictionary.
         """
-        name = extract_type_path(self.type.DATA_CLASS)
+        if isclass(self.type) and issubclass(self.type, ResourceData):
+            name = extract_type_path(self.type)
+
+        else:
+            name = extract_type_path(self.type.DATA_CLASS)
 
         return {TYPE_NAME: name, PROPERTIES: self.properties}
 
