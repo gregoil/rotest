@@ -92,8 +92,8 @@ class TestControlOperationParamsModel(AbstractAPIModel):
         test_id (number): the relevant test to be influenced by the operation.
     """
     PROPERTIES = [
-        StringField(name="token", required=True),
-        NumberField(name="test_id", required=True)
+        StringField(name="token", required=True, location="query"),
+        NumberField(name="test_id", required=True, location="query")
     ]
 
 
@@ -110,7 +110,8 @@ class UpdateResourcesParamsModel(AbstractAPIModel):
         ArrayField(name="descriptors", items_type=ResourceDescriptorModel,
                    required=True),
         ModelField(name="test_details",
-                   model=TestControlOperationParamsModel, required=True)
+                   model=TestControlOperationParamsModel, required=True,
+                   location="query")
     ]
 
 
@@ -124,7 +125,8 @@ class AddTestResultParamsModel(AbstractAPIModel):
     """
     PROPERTIES = [
         ModelField(name="test_details",
-                   model=TestControlOperationParamsModel, required=True),
+                   model=TestControlOperationParamsModel, required=True,
+                   location="query"),
         ModelField(name="result", model=TestResultModel, required=True)
     ]
 

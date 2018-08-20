@@ -2,11 +2,12 @@
 import httplib
 
 from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.responses import SuccessResponse
 from rotest.api.common.models import AddTestResultParamsModel
 from rotest.api.test_control.middleware import session_middleware
+from rotest.api.common.responses import SuccessResponse, FailureResponseModel
 
 
 class AddTestResult(DjangoRequestView):
@@ -21,6 +22,7 @@ class AddTestResult(DjangoRequestView):
     DEFAULT_MODEL = AddTestResultParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
+        httplib.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -36,8 +38,14 @@ class AddTestResult(DjangoRequestView):
             info (str): additional info (traceback / end reason etc).
         """
         session_token = request.model.test_details.token
-        session_data = sessions[session_token]
-        test_data = session_data.all_tests[request.model.test_details.test_id]
+        try:
+            session_data = sessions[session_token]
+            test_data = \
+                session_data.all_tests[request.model.test_details.test_id]
+
+        except KeyError:
+            raise BadRequest("Invalid token/test_id provided!")
+
         test_data.update_result(request.model.result.result_code,
                                 request.model.result.info)
         test_data.save()

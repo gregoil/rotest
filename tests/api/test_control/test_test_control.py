@@ -1,4 +1,5 @@
 """Basic unittests for the server test control operations."""
+# pylint: disable=protected-access
 import httplib
 from functools import partial
 
@@ -15,8 +16,6 @@ from tests.core.utils import (MockSuite1,
                               MockCase,
                               MockCase1, MockCase2, SuccessCase)
 
-
-# pylint: disable=protected-access
 
 class TestControl(TransactionTestCase):
     """Very basic unittests for asserting server responses.
@@ -69,7 +68,6 @@ class TestControl(TransactionTestCase):
                 "run_data": {
                     "run_name": "name2"
                 }
-
             })
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
@@ -77,11 +75,11 @@ class TestControl(TransactionTestCase):
         """Assert that the request has the right server response."""
         response, _ = self.requester(
             path="tests/update_resources",
+            params={
+                "token": self.token,
+                "test_id": self.test_case.identifier
+            },
             json_data={
-                "test_details": {
-                    "token": self.token,
-                    "test_id": self.test_case.identifier
-                },
                 "descriptors": [{
                     "type": "rotest.management.models.ut_models."
                             "DemoResourceData",
@@ -95,11 +93,11 @@ class TestControl(TransactionTestCase):
     def test_should_skip(self):
         """Assert that the request has the right server response."""
         response, content = self.requester(path="tests/should_skip",
-                                           json_data={
+                                           params={
                                                "token": self.token,
                                                "test_id":
                                                    self.test_case.identifier
-                                           })
+                                           }, method="get")
         self.assertEqual(response.status_code, httplib.OK)
         self.assertFalse(content.should_skip)
 
@@ -107,11 +105,11 @@ class TestControl(TransactionTestCase):
         """Assert that the request has the right server response."""
         response, _ = self.requester(
             path="tests/add_test_result",
+            params={
+                "token": self.token,
+                "test_id": self.test_case.identifier
+            },
             json_data={
-                "test_details": {
-                    "token": self.token,
-                    "test_id": self.test_case.identifier
-                },
                 "result": {
                     "result_code": TestOutcome.FAILED,
                     "info": "This test failed!"
@@ -122,15 +120,16 @@ class TestControl(TransactionTestCase):
     def test_start_test_stop_test(self):
         """Assert that the request has the right server response."""
         response, _ = self.requester(path="tests/start_test",
-                                     json_data={
+                                     params={
                                          "token": self.token,
                                          "test_id":
                                              self.test_case.identifier
                                      })
+
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
         response, _ = self.requester(path="tests/stop_test",
-                                     json_data={
+                                     params={
                                          "token": self.token,
                                          "test_id":
                                              self.test_case.identifier
@@ -140,7 +139,7 @@ class TestControl(TransactionTestCase):
     def test_start_test_stop_composite(self):
         """Assert that the request has the right server response."""
         response, _ = self.requester(path="tests/start_composite",
-                                     json_data={
+                                     params={
                                          "token": self.token,
                                          "test_id":
                                              self.test_case.identifier
@@ -148,7 +147,7 @@ class TestControl(TransactionTestCase):
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
         response, _ = self.requester(path="tests/stop_composite",
-                                     json_data={
+                                     params={
                                          "token": self.token,
                                          "test_id":
                                              self.test_case.identifier

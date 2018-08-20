@@ -81,6 +81,7 @@ class ClientResultManager(AbstractClient):
             "tests": tests_tree_dict,
             "run_data": run_data
         })
+
         response = self.requester.request(StartTestRun,
                                           data=request_data,
                                           method="post")
@@ -163,7 +164,7 @@ class ClientResultManager(AbstractClient):
         })
         response = self.requester.request(ShouldSkip,
                                           data=request_data,
-                                          method="post")
+                                          method="get")
 
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)

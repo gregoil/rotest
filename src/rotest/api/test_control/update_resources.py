@@ -2,12 +2,13 @@
 import httplib
 
 from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.api.common.responses import SuccessResponse
 from rotest.api.common.models import UpdateResourcesParamsModel
 from rotest.api.test_control.middleware import session_middleware
 from rotest.management.common.resource_descriptor import ResourceDescriptor
+from rotest.api.common.responses import SuccessResponse, FailureResponseModel
 
 
 class UpdateResources(DjangoRequestView):
@@ -22,6 +23,7 @@ class UpdateResources(DjangoRequestView):
     DEFAULT_MODEL = UpdateResourcesParamsModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
+        httplib.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -36,8 +38,14 @@ class UpdateResources(DjangoRequestView):
             descriptors (list): the resources the test used.
         """
         session_token = request.model.test_details.token
-        session_data = sessions[session_token]
-        test_data = session_data.all_tests[request.model.test_details.test_id]
+        try:
+            session_data = sessions[session_token]
+            test_data = \
+                session_data.all_tests[request.model.test_details.test_id]
+
+        except KeyError:
+            raise BadRequest("Invalid token/test_id provided!")
+
         test_data.resources.clear()
 
         for resource_descriptor in request.model.descriptors:

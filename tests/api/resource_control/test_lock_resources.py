@@ -144,10 +144,8 @@ class TestLockResourcesInvalid(TransactionTestCase):
     def test_invalid_input(self):
         """Assert invalid request."""
         # empty data
-        response, content = self.requester(json_data={})
+        response, _ = self.requester(json_data={})
         self.assertEqual(response.status_code, httplib.INTERNAL_SERVER_ERROR)
-        # descriptors and timeout properties are expected and missing
-        self.assertEqual(content.details, "Invalid number of properties")
 
     def test_no_user_in_db(self):
         """Assert locking user not in db."""
