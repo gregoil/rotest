@@ -313,7 +313,7 @@ class ClientResourceManager(AbstractClient):
             resources.extend(descriptor.type(data=resource_data)
                              for (descriptor, resource_data) in
                              zip(server_requests, response_resources))
-            
+
         for index, descriptor in enumerate(descriptors):
             if descriptor.type.DATA_CLASS is None:
                 # it's a service

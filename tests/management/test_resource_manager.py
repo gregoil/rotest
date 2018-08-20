@@ -19,7 +19,6 @@ from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
 from rotest.management.common.utils import LOCALHOST
-from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
@@ -132,7 +131,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                          name=self.FREE1_NAME)
 
         resources = [resource for resource in resources
-                     if resource.owner.split(HOST_PORT_SEPARATOR)[0] == host]
+                     if resource.owner == host]
 
         self.assertEquals(len(resources), 1, "Expected 1 locked resource "
                           "with name %r and owner %r in DB, found %d"
@@ -938,10 +937,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.FREE1_NAME, resource.name))
 
         expected_host = LOCALHOST
-        actual_host = resource.owner
-        self.assertEquals(actual_host, expected_host,
+        self.assertEquals(resource.owner, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, actual_host))
+                          "Got %r" % (expected_host, resource.owner))
 
     def test_locking_other_group_resource(self):
         """Lock another group resource & validate failure.
@@ -984,10 +982,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.NO_GROUP_RESOURCE, resource.name))
 
         expected_host = LOCALHOST
-        actual_host = resource.owner
-        self.assertEquals(actual_host, expected_host,
+        self.assertEquals(resource.owner, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, actual_host))
+                          "Got %r" % (expected_host, resource.owner))
 
     def test_update_fields(self):
         """Test the UpdateFields message.
