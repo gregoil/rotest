@@ -11,6 +11,7 @@ from rotest.common.utils import get_work_dir
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.models.case_data import CaseData
 from rotest.core.abstract_test import AbstractTest, request
+from rotest.common.log import get_test_logger, get_tree_path
 
 
 assert request
@@ -73,6 +74,7 @@ class TestCase(AbstractTest):
         core_log.debug("Creating database entry for %r test-case", name)
         self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = CaseData(name=name, run_data=run_data)
+        self.logger = get_test_logger(get_tree_path(self), self.work_dir)
 
         core_log.debug("Initialized %r test-case successfully", name)
 
