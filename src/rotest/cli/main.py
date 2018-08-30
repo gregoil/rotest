@@ -27,11 +27,11 @@ def start_server():
 
 
 def main():
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "shell":
-            shell()
+    if len(sys.argv) > 1 and sys.argv[1] == "shell":
+        shell()
 
-        elif sys.argv[1] == "server":
-            start_server()
+    elif len(sys.argv) > 1 and sys.argv[1] == "server":
+        start_server()
+
     else:
         run()
