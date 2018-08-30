@@ -103,14 +103,14 @@ that the client should contact with, use the following methods:
 Port
 ----
 
-.. envvar:: ROTEST_SERVER_PORT
+.. envvar:: DJANGO_SERVER_PORT
 
-    Port on the server's side, to be used for communication with clients.
+    Port for the Django server, to be used for communication with clients.
 
-To define the relevant server's port the will be opened, and the port clients
+To define the relevant server's port that will be opened, and the port clients
 will communicate with, use the following methods:
 
-* Define :envvar:`ROTEST_SERVER_PORT` with the desired port.
+* Define :envvar:`DJANGO_SERVER_PORT` with the desired port.
 
 * Define ``port`` in the configuration file:
 
@@ -119,7 +119,7 @@ will communicate with, use the following methods:
       rotest:
           port: 8585
 
-* Use the default, which is ``7777``.
+* Use the default, which is ``8000``.
 
 Resource Request Timeout
 ------------------------
