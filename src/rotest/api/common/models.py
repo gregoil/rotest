@@ -2,9 +2,10 @@
 from swaggapi.api.builder.common.model import AbstractAPIModel
 from swaggapi.api.builder.common.fields import (NumberField,
                                                 StringField,
+                                                DynamicType,
                                                 ArrayField,
                                                 ModelField,
-                                                DynamicType, BoolField)
+                                                BoolField)
 
 
 class GenericModel(AbstractAPIModel):

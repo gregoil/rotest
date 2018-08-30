@@ -22,14 +22,14 @@ class TokenResponseModel(AbstractResponse):
 
 
 class CleanupUserResponseModel(AbstractResponse):
-    """Returns details about the executed request."""
+    """Returns after a cleanup user resources request."""
     PROPERTIES = [
         StringField(name="details", required=True)
     ]
 
 
 class FailureResponseModel(AbstractResponse):
-    "Returns when an invalid request is received."
+    """Returns when an invalid request is received."""
     PROPERTIES = [
         StringField(name="details", required=True),
         ModelField(name="errors", model=GenericModel)
@@ -37,7 +37,7 @@ class FailureResponseModel(AbstractResponse):
 
 
 class InfluencedResourcesResponseModel(AbstractResponse):
-    "Returns an array of the resources influenced by the action."
+    """Returns an array of the resources influenced by the action."""
     PROPERTIES = [
         ArrayField(name="resource_descriptors", items_type=GenericModel,
                    required=True)
