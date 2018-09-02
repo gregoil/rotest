@@ -140,7 +140,7 @@ class ClientResourceManager(AbstractClient):
         """
         sub_threads = []
         for sub_resource in resource.get_sub_resources():
-            if sub_resource.INITIALIZE_IN_THREAD:
+            if resource.PARALLEL_INITIALIZATION:
                 sub_resource.logger.debug("Initializing %r in a new thread",
                                           sub_resource.name)
 

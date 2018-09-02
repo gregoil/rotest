@@ -1,6 +1,7 @@
 """Resource management tests.
 
-We test resource management behavior under different scenarios."""
+We test resource management behavior under different scenarios.
+"""
 # pylint: disable=too-many-lines
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
 import time
@@ -1256,6 +1257,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEqual(len(ThreadedResource.THREADS), 2,
                          "%d threads were created instead of 2" %
                          len(ThreadedResource.THREADS))
+
         self.assertEqual(ThreadedResource.MAX_THREADS, 3,
                          "%d threads ran in parallel instead of 3" %
                          ThreadedResource.MAX_THREADS)

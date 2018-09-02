@@ -52,8 +52,7 @@ class BaseResourceManagementTest(TransactionTestCase):
 
 
 class ThreadedResource(DemoResource):
-    INITIALIZE_IN_THREAD = True
-
+    """A UT resource that initializes in another thread."""
     THREADS = []
     MAX_THREADS = 0
 
@@ -69,14 +68,16 @@ class ThreadedResource(DemoResource):
 
 
 class ThreadedParent(DemoComplexResource):
-        """Fake complex resource class, used in multithreaded resource tests.
+    """Fake complex resource class, used in multithreaded resource tests.
 
-        Attributes:
-            demo1 (ThreadedResource): sub resource pointer.
-            demo2 (ThreadedResource): sub resource pointer.
-        """
-        def create_sub_resources(self):
-            """Return an iterable to the complex resource's sub-resources."""
-            self.demo1 = ThreadedResource(data=self.data.demo1)
-            self.demo2 = ThreadedResource(data=self.data.demo2)
-            return (self.demo1, self.demo2)
+    Attributes:
+        demo1 (ThreadedResource): sub resource pointer.
+        demo2 (ThreadedResource): sub resource pointer.
+    """
+    PARALLEL_INITIALIZATION = True
+
+    def create_sub_resources(self):
+        """Return an iterable to the complex resource's sub-resources."""
+        self.demo1 = ThreadedResource(data=self.data.demo1)
+        self.demo2 = ThreadedResource(data=self.data.demo2)
+        return (self.demo1, self.demo2)
