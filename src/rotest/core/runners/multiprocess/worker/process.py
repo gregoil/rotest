@@ -136,9 +136,10 @@ class WorkerProcess(Process):
                 core_log.debug('Worker %r done with %r',
                                self.pid, test.data.name)
 
-            core_log.debug('Worker %r finished working', self.pid)
-            runner.queue_handler.finish_run()
-
         finally:
             if self.resource_manager is not None:
                 runner.resource_manager.disconnect()
+
+            core_log.debug('Worker %r finished working', self.pid)
+            runner.queue_handler.finish_run()
+            
