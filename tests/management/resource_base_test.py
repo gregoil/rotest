@@ -9,8 +9,9 @@ from django.test.testcases import TransactionTestCase
 from rotest.core.result.result import Result
 from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.management.server.main import ResourceManagerServer
-from rotest.management.models.ut_models import (DemoResource,
-                                                DemoComplexResource)
+from rotest.management.base_resource import BaseResource
+from rotest.management.models.ut_models import (DemoResourceData,
+                                                DemoComplexResourceData)
 
 
 class BaseResourceManagementTest(TransactionTestCase):
@@ -52,8 +53,9 @@ class BaseResourceManagementTest(TransactionTestCase):
         return result
 
 
-class ThreadedResource(DemoResource):
+class ThreadedResource(BaseResource):
     """A UT resource that initializes in another thread."""
+    DATA_CLASS = DemoResourceData
     THREADS = []
 
     def validate(self):
@@ -62,20 +64,15 @@ class ThreadedResource(DemoResource):
         while len(self.THREADS) <= 1:
             time.sleep(0.1)
 
-    def initialize(self):
-        pass
 
-    def finalize(self):
-        pass
-
-
-class ThreadedParent(DemoComplexResource):
+class ThreadedParent(BaseResource):
     """Fake complex resource class, used in multithreaded resource tests.
 
     Attributes:
         demo1 (ThreadedResource): sub resource pointer.
         demo2 (ThreadedResource): sub resource pointer.
     """
+    DATA_CLASS = DemoComplexResourceData
     PARALLEL_INITIALIZATION = True
 
     def create_sub_resources(self):
@@ -83,12 +80,3 @@ class ThreadedParent(DemoComplexResource):
         self.demo1 = ThreadedResource(data=self.data.demo1)
         self.demo2 = ThreadedResource(data=self.data.demo2)
         return (self.demo1, self.demo2)
-
-    def initialize(self):
-        pass
-
-    def validate(self):
-        pass
-
-    def finalize(self):
-        pass
