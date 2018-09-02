@@ -65,7 +65,8 @@ class ThreadedResource(DemoResource):
 
     def initialize(self):
         """Mock initialize, update max number of threads running together."""
-        self.MAX_THREADS = max(self.MAX_THREADS, active_count())
+        ThreadedResource.MAX_THREADS = max(ThreadedResource.MAX_THREADS,
+                                           active_count())
 
     def finalize(self):
         pass
