@@ -86,5 +86,11 @@ class ThreadedParent(DemoComplexResource):
         self.demo2 = ThreadedResource(data=self.data.demo2)
         return (self.demo1, self.demo2)
 
+    def initialize(self):
+        pass
+
+    def validate(self):
+        pass
+
     def finalize(self):
         pass
