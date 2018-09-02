@@ -2,7 +2,7 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=too-many-public-methods,invalid-name
 import time
-from threading import Thread, current_thread, active_count
+from threading import Thread, current_thread
 
 from django.test.testcases import TransactionTestCase
 
@@ -55,18 +55,15 @@ class BaseResourceManagementTest(TransactionTestCase):
 class ThreadedResource(DemoResource):
     """A UT resource that initializes in another thread."""
     THREADS = []
-    MAX_THREADS = 0
 
     def validate(self):
         """Mock validate, register the thread and wait for another."""
         self.THREADS.append(current_thread().ident)
-        while len(self.THREADS) == 1:
+        while len(self.THREADS) <= 1:
             time.sleep(0.1)
 
     def initialize(self):
-        """Mock initialize, update max number of threads running together."""
-        ThreadedResource.MAX_THREADS = max(ThreadedResource.MAX_THREADS,
-                                           active_count())
+        pass
 
     def finalize(self):
         pass
