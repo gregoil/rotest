@@ -52,8 +52,8 @@ class BaseResource(object):
 
     Attributes:
         DATA_CLASS (class): class of the resource's global data container.
-        PARALLEL_INITIALIZATION (bool): whether or not to validate and initialize
-            this resource in a sub-thread.
+        PARALLEL_INITIALIZATION (bool): whether or not to validate and
+            initialize sub-resources in other threads.
         logger (logger): resource's logger instance.
         data (ResourceData): assigned data instance.
         config (AttrDict): run configuration.

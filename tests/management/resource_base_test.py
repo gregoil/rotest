@@ -1,4 +1,5 @@
 """Abstract TestCase for all resources related tests."""
+# pylint: disable=attribute-defined-outside-init
 # pylint: disable=too-many-public-methods,invalid-name
 import time
 from threading import Thread, current_thread, active_count
@@ -65,6 +66,9 @@ class ThreadedResource(DemoResource):
     def initialize(self):
         """Mock initialize, update max number of threads running together."""
         self.MAX_THREADS = max(self.MAX_THREADS, active_count())
+
+    def finalize(self):
+        pass
 
 
 class ThreadedParent(DemoComplexResource):
