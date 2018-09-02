@@ -62,6 +62,7 @@ class BaseResource(object):
     __metaclass__ = ConvertToKwargsMeta
 
     DATA_CLASS = None
+    INITIALIZE_IN_THREAD = False
 
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
