@@ -112,7 +112,7 @@ Pay attention to the following:
   address, or a DNS of the server. For now, both the client and server are
   running on the same machine., but it doesn't have to be that way.
 * The `api_base_url` key is the end-point url of the rotest urls file,
-  it must be configured for the resource manager to work - default is "rotest/api/".
+  it must be configured for the resource management  to work - default is "rotest/api/".
 * The `django_settings` key is directing to the settings of the Django app,
   that defines all relevant Django configuration (DB configuration, installed
   Django applications, and so on).

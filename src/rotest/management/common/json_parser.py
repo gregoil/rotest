@@ -19,7 +19,7 @@ from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
 class JSONParser(object):
     """json messages parser.
 
-    This message parser allow to encode & decode resource management messages.
+    This message parser allows to encode & decode resource management messages.
     Each message should be composed from basic-types (such as numbers, strings
     and booleans), lists, dictionaries, and resources (which derived from
     :class:`BaseResource`).
@@ -27,10 +27,6 @@ class JSONParser(object):
     Any other object type may cause an error during the encoding process.
     The result of successful encoding process is an json string, represent the
     encoded message.
-
-    For instance, the inner message object:
-        [False, {'key1': 5, 'key2': 'google'}, [1, 2, 3]]
-    will be encoded as:
 
     When decoding data (an json string), the parser validates it using the
     parser's scheme. Failure in the validation case will cause a raise of
@@ -79,7 +75,6 @@ class JSONParser(object):
             TypeError: given 'resource' is not of type 'ResourceData'.
             ParsingError: encoding failure.
         """
-
         return self._encode(resource_data)
 
     def decode(self, data):
@@ -95,19 +90,14 @@ class JSONParser(object):
         Raises:
             ParsingError: decoding failure.
         """
-        # try:
         return self._decode(data)
-        #
-        # except Exception as err:
-        #     raise ParsingError("Decoding data %r has failed. Reason: %s." %
-        #                        (data, err))
 
     def _encode(self, data):
         """Encode the given data according to its type.
 
         Warning:
             Do not change the order of the type validation! Some types matches
-            more than one type(e.g: bool is also a Number).
+            more than one type (e.g: bool is also a Number).
 
         Args:
             data (object): an object to encode.
@@ -236,7 +226,6 @@ class JSONParser(object):
         Raises:
             ParsingError: failed to decode the element.
         """
-
         if not isinstance(element, dict) or \
                         element.keys()[0] not in self.complex_decoders:
             value = element
@@ -349,7 +338,7 @@ class JSONParser(object):
             dict_element (dict): an json element that represent a dict.
 
         Returns:
-            dict. decoded dictionary.
+            dict. decoded dictionary.`
         """
         dictionary = {}
         for key, value in dict_element.items():

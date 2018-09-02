@@ -27,7 +27,6 @@ class TestResultManagement(BaseResourceManagementTest):
         super(TestResultManagement, self).setUp()
 
         self.client = ClientResultManager(LOCALHOST)
-        self.client.connect()
 
     def tearDown(self):
         """Disconnect the client from the server."""

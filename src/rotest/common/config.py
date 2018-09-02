@@ -211,7 +211,7 @@ CONFIGURATION_SCHEMA = {
         config_file_options=["host"],
         default_value="localhost"),
     "port": Option(
-        environment_variables=["DJANGO_SERVER_PORT"],
+        environment_variables=["ROTEST_SERVER_PORT"],
         config_file_options=["port"],
         default_value="8000"),
     "api_base_url": Option(

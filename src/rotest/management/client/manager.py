@@ -3,8 +3,8 @@
 Responsible for locking resources and preparing them for work,
 also for the resources cleanup procedure and release.
 """
-# pylint: disable=invalid-name,too-many-instance-attributes, too-many-branches
-# pylint: disable=too-few-public-methods,too-many-arguments, too-many-locals
+# pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches
+# pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from itertools import izip
 
@@ -113,8 +113,7 @@ class ClientResourceManager(AbstractClient):
         self._release_locked_resources()
         self.requester.request(CleanupUser, method="post",
                                data=GenericModel({}))
-        if self.is_connected():
-            super(ClientResourceManager, self).disconnect()
+        super(ClientResourceManager, self).disconnect()
 
     def _initialize_resource(self, resource, skip_init=False):
         """Try to initialize the resource.
@@ -266,6 +265,49 @@ class ClientResourceManager(AbstractClient):
             raise RuntimeError("Releasing resources has failed. "
                                "Reasons: %s" % "\n".join(exceptions))
 
+    def _wait_until_resources_are_locked(self, descriptors, timeout):
+        """Wait until the given resources are locked.
+
+        Args:
+            descriptors (list): list of ResourceDescriptor objects,
+                that represent the wanted resources.
+            timeout (number): time to wait for the resources to be locked.
+
+        Returns:
+            InfluencedResourcesResponseModel. the response model received from
+                the server.
+
+        Raises:
+            UnknownUserError. if the user requested the lock is unknown.
+            ResourceUnavailableError. if timeout is reached and no resource
+                could be locked.
+        """
+        encoded_requests = [descriptor.encode() for descriptor in
+                            descriptors]
+
+        request_data = LockResourcesParamsModel({
+            "descriptors": encoded_requests
+        })
+
+        start_time = time.time()
+        while True:
+            response = self.requester.request(LockResources,
+                                              data=request_data,
+                                              method="post")
+            if isinstance(response, FailureResponseModel):
+                match = re.match(USER_NOT_EXIST.format(".*"),
+                                 response.details)
+                if match:
+                    raise UnknownUserError(response.details)
+
+                if time.time() - start_time > timeout:
+                    raise ResourceUnavailableError(response.details)
+
+            else:
+                break
+
+        return response
+
     def _lock_resources(self, descriptors, timeout=None):
         """Send LockResources request to resource manager server.
 
@@ -289,31 +331,8 @@ class ClientResourceManager(AbstractClient):
                            if descriptor.type.DATA_CLASS is not None]
 
         if len(server_requests) > 0:
-            if not self.is_connected():
-                self.connect()
-
-            encoded_requests = [descriptor.encode() for descriptor in
-                                server_requests]
-
-            request_data = LockResourcesParamsModel({
-                "descriptors": encoded_requests
-            })
-            start_time = time.time()
-            while True:
-                response = self.requester.request(LockResources,
-                                                  data=request_data,
-                                                  method="post")
-                if isinstance(response, FailureResponseModel):
-                    match = re.match(USER_NOT_EXIST.format(".*"),
-                                 response.details)
-                    if match:
-                        raise UnknownUserError(response.details)
-
-                    if time.time() - start_time > timeout:
-                        raise ResourceUnavailableError(response.details)
-
-                else:
-                    break
+            response = \
+                self._wait_until_resources_are_locked(server_requests, timeout)
 
             response_resources = \
                 [self.parser.decode(resource)

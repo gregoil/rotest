@@ -103,14 +103,14 @@ that the client should contact with, use the following methods:
 Port
 ----
 
-.. envvar:: DJANGO_SERVER_PORT
+.. envvar:: ROTEST_SERVER_PORT
 
     Port for the Django server, to be used for communication with clients.
 
 To define the relevant server's port that will be opened, and the port clients
 will communicate with, use the following methods:
 
-* Define :envvar:`DJANGO_SERVER_PORT` with the desired port.
+* Define :envvar:`ROTEST_SERVER_PORT` with the desired port.
 
 * Define ``port`` in the configuration file:
 

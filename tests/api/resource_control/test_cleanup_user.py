@@ -20,7 +20,7 @@ class TestCleanupUser(TransactionTestCase):
 
     def test_no_resources_locked(self):
         """Assert response - cleanup when user didn't lock anything."""
-        response, content = self.requester()
+        response, _ = self.requester()
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
     def test_release_owner_complex_resource(self):

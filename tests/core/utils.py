@@ -177,28 +177,9 @@ class BasicRotestUnitTest(TransactionTestCase):
 
 class MockResourceClient(ClientResourceManager):
     """Mock resource client."""
-
-    def __init__(self, *args, **kwargs):
-        """Suppress connecting/disconnecting to/from the server."""
-        super(MockResourceClient, self).__init__(*args, **kwargs)
-        self.connected = False
-
-    def is_connected(self):
-        """Check if the client is connected or not.
-
-        Returns:
-            bool. True if the client is connected, False otherwise.
-        """
-        return self.connected
-
-    def connect(self, *args, **kwargs):
-        """Suppressed connect method."""
-        self.connected = True
-
     def disconnect(self, *args, **kwargs):
         """Suppressed disconnect method."""
         self._release_locked_resources()
-        self.connected = False
 
     def _lock_resources(self, descriptors, timeout=None):
         """Return resources from the DB according to the descriptors.
@@ -231,9 +212,6 @@ class MockResourceClient(ClientResourceManager):
                 resource = descriptor.type(**descriptor.properties)
 
             else:
-                if not self.is_connected():
-                    self.connect()
-
                 try:
                     available_resources = data_type.objects.filter(
                         is_usable=True, **descriptor.properties)

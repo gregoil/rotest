@@ -140,7 +140,5 @@ class WorkerProcess(Process):
             runner.queue_handler.finish_run()
 
         finally:
-            if (self.resource_manager is not None and
-                    self.resource_manager.is_connected()):
-
+            if self.resource_manager is not None:
                 runner.resource_manager.disconnect()

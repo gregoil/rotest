@@ -21,13 +21,6 @@ class TokenResponseModel(AbstractResponse):
     ]
 
 
-class CleanupUserResponseModel(AbstractResponse):
-    """Returns after a cleanup user resources request, describes ."""
-    PROPERTIES = [
-        StringField(name="details", required=True)
-    ]
-
-
 class FailureResponseModel(AbstractResponse):
     """Returns when an invalid request is received."""
     PROPERTIES = [
