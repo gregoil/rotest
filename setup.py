@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "3.3.1"
+__version__ = "3.3.2"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -40,11 +40,9 @@ requirements = [
     'colorama',
     'termcolor',
     'jsonschema',
-    'basicstruct'
+    'basicstruct',
+    'python-daemon;platform_system!="Windows"'
 ]
-
-if not sys.platform.startswith("win32"):
-    requirements.append('python-daemon')
 
 setup(
     name='rotest',
