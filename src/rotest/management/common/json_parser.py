@@ -39,7 +39,6 @@ class JSONParser(object):
     _NONE_TYPE = 'None'
     _LIST_TYPE = 'List'
     _CLASS_TYPE = 'Class'
-    _LIST_ITEM_TYPE = 'Item'
     _DICT_TYPE = 'Dictionary'
     _RESOURCE_TYPE = 'Resource'
     _RESOURCE_DATA_TYPE = 'ResourceData'
@@ -209,9 +208,9 @@ class JSONParser(object):
             dict. json element represent a list.
         """
         list_data = \
-            [{self._LIST_ITEM_TYPE: self._encode(item)} for item in list_data]
+            [self._encode(item) for item in list_data]
         return {
-            self._DICT_TYPE: list_data
+            self._LIST_TYPE: list_data
         }
 
     def _decode(self, element):
