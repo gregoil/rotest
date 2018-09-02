@@ -52,6 +52,8 @@ class BaseResource(object):
 
     Attributes:
         DATA_CLASS (class): class of the resource's global data container.
+        INITIALIZE_IN_THREAD (bool): whether or not to validate and initialize
+            this resource in a sub-thread.
         logger (logger): resource's logger instance.
         data (ResourceData): assigned data instance.
         config (AttrDict): run configuration.

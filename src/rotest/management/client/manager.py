@@ -141,6 +141,9 @@ class ClientResourceManager(AbstractClient):
         sub_threads = []
         for sub_resource in resource.get_sub_resources():
             if sub_resource.INITIALIZE_IN_THREAD:
+                sub_resource.logger.debug("Initializing %r in a new thread",
+                                          sub_resource.name)
+
                 initialize_thread = Thread(target=self._validate_resource,
                                            args=[sub_resource])
                 initialize_thread.start()

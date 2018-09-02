@@ -1,13 +1,15 @@
 """Abstract TestCase for all resources related tests."""
 # pylint: disable=too-many-public-methods,invalid-name
 import time
-from threading import Thread
+from threading import Thread, current_thread, active_count
 
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.result.result import Result
 from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.management.server.main import ResourceManagerServer
+from rotest.management.models.ut_models import (DemoResource,
+                                                DemoComplexResource)
 
 
 class BaseResourceManagementTest(TransactionTestCase):
@@ -47,3 +49,34 @@ class BaseResourceManagementTest(TransactionTestCase):
         result = Result(outputs=[DBHandler.NAME], main_test=main_test)
         result.startTestRun()
         return result
+
+
+class ThreadedResource(DemoResource):
+    INITIALIZE_IN_THREAD = True
+
+    THREADS = []
+    MAX_THREADS = 0
+
+    def validate(self):
+        """Mock validate, register the thread and wait for another."""
+        self.THREADS.append(current_thread().ident)
+        while len(self.THREADS) == 1:
+            time.sleep(0.1)
+
+    def initialize(self):
+        """Mock initialize, update max number of threads running together."""
+        self.MAX_THREADS = max(self.MAX_THREADS, active_count())
+
+
+class ThreadedParent(DemoComplexResource):
+        """Fake complex resource class, used in multithreaded resource tests.
+
+        Attributes:
+            demo1 (ThreadedResource): sub resource pointer.
+            demo2 (ThreadedResource): sub resource pointer.
+        """
+        def create_sub_resources(self):
+            """Return an iterable to the complex resource's sub-resources."""
+            self.demo1 = ThreadedResource(data=self.data.demo1)
+            self.demo2 = ThreadedResource(data=self.data.demo2)
+            return (self.demo1, self.demo2)
