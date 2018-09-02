@@ -21,9 +21,7 @@ class TestCleanupUser(TransactionTestCase):
     def test_no_resources_locked(self):
         """Assert response - cleanup when user didn't lock anything."""
         response, content = self.requester()
-        self.assertEqual(response.status_code, httplib.OK)
-        self.assertEqual(content.details,
-                         "User localhost didn't lock any resource")
+        self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
     def test_release_owner_complex_resource(self):
         """Assert response - cleanup of complex resource."""
@@ -38,7 +36,7 @@ class TestCleanupUser(TransactionTestCase):
         resource.save()
         sub_resource.save()
         response, _ = self.requester()
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
         resources = DemoComplexResourceData.objects.filter(
             name='complex_resource1')

@@ -76,6 +76,24 @@ You'll end up with the following tree:
         ├── urls.py
         └── wsgi.py
 
+Now add an end-point for rotest urls in the :file:`urls.py` file:
+
+.. code-block:: python
+
+    from django.contrib import admin
+    from django.conf.urls import include, url
+
+    admin.autodiscover()
+    urlpatterns = [
+        url(r'^rotest/api/', include("rotest.api.urls")),
+        url(r'^admin/', include(admin.site.urls)),
+    ]
+
+.. note::
+
+    Pay attention to the base url given - `rotest/api/` is the default end-point,
+    if it is different make sure to update it in the :file:`rotest.yml` file.
+
 Inside it, create a file in the root directory of the project called
 :file:`rotest.yml`, that includes all configuration of Rotest:
 
@@ -83,6 +101,7 @@ Inside it, create a file in the root directory of the project called
 
     rotest:
         host: localhost
+        api_base_url: rotest/api/
         django_settings: rotest_demo.settings
 
 Pay attention to the following:
@@ -92,6 +111,8 @@ Pay attention to the following:
 * The `host` key is how the client should contact the server. It's an IP
   address, or a DNS of the server. For now, both the client and server are
   running on the same machine., but it doesn't have to be that way.
+* The `api_base_url` key is the end-point url of the rotest urls file,
+  it must be configured for the resource manager to work - default is "rotest/api/".
 * The `django_settings` key is directing to the settings of the Django app,
   that defines all relevant Django configuration (DB configuration, installed
   Django applications, and so on).

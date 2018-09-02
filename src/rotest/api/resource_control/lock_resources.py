@@ -47,9 +47,6 @@ class LockResources(DjangoRequestView):
         For complex resource, marks also its sub-resources as locked by the
         given user.
 
-        Note:
-            The given resource *must* be available.
-
         Args:
             resource (ResourceData): resource to lock.
             user_name (str): name of the locking user.

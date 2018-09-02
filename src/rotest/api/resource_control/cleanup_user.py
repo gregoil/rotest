@@ -6,15 +6,15 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management import ResourceData
+from rotest.api.common.responses import SuccessResponse
 from rotest.management.common.utils import get_username
-from rotest.api.common.responses import CleanupUserResponseModel
 
 
 class CleanupUser(DjangoRequestView):
     """Cleaning up user's requests and locked resources."""
     URI = "resources/cleanup_user"
     DEFAULT_RESPONSES = {
-        httplib.OK: CleanupUserResponseModel,
+        httplib.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "post": ["Resources"]
@@ -34,13 +34,8 @@ class CleanupUser(DjangoRequestView):
             resources = ResourceData.objects.select_for_update().filter(
                 owner=username)
 
-            if resources.count() == 0:
-                return Response({
-                    "details": "User {} didn't lock any resource".format(
-                        username)
-                }, status=httplib.OK)
-
             resources.update(owner="", owner_time=None)
+
         return Response({
             "details": "User {} was successfully cleaned".format(username)
-        }, status=httplib.OK)
+        }, status=httplib.NO_CONTENT)

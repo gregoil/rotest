@@ -22,7 +22,7 @@ class TokenResponseModel(AbstractResponse):
 
 
 class CleanupUserResponseModel(AbstractResponse):
-    """Returns after a cleanup user resources request."""
+    """Returns after a cleanup user resources request, describes ."""
     PROPERTIES = [
         StringField(name="details", required=True)
     ]

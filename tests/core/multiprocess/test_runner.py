@@ -8,10 +8,8 @@ import unittest
 from Queue import Empty
 from multiprocessing import Queue, Event
 
-import mock
 import psutil
 import pytest
-from swaggapi.api.builder.client import requester
 
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -37,8 +35,6 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
 
     fixtures = ['case_ut.json']
 
-    @mock.patch("rotest.management.client.client.Requester",
-                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize the test runner and create cases' variables."""
         super(AbstractMultiprocessRunnerTest, self).setUp()
