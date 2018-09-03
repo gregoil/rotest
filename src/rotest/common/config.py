@@ -213,7 +213,12 @@ CONFIGURATION_SCHEMA = {
     "port": Option(
         environment_variables=["ROTEST_SERVER_PORT"],
         config_file_options=["port"],
-        default_value="7777"),
+        default_value="8000"),
+    "api_base_url": Option(
+        command_line_options=["--api_base_url"],
+        environment_variables=["ROTEST_API_BASE_URL"],
+        config_file_options=["api_base_url"],
+        default_value="rotest/api/"),
     "discoverer_blacklist": Option(
         config_file_options=["discoverer_blacklist"],
         default_value=[]),
@@ -257,7 +262,8 @@ CONFIGURATION = get_configuration(
 
 ROTEST_WORK_DIR = os.path.expanduser(CONFIGURATION.workdir)
 RESOURCE_MANAGER_HOST = CONFIGURATION.host
-RESOURCE_MANAGER_PORT = int(CONFIGURATION.port)
+DJANGO_MANAGER_PORT = int(CONFIGURATION.port)
+API_BASE_URL = CONFIGURATION.api_base_url
 RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)

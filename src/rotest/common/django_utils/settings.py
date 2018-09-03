@@ -20,13 +20,14 @@ INSTALLED_APPS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'rotest_ut',
+        'NAME': 'rotest_db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
-        'TEST_NAME': 'rotest_ut_test'
-    }
+        'TEST_NAME': 'test_rotest_db',
+    },
+
 }
 
 # Defining middleware classes

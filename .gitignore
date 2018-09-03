@@ -101,10 +101,10 @@ ENV/
 .mypy_cache/
 
 .idea/
-rotest_ut
+rotest_db
 rotest_test
 rotest_test-journal
-rotest_ut_test
+test_rotest_db
 rotest_ut_test-journal
 nohup.out
 /.project

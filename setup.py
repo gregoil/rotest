@@ -1,7 +1,7 @@
 """Setup file for handling packaging and distribution."""
 from setuptools import setup, find_packages
 
-__version__ = "3.4.0"
+__version__ = "4.0.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -39,6 +39,7 @@ requirements = [
     'termcolor',
     'jsonschema',
     'basicstruct',
+    'swaggapi',
     'python-daemon;platform_system!="Windows"'
 ]
 

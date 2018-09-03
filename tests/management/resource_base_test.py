@@ -2,14 +2,13 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=too-many-public-methods,invalid-name
 import time
-from threading import Thread, current_thread
+from threading import current_thread
 
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.result.result import Result
-from rotest.core.result.handlers.db_handler import DBHandler
-from rotest.management.server.main import ResourceManagerServer
 from rotest.management.base_resource import BaseResource
+from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.management.models.ut_models import (DemoResourceData,
                                                 DemoComplexResourceData)
 
@@ -23,20 +22,6 @@ class BaseResourceManagementTest(TransactionTestCase):
     from this class will start the resource manager server in an independent
     thread on the setUp of each test and stop in on the tearDown.
     """
-    SERVER_STARTUP_TIME = 0.5
-
-    def setUp(self):
-        """Start ResourceManagerServer in an independent thread."""
-        self.server = ResourceManagerServer(log_to_screen=False)
-        self._server_thread = Thread(target=self.server.start)
-
-        self._server_thread.start()
-        time.sleep(self.SERVER_STARTUP_TIME)
-
-    def tearDown(self):
-        """Stop resource manager server."""
-        self.server.stop()
-        self._server_thread.join()
 
     @staticmethod
     def create_result(main_test):

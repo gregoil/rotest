@@ -182,10 +182,6 @@ Let's run the Rotest server, using the :program:`rotest server` command:
 
     $ rotest server
 
-    Running in attached mode
-    Running the Django server as well
-    <2018-05-23 20:05:26,574>[DEBUG][main@91]: Starting resource manager, port:7777
-    <2018-05-23 20:05:26,575>[DEBUG][manager@101]: Resource manager main thread started
     Performing system checks...
 
     System check identified no issues (0 silenced).
@@ -239,7 +235,6 @@ following content:
 
 .. code-block:: python
 
-    from rotest import main
     from rotest.core import TestCase
 
     from resources.calculator import Calculator
@@ -252,15 +247,11 @@ following content:
             result = self.calc.calculate("1 + 1")
             self.assertEqual(result, 2)
 
-
-    if __name__ == "__main__":
-        main()
-
 Now, let's run the test:
 
 .. code-block:: console
 
-    $ python test_math.py
+    $ rotest test_math.py
     AnonymousSuite
       AddTest.test_add ... OK
 

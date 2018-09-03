@@ -3,20 +3,34 @@
 Responsible for locking resources and preparing them for work,
 also for the resources cleanup procedure and release.
 """
-# pylint: disable=invalid-name,too-many-instance-attributes
-# pylint: disable=too-few-public-methods,too-many-arguments
+# pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches
+# pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from itertools import izip
 from threading import Thread
 
+import time
+
+import re
 from attrdict import AttrDict
 
+from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.common import core_log
-from rotest.management.common import messages
 from rotest.management.client.client import AbstractClient
-from rotest.management.common.errors import ResourceDoesNotExistError
-from rotest.common.config import ROTEST_WORK_DIR, RESOURCE_MANAGER_HOST
+from rotest.api.common.responses import FailureResponseModel
+from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.common.resource_descriptor import ResourceDescriptor
+from rotest.management.common.errors import (ResourceReleaseError,
+                                             ResourceUnavailableError,
+                                             UnknownUserError)
+from rotest.api.resource_control import (LockResources,
+                                         QueryResources,
+                                         ReleaseResources, CleanupUser)
+from rotest.api.common.models import (ReleaseResourcesParamsModel,
+                                      ResourceDescriptorModel,
+                                      LockResourcesParamsModel, GenericModel)
+
+SLEEP_TIME_BETWEEN_REQUESTS = 0.25
 
 
 class ResourceRequest(object):
@@ -29,6 +43,7 @@ class ResourceRequest(object):
             initialized even if their validation succeeds.
         kwargs (dict): requested resource arguments.
     """
+
     def __init__(self, resource_name, resource_class,
                  force_initialize=False, **kwargs):
         """Initialize the required parameters of resource request."""
@@ -97,8 +112,9 @@ class ClientResourceManager(AbstractClient):
             RuntimeError: wasn't connected in the first place.
         """
         self._release_locked_resources()
-        if self.is_connected():
-            super(ClientResourceManager, self).disconnect()
+        self.requester.request(CleanupUser, method="post",
+                               data=GenericModel({}))
+        super(ClientResourceManager, self).disconnect()
 
     def _initialize_resource(self, resource, skip_init=False):
         """Try to initialize the resource.
@@ -215,8 +231,10 @@ class ClientResourceManager(AbstractClient):
 
             resource.set_sub_resources()
 
-            self._propagate_attributes(resource=resource, config=config,
-               force_initialize=request.force_initialize or force_initialize)
+            self._propagate_attributes(
+                resource=resource,
+                config=config,
+                force_initialize=request.force_initialize or force_initialize)
 
             resource.set_work_dir(request.name, base_work_dir)
             resource.logger.debug("Resource %r work dir was created under %r",
@@ -262,6 +280,49 @@ class ClientResourceManager(AbstractClient):
             raise RuntimeError("Releasing resources has failed. "
                                "Reasons: %s" % "\n".join(exceptions))
 
+    def _wait_until_resources_are_locked(self, descriptors, timeout):
+        """Wait until the given resources are locked.
+
+        Args:
+            descriptors (list): list of ResourceDescriptor objects,
+                that represent the wanted resources.
+            timeout (number): time to wait for the resources to be locked.
+
+        Returns:
+            InfluencedResourcesResponseModel. the response model received from
+                the server.
+
+        Raises:
+            UnknownUserError. if the user requested the lock is unknown.
+            ResourceUnavailableError. if timeout is reached and no resource
+                could be locked.
+        """
+        encoded_requests = [descriptor.encode() for descriptor in
+                            descriptors]
+
+        request_data = LockResourcesParamsModel({
+            "descriptors": encoded_requests
+        })
+
+        start_time = time.time()
+        while True:
+            response = self.requester.request(LockResources,
+                                              data=request_data,
+                                              method="post")
+            if isinstance(response, FailureResponseModel):
+                match = re.match(USER_NOT_EXIST.format(".*"),
+                                 response.details)
+                if match:
+                    raise UnknownUserError(response.details)
+
+                if time.time() - start_time > timeout:
+                    raise ResourceUnavailableError(response.details)
+
+            else:
+                break
+
+        return response
+
     def _lock_resources(self, descriptors, timeout=None):
         """Send LockResources request to resource manager server.
 
@@ -285,20 +346,16 @@ class ClientResourceManager(AbstractClient):
                            if descriptor.type.DATA_CLASS is not None]
 
         if len(server_requests) > 0:
-            if not self.is_connected():
-                self.connect()
+            response = \
+                self._wait_until_resources_are_locked(server_requests, timeout)
 
-            encoded_requests = [descriptor.encode() for descriptor in
-                                server_requests]
+            response_resources = \
+                [self.parser.decode(resource)
+                 for resource in response.resource_descriptors]
 
-            request = messages.LockResources(descriptors=encoded_requests,
-                                             timeout=timeout)
-
-            reply = self._request(request, timeout=timeout)
-
-            resources.extend(descriptor.type(data=resource_data) for
-                             (descriptor, resource_data) in
-                             zip(server_requests, reply.resources))
+            resources.extend(descriptor.type(data=resource_data)
+                             for (descriptor, resource_data) in
+                             zip(server_requests, response_resources))
 
         for index, descriptor in enumerate(descriptors):
             if descriptor.type.DATA_CLASS is None:
@@ -320,8 +377,15 @@ class ClientResourceManager(AbstractClient):
                             for res in resources if res.DATA_CLASS is not None]
 
         if len(release_requests) > 0:
-            request = messages.ReleaseResources(requests=release_requests)
-            self._request(request)
+            request_data = ReleaseResourcesParamsModel({
+                "resources": release_requests
+            })
+            response = self.requester.request(ReleaseResources,
+                                              data=request_data,
+                                              method="post")
+
+            if isinstance(response, FailureResponseModel):
+                raise ResourceReleaseError(response.errors)
 
         for resource in resources:
             if resource in self.locked_resources:
@@ -382,15 +446,15 @@ class ClientResourceManager(AbstractClient):
                    for resource in unused_locked_resources):
 
                 matching_resources = self._find_matching_resources(
-                                                    descriptor,
-                                                    unused_locked_resources)
+                    descriptor,
+                    unused_locked_resources)
 
                 if len(matching_resources) > 0:
                     previous_resource = matching_resources[0]
                     self.logger.info("Retrieved previously locked "
-                                      "resource %r for %r",
-                                      previous_resource,
-                                      request.name)
+                                     "resource %r for %r",
+                                     previous_resource,
+                                     request.name)
 
                     retrieved_resources[request.name] = previous_resource
 
@@ -508,11 +572,12 @@ class ClientResourceManager(AbstractClient):
             descriptor (ResourceDescriptor): descriptor of the query
                 (containing model class and query filter kwargs).
         """
-        request = messages.QueryResources(descriptors=descriptor.encode())
-        try:
-            reply = self._request(request)
+        request_data = ResourceDescriptorModel(descriptor.encode())
+        response = self.requester.request(QueryResources,
+                                          data=request_data,
+                                          method="post")
+        if isinstance(response, FailureResponseModel):
+            raise Exception(response.details)
 
-        except ResourceDoesNotExistError:
-            return []
-
-        return reply.resources
+        return [self.parser.decode(resource)
+                for resource in response.resource_descriptors]

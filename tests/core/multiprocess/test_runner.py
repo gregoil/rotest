@@ -10,6 +10,7 @@ from multiprocessing import Queue, Event
 
 import psutil
 import pytest
+
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
 from tests.core.utils import MockSuite1, BasicRotestUnitTest
@@ -164,7 +165,6 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
                                  ResourceIdRegistrationCase)
 
         self.runner.run(MockSuite1)
-
         resources_locked = len(set(self.get_pids()))
         self.assertEqual(resources_locked, 1,
                          "Number of resource locks was %d instead of 1" %

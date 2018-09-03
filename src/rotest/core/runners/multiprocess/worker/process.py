@@ -42,6 +42,7 @@ class WorkerProcess(Process):
         skip_init (bool): True to skip resources initialization and validation.
         output_handlers (list): output handlers for the worker's runner.
     """
+
     def __init__(self, save_state, config, run_delta, run_name, requests_queue,
                  reply_queue, results_queue, root_test, failfast, parent_id,
                  skip_init, output_handlers, *args, **kwargs):
@@ -126,7 +127,6 @@ class WorkerProcess(Process):
 
         try:
             for test_id in iter(self._get_tests, None):
-
                 self.assert_runner_is_alive()
 
                 test = get_item_by_id(self.root_test, test_id)
@@ -136,11 +136,9 @@ class WorkerProcess(Process):
                 core_log.debug('Worker %r done with %r',
                                self.pid, test.data.name)
 
+        finally:
+            if self.resource_manager is not None:
+                runner.resource_manager.disconnect()
+
             core_log.debug('Worker %r finished working', self.pid)
             runner.queue_handler.finish_run()
-
-        finally:
-            if (self.resource_manager is not None and
-                    self.resource_manager.is_connected()):
-
-                runner.resource_manager.disconnect()

@@ -1,5 +1,8 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
+import mock
+from swaggapi.api.builder.client import requester
+
 from rotest.core.models import GeneralData
 from rotest.core.models.run_data import RunData
 from rotest.management.common.utils import LOCALHOST
@@ -17,12 +20,13 @@ class TestResultManagement(BaseResourceManagementTest):
     """Result management tests."""
     fixtures = ['resource_ut.json']
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize and connect a client to the server."""
         super(TestResultManagement, self).setUp()
 
         self.client = ClientResultManager(LOCALHOST)
-        self.client.connect()
 
     def tearDown(self):
         """Disconnect the client from the server."""
@@ -117,9 +121,7 @@ class TestResultManagement(BaseResourceManagementTest):
 
         run_data = RunData(run_name='test_run_name')
         main_test = MockSuite1(run_data=run_data)
-
         self.client.start_test_run(main_test)
-
         self._validate_tests_tree(main_test)
 
         try:
@@ -138,10 +140,10 @@ class TestResultManagement(BaseResourceManagementTest):
         main_test = MockTestSuite(run_data=run_data)
         test_case = next(iter(main_test))
 
-        self.client.start_test_run(main_test)
+        token = self.client.start_test_run(main_test)
         self._validate_has_times(test_case, start_time=False)
 
-        self.client.start_test(test_case)
+        self.client.start_test(test_case, token)
         self._validate_has_times(test_case, start_time=True)
 
     def test_stop_test(self):
@@ -152,13 +154,13 @@ class TestResultManagement(BaseResourceManagementTest):
         main_test = MockTestSuite(run_data=run_data)
         test_case = next(iter(main_test))
 
-        self.client.start_test_run(main_test)
+        token = self.client.start_test_run(main_test)
         self._validate_has_times(test_case, start_time=False, end_time=False)
 
-        self.client.start_test(test_case)
+        self.client.start_test(test_case, token)
         self._validate_has_times(test_case, start_time=True, end_time=False)
 
-        self.client.stop_test(test_case)
+        self.client.stop_test(test_case, token)
         self._validate_has_times(test_case, start_time=True, end_time=True)
 
     def test_update_resources(self):
@@ -172,9 +174,9 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case.locked_resources = {'test_resource': DemoResource(
             data=DemoResourceData.objects.get(name='available_resource1'))}
 
-        self.client.start_test_run(main_test)
-        self.client.start_test(test_case)
-        self.client.update_resources(test_case)
+        token = self.client.start_test_run(main_test)
+        self.client.start_test(test_case, token)
+        self.client.update_resources(test_case, token)
 
         test_data = CaseData.objects.get(name=test_case.data.name)
 
@@ -198,10 +200,10 @@ class TestResultManagement(BaseResourceManagementTest):
         run_data = RunData(run_name=None)
         main_test = MockTestSuite(run_data=run_data)
 
-        self.client.start_test_run(main_test)
+        token = self.client.start_test_run(main_test)
         self._validate_has_times(main_test, start_time=False)
 
-        self.client.start_composite(main_test)
+        self.client.start_composite(main_test, token)
         self._validate_has_times(main_test, start_time=True)
 
     def test_stop_composite(self):
@@ -211,13 +213,13 @@ class TestResultManagement(BaseResourceManagementTest):
         run_data = RunData(run_name=None)
         main_test = MockTestSuite(run_data=run_data)
 
-        self.client.start_test_run(main_test)
+        token = self.client.start_test_run(main_test)
         self._validate_has_times(main_test, start_time=False, end_time=False)
 
-        self.client.start_composite(main_test)
+        self.client.start_composite(main_test, token)
         self._validate_has_times(main_test, start_time=True, end_time=False)
 
-        self.client.stop_composite(main_test)
+        self.client.stop_composite(main_test, token)
         self._validate_has_times(main_test, start_time=True, end_time=True)
 
     def test_add_result(self):
@@ -236,9 +238,9 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case = next(iter(main_test))
 
         # Simulate starting the test.
-        self.client.start_test_run(main_test)
-        self.client.start_composite(main_test)
-        self.client.start_test(test_case)
+        token = self.client.start_test_run(main_test)
+        self.client.start_composite(main_test, token)
+        self.client.start_test(test_case, token)
 
         # Check that the results are still None.
         self._validate_test_result(main_test, success=None)
@@ -246,10 +248,11 @@ class TestResultManagement(BaseResourceManagementTest):
                                    error_tuple=(None, ''))
 
         # Simulate ending the test.
-        self.client.stop_test(test_case)
+        self.client.stop_test(test_case, token)
         ERROR_STRING = 'test error'
-        self.client.add_result(test_case, TestOutcome.ERROR, ERROR_STRING)
-        self.client.stop_composite(main_test)
+        self.client.add_result(test_case, TestOutcome.ERROR, token,
+                               ERROR_STRING)
+        self.client.stop_composite(main_test, token)
 
         # Check that the results are updated.
         self._validate_test_result(test_case, success=False,

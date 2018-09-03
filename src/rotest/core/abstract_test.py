@@ -301,9 +301,7 @@ class AbstractTest(unittest.TestCase):
                        dirty=self.data.exception_type == TestOutcome.ERROR,
                        force_release=False)
 
-                if (self._is_client_local and
-                        self.resource_manager.is_connected()):
-
+                if self._is_client_local:
                     self.resource_manager.disconnect()
 
         return teardown_method_wrapper

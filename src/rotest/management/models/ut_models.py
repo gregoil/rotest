@@ -181,7 +181,7 @@ class DemoComplexResource(BaseResource):
 
     def finalize(self):
         """Turns on the finalization flag."""
-        self.finalization_flag = True
+        self.data.finalization_flag = True
         self.data.save()
         super(DemoComplexResource, self).finalize()
 

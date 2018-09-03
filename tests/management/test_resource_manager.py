@@ -8,10 +8,12 @@ import time
 from itertools import izip
 from threading import Thread
 
+import mock
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
+from swaggapi.api.builder.client import requester
+
 from rotest.management.common.utils import LOCALHOST
-from rotest.management.common.utils import HOST_PORT_SEPARATOR
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
@@ -21,13 +23,12 @@ from rotest.management.models.ut_models import (DemoService,
                                                 DemoResourceData,
                                                 DemoComplexResource,
                                                 DemoComplexResourceData)
-from rotest.management.common.errors import (ServerError,
-                                             UnknownUserError,
-                                             ResourceReleaseError,
+from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourcePermissionError,
                                              ResourceUnavailableError,
                                              ResourceDoesNotExistError,
-                                             ResourceAlreadyAvailableError)
+                                             ResourceAlreadyAvailableError,
+                                             UnknownUserError)
 
 from tests.management.resource_base_test import (BaseResourceManagementTest,
                                                  ThreadedParent,
@@ -52,12 +53,13 @@ class TestResourceManagement(BaseResourceManagementTest):
     LOCK_TIMEOUT = 4
     CLEANUP_TIME = 1.5
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def setUp(self):
         """Initialize and connect a client to the resource manager."""
         super(TestResourceManagement, self).setUp()
 
         self.client = ClientResourceManager(LOCALHOST)
-        self.client.connect()
 
     def tearDown(self):
         """Disconnect the client from the resource manager."""
@@ -126,7 +128,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                          name=self.FREE1_NAME)
 
         resources = [resource for resource in resources
-                     if resource.owner.split(HOST_PORT_SEPARATOR)[0] == host]
+                     if resource.owner == host]
 
         self.assertEquals(len(resources), 1, "Expected 1 locked resource "
                           "with name %r and owner %r in DB, found %d"
@@ -291,7 +293,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          % (self.NON_EXISTING_NAME1, resources_num))
 
         descriptor = Descriptor(DemoResource, name=self.NON_EXISTING_NAME1)
-        self.assertRaises(ResourceDoesNotExistError,
+        self.assertRaises(ResourceUnavailableError,
                           self.client._lock_resources,
                           descriptors=[descriptor],
                           timeout=self.LOCK_TIMEOUT)
@@ -308,7 +310,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
         descriptor.properties[self.NON_EXISTING_FIELD] = 0
 
-        self.assertRaises(ServerError,
+        self.assertRaises(ResourceUnavailableError,
                           self.client._lock_resources,
                           descriptors=[descriptor],
                           timeout=self.LOCK_TIMEOUT)
@@ -361,6 +363,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                                 "resources took %.2f seconds, but should take "
                                 "at least %d" % (duration, self.LOCK_TIMEOUT))
 
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
     def _test_wait_for_unavailable_resource(self, timeout, release_time):
         """Lock a locked resource, wait for it to release & validate success.
 
@@ -387,7 +391,6 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.get_resource(self.FREE1_NAME, owner="")
 
         new_client = ClientResourceManager(LOCALHOST)
-        new_client.connect()
 
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
         resources = new_client._lock_resources(descriptors=[descriptor],
@@ -432,7 +435,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
     def test_wait_for_unavailable_resource_with_timeout(self):
         """Wait for a locked resource with timeout & validate success."""
-        self._test_wait_for_unavailable_resource(self.LOCK_TIMEOUT, 2)
+        self._test_wait_for_unavailable_resource(self.LOCK_TIMEOUT, 3)
 
     def test_lock_multiple_matches(self):
         """Lock a resource, parameters matching more then one result.
@@ -930,10 +933,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.FREE1_NAME, resource.name))
 
         expected_host = LOCALHOST
-        actual_host, _ = resource.owner.split(":")
-        self.assertEquals(actual_host, expected_host,
+        self.assertEquals(resource.owner, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, actual_host))
+                          "Got %r" % (expected_host, resource.owner))
 
     def test_locking_other_group_resource(self):
         """Lock another group resource & validate failure.
@@ -947,7 +949,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         descriptor = Descriptor(DemoResource, name=self.OTHER_GROUP_RESOURCE)
 
-        with self.assertRaises(ResourceDoesNotExistError):
+        with self.assertRaises(ResourceUnavailableError):
             self.client._lock_resources(descriptors=[descriptor],
                                         timeout=self.LOCK_TIMEOUT)
 
@@ -976,10 +978,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                           % (self.NO_GROUP_RESOURCE, resource.name))
 
         expected_host = LOCALHOST
-        actual_host, _ = resource.owner.split(":")
-        self.assertEquals(actual_host, expected_host,
+        self.assertEquals(resource.owner, expected_host,
                           "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, actual_host))
+                          "Got %r" % (expected_host, resource.owner))
 
     def test_update_fields(self):
         """Test the UpdateFields message.

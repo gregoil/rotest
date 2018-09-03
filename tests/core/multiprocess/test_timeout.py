@@ -107,6 +107,8 @@ class TestMultiprocessTimeouts(AbstractMultiprocessRunnerTest):
 
         self.validate_test_processes(2)
 
+    @pytest.mark.skipif(sys.platform == "win32",
+                        reason="Flaky test on appveyor")
     def test_suite_continues_after_teardown_timeout(self):
         """Test that tests continue to run after a case is killed in tearDown.
 

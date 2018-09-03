@@ -11,7 +11,6 @@ from attrdict import AttrDict
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
-from rotest.management.common.utils import HOST_PORT_SEPARATOR
 
 
 class ConvertToKwargsMeta(type):
@@ -121,7 +120,6 @@ class BaseResource(object):
         """
         leaf = self.leaf  # 'leaf' is a property.
         if leaf == self:
-            user_name = user_name.split(HOST_PORT_SEPARATOR)[0]
             return self.reserved in [user_name, ""] and self.owner == ""
 
         return leaf.is_available(user_name)
