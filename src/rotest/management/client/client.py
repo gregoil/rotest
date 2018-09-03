@@ -55,16 +55,14 @@ class AbstractClient(object):
                                    logger=self.logger)
 
     def connect(self):
-        """Connect to manager server.
-         Args:
-            timeout (number): time to wait for a reply from the server.
-        """
+        """Connect to manager server."""
         self._is_connected = True
 
     def is_connected(self):
         """Check if the socket is connected or not.
-         Returns:
-            bool. True if the socket is connected, False otherwise.
+
+        Returns:
+            bool. True if connection was already made, False otherwise.
         """
         return self._is_connected
 
