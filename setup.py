@@ -1,6 +1,4 @@
 """Setup file for handling packaging and distribution."""
-import sys
-
 from setuptools import setup, find_packages
 
 __version__ = "3.4.0"
@@ -40,11 +38,9 @@ requirements = [
     'colorama',
     'termcolor',
     'jsonschema',
-    'basicstruct'
+    'basicstruct',
+    'python-daemon;platform_system!="Windows"'
 ]
-
-if not sys.platform.startswith("win32"):
-    requirements.append('python-daemon')
 
 setup(
     name='rotest',
