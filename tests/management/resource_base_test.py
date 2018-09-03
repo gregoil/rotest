@@ -2,14 +2,13 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=too-many-public-methods,invalid-name
 import time
-from threading import Thread, current_thread
+from threading import current_thread
 
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.result.result import Result
 from rotest.management.base_resource import BaseResource
 from rotest.core.result.handlers.db_handler import DBHandler
-from rotest.management.server.main import ResourceManagerServer
 from rotest.management.models.ut_models import (DemoResourceData,
                                                 DemoComplexResourceData)
 
