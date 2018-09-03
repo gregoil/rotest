@@ -137,7 +137,8 @@ class WorkerProcess(Process):
                                self.pid, test.data.name)
 
         finally:
-            if self.resource_manager is not None:
+            if (self.resource_manager is not None and
+                    self.resource_manager.is_connected()):
                 runner.resource_manager.disconnect()
 
             core_log.debug('Worker %r finished working', self.pid)

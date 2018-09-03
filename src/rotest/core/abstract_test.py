@@ -1,8 +1,8 @@
 """Describe TestBlock class."""
 # pylint: disable=attribute-defined-outside-init,unused-argument
-# pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
+# pylint: disable=too-many-arguments,too-many-locals,broad-except,no-self-use
 import os
 import sys
 import unittest
@@ -146,7 +146,7 @@ class AbstractTest(unittest.TestCase):
         Returns:
             ClientResourceManager. new resource manager client.
         """
-        return ClientResourceManager(logger=self.logger)
+        return ClientResourceManager()
 
     def expect(self, expression, msg=None):
         """Check an expression and fail the test at the end if it's False.
@@ -301,7 +301,8 @@ class AbstractTest(unittest.TestCase):
                        dirty=self.data.exception_type == TestOutcome.ERROR,
                        force_release=False)
 
-                if self._is_client_local:
+                if (self._is_client_local and
+                        self.resource_manager.is_connected()):
                     self.resource_manager.disconnect()
 
         return teardown_method_wrapper

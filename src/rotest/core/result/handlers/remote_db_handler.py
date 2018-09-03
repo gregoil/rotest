@@ -17,6 +17,7 @@ class RemoteDBHandler(AbstractResultHandler):
         """Initialize the result handler and connect to the result server."""
         super(RemoteDBHandler, self).__init__(*args, **kwargs)
         self.client = ClientResultManager()
+        self.client.connect()
         self.token = None
 
     def start_test_run(self):

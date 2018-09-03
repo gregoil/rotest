@@ -60,6 +60,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         super(TestResourceManagement, self).setUp()
 
         self.client = ClientResourceManager(LOCALHOST)
+        self.client.connect()
 
     def tearDown(self):
         """Disconnect the client from the resource manager."""
@@ -391,6 +392,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.get_resource(self.FREE1_NAME, owner="")
 
         new_client = ClientResourceManager(LOCALHOST)
+        new_client.connect()
 
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
         resources = new_client._lock_resources(descriptors=[descriptor],
