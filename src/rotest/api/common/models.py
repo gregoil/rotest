@@ -63,8 +63,7 @@ class ReleaseResourcesParamsModel(AbstractAPIModel):
     """Release the given resources names.
 
     Args:
-        resources (list): list of str. the names of the resources to be
-            released.
+        resources (list): list of str. resource names to be released.
     """
     PROPERTIES = [
         ArrayField(name="resources", items_type=StringField("resource_name"),
