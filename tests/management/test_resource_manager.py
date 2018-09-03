@@ -1,11 +1,6 @@
 """Resource management tests.
 
 We test resource management behavior under different scenarios.
-
-TODO: add tests for complex resources.
-5. Lock/Release a complex resource and other resources.
-7. Cleaned Up a complex resource.
-8. Dirty tests
 """
 # pylint: disable=too-many-lines
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
@@ -35,7 +30,9 @@ from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourceAlreadyAvailableError,
                                              UnknownUserError)
 
-from tests.management.resource_base_test import BaseResourceManagementTest
+from tests.management.resource_base_test import (BaseResourceManagementTest,
+                                                 ThreadedParent,
+                                                 ThreadedResource)
 
 
 class TestResourceManagement(BaseResourceManagementTest):
@@ -1247,3 +1244,17 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.client.disconnect()
         self.assertEqual(self.client.locked_resources, [])
+
+    def test_threaded_initialize(self):
+        """Test multi-threaded resources initialize."""
+        requests = [ResourceRequest('res1', ThreadedParent,
+                                    name=self.COMPLEX_NAME)]
+
+        # Request the free resource
+        resources = self.client.request_resources(requests)
+        # Check that it locked 1 resource
+        self.assertEqual(len(resources), 1)
+        # Check that the resource was initialize in multi-threading
+        self.assertEqual(len(ThreadedResource.THREADS), 2,
+                         "%d threads were created instead of 2" %
+                         len(ThreadedResource.THREADS))
