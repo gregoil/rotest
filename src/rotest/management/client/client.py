@@ -48,17 +48,33 @@ class AbstractClient(object):
         self.logger = logger
         self._messages_counter = count()
         self.lock_timeout = lock_timeout
+        self._is_connected = False
         self.requester = Requester(host=self._host,
                                    port=self._port,
                                    base_url=self.base_uri,
                                    logger=self.logger)
 
+    def connect(self):
+        """Connect to manager server.
+         Args:
+            timeout (number): time to wait for a reply from the server.
+        """
+        self._is_connected = True
+
+    def is_connected(self):
+        """Check if the socket is connected or not.
+         Returns:
+            bool. True if the socket is connected, False otherwise.
+        """
+        return self._is_connected
+
     def disconnect(self):
         """Cleanup the client."""
-        pass
+        self._is_connected = False
 
     def __enter__(self):
         """Connect to manager server."""
+        self.connect()
         return self
 
     def __exit__(self, *args, **kwargs):

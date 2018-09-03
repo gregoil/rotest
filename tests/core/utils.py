@@ -212,6 +212,9 @@ class MockResourceClient(ClientResourceManager):
                 resource = descriptor.type(**descriptor.properties)
 
             else:
+                if not self.is_connected():
+                    self.connect()
+
                 try:
                     available_resources = data_type.objects.filter(
                         is_usable=True, **descriptor.properties)

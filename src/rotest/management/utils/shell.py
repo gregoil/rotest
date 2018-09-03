@@ -94,6 +94,7 @@ def main():
 
     print("Creating client")
     BaseResource._SHELL_CLIENT = ClientResourceManager()
+    BaseResource._SHELL_CLIENT.connect()
     LogDebugHandler(None, sys.stdout, None)  # Activate log to screen
 
     print("""Done! You can now lock resources and run tests, e.g.

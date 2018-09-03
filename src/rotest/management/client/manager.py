@@ -111,10 +111,11 @@ class ClientResourceManager(AbstractClient):
         Raises:
             RuntimeError: wasn't connected in the first place.
         """
-        self._release_locked_resources()
-        self.requester.request(CleanupUser, method="post",
-                               data=GenericModel({}))
-        super(ClientResourceManager, self).disconnect()
+        if self.is_connected():
+            self._release_locked_resources()
+            self.requester.request(CleanupUser, method="post",
+                                   data=GenericModel({}))
+            super(ClientResourceManager, self).disconnect()
 
     def _initialize_resource(self, resource, skip_init=False):
         """Try to initialize the resource.
@@ -346,6 +347,9 @@ class ClientResourceManager(AbstractClient):
                            if descriptor.type.DATA_CLASS is not None]
 
         if len(server_requests) > 0:
+            if not self.is_connected():
+                self.connect()
+
             response = \
                 self._wait_until_resources_are_locked(server_requests, timeout)
 
