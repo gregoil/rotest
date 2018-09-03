@@ -7,6 +7,7 @@ also for the resources cleanup procedure and release.
 # pylint: disable=too-few-public-methods,too-many-arguments
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from itertools import izip
+from threading import Thread
 
 from attrdict import AttrDict
 
@@ -137,8 +138,22 @@ class ClientResourceManager(AbstractClient):
         Args:
             resource (BaseResource): resource to validate and initialize.
         """
+        sub_threads = []
         for sub_resource in resource.get_sub_resources():
-            self._validate_resource(sub_resource)
+            if resource.PARALLEL_INITIALIZATION:
+                sub_resource.logger.debug("Initializing %r in a new thread",
+                                          sub_resource.name)
+
+                initialize_thread = Thread(target=self._validate_resource,
+                                           args=[sub_resource])
+                initialize_thread.start()
+                sub_threads.append(initialize_thread)
+
+            else:
+                self._validate_resource(sub_resource)
+
+        for sub_thread in sub_threads:
+            sub_thread.join()
 
         if resource.force_initialize or not resource.validate():
             if not resource.force_initialize:
