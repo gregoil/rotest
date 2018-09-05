@@ -1,5 +1,4 @@
 # pylint: disable=unused-argument, no-self-use
-import uuid
 import httplib
 
 from swaggapi.api.builder.server.response import Response

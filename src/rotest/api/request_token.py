@@ -2,13 +2,10 @@
 import uuid
 import httplib
 
-from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.core.models import RunData
 from rotest.api.common.models import GenericModel
-from rotest.management.common.json_parser import JSONParser
 from rotest.api.test_control.middleware import session_middleware, SessionData
 from rotest.api.common.responses import (TokenResponseModel,
                                          FailureResponseModel)
@@ -46,9 +43,7 @@ class RequestToken(DjangoRequestView):
             run_data (dict): contains additional data about the run.
         """
         session_token = str(uuid.uuid4())
-        sessions[session_token] = SessionData(all_tests=None,
-                                              run_data=None,
-                                              main_test=None)
+        sessions[session_token] = SessionData()
         response = {
             "token": session_token
         }
