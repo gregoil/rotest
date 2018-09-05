@@ -155,7 +155,7 @@ class TestResultManagement(BaseResourceManagementTest):
         main_test = MockTestSuite(run_data=run_data)
         test_case = next(iter(main_test))
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(test_case, start_time=False, end_time=False)
 
         self.client.start_test(test_case)
@@ -175,7 +175,7 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case.locked_resources = {'test_resource': DemoResource(
             data=DemoResourceData.objects.get(name='available_resource1'))}
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self.client.start_test(test_case)
         self.client.update_resources(test_case)
 
@@ -201,7 +201,7 @@ class TestResultManagement(BaseResourceManagementTest):
         run_data = RunData(run_name=None)
         main_test = MockTestSuite(run_data=run_data)
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(main_test, start_time=False)
 
         self.client.start_composite(main_test)
@@ -214,7 +214,7 @@ class TestResultManagement(BaseResourceManagementTest):
         run_data = RunData(run_name=None)
         main_test = MockTestSuite(run_data=run_data)
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(main_test, start_time=False, end_time=False)
 
         self.client.start_composite(main_test)
@@ -239,7 +239,7 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case = next(iter(main_test))
 
         # Simulate starting the test.
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self.client.start_composite(main_test)
         self.client.start_test(test_case)
 

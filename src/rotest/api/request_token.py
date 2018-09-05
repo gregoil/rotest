@@ -35,7 +35,7 @@ class RequestToken(DjangoRequestView):
     }
 
     @session_middleware
-    def post(self, request, sessions, *args, **kwargs):
+    def get(self, request, sessions, *args, **kwargs):
         """Initialize the tests run data.
 
         Args:
