@@ -4,6 +4,7 @@ import httplib
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
+from rotest.api.common.models import TokenModel
 from rotest.api.common.responses import SuccessResponse
 from rotest.management.common.utils import get_username
 from rotest.api.test_control.middleware import session_middleware
@@ -13,6 +14,7 @@ from rotest.api.resource_control.release_resources import ReleaseResources
 class CleanupUser(DjangoRequestView):
     """Cleaning up user's requests and locked resources."""
     URI = "resources/cleanup_user"
+    DEFAULT_MODEL = TokenModel
     DEFAULT_RESPONSES = {
         httplib.NO_CONTENT: SuccessResponse,
     }

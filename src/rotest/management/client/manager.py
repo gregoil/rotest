@@ -14,10 +14,10 @@ import time
 import re
 from attrdict import AttrDict
 
-from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
 from rotest.api.common.responses import FailureResponseModel
+from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.common.errors import (ResourceReleaseError,
