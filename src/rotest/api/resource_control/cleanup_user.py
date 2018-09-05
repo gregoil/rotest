@@ -4,10 +4,10 @@ import httplib
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from .release_resources import ReleaseResources
 from rotest.api.common.responses import SuccessResponse
 from rotest.management.common.utils import get_username
 from rotest.api.test_control.middleware import session_middleware
+from rotest.api.resource_control.release_resources import ReleaseResources
 
 
 class CleanupUser(DjangoRequestView):
