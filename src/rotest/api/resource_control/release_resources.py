@@ -10,6 +10,7 @@ from rotest.management import ResourceData
 from rotest.management.common.utils import get_username
 from rotest.common.django_utils.common import get_sub_model
 from rotest.api.common.models import ReleaseResourcesParamsModel
+from rotest.api.test_control.middleware import session_middleware
 from rotest.api.common.responses import (FailureResponseModel,
                                          SuccessResponse)
 from rotest.management.common.errors import (ResourceAlreadyAvailableError,
@@ -39,7 +40,8 @@ class ReleaseResources(DjangoRequestView):
         "post": ["Resources"]
     }
 
-    def _release_resource(self, resource, username):
+    @classmethod
+    def release_resource(cls, resource, username):
         """Mark the resource as free.
 
         For complex resource, marks also its sub-resources as free.
@@ -57,17 +59,17 @@ class ReleaseResources(DjangoRequestView):
 
         for sub_resource in resource.get_sub_resources():
             try:
-                self._release_resource(sub_resource, username)
+                cls.release_resource(sub_resource, username)
 
             except ServerError as ex:
                 errors[sub_resource.name] = (ex.ERROR_CODE, str(ex))
 
-        if resource.is_available(username):
+        if username is not None and resource.is_available(username):
             raise ResourceAlreadyAvailableError("Failed releasing resource "
                                                 "%r, it was not locked"
                                                 % resource.name)
 
-        if resource.owner != username:
+        if username is not None and resource.owner != username:
             raise ResourcePermissionError("Failed releasing resource %r, "
                                           "it is locked by %r"
                                           % (resource.name, resource.owner))
@@ -79,10 +81,12 @@ class ReleaseResources(DjangoRequestView):
         if len(errors) != 0:
             raise ResourceReleaseError(errors)
 
-    def post(self, request, *args, **kwargs):
+    @session_middleware
+    def post(self, request, sessions, *args, **kwargs):
         """Release the given resources one by one."""
         errors = {}
         username = get_username(request)
+        session = sessions[request.model.token]
         with transaction.atomic():
             for name in request.model.resources:
                 try:
@@ -97,7 +101,8 @@ class ReleaseResources(DjangoRequestView):
                 resource = get_sub_model(resource_data)
 
                 try:
-                    self._release_resource(resource, username)
+                    self.release_resource(resource, username)
+                    session.resources.remove(resource)
 
                 except ServerError as ex:
                     errors[name] = (ex.ERROR_CODE, ex.get_error_content())

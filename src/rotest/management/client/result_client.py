@@ -78,6 +78,7 @@ class ClientResultManager(AbstractClient):
         tests_tree_dict = self._create_test_dict(main_test)
         run_data = {'run_name': main_test.data.run_data.run_name}
         request_data = StartTestRunParamsModel({
+            "token": self.token,
             "tests": tests_tree_dict,
             "run_data": run_data
         })
@@ -85,12 +86,11 @@ class ClientResultManager(AbstractClient):
         response = self.requester.request(StartTestRun,
                                           data=request_data,
                                           method="post")
+
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-        return response.token
-
-    def update_run_data(self, run_data, token):
+    def update_run_data(self, run_data):
         """Update the run data in the server.
 
         Args:
@@ -98,7 +98,7 @@ class ClientResultManager(AbstractClient):
         """
         request_data = UpdateRunDataParamsModel({
             "run_data": run_data.get_fields(),
-            "token": token
+            "token": self.token
         })
         response = self.requester.request(UpdateRunData,
                                           data=request_data,
@@ -107,7 +107,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def add_result(self, test_item, result_code, token, info=None):
+    def add_result(self, test_item, result_code, info=None):
         """Update the result of the test item in the result server.
 
         Args:
@@ -118,7 +118,7 @@ class ClientResultManager(AbstractClient):
         request_data = AddTestResultParamsModel({
             "test_details": {
                 "test_id": test_item.identifier,
-                "token": token
+                "token": self.token
             },
             "result": {
                 "result_code": result_code,
@@ -132,7 +132,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def start_test(self, test_item, token):
+    def start_test(self, test_item):
         """Inform the result server of the beginning of a test.
 
         Args:
@@ -140,7 +140,7 @@ class ClientResultManager(AbstractClient):
         """
         request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
-            "token": token
+            "token": self.token
         })
         response = self.requester.request(StartTest,
                                           data=request_data,
@@ -149,7 +149,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def should_skip(self, test_item, token):
+    def should_skip(self, test_item):
         """Check if the test passed in the last run according to results DB.
 
         Args:
@@ -160,7 +160,7 @@ class ClientResultManager(AbstractClient):
         """
         request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
-            "token": token
+            "token": self.token
         })
         response = self.requester.request(ShouldSkip,
                                           data=request_data,
@@ -171,7 +171,7 @@ class ClientResultManager(AbstractClient):
 
         return response.should_skip
 
-    def stop_test(self, test_item, token):
+    def stop_test(self, test_item):
         """Inform the result server of the end of a test.
 
         Args:
@@ -179,7 +179,7 @@ class ClientResultManager(AbstractClient):
         """
         request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
-            "token": token
+            "token": self.token
         })
         response = self.requester.request(StopTest,
                                           data=request_data,
@@ -188,7 +188,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def update_resources(self, test_item, token):
+    def update_resources(self, test_item):
         """Inform the result server of locked resources of a test.
 
         Args:
@@ -204,7 +204,7 @@ class ClientResultManager(AbstractClient):
         request_data = UpdateResourcesParamsModel({
             "test_details": {
                 "test_id": test_item.identifier,
-                "token": token
+                "token": self.token
             },
             "descriptors": resources
         })
@@ -215,7 +215,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def start_composite(self, test_item, token):
+    def start_composite(self, test_item):
         """Inform the result server of the beginning of a composite test.
 
         Args:
@@ -223,7 +223,7 @@ class ClientResultManager(AbstractClient):
         """
         request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
-            "token": token
+            "token": self.token
         })
         response = self.requester.request(StartComposite,
                                           data=request_data,
@@ -232,7 +232,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def stop_composite(self, test_item, token):
+    def stop_composite(self, test_item):
         """Inform the result server of the end of a composite test.
 
         Args:
@@ -240,7 +240,7 @@ class ClientResultManager(AbstractClient):
         """
         request_data = TestControlOperationParamsModel({
             "test_id": test_item.identifier,
-            "token": token
+            "token": self.token
         })
         response = self.requester.request(StopComposite,
                                           data=request_data,

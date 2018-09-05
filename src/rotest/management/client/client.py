@@ -5,13 +5,15 @@ from itertools import count
 from swaggapi.api.builder.client.requester import Requester
 
 from rotest.common import core_log
+from rotest.api.request_token import RequestToken
+from rotest.api.common.models import GenericModel
 from rotest.api.resource_control import UpdateFields
 from rotest.api.common import UpdateFieldsParamsModel
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.responses import FailureResponseModel
+from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.common.config import (DJANGO_MANAGER_PORT,
                                   RESOURCE_REQUEST_TIMEOUT, API_BASE_URL)
-from rotest.management.common.resource_descriptor import ResourceDescriptor
 
 
 class AbstractClient(object):
@@ -24,7 +26,6 @@ class AbstractClient(object):
         lock_timeout (number): default waiting time on requests.
         _host (str): server's host.
         _port (number): server's port.
-        _messages_counter (itertools.count): msg_id counter.
     """
     REPLY_OVERHEAD_TIME = 2
     _DEFAULT_REPLY_TIMEOUT = 18
@@ -46,9 +47,8 @@ class AbstractClient(object):
         self._port = port
         self.base_uri = base_uri
         self.logger = logger
-        self._messages_counter = count()
         self.lock_timeout = lock_timeout
-        self._is_connected = False
+        self.token = None
         self.requester = Requester(host=self._host,
                                    port=self._port,
                                    base_url=self.base_uri,
@@ -56,7 +56,14 @@ class AbstractClient(object):
 
     def connect(self):
         """Connect to manager server."""
-        self._is_connected = True
+        response = self.requester.request(RequestToken,
+                                          method="get",
+                                          data=GenericModel({}))
+
+        if isinstance(response, FailureResponseModel):
+            raise RuntimeError(response.details)
+
+        self.token = response.token
 
     def is_connected(self):
         """Check if the socket is connected or not.
@@ -64,11 +71,11 @@ class AbstractClient(object):
         Returns:
             bool. True if connection was already made, False otherwise.
         """
-        return self._is_connected
+        return self.token is not None
 
     def disconnect(self):
         """Cleanup the client."""
-        self._is_connected = False
+        self.token = None
 
     def __enter__(self):
         """Connect to manager server."""
