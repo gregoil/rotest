@@ -9,7 +9,7 @@ from rotest.core.models import RunData
 from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import StartTestRunParamsModel
 from rotest.api.test_control.middleware import session_middleware
-from rotest.api.common.responses import (TokenResponseModel,
+from rotest.api.common.responses import (SuccessResponse,
                                          FailureResponseModel)
 
 
@@ -29,7 +29,7 @@ class StartTestRun(DjangoRequestView):
     URI = "tests/start_test_run"
     DEFAULT_MODEL = StartTestRunParamsModel
     DEFAULT_RESPONSES = {
-        httplib.OK: TokenResponseModel,
+        httplib.NO_CONTENT: SuccessResponse,
         httplib.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {

@@ -4,8 +4,8 @@ from unittest import skip, SkipTest, skipIf as skip_if
 
 import colorama
 
-from rotest.common import config
-from rotest.cli.client import main
+from .common import config
+from .cli.client import main
 
 
 # Enable color printing on screen.

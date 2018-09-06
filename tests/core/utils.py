@@ -181,6 +181,10 @@ class MockResourceClient(ClientResourceManager):
         """Suppressed disconnect method."""
         self._release_locked_resources()
 
+    def connect(self):
+        """Suppressed connect method."""
+        self.token = "tmptoken"
+
     def _lock_resources(self, descriptors, timeout=None):
         """Return resources from the DB according to the descriptors.
 

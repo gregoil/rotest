@@ -11,12 +11,6 @@ from rotest.api.common.responses import (TokenResponseModel,
                                          FailureResponseModel)
 
 
-TEST_ID_KEY = 'id'
-TEST_NAME_KEY = 'name'
-TEST_CLASS_CODE_KEY = 'class'
-TEST_SUBTESTS_KEY = 'subtests'
-
-
 class RequestToken(DjangoRequestView):
     """Initialize the tests run data.
 

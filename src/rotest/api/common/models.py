@@ -50,7 +50,6 @@ class UpdateFieldsParamsModel(AbstractAPIModel):
         ModelField(name="resource_descriptor", required=True,
                    model=ResourceDescriptorModel),
         ModelField(name="changes", required=True, model=GenericModel),
-        StringField(name="token", required=True)
     ]
 
 
