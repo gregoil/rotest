@@ -4,8 +4,8 @@ from functools import partial
 
 from django.test import Client, TransactionTestCase
 
-from rotest.api.test_control.middleware import SESSIONS
 from tests.api.utils import request
+from rotest.api.test_control.middleware import SESSIONS
 from rotest.management.models import DemoComplexResourceData, DemoResourceData
 
 

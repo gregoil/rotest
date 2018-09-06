@@ -52,12 +52,12 @@ class TestControl(TransactionTestCase):
         tests_tree_dict = ClientResultManager._create_test_dict(self.main_test)
         run_data = {'run_name': self.main_test.data.run_data.run_name}
 
-        response, content = self.requester(path="tests/start_test_run",
-                                           json_data={
-                                               "run_data": run_data,
-                                               "tests": tests_tree_dict,
-                                               "token": self.token
-                                           })
+        response, _ = self.requester(path="tests/start_test_run",
+                                     json_data={
+                                         "run_data": run_data,
+                                         "tests": tests_tree_dict,
+                                         "token": self.token
+                                     })
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
         self.test_suite = next(iter(self.main_test))
         self.test_case = next(iter(self.test_suite))
