@@ -2,6 +2,7 @@
 # pylint: disable=dangerous-default-value,too-many-arguments
 from itertools import count
 
+from rotest.common.utils import get_class_fields
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
                                         MODE_FINALLY, MODE_CRITICAL,
@@ -105,40 +106,21 @@ class TestBlock(AbstractFlowComponent):
 
     @classmethod
     def get_inputs(cls):
-        """Return a list of all the input instances of this block.
+        """Return a dict of all the input instances of this block.
 
         Returns:
             dict. block's inputs (name: input placeholder instance).
         """
-        all_inputs = {}
-        checked_class = cls
-        while checked_class is not TestBlock:
-            all_inputs.update({key: value for (key, value) in
-                               checked_class.__dict__.iteritems()
-                               if (isinstance(value, BlockInput) and
-                                   key not in all_inputs)})
-
-            checked_class = checked_class.__bases__[0]
-
-        return all_inputs
+        return dict(get_class_fields(cls, BlockInput))
 
     @classmethod
     def get_outputs(cls):
-        """Return a list of all the input instances of this block.
+        """Return a dict of all the input instances of this block.
 
         Returns:
             dict. block's inputs (name: input placeholder instance).
         """
-        all_outputs = {}
-        checked_class = cls
-        while checked_class is not TestBlock:
-            all_outputs.update({key: value for (key, value) in
-                                checked_class.__dict__.iteritems()
-                                if isinstance(value, BlockOutput)})
-
-            checked_class = checked_class.__bases__[0]
-
-        return all_outputs
+        return dict(get_class_fields(cls, BlockOutput))
 
     def _share_outputs(self):
         """Share all the declared outputs of the block."""

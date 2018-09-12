@@ -72,3 +72,31 @@ def get_work_dir(base_dir, test_name, test_item):
 
     os.makedirs(work_dir)
     return work_dir
+
+
+def get_class_fields(cls, field_type):
+    """Get all fields of the class that inherit from the given type.
+
+    * This method searches also in the parent classes.
+    * Fields of sons override fields of parents.
+    * Ignores fields starting with '_'.
+
+    Args:
+        cls (type): class to search.
+        field_type (type): field type to find.
+
+    Yields:
+        tuple. all found (field name, field value).
+    """
+    if cls is object:
+        return
+
+    for parent_class in cls.__bases__:
+        for (field_name, field) in get_class_fields(parent_class, field_type):
+            yield (field_name, field)
+
+    for field_name in cls.__dict__:
+        if not field_name.startswith("_"):
+            field = getattr(cls, field_name)
+            if isinstance(field, field_type):
+                yield (field_name, field)

@@ -10,7 +10,7 @@ from ipdbugger import debug
 from attrdict import AttrDict
 
 from rotest.common import core_log
-from rotest.common.utils import get_work_dir
+from rotest.common.utils import get_work_dir, get_class_fields
 
 
 class ConvertToKwargsMeta(type):
@@ -95,13 +95,33 @@ class BaseResource(object):
     def create_sub_resources(self):
         """Create and return the sub resources if needed.
 
+        By default, this method searches for sub-resources declared as
+        class fields, where the 'data' attribute in the declaration points
+        to the name of the sub-resource's data field under the current's data.
+
         Override and assign sub-resources to fields in the current resource,
         using the 'data' object.
 
         Returns:
             iterable. sub-resources created.
         """
-        return ()
+        sub_resources = []
+        for sub_name, sub_placeholder in get_class_fields(self.__class__,
+                                                          BaseResource):
+
+            sub_class = sub_placeholder.__class__
+            if sub_class.DATA_CLASS is None:
+                sub_data = None
+
+            else:
+                sub_data = getattr(self.data, sub_placeholder.data)
+
+            sub_resource = sub_class(data=sub_data, **sub_placeholder.kwargs)
+
+            setattr(self, sub_name, sub_resource)
+            sub_resources.append(sub_resource)
+
+        return sub_resources
 
     def is_available(self, user_name=""):
         """Return whether resource is available for the given user.
