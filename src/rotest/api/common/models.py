@@ -16,7 +16,6 @@ class GenericModel(AbstractAPIModel):
 
 class TokenModel(AbstractAPIModel):
     """Model that contains only a session token."""
-    TITLE = "Generic Object"
     PROPERTIES = [
         StringField(name="token", required=True)
     ]
