@@ -5,6 +5,7 @@ from django.conf.urls import patterns
 from swaggapi.build import Swagger
 from swaggapi.api.openapi.models import Info, License, Tag
 
+from rotest.api.request_token import RequestToken
 from rotest.api.resource_control import (CleanupUser,
                                          LockResources,
                                          ReleaseResources,
@@ -20,6 +21,8 @@ from rotest.api.test_control import (StartTestRun,
                                      AddTestResult, UpdateResources)
 
 requests = [
+    RequestToken,
+
     # resources
     LockResources,
     ReleaseResources,

@@ -12,7 +12,13 @@ class GenericModel(AbstractAPIModel):
     """Generic model can be any dict object."""
     TITLE = "Generic Object"
     PROPERTIES = []
-    EXAMPLE = {}
+
+
+class TokenModel(AbstractAPIModel):
+    """Model that contains only a session token."""
+    PROPERTIES = [
+        StringField(name="token", required=True)
+    ]
 
 
 class ResourceDescriptorModel(AbstractAPIModel):
@@ -26,7 +32,7 @@ class ResourceDescriptorModel(AbstractAPIModel):
     PROPERTIES = [
         StringField(name="type", required=True,
                     example="resources.models.CalculatorData"),
-        ModelField(name="properties", model=GenericModel, required=True),
+        ModelField(name="properties", model=GenericModel, required=True)
     ]
 
 
@@ -42,7 +48,7 @@ class UpdateFieldsParamsModel(AbstractAPIModel):
     PROPERTIES = [
         ModelField(name="resource_descriptor", required=True,
                    model=ResourceDescriptorModel),
-        ModelField(name="changes", required=True, model=GenericModel)
+        ModelField(name="changes", required=True, model=GenericModel),
     ]
 
 
@@ -55,7 +61,8 @@ class LockResourcesParamsModel(AbstractAPIModel):
     """
     PROPERTIES = [
         ArrayField(name="descriptors", items_type=ResourceDescriptorModel,
-                   required=True)
+                   required=True),
+        StringField(name="token", required=True)
     ]
 
 
@@ -67,7 +74,8 @@ class ReleaseResourcesParamsModel(AbstractAPIModel):
     """
     PROPERTIES = [
         ArrayField(name="resources", items_type=StringField("resource_name"),
-                   example=["calc1", "calc2"], required=True)
+                   example=["calc1", "calc2"], required=True),
+        StringField(name="token", required=True)
     ]
 
 
@@ -183,6 +191,7 @@ class StartTestRunParamsModel(AbstractAPIModel):
         run_data (RunDataModel): the run data details of the current run.
     """
     PROPERTIES = [
+        StringField(name="token", required=True),
         ModelField(name="tests", model=TestModel, required=True),
         ModelField(name="run_data", model=RunDataModel, required=True)
     ]

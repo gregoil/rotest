@@ -141,10 +141,10 @@ class TestResultManagement(BaseResourceManagementTest):
         main_test = MockTestSuite(run_data=run_data)
         test_case = next(iter(main_test))
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(test_case, start_time=False)
 
-        self.client.start_test(test_case, token)
+        self.client.start_test(test_case)
         self._validate_has_times(test_case, start_time=True)
 
     def test_stop_test(self):
@@ -155,13 +155,13 @@ class TestResultManagement(BaseResourceManagementTest):
         main_test = MockTestSuite(run_data=run_data)
         test_case = next(iter(main_test))
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(test_case, start_time=False, end_time=False)
 
-        self.client.start_test(test_case, token)
+        self.client.start_test(test_case)
         self._validate_has_times(test_case, start_time=True, end_time=False)
 
-        self.client.stop_test(test_case, token)
+        self.client.stop_test(test_case)
         self._validate_has_times(test_case, start_time=True, end_time=True)
 
     def test_update_resources(self):
@@ -175,9 +175,9 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case.locked_resources = {'test_resource': DemoResource(
             data=DemoResourceData.objects.get(name='available_resource1'))}
 
-        token = self.client.start_test_run(main_test)
-        self.client.start_test(test_case, token)
-        self.client.update_resources(test_case, token)
+        self.client.start_test_run(main_test)
+        self.client.start_test(test_case)
+        self.client.update_resources(test_case)
 
         test_data = CaseData.objects.get(name=test_case.data.name)
 
@@ -201,10 +201,10 @@ class TestResultManagement(BaseResourceManagementTest):
         run_data = RunData(run_name=None)
         main_test = MockTestSuite(run_data=run_data)
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(main_test, start_time=False)
 
-        self.client.start_composite(main_test, token)
+        self.client.start_composite(main_test)
         self._validate_has_times(main_test, start_time=True)
 
     def test_stop_composite(self):
@@ -214,13 +214,13 @@ class TestResultManagement(BaseResourceManagementTest):
         run_data = RunData(run_name=None)
         main_test = MockTestSuite(run_data=run_data)
 
-        token = self.client.start_test_run(main_test)
+        self.client.start_test_run(main_test)
         self._validate_has_times(main_test, start_time=False, end_time=False)
 
-        self.client.start_composite(main_test, token)
+        self.client.start_composite(main_test)
         self._validate_has_times(main_test, start_time=True, end_time=False)
 
-        self.client.stop_composite(main_test, token)
+        self.client.stop_composite(main_test)
         self._validate_has_times(main_test, start_time=True, end_time=True)
 
     def test_add_result(self):
@@ -239,9 +239,9 @@ class TestResultManagement(BaseResourceManagementTest):
         test_case = next(iter(main_test))
 
         # Simulate starting the test.
-        token = self.client.start_test_run(main_test)
-        self.client.start_composite(main_test, token)
-        self.client.start_test(test_case, token)
+        self.client.start_test_run(main_test)
+        self.client.start_composite(main_test)
+        self.client.start_test(test_case)
 
         # Check that the results are still None.
         self._validate_test_result(main_test, success=None)
@@ -249,11 +249,11 @@ class TestResultManagement(BaseResourceManagementTest):
                                    error_tuple=(None, ''))
 
         # Simulate ending the test.
-        self.client.stop_test(test_case, token)
+        self.client.stop_test(test_case)
         ERROR_STRING = 'test error'
-        self.client.add_result(test_case, TestOutcome.ERROR, token,
+        self.client.add_result(test_case, TestOutcome.ERROR,
                                ERROR_STRING)
-        self.client.stop_composite(main_test, token)
+        self.client.stop_composite(main_test)
 
         # Check that the results are updated.
         self._validate_test_result(test_case, success=False,

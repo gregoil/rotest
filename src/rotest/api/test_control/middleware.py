@@ -23,8 +23,10 @@ class SessionData(object):
             and value is the actual test data.
         run_data (RunData): run data object that describes the test run.
         main_test (GeneralData): the main test of the run suite.
+        resources (list): resources locked in the session.
     """
-    def __init__(self, all_tests, run_data, main_test):
-        self.all_tests = all_tests
-        self.run_data = run_data
-        self.main_test = main_test
+    def __init__(self):
+        self.all_tests = None
+        self.run_data = None
+        self.main_test = None
+        self.resources = []

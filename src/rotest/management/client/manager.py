@@ -14,10 +14,10 @@ import time
 import re
 from attrdict import AttrDict
 
-from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
 from rotest.api.common.responses import FailureResponseModel
+from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.common.errors import (ResourceReleaseError,
@@ -28,7 +28,7 @@ from rotest.api.resource_control import (LockResources,
                                          ReleaseResources, CleanupUser)
 from rotest.api.common.models import (ReleaseResourcesParamsModel,
                                       ResourceDescriptorModel,
-                                      LockResourcesParamsModel, GenericModel)
+                                      LockResourcesParamsModel, TokenModel)
 
 SLEEP_TIME_BETWEEN_REQUESTS = 0.25
 
@@ -114,7 +114,7 @@ class ClientResourceManager(AbstractClient):
         if self.is_connected():
             self._release_locked_resources()
             self.requester.request(CleanupUser, method="post",
-                                   data=GenericModel({}))
+                                   data=TokenModel({"token": self.token}))
             super(ClientResourceManager, self).disconnect()
 
     def _initialize_resource(self, resource, skip_init=False):
@@ -302,7 +302,8 @@ class ClientResourceManager(AbstractClient):
                             descriptors]
 
         request_data = LockResourcesParamsModel({
-            "descriptors": encoded_requests
+            "descriptors": encoded_requests,
+            "token": self.token
         })
 
         start_time = time.time()
@@ -382,7 +383,8 @@ class ClientResourceManager(AbstractClient):
 
         if len(release_requests) > 0:
             request_data = ReleaseResourcesParamsModel({
-                "resources": release_requests
+                "resources": release_requests,
+                "token": self.token
             })
             response = self.requester.request(ReleaseResources,
                                               data=request_data,

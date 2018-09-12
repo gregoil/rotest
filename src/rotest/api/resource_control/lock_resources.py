@@ -10,10 +10,11 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.management.common.errors import ResourceTypeError
 from rotest.management.common.utils import get_username
 from rotest.management.common.json_parser import JSONParser
+from rotest.management.common.errors import ResourceTypeError
 from rotest.api.common.models import LockResourcesParamsModel
+from rotest.api.test_control.middleware import session_middleware
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.api.common.responses import (InfluencedResourcesResponseModel,
                                          FailureResponseModel)
@@ -132,7 +133,8 @@ class LockResources(DjangoRequestView):
         except StopIteration:
             raise BadRequest(UNAVAILABLE_RESOURCES.format(descriptor))
 
-    def post(self, request, *args, **kwargs):
+    @session_middleware
+    def post(self, request, sessions, *args, **kwargs):
         """Lock the given resources one by one.
 
         Note:
@@ -140,6 +142,7 @@ class LockResources(DjangoRequestView):
             been locked until that resource will be released.
         """
         username = get_username(request)
+        session = sessions[request.model.token]
         descriptors = request.model.descriptors
 
         if not auth_models.User.objects.filter(username=username).exists():
@@ -152,6 +155,9 @@ class LockResources(DjangoRequestView):
             for descriptor_dict in descriptors:
                 locked_resources.append(self._try_to_lock_available_resource(
                     username, groups, descriptor_dict))
+
+        for resource in locked_resources:
+            session.resources.append(resource)
 
         encoder = JSONParser()
         response = [encoder.encode(_resource)

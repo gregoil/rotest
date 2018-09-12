@@ -5,6 +5,7 @@ from functools import partial
 from django.test import Client, TransactionTestCase
 
 from tests.api.utils import request
+from rotest.api.test_control.middleware import SESSIONS
 from rotest.management.models import DemoComplexResourceData, DemoResourceData
 
 
@@ -15,13 +16,17 @@ class TestReleaseResources(TransactionTestCase):
     def setUp(self):
         """Setup test environment."""
         self.client = Client()
+        _, token_object = request(client=self.client,
+                                  path="tests/get_token", method="get")
+        self.token = token_object.token
         self.requester = partial(request, client=self.client,
                                  path="resources/release_resources")
 
     def test_resource_doesnt_exist(self):
         """Assert trying to release invalid resource fails."""
         response, _ = self.requester(json_data={
-            "resources": ["invalid_resource_name"]
+            "resources": ["invalid_resource_name"],
+            "token": self.token
         })
 
         self.assertEqual(response.status_code, httplib.BAD_REQUEST)
@@ -40,8 +45,11 @@ class TestReleaseResources(TransactionTestCase):
         resource.owner = "localhost"
         resource.save()
 
+        SESSIONS[self.token].resources = [resource]
+
         response, content = self.requester(json_data={
-            "resources": ["complex_resource1"]
+            "resources": ["complex_resource1"],
+            "token": self.token
         })
 
         # bad request because sub-resources was not owned.
@@ -68,8 +76,11 @@ class TestReleaseResources(TransactionTestCase):
         resource.owner = "unknown_user"
         resource.save()
 
+        SESSIONS[self.token].resources = [resource]
+
         response, _ = self.requester(json_data={
-            "resources": ["available_resource1"]
+            "resources": ["available_resource1"],
+            "token": self.token
         })
         # refresh from db
         resources = DemoResourceData.objects.filter(
@@ -88,8 +99,11 @@ class TestReleaseResources(TransactionTestCase):
         resource.owner = "localhost"
         resource.save()
 
+        SESSIONS[self.token].resources = [resource]
+
         response, _ = self.requester(json_data={
-            "resources": ["available_resource1"]
+            "resources": ["available_resource1"],
+            "token": self.token
         })
         # refresh from db
         resources = DemoResourceData.objects.filter(

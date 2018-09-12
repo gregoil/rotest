@@ -16,6 +16,9 @@ class TestLockResources(TransactionTestCase):
     def setUp(self):
         """Setup test environment."""
         self.client = Client()
+        _, token_object = request(client=self.client,
+                                  path="tests/get_token", method="get")
+        self.token = token_object.token
         self.requester = partial(request, self.client,
                                  "resources/lock_resources")
 
@@ -24,7 +27,8 @@ class TestLockResources(TransactionTestCase):
         response, content = self.requester(
             json_data={
                 "descriptors": [],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
         self.assertEqual(response.status_code, httplib.OK)
         self.assertEqual(len(content.resource_descriptors), 0)
@@ -40,7 +44,8 @@ class TestLockResources(TransactionTestCase):
                         "properties": {}
                     }
                 ],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
         self.assertEqual(response.status_code, httplib.OK)
         self.assertEqual(len(content.resource_descriptors), 1)
@@ -58,7 +63,8 @@ class TestLockResources(TransactionTestCase):
                         }
                     }
                 ],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
         self.assertEqual(response.status_code, httplib.BAD_REQUEST)
 
@@ -81,7 +87,8 @@ class TestLockResources(TransactionTestCase):
                         "properties": {}
                     }
                 ],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
         # refresh from db
         resources = DemoComplexResourceData.objects.filter(
@@ -113,7 +120,8 @@ class TestLockResources(TransactionTestCase):
                         "properties": {}
                     }
                 ],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
 
         resources = DemoComplexResourceData.objects.filter(
@@ -138,6 +146,9 @@ class TestLockResourcesInvalid(TransactionTestCase):
     def setUp(self):
         """Setup test environment."""
         self.client = Client()
+        _, token_object = request(client=self.client,
+                                  path="tests/get_token", method="get")
+        self.token = token_object.token
         self.requester = partial(request, self.client,
                                  "resources/lock_resources")
 
@@ -153,7 +164,8 @@ class TestLockResourcesInvalid(TransactionTestCase):
         response, content = self.requester(
             json_data={
                 "descriptors": [],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
         self.assertEqual(response.status_code, httplib.BAD_REQUEST)
         self.assertEqual(content.details,
@@ -178,7 +190,8 @@ class TestLockResourcesInvalid(TransactionTestCase):
                         "properties": {}
                     }
                 ],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
         self.assertEqual(response.status_code, httplib.BAD_REQUEST)
         self.assertEqual(content.details,
@@ -195,7 +208,8 @@ class TestLockResourcesInvalid(TransactionTestCase):
                         "properties": {}
                     }
                 ],
-                "timeout": 0
+                "timeout": 0,
+                "token": self.token
             })
 
         self.assertEqual(response.status_code, httplib.BAD_REQUEST)

@@ -1,16 +1,15 @@
 # pylint: disable=unused-argument, no-self-use
-import uuid
 import httplib
 
-from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.core.models import RunData
-from rotest.api.common.models import StartTestRunParamsModel
 from rotest.management.common.json_parser import JSONParser
-from rotest.api.test_control.middleware import session_middleware, SessionData
-from rotest.api.common.responses import (TokenResponseModel,
+from rotest.api.common.models import StartTestRunParamsModel
+from rotest.api.test_control.middleware import session_middleware
+from rotest.api.common.responses import (SuccessResponse,
                                          FailureResponseModel)
 
 
@@ -30,7 +29,7 @@ class StartTestRun(DjangoRequestView):
     URI = "tests/start_test_run"
     DEFAULT_MODEL = StartTestRunParamsModel
     DEFAULT_RESPONSES = {
-        httplib.OK: TokenResponseModel,
+        httplib.NO_CONTENT: SuccessResponse,
         httplib.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
@@ -94,11 +93,9 @@ class StartTestRun(DjangoRequestView):
         run_data.user_name = request.get_host()
         run_data.save()
 
-        session_token = str(uuid.uuid4())
-        sessions[session_token] = SessionData(all_tests=all_tests,
-                                              run_data=run_data,
-                                              main_test=main_test)
-        response = {
-            "token": session_token
-        }
-        return Response(response, status=httplib.OK)
+        session = sessions[request.model.token]
+        session.all_tests = all_tests
+        session.run_data = run_data
+        session.main_test = main_test
+
+        return Response({}, status=httplib.NO_CONTENT)

@@ -5,6 +5,7 @@ from functools import partial
 from django.test import Client, TransactionTestCase
 
 from tests.api.utils import request
+from rotest.api.test_control.middleware import SESSIONS
 from rotest.management.models import DemoComplexResourceData
 
 
@@ -15,12 +16,15 @@ class TestCleanupUser(TransactionTestCase):
     def setUp(self):
         """Setup test environment."""
         self.client = Client()
+        _, token_object = request(client=self.client,
+                                  path="tests/get_token", method="get")
+        self.token = token_object.token
         self.requester = partial(request, client=self.client,
                                  path="resources/cleanup_user")
 
     def test_no_resources_locked(self):
         """Assert response - cleanup when user didn't lock anything."""
-        response, _ = self.requester()
+        response, _ = self.requester(json_data={"token": self.token})
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
     def test_release_owner_complex_resource(self):
@@ -35,7 +39,8 @@ class TestCleanupUser(TransactionTestCase):
         sub_resource.owner = "localhost"
         resource.save()
         sub_resource.save()
-        response, _ = self.requester()
+        SESSIONS[self.token].resources = [resource]
+        response, _ = self.requester(json_data={"token": self.token})
         self.assertEqual(response.status_code, httplib.NO_CONTENT)
 
         resources = DemoComplexResourceData.objects.filter(
