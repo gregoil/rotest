@@ -1356,14 +1356,6 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.client.release_resources(resources=[resource])
 
-        resources = DemoComplexResourceData.objects.filter(
-                                                       name=self.COMPLEX_NAME)
-
-        resource, = resources
-        self.assertTrue(resource.is_available(), "Expected available "
-                        "complex resource with name %r in DB, found %d"
-                        % (self.COMPLEX_NAME, resources_num))
-
     def test_lock_alter_complex_service(self):
         """Lock complex service with the default 'create_sub_resources'.
 
