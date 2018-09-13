@@ -29,6 +29,7 @@ class ConvertToKwargsMeta(type):
                                "positional arguments")
 
         resource = type.__call__(cls, *args, **kwargs)
+        kwargs.pop('data')
         resource.kwargs = kwargs
         for field_name, field_value in kwargs.iteritems():
             setattr(resource, field_name, field_value)
