@@ -10,8 +10,8 @@ from ipdbugger import debug
 from attrdict import AttrDict
 
 from rotest.common import core_log
-from rotest.management import ResourceData
 from rotest.common.utils import get_work_dir, get_class_fields
+from rotest.management.models.resource_data import ResourceData
 
 
 class ConvertToKwargsMeta(type):
