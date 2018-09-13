@@ -10,6 +10,7 @@ from ipdbugger import debug
 from attrdict import AttrDict
 
 from rotest.common import core_log
+from rotest.management import ResourceData
 from rotest.common.utils import get_work_dir, get_class_fields
 
 
@@ -75,7 +76,7 @@ class BaseResource(object):
         self.logger = core_log
         self._prev_loggers = []
 
-        if data is not None:
+        if data is not None and isinstance(data, ResourceData):
             self.data = data
             for field_name, field_value in self.data.get_fields().iteritems():
                 setattr(self, field_name, field_value)

@@ -114,7 +114,7 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        for (field_name, field) in dict(get_class_fields(cls, BaseResource)):
+        for (field_name, field) in get_class_fields(cls, BaseResource):
             new_request = request(field_name,
                                   field.__class__,
                                   **field.kwargs)

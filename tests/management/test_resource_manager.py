@@ -1319,7 +1319,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                               % (request.type.__name__,
                                  resource.__class__.__name__))
 
-        self.assertEquals(len(resource.get_sub_resources()), 2,
+        self.assertEquals(len(list(resource.get_sub_resources())), 2,
                           "Expected to have 2 sub-resources, found %r"
                           % resource.get_sub_resources())
 
@@ -1404,7 +1404,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                               % (request.type.__name__,
                                  resource.__class__.__name__))
 
-        self.assertEquals(len(resource.get_sub_resources()), 2,
+        self.assertEquals(len(list(resource.get_sub_resources())), 2,
                           "Expected to have 2 sub-resources, found %r"
                           % resource.get_sub_resources())
 
