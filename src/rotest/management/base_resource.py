@@ -77,10 +77,11 @@ class BaseResource(object):
         self.logger = core_log
         self._prev_loggers = []
 
-        if data is not None and isinstance(data, ResourceData):
+        if data is not None:
             self.data = data
-            for field_name, field_value in self.data.get_fields().iteritems():
-                setattr(self, field_name, field_value)
+            if isinstance(data, ResourceData):
+                for field_name, field_value in data.get_fields().iteritems():
+                    setattr(self, field_name, field_value)
 
         else:
             self.data = AttrDict()
