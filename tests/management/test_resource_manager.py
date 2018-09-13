@@ -1332,7 +1332,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                              "Sub-resource %r is still a placeholder" %
                              sub_resource.name)
 
-            self.assertFalse(sub_resource.is_available(),
+            sub_data = DemoResourceData.objects.get(name=sub_resource.name)
+            self.assertFalse(sub_data.is_available(),
                              "Sub-resource %r should be locked but "
                              "found available" % sub_resource.name)
 
