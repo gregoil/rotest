@@ -70,6 +70,7 @@ class TestSuite(unittest.TestSuite):
         self.identifier = indexer.next()
         self.resource_manager = resource_manager
         self.parents_count = self._get_parents_count()
+        self.config = config
 
         if parent is not None:
             parent.addTest(self)

@@ -6,6 +6,8 @@ tell what and when tests and tests containers were run (including their
 hierarchial structure), what were their results and error descriptions, and
 additional data about the run.
 """
+import json
+
 from rotest.api.common.models import (StartTestRunParamsModel,
                                       UpdateRunDataParamsModel,
                                       AddTestResultParamsModel,
@@ -69,14 +71,19 @@ class ClientResultManager(AbstractClient):
 
         return test_dict
 
-    def start_test_run(self, main_test):
+    def start_test_run(self, main_test, config=None):
         """Inform the result server of the start of the run.
 
         Args:
             main_test (TestCase / TestSuite): main test container of the run.
+            config (dict): configurations the test was loaded with.
         """
+        config = config if config else dict()
+
         tests_tree_dict = self._create_test_dict(main_test)
-        run_data = {'run_name': main_test.data.run_data.run_name}
+        run_data = {'run_name': main_test.data.run_data.run_name,
+                    'config': json.dumps(config)}
+
         request_data = StartTestRunParamsModel({
             "token": self.token,
             "tests": tests_tree_dict,

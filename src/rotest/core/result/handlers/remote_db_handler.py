@@ -21,7 +21,7 @@ class RemoteDBHandler(AbstractResultHandler):
 
     def start_test_run(self):
         """Save all the test datas and the run data in the remote db."""
-        self.client.start_test_run(self.main_test)
+        self.client.start_test_run(self.main_test, self.main_test.config)
 
     def stop_test_run(self):
         """Disconnect from the result server."""

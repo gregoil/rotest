@@ -1,6 +1,8 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
 import mock
+import json
+
 from swaggapi.api.builder.client import requester
 
 from rotest.core.models import GeneralData
@@ -146,6 +148,22 @@ class TestResultManagement(BaseResourceManagementTest):
 
         self.client.start_test(test_case)
         self._validate_has_times(test_case, start_time=True)
+
+    def test_start_test_with_config(self):
+        """Test that the start_test method properly saves the configuration."""
+        MockTestSuite.components = (SuccessCase,)
+
+        run_data = RunData(run_name=None)
+        main_test = MockTestSuite(run_data=run_data)
+
+        mock_configuration = {"mock_key": "mock_value"}
+        json_configuration = json.dumps(mock_configuration)
+
+        self.client.start_test_run(main_test, config=mock_configuration)
+        self.assertEqual(run_data.config, json_configuration,
+                         "Configuration was not saved correctly as a "
+                         "json string, expected %r, got %r"
+                         % (json_configuration, run_data.config))
 
     def test_stop_test(self):
         """Test that the stop_test method ends the test's data."""
