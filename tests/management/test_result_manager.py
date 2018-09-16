@@ -153,13 +153,13 @@ class TestResultManagement(BaseResourceManagementTest):
         """Test that the start_test method properly saves the configuration."""
         MockTestSuite.components = (SuccessCase,)
 
-        run_data = RunData(run_name=None)
+        mock_configuration = {"mock_key": "mock_value"}
+        run_data = RunData(run_name=None, config=mock_configuration)
         main_test = MockTestSuite(run_data=run_data)
 
-        mock_configuration = {"mock_key": "mock_value"}
         json_configuration = json.dumps(mock_configuration)
 
-        self.client.start_test_run(main_test, config=mock_configuration)
+        self.client.start_test_run(main_test)
         self.assertEqual(run_data.config, json_configuration,
                          "Configuration was not saved correctly as a "
                          "json string, expected %r, got %r"

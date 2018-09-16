@@ -6,8 +6,6 @@ tell what and when tests and tests containers were run (including their
 hierarchial structure), what were their results and error descriptions, and
 additional data about the run.
 """
-import json
-
 from rotest.api.common.models import (StartTestRunParamsModel,
                                       UpdateRunDataParamsModel,
                                       AddTestResultParamsModel,
