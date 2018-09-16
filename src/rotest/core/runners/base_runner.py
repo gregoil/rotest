@@ -2,6 +2,7 @@
 # pylint: disable=invalid-name,too-many-arguments
 # pylint: disable=expression-not-assigned,no-member
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
+import json
 from unittest.runner import TextTestRunner
 
 from rotest.common import core_log
@@ -89,7 +90,8 @@ class BaseTestRunner(TextTestRunner):
                 :class:`rotest.core.suite.TestSuite`.
         """
         core_log.debug('Generating run data for %r', self.run_name)
-        run_data = RunData(run_name=self.run_name, run_delta=self.run_delta)
+        run_data = RunData(run_name=self.run_name, run_delta=self.run_delta,
+                           config=json.dumps(self.config))
 
         core_log.debug("Creating resource client")
         self.resource_manager = self.create_resource_manager()

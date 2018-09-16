@@ -71,18 +71,15 @@ class ClientResultManager(AbstractClient):
 
         return test_dict
 
-    def start_test_run(self, main_test, config=None):
+    def start_test_run(self, main_test):
         """Inform the result server of the start of the run.
 
         Args:
             main_test (TestCase / TestSuite): main test container of the run.
-            config (dict): configurations the test was loaded with.
         """
-        config = config if config else dict()
-
         tests_tree_dict = self._create_test_dict(main_test)
         run_data = {'run_name': main_test.data.run_data.run_name,
-                    'config': json.dumps(config)}
+                    'config': main_test.data.run_data.config}
 
         request_data = StartTestRunParamsModel({
             "token": self.token,
