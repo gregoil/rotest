@@ -1,8 +1,8 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
-import mock
 import json
 
+import mock
 from swaggapi.api.builder.client import requester
 
 from rotest.core.models import GeneralData
