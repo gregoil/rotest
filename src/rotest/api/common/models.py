@@ -166,7 +166,8 @@ class RunDataModel(AbstractAPIModel):
         StringField(name="run_name"),
         StringField(name="artifact_path"),
         BoolField(name="run_delta"),
-        StringField(name="user_name")
+        StringField(name="user_name"),
+        StringField(name="config"),
     ]
 
 

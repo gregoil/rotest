@@ -76,7 +76,9 @@ class ClientResultManager(AbstractClient):
             main_test (TestCase / TestSuite): main test container of the run.
         """
         tests_tree_dict = self._create_test_dict(main_test)
-        run_data = {'run_name': main_test.data.run_data.run_name}
+        run_data = {'run_name': main_test.data.run_data.run_name,
+                    'config': main_test.data.run_data.config}
+
         request_data = StartTestRunParamsModel({
             "token": self.token,
             "tests": tests_tree_dict,

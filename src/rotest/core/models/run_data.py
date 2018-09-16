@@ -30,8 +30,9 @@ class RunData(models.Model):
     main_test = models.ForeignKey(GeneralData, null=True, blank=True,
                                   related_name='+')
     user_name = NameField(null=True, blank=True)
+    config = models.TextField(blank=True, null=True, default="{}")
 
-    GLOBAL_FIELDS = ('run_name', 'run_delta', 'artifact_path')
+    GLOBAL_FIELDS = ('run_name', 'run_delta', 'artifact_path', 'config')
 
     class Meta:
         """Define the Django application for this model."""
