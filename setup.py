@@ -1,7 +1,7 @@
 """Setup file for handling packaging and distribution."""
 from setuptools import setup, find_packages
 
-__version__ = "4.1.2"
+__version__ = "4.1.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
