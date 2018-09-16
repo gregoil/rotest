@@ -149,22 +149,6 @@ class TestResultManagement(BaseResourceManagementTest):
         self.client.start_test(test_case)
         self._validate_has_times(test_case, start_time=True)
 
-    def test_start_test_with_config(self):
-        """Test that the start_test method properly saves the configuration."""
-        MockTestSuite.components = (SuccessCase,)
-
-        mock_configuration = {"mock_key": "mock_value"}
-        run_data = RunData(run_name=None, config=mock_configuration)
-        main_test = MockTestSuite(run_data=run_data)
-
-        json_configuration = json.dumps(mock_configuration)
-
-        self.client.start_test_run(main_test)
-        self.assertEqual(run_data.config, json_configuration,
-                         "Configuration was not saved correctly as a "
-                         "json string, expected %r, got %r"
-                         % (json_configuration, run_data.config))
-
     def test_stop_test(self):
         """Test that the stop_test method ends the test's data."""
         MockTestSuite.components = (SuccessCase,)
