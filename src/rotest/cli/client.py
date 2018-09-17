@@ -84,7 +84,7 @@ def parse_outputs_option(outputs):
                               ", ".join(non_existing_handlers),
                               ", ".join(available_handlers)))
 
-    return requested_handlers
+    return list(requested_handlers)
 
 
 def get_tags_by_class(test_class):
