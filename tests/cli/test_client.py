@@ -18,7 +18,7 @@ class MockCase(TestCase):
 
 def test_parsing_output_handlers():
     outputs = parse_outputs_option("pretty,xml,excel")
-    assert outputs == ["pretty", "xml", "excel"]
+    assert set(outputs) == {"pretty", "xml", "excel"}
 
 
 def test_bad_option_in_output_parser():
@@ -51,7 +51,7 @@ def test_setting_options_by_config(run_tests):
 
     config = AttrDict(delta_iterations=5, processes=2,
                       paths=(".",), config_path="config.json",
-                      outputs={"xml", "remote"}, filter="MockCase",
+                      outputs=list({"xml", "remote"}), filter="MockCase",
                       run_name="some name", resources="query", debug=False,
                       fail_fast=False, list=False, save_state=False,
                       skip_init=False)
@@ -85,7 +85,7 @@ def test_setting_options_by_cli(run_tests):
 
     config = AttrDict(delta_iterations=4, processes=1,
                       paths=(".",), config_path="config.json",
-                      outputs=["pretty", "full"], filter="MockCase",
+                      outputs=list({"pretty", "full"}), filter="MockCase",
                       run_name="other name", resources="other query",
                       debug=True, fail_fast=True, list=True, save_state=True,
                       skip_init=True)
