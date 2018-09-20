@@ -72,11 +72,11 @@ def parse_outputs_option(outputs):
     if not outputs:
         return None
 
-    requested_handlers = set(outputs.split(","))
+    requested_handlers = outputs.split(",")
 
-    available_handlers = set(get_result_handlers())
+    available_handlers = get_result_handlers()
 
-    non_existing_handlers = requested_handlers - available_handlers
+    non_existing_handlers = set(requested_handlers) - set(available_handlers)
 
     if non_existing_handlers:
         raise ValueError("The following output handlers are not "
@@ -84,7 +84,7 @@ def parse_outputs_option(outputs):
                               ", ".join(non_existing_handlers),
                               ", ".join(available_handlers)))
 
-    return list(requested_handlers)
+    return requested_handlers
 
 
 def get_tags_by_class(test_class):
