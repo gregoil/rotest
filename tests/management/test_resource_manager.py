@@ -13,8 +13,8 @@ from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
-from rotest.management import BaseResource
 from rotest.management.common.utils import LOCALHOST
+from rotest.management import BaseResource, DataPointer
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
@@ -1278,8 +1278,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoResource(data='demo1')
-            demo2 = DemoResource(data='demo2')
+            demo1 = DemoResource(data=DataPointer('demo1'))
+            demo2 = DemoResource(data=DataPointer('demo2'))
 
             def initialize(self):
                 """Turns on the initialization flag."""

@@ -29,7 +29,6 @@ class ConvertToKwargsMeta(type):
                                "positional arguments")
 
         resource = type.__call__(cls, *args, **kwargs)
-        kwargs.pop('data', None)
         resource.kwargs = kwargs
         for field_name, field_value in kwargs.iteritems():
             setattr(resource, field_name, field_value)
@@ -38,6 +37,12 @@ class ConvertToKwargsMeta(type):
             resource.data.update(kwargs)
 
         return resource
+
+
+class DataPointer(object):
+    """Pointer to a field in the resource's data."""
+    def __init__(self, field_name):
+        self.field_name = field_name
 
 
 class BaseResource(object):
@@ -113,13 +118,12 @@ class BaseResource(object):
                                                           BaseResource):
 
             sub_class = sub_placeholder.__class__
-            if sub_class.DATA_CLASS is None:
-                sub_data = None
+            actual_kwargs = sub_placeholder.kwargs.copy()
+            for key, value in sub_placeholder.kwargs.iteritems():
+                if isinstance(value, DataPointer):
+                    actual_kwargs[key] = getattr(self.data, value.field_name)
 
-            else:
-                sub_data = getattr(self.data, sub_placeholder.data)
-
-            sub_resource = sub_class(data=sub_data, **sub_placeholder.kwargs)
+            sub_resource = sub_class(**actual_kwargs)
 
             setattr(self, sub_name, sub_resource)
             sub_resources.append(sub_resource)
