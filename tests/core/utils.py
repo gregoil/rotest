@@ -321,8 +321,24 @@ class StoreFailureCase(MockCase):
 
     def test_store_failure(self):
         """Mock test function - stores failures."""
-        self.expect(False, self.FAILURE_MESSAGE)
-        self.assertTrue(self.ASSERTION_MESSAGE)
+        self.expectTrue(False, self.FAILURE_MESSAGE)
+        self.assertTrue(False, self.ASSERTION_MESSAGE)
+
+
+class ExpectRaisesCase(MockCase):
+    """Mock case, expect multiple exceptions."""
+    __test__ = False
+
+    FAILURE_MESSAGE = "Stored failure"
+    ASSERTION_MESSAGE = "Assertion failed"
+
+    def test_expect_errors(self):
+        """Mock test function - stores failures."""
+        self.expectRaises(RuntimeError, list)
+        with self.expectRaises(RuntimeError):
+            pass
+
+        self.assertTrue(False, self.ASSERTION_MESSAGE)
 
 
 class StoreMultipleFailuresCase(MockCase):
@@ -334,8 +350,8 @@ class StoreMultipleFailuresCase(MockCase):
 
     def test_store_failures(self):
         """Mock test function - stores failures."""
-        self.expect(False, self.FAILURE_MESSAGE1)
-        self.expect(False, self.FAILURE_MESSAGE2)
+        self.expectTrue(False, self.FAILURE_MESSAGE1)
+        self.expectTrue(False, self.FAILURE_MESSAGE2)
 
 
 class StoreFailureErrorCase(MockCase):
@@ -347,7 +363,7 @@ class StoreFailureErrorCase(MockCase):
 
     def test_store_failure_and_error(self):
         """Mock test function - stores a failure and raise exception."""
-        self.expect(False, self.FAILURE_MESSAGE)
+        self.expectTrue(False, self.FAILURE_MESSAGE)
         raise RuntimeError(self.ERROR_MESSAGE)
 
 
@@ -616,8 +632,8 @@ class StoreFailuresBlock(MockBlock):
 
     def test_store_failures(self):
         """Mock test function - stores failures."""
-        self.expect(False, self.FAILURE_MESSAGE1)
-        self.expect(False, self.FAILURE_MESSAGE2)
+        self.expectTrue(False, self.FAILURE_MESSAGE1)
+        self.expectTrue(False, self.FAILURE_MESSAGE2)
 
 
 class FailureBlock(MockBlock):

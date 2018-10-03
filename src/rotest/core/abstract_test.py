@@ -3,6 +3,7 @@
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
 # pylint: disable=too-many-arguments,too-many-locals,broad-except,no-self-use
+# pylint: disable=too-many-public-methods
 import os
 import sys
 import unittest
@@ -13,7 +14,6 @@ from itertools import count
 from ipdbugger import debug
 from attrdict import AttrDict
 
-from rotest.common.utils import get_class_fields
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ResourceRequest
@@ -103,6 +103,21 @@ class AbstractTest(unittest.TestCase):
             resource.release_logger(self.logger)
 
     @classmethod
+    def get_resource_requests_fields(cls):
+        """Yield tuples of all the resource request fields of this test.
+         Yields:
+            tuple. (requests name,  request field) tuples of the test class.
+        """
+        checked_class = cls
+        while checked_class is not AbstractTest:
+            for field_name in checked_class.__dict__:
+                if not field_name.startswith("_"):
+                    field = getattr(checked_class, field_name)
+                    if isinstance(field, BaseResource):
+                        yield (field_name, field)
+            checked_class = checked_class.__bases__[0]
+
+    @classmethod
     def get_resource_requests(cls):
         """Return a list of all the resource requests this test makes.
 
@@ -114,7 +129,7 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        for (field_name, field) in get_class_fields(cls, BaseResource):
+        for (field_name, field) in cls.get_resource_requests_fields():
             new_request = request(field_name,
                                   field.__class__,
                                   **field.kwargs)
