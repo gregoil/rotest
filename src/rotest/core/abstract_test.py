@@ -13,6 +13,7 @@ from itertools import count
 from ipdbugger import debug
 from attrdict import AttrDict
 
+from rotest.common.utils import get_class_fields
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ResourceRequest
@@ -102,23 +103,6 @@ class AbstractTest(unittest.TestCase):
             resource.release_logger(self.logger)
 
     @classmethod
-    def get_resource_requests_fields(cls):
-        """Yield tuples of all the resource request fields of this test.
-
-        Yields:
-            tuple. (requests name,  request field) tuples of the test class.
-        """
-        checked_class = cls
-        while checked_class is not AbstractTest:
-            for field_name in checked_class.__dict__:
-                if not field_name.startswith("_"):
-                    field = getattr(checked_class, field_name)
-                    if isinstance(field, BaseResource):
-                        yield (field_name, field)
-
-            checked_class = checked_class.__bases__[0]
-
-    @classmethod
     def get_resource_requests(cls):
         """Return a list of all the resource requests this test makes.
 
@@ -130,7 +114,7 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        for (field_name, field) in cls.get_resource_requests_fields():
+        for (field_name, field) in get_class_fields(cls, BaseResource):
             new_request = request(field_name,
                                   field.__class__,
                                   **field.kwargs)
@@ -331,3 +315,146 @@ class AbstractTest(unittest.TestCase):
 
         for resource in self.all_resources.itervalues():
             resource.store_state(store_dir)
+
+    def _wrap_assert(self, assert_method, *args, **kwargs):
+        try:
+            assert_method(*args, **kwargs)
+
+        except AssertionError as err:
+            self.expect(False, str(err))
+
+    def expectFalse(self, expr, msg=None):
+        self._wrap_assert(self.assertFalse, expr, msg)
+
+    def expectTrue(self, expr, msg=None):
+        self._wrap_assert(self.assertTrue, expr, msg)
+
+    def expectEqual(self, first, second, msg=None):
+        self._wrap_assert(self.assertEqual, first, second, msg)
+
+    def expectNotEqual(self, first, second, msg=None):
+        self._wrap_assert(self.assertNotEqual, first, second, msg)
+
+    def expectAlmostEqual(self, first, second, places=None,
+                          msg=None, delta=None):
+
+        self._wrap_assert(self.assertAlmostEqual, first, second, places,
+                          msg, delta)
+
+    def expectNotAlmostEqual(self, first, second, places=None,
+                             msg=None, delta=None):
+
+        self._wrap_assert(self.assertNotAlmostEqual, first, second, places,
+                          msg, delta)
+
+    expectEquals = expectEqual
+    expectNotEquals = expectNotEqual
+    expectAlmostEquals = expectAlmostEqual
+    expectNotAlmostEquals = expectNotAlmostEqual
+
+    def expectSequenceEqual(self, seq1, seq2, msg=None, seq_type=None):
+        self._wrap_assert(self.assertSequenceEqual, seq1, seq2, msg, seq_type)
+
+    def expectListEqual(self, list1, list2, msg=None):
+        self._wrap_assert(self.assertListEqual, list1, list2, msg)
+
+    def expectTupleEqual(self, tuple1, tuple2, msg=None):
+        self._wrap_assert(self.assertTupleEqual, tuple1, tuple2, msg)
+
+    def expectSetEqual(self, set1, set2, msg=None):
+        self._wrap_assert(self.assertSetEqual, set1, set2, msg)
+
+    def expectIn(self, member, container, msg=None):
+        self._wrap_assert(self.assertIn, member, container, msg)
+
+    def expectNotIn(self, member, container, msg=None):
+        self._wrap_assert(self.assertNotIn, member, container, msg)
+
+    def expectIs(self, expr1, expr2, msg=None):
+        self._wrap_assert(self.assertIs, expr1, expr2, msg)
+
+    def expectIsNot(self, expr1, expr2, msg=None):
+        self._wrap_assert(self.assertIsNot, expr1, expr2, msg)
+
+    def expectDictEqual(self, set1, set2, msg=None):
+        self._wrap_assert(self.assertDictEqual, set1, set2, msg)
+
+    def expectDictContainsSubset(self, expected, actual, msg=None):
+        self._wrap_assert(self.assertDictContainsSubset, expected, actual, msg)
+
+    def expectItemsEqual(self, expected_seq, actual_seq, msg=None):
+        self._wrap_assert(self.assertItemsEqual, expected_seq, actual_seq, msg)
+
+    def expectMultiLineEqual(self, first, second, msg=None):
+        self._wrap_assert(self.assertMultiLineEqual, first, second, msg)
+
+    def expectLess(self, a, b, msg=None):
+        self._wrap_assert(self.assertLess, a, b, msg)
+
+    def expectLessEqual(self, a, b, msg=None):
+        self._wrap_assert(self.assertLessEqual, a, b, msg)
+
+    def expectGreater(self, a, b, msg=None):
+        self._wrap_assert(self.assertGreater, a, b, msg)
+
+    def expectGreaterEqual(self, a, b, msg=None):
+        self._wrap_assert(self.assertGreaterEqual, a, b, msg)
+
+    def expectIsNone(self, obj, msg=None):
+        self._wrap_assert(self.assertIsNone, obj, msg)
+
+    def expectIsNotNone(self, obj, msg=None):
+        self._wrap_assert(self.assertIsNotNone, obj, msg)
+
+    def expectIsInstance(self, obj, msg=None):
+        self._wrap_assert(self.assertIsInstance, obj, msg)
+
+    def expectNotIsInstance(self, obj, msg=None):
+        self._wrap_assert(self.assertNotIsInstance, obj, msg)
+
+    def expectRegexpMatches(self, text, expected_regexp, msg=None):
+        self._wrap_assert(self.assertRegexpMatches, text,
+                          expected_regexp, msg)
+
+    def expectNotRegexpMatches(self, text, unexpected_regexp, msg=None):
+        self._wrap_assert(self.assertNotRegexpMatches, text,
+                          unexpected_regexp, msg)
+
+    class _ExpectRaisesContext(object):
+        def __init__(self, assert_context, wrap_assert):
+            self.assert_context = assert_context
+            self.wrap_assert = wrap_assert
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, tb):
+            self.wrap_assert(self.assert_context.__exit__,
+                             exc_type, exc_value, tb)
+
+    def expectRaises(self, expected_exception, callable_obj=None,
+                     *args, **kwargs):
+
+        if callable_obj is None:
+            return AbstractTest._ExpectRaisesContext(self.assertRaises(
+                                                        expected_exception,
+                                                        callable_obj,
+                                                        *args, **kwargs),
+                                                     self._wrap_assert)
+
+        self._wrap_assert(self.assertRaises, expected_exception, callable_obj,
+                          *args, **kwargs)
+
+    def expectRaisesRegexp(self, expected_exception, expected_regexp,
+                           callable_obj=None, *args, **kwargs):
+
+        if callable_obj is None:
+            return AbstractTest._ExpectRaisesContext(self.assertRaisesRegexp(
+                                                        expected_exception,
+                                                        expected_regexp,
+                                                        callable_obj,
+                                                        *args, **kwargs),
+                                                     self._wrap_assert)
+
+        self._wrap_assert(self.assertRaisesRegexp, expected_exception,
+                          expected_regexp, callable_obj, *args, **kwargs)
