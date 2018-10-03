@@ -412,14 +412,14 @@ class TestTestCase(BasicRotestUnitTest):
         match = re.search(expected_traceback, case.data.traceback,
                           flags=re.DOTALL)
 
-        self.assertIsNotNone(match,
-                     "Unexpected traceback, %r doesn't match the expression %r"
-                     % (case.data.traceback, expected_traceback))
+        self.assertIsNotNone(match, "Unexpected traceback, "
+                             "%r doesn't match the expression %r"
+                             % (case.data.traceback, expected_traceback))
 
         test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
 
         self.assertTrue(isinstance(test_resource, DemoResource),
-                "State resource type should have been 'DemoResource'")
+                        "State resource type should have been 'DemoResource'")
 
         self.assertEqual(test_resource.mode,
                          DemoResourceData.BOOT_MODE,

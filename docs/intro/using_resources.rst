@@ -1,6 +1,6 @@
-===============
-Using Resources
-===============
+================
+Adding Resources
+================
 
 The true power of Rotest is in its client-server infrastructure, which enables
 writing resource-oriented tests, running a dedicated server to hold all
@@ -10,7 +10,6 @@ In this tutorial, you'll learn:
 
 * How to create a resource class.
 * How to run the server, that acts as a resource manager.
-* How to write tests that use resources.
 
 Creating a Resource Class
 =========================
@@ -213,51 +212,3 @@ access it using the above credentials, and add a resource with the name
     :target: ../_images/adding_resource.png
 
     Adding a resource via Django admin
-
-Writing a Resource-Based Test
-=============================
-
-In this section, we are going to add a resource request to our existing test.
-The first thing we need to do, is setting up our resource named ``calc``. We
-need to run the RPyC server of the calculator, using the following command:
-
-.. code-block:: console
-
-    $ rpyc_classic.py --port 1357
-    INFO:SLAVE/1357:server started on [0.0.0.0]:1357
-
-This way, we have a way to communicate to our resource, which is running on
-our local computer (or may run on other computer, assuming you've set the
-corresponding IP address in the Django admin).
-
-Now, let's change the previously written module :file:`test_math.py` with the
-following content:
-
-.. code-block:: python
-
-    from rotest.core import TestCase
-
-    from resources.calculator import Calculator
-
-
-    class AddTest(TestCase):
-        calc = Calculator()
-
-        def test_add(self):
-            result = self.calc.calculate("1 + 1")
-            self.assertEqual(result, 2)
-
-Now, let's run the test:
-
-.. code-block:: console
-
-    $ rotest test_math.py
-    AnonymousSuite
-      AddTest.test_add ... OK
-
-    Ran 1 test in 0.160s
-
-    OK
-
-Well done! You've just written your first resource oriented test, that asserts
-the behaviour of a simple addition of a Calculator resource.

@@ -105,7 +105,8 @@ class AbstractTest(unittest.TestCase):
     @classmethod
     def get_resource_requests_fields(cls):
         """Yield tuples of all the resource request fields of this test.
-         Yields:
+
+        Yields:
             tuple. (requests name,  request field) tuples of the test class.
         """
         checked_class = cls
@@ -115,6 +116,7 @@ class AbstractTest(unittest.TestCase):
                     field = getattr(checked_class, field_name)
                     if isinstance(field, BaseResource):
                         yield (field_name, field)
+
             checked_class = checked_class.__bases__[0]
 
     @classmethod
