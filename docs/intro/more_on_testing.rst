@@ -110,6 +110,11 @@ We can request resources in the test's scope in two different ways.
 
   where the parameters mean the same as in the previous requesting method.
 
+* Dynamic requests (during the test-run)
+
+  In the test method, you can call self.request_resources([<request1>, <request2>, ...])
+
+  The requests are instances of `rotest.core.request`, as in the previous method.
 
 Now, let's run the test:
 
