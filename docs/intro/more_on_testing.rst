@@ -48,7 +48,7 @@ Using the shell:
     2
 
 
-All `BaseResource`s have a `lock` method that can be used in the shell and in scripts,
+All `BaseResources` have a `lock` method that can be used in the shell and in scripts,
 which requests and initializes resources, returning a resource that's ready for work.
 
 You can add more startup commands to the rotest shell via the entry-point `shell_startup_commands`.
@@ -92,29 +92,38 @@ We can request resources in the test's scope in two different ways.
 
 * As shown in the example, write a request of the format:
 
-  <request_name> = <resource_class>(**<request_filters or service_parameters>)
+  .. code-block:: python
 
-  The `request filters` (in case of a resource that has data) are of the same syntax as
-  the options passed to Django models `.objects.filter()` method, and can help you
-  make the resource request of the test more specific, e.g.
+    <request_name> = <resource_class>(<request_filters or service_parameters>)
 
-  calc = Calculator(name='calc')
+  The optional ``request filters`` (in case of a resource that has data) are of the same
+  syntax as the options passed to Django models ``<Model>.objects.filter()`` method,
+  and can help you make the resource request of the test more specific, e.g.
 
-* Overriding the `resources` field and using `rotest.core.request` instances:
+  .. code-block:: python
 
-  resources = [<request1>, <request2>, ...]
+    calc = Calculator(name='calc')
+
+  If the resource doesn't point to ``DATA_CLASS`` (is None) then the resource is a service,
+  and ``request_filters`` become initialization parameters.
+
+* [Deprecated] Overriding the ``resources`` field and using ``rotest.core.request`` instances:
+
+  .. code-block:: python
+
+    resources = [<request1>, <request2>, ...]
 
   where each request is of the format
 
-  request(<request_name>, <resource_class>, **<request_filters or service_parameters>)
+  request(<request_name>, <resource_class>, <request_filters or service_parameters>)
 
   where the parameters mean the same as in the previous requesting method.
 
 * Dynamic requests (during the test-run)
 
-  In the test method, you can call self.request_resources([<request1>, <request2>, ...])
+  In the test method, you can call ``self.request_resources([<request1>, <request2>, ...])``
 
-  The requests are instances of `rotest.core.request`, as in the previous method.
+  The requests are instances of ``rotest.core.request``, as in the previous method.
 
 Now, let's run the test:
 
@@ -129,14 +138,13 @@ Now, let's run the test:
     OK
 
 
-Assert Vs Expect
+Assert vs Expect
 ================
 
 In the test method you can use the assert<X> methods to perform the testing,
-but for cases where you don't want the action to be fatal (to raise exception),
-you can use `expect`.
+but for cases where you don't want the action to stop the test, you can use ``expect``.
 
-The difference is that `expect` only register failures but stay in the same scope,
+``expect`` only registers failures but stays in the same scope,
 allowing for more testing actions in the same single test. E.g.
 
 .. code-block:: python
@@ -155,9 +163,9 @@ allowing for more testing actions in the same single test. E.g.
             self.expectEqual(self.calc.calculate("1 + 3"), 2)
 
 
-In the above example the AddTest will have 2 failures to the same run (3!=2 and 4!=2).
+In the above example the ``AddTest`` will have 2 failures to the same run (3!=2 and 4!=2).
 
-It is recommended to use `expect` to validate several outcomes that are dependent (unlike in the example above),
+It is recommended to use ``expect`` to test different side-effects of the same scenario,
 like different side effects of the same action, but you can use it any way you please.
 
-There is an `expect` method equivalent for every `assert` method, e.g. expectEqual and expectIsNone.
+There is an ``expect`` method equivalent for every ``assert`` method, e.g. ``expectEqual`` and ``expectIsNone``.
