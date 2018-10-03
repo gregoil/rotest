@@ -1,6 +1,7 @@
 """Test utils for Rotest UT."""
 # pylint: disable=expression-not-assigned,too-many-arguments
 # pylint: disable=no-self-use,too-many-public-methods,unused-argument
+# pylint: disable=redundant-unittest-assert
 import unittest
 
 import django
@@ -329,12 +330,12 @@ class ExpectRaisesCase(MockCase):
     """Mock case, expect multiple exceptions."""
     __test__ = False
 
-    FAILURE_MESSAGE = "Stored failure"
+    FAILURE_MESSAGE = "AssertionError: RuntimeError not raised"
     ASSERTION_MESSAGE = "Assertion failed"
 
     def test_expect_errors(self):
         """Mock test function - stores failures."""
-        self.expectRaises(RuntimeError, list)
+        self.expectRaises(RuntimeError, list, self.FAILURE_MESSAGE)
         with self.expectRaises(RuntimeError):
             pass
 
