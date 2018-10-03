@@ -13,7 +13,7 @@ from rotest.management.models.ut_models import (DemoResource,
 from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
                               ErrorCase, StoreMultipleFailuresCase,
                               UnexpectedSuccessCase, BasicRotestUnitTest,
-                              DynamicResourceLockingCase,
+                              DynamicResourceLockingCase, ExpectRaisesCase,
                               StoreFailureErrorCase, ExpectedFailureCase,
                               StoreFailureCase, MockTestSuite)
 
@@ -58,6 +58,13 @@ class TempFailureCase(FailureCase):
 
 
 class TempStoreFailureCase(StoreFailureCase):
+    """Inherit class and override resources requests."""
+    __test__ = False
+
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
+
+
+class TempExpectRaisesCase(ExpectRaisesCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
@@ -169,13 +176,13 @@ class TestTestCase(BasicRotestUnitTest):
         # === Validate case data object ===
         self.assertTrue(case.data.success)
 
-        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
-        self.assertTrue(isinstance(test_resource, DemoResource),
-                "State resource data type should have been 'DemoResourceData'")
-
         self.assertEqual(case.data.exception_type, TestOutcome.SUCCESS,
                          "Unexpected test outcome, expected %r got %r" %
                          (TestOutcome.SUCCESS, case.data.exception_type))
+
+        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
+        self.assertTrue(isinstance(test_resource, DemoResource),
+                "State resource data type should have been 'DemoResourceData'")
 
         self.assertEqual(test_resource.mode,
                          DemoResourceData.BOOT_MODE,
@@ -326,7 +333,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         * Defines the registered resource as required resource.
         * Runs the test under a test suite.
-        * Validates that the test failed.
+        * Validates that the test failed with both tracebacks.
         * Validates the case's data object.
         * Validates the resource's state.
         """
@@ -347,7 +354,9 @@ class TestTestCase(BasicRotestUnitTest):
                          "Unexpected test outcome, expected %r got %r" %
                          (TestOutcome.FAILED, case.data.exception_type))
 
-        expected_traceback = "%s.*" % TempStoreFailureCase.FAILURE_MESSAGE
+        expected_traceback = "%s.*%s.*" % (StoreFailureCase.FAILURE_MESSAGE,
+                                           StoreFailureCase.ASSERTION_MESSAGE)
+
         match = re.search(expected_traceback, case.data.traceback,
                           flags=re.DOTALL)
 
@@ -356,6 +365,66 @@ class TestTestCase(BasicRotestUnitTest):
                      % (case.data.traceback, expected_traceback))
 
         test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
+
+        self.assertTrue(isinstance(test_resource, DemoResource),
+                "State resource type should have been 'DemoResource'")
+
+        self.assertEqual(test_resource.mode,
+                         DemoResourceData.BOOT_MODE,
+                         "State resource mode attribute should "
+                         "have been 'boot'")
+
+        test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
+
+        self.validate_resource(test_resource)
+
+    def test_expect_raises_and_assert_case_run(self):
+        """Test a TestCase that uses both expect raises and assert.
+
+        * Defines the registered resource as required resource.
+        * Runs the test under a test suite.
+        * Validates that the test failed with three tracebacks.
+        * Validates the case's data object.
+        * Validates the resource's state.
+        """
+        TempExpectRaisesCase.resources = (request('test_resource',
+                                                   DemoResource,
+                                                   name=RESOURCE_NAME),)
+
+        case = self._run_case(TempExpectRaisesCase)
+
+        self.assertFalse(self.result.wasSuccessful(),
+                         'Case succeeded when it should have failed')
+
+        # === Validate case data object ===
+        self.assertFalse(case.data.success,
+                         'Case data result should have been False')
+
+        self.assertEqual(case.data.exception_type, TestOutcome.FAILED,
+                         "Unexpected test outcome, expected %r got %r" %
+                         (TestOutcome.FAILED, case.data.exception_type))
+
+        expected_traceback = "%s.*%s.*%s.*" %\
+                             (TempExpectRaisesCase.FAILURE_MESSAGE,
+                              TempExpectRaisesCase.FAILURE_MESSAGE,
+                              TempExpectRaisesCase.ASSERTION_MESSAGE)
+
+        match = re.search(expected_traceback, case.data.traceback,
+                          flags=re.DOTALL)
+
+        self.assertIsNotNone(match, "Unexpected traceback, "
+                             "%r doesn't match the expression %r"
+                             % (case.data.traceback, expected_traceback))
+
+        test_resource = case.all_resources[self.DEMO_RESOURCE_NAME]
+
+        self.assertTrue(isinstance(test_resource, DemoResource),
+                        "State resource type should have been 'DemoResource'")
+
+        self.assertEqual(test_resource.mode,
+                         DemoResourceData.BOOT_MODE,
+                         "State resource mode attribute should "
+                         "have been 'boot'")
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
 
