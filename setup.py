@@ -54,7 +54,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=requirements,
-    python_requires="~=2.7.0",
+    python_requires=">=2.7.0",
     entry_points={
         "console_scripts": [
             "rotest = rotest.cli.main:main"
@@ -72,6 +72,8 @@ setup(
         'Topic :: Software Development :: Testing',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',
