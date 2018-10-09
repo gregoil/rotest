@@ -3,6 +3,7 @@
 Used in order to modify the appearance of tables in the admin site.
 """
 # pylint: disable=too-many-public-methods
+from __future__ import absolute_import
 from django.contrib import admin
 
 from rotest.core.models import RunData, SuiteData, CaseData, SignatureData

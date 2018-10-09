@@ -2,6 +2,8 @@
 # pylint: disable=too-many-locals,protected-access
 # pylint: disable=too-many-public-methods,invalid-name,old-style-class
 # pylint: disable=no-member,protected-access,no-init,too-few-public-methods
+from __future__ import absolute_import
+from builtins import object
 import os
 
 from rotest.core.suite import TestSuite
@@ -215,7 +217,7 @@ class TestTestSuite(BasicRotestUnitTest):
 
     def test_invalid_type(self):
         """Test invalid component type raises TypeError."""
-        class BadTestType():
+        class BadTestType(object):
             pass
 
         MockSuite1.components = (SuccessCase,)

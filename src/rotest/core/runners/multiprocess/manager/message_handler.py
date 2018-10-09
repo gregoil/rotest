@@ -1,6 +1,8 @@
 """Multiprocess runner message handler."""
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
 # pylint: disable=expression-not-assigned,too-many-arguments,unused-argument
+from __future__ import absolute_import
+from builtins import object
 from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.models.general_data import GeneralData

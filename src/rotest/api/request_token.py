@@ -1,6 +1,8 @@
 # pylint: disable=unused-argument, no-self-use
+from __future__ import absolute_import
+from builtins import str
 import uuid
-import httplib
+import six.moves.http_client
 
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -21,8 +23,8 @@ class RequestToken(DjangoRequestView):
     URI = "tests/get_token"
     DEFAULT_MODEL = GenericModel
     DEFAULT_RESPONSES = {
-        httplib.OK: TokenResponseModel,
-        httplib.BAD_REQUEST: FailureResponseModel
+        six.moves.http_client.OK: TokenResponseModel,
+        six.moves.http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "get": ["Token"]
@@ -41,4 +43,4 @@ class RequestToken(DjangoRequestView):
         response = {
             "token": session_token
         }
-        return Response(response, status=httplib.OK)
+        return Response(response, status=six.moves.http_client.OK)

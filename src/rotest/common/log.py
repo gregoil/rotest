@@ -5,6 +5,8 @@ test logger inherits from core_logger
 and resource_logger inherits from test_logger.
 """
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
+from builtins import str
 import os
 import logging
 from logging.handlers import RotatingFileHandler

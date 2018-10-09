@@ -2,6 +2,7 @@
 # pylint: disable=too-many-public-methods,too-many-arguments
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
 # pylint: disable=no-member,method-hidden,broad-except,bare-except,invalid-name
+from __future__ import absolute_import
 import unittest
 from functools import wraps
 from itertools import count

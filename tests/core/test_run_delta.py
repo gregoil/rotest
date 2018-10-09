@@ -1,6 +1,7 @@
 """Test run delta feature."""
 # pylint: disable=too-many-arguments
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
+from __future__ import absolute_import
 from rotest.core.runner import run
 from rotest.core.models.run_data import RunData
 from rotest.core.models.case_data import TestOutcome

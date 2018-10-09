@@ -21,7 +21,7 @@ hyperlink==17.3.1
 idna==2.6
 incremental==17.5.0
 ipdb==0.10.3
-ipdbugger==1.1.2
+ipdbugger==2.0.3
 ipython==5.5.0
 ipython-genutils==0.2.0
 isort==4.2.15

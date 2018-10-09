@@ -1,5 +1,8 @@
 """Abstract class for all result handler tests."""
-from itertools import izip
+from __future__ import absolute_import
+from builtins import zip
+import six
+
 from abc import ABCMeta, abstractmethod
 
 from django.test.testcases import TransactionTestCase
@@ -10,6 +13,7 @@ from rotest.core.models.case_data import TestOutcome, CaseData
 from tests.core.utils import (MockCase1, MockCase2, MockTestSuite, MockSuite2,
                               MockSuite1, FailureBlock, MockNestedTestSuite,
                               MockFlow2, SkipBlock, SuccessBlock, MockFlow1)
+from six.moves import zip
 
 
 def get_tests(test):
@@ -31,10 +35,9 @@ def get_tests(test):
                 yield leaf
 
 
-class BaseResultHandlerTest(TransactionTestCase):
+class BaseResultHandlerTest(six.with_metaclass(ABCMeta, TransactionTestCase)):
     """Base class for testing result handlers."""
     __test__ = False
-    __metaclass__ = ABCMeta
 
     fixtures = ['resource_ut.json']
 
@@ -130,7 +133,7 @@ class BaseResultHandlerTest(TransactionTestCase):
             TestOutcome.UNEXPECTED_SUCCESS:
                 self.handler.add_unexpected_success}
 
-        for case, result_index in izip(self.components, self.EXPECTED_RESULTS):
+        for case, result_index in zip(self.components, self.EXPECTED_RESULTS):
             result = CaseData.RESULT_CHOICES[result_index]
             self.handler.start_test(case)
             case.data.exception_type = result_index

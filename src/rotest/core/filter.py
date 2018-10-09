@@ -1,5 +1,7 @@
 """Test trimming utilities by filtering of tags."""
 # pylint: disable=protected-access,eval-used
+from __future__ import absolute_import
+from builtins import str
 from fnmatch import fnmatch
 
 

@@ -1,5 +1,7 @@
 """Excel result handler."""
 # pylint: disable=unused-argument
+from __future__ import absolute_import
+from builtins import str
 import os
 from collections import OrderedDict
 
@@ -12,6 +14,7 @@ from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.core.result.handlers.remote_db_handler import RemoteDBHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
+import six
 
 
 class ExcelHandler(AbstractResultHandler):
@@ -195,7 +198,7 @@ class ExcelHandler(AbstractResultHandler):
         if test.locked_resources is not None:
             resources = '\n'.join("%s:%s" % (request_name, resource.name)
                                   for (request_name, resource) in
-                                  test.locked_resources.iteritems())
+                                  six.iteritems(test.locked_resources))
         else:
             resources = ''
 
@@ -361,7 +364,7 @@ class ExcelHandler(AbstractResultHandler):
 
     def _align_columns(self):
         """Align the columns width."""
-        for header, col_width in self.HEADER_TO_WIDTH.items():
+        for header, col_width in list(self.HEADER_TO_WIDTH.items()):
             self.sheet.col(self.HEADERS.index(header)).width = col_width
 
     def _create_result_summary(self):

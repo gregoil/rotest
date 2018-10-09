@@ -4,6 +4,10 @@
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
 # pylint: disable=too-many-arguments,too-many-locals,broad-except,no-self-use
 # pylint: disable=too-many-public-methods
+from __future__ import absolute_import
+from builtins import next
+from builtins import str
+from builtins import object
 import os
 import sys
 import unittest
@@ -18,6 +22,7 @@ from rotest.core.models.case_data import TestOutcome
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
+import six
 
 request = ResourceRequest
 
@@ -78,7 +83,7 @@ class AbstractTest(unittest.TestCase):
         self.parent = parent
         self.skip_init = skip_init
         self.save_state = save_state
-        self.identifier = indexer.next()
+        self.identifier = next(indexer)
         self.enable_debug = enable_debug
         self.force_initialize = force_initialize
         self.parents_count = self._get_parents_count()
@@ -94,12 +99,12 @@ class AbstractTest(unittest.TestCase):
 
     def override_resource_loggers(self):
         """Replace the resources' logger with the test's logger."""
-        for resource in self.all_resources.itervalues():
+        for resource in six.itervalues(self.all_resources):
             resource.override_logger(self.logger)
 
     def release_resource_loggers(self):
         """Revert logger replacement."""
-        for resource in self.all_resources.itervalues():
+        for resource in six.itervalues(self.all_resources):
             resource.release_logger(self.logger)
 
     @classmethod
@@ -178,7 +183,7 @@ class AbstractTest(unittest.TestCase):
                 instance.
         """
         self.all_resources.update(resources)
-        for name, resource in resources.iteritems():
+        for name, resource in six.iteritems(resources):
             setattr(self, name, resource)
 
     def request_resources(self, resources_to_request, use_previous=False):
@@ -209,7 +214,7 @@ class AbstractTest(unittest.TestCase):
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
-        for resource in requested_resources.itervalues():
+        for resource in six.itervalues(requested_resources):
             resource.override_logger(self.logger)
 
         if self.result is not None:
@@ -228,14 +233,14 @@ class AbstractTest(unittest.TestCase):
                 or enable saving them for next tests.
         """
         if resources is None:
-            resources = self.locked_resources.keys()
+            resources = list(self.locked_resources.keys())
 
         if len(resources) == 0:
             # No resources to release locked
             return
 
         resources_dict = {name: resource
-                          for name, resource in self.locked_resources.items()
+                          for name, resource in list(self.locked_resources.items())
                           if name in resources}
 
         self.resource_manager.release_resources(resources_dict,
@@ -243,7 +248,7 @@ class AbstractTest(unittest.TestCase):
                                                 force_release=force_release)
 
         # Remove the resources from the test's resource to avoid double release
-        for resource in resources_dict.itervalues():
+        for resource in six.itervalues(resources_dict):
             self.locked_resources.pop(resource, None)
 
     def _get_parents_count(self):
@@ -330,7 +335,7 @@ class AbstractTest(unittest.TestCase):
         self.logger.debug("Creating state dir %r", store_dir)
         os.makedirs(store_dir)
 
-        for resource in self.all_resources.itervalues():
+        for resource in six.itervalues(self.all_resources):
             resource.store_state(store_dir)
 
     def _wrap_assert(self, assert_method, *args, **kwargs):

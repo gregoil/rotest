@@ -4,8 +4,12 @@ We test resource management behavior under different scenarios.
 """
 # pylint: disable=too-many-lines
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
+from __future__ import absolute_import
+from builtins import zip
+from builtins import range
 import time
-from itertools import izip
+from six.moves import range
+
 from threading import Thread
 
 import mock
@@ -33,6 +37,7 @@ from rotest.management.common.errors import (ResourceReleaseError,
 from tests.management.resource_base_test import (BaseResourceManagementTest,
                                                  ThreadedParent,
                                                  ThreadedResource)
+from six.moves import zip
 
 
 class TestResourceManagement(BaseResourceManagementTest):
@@ -220,7 +225,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEquals(resources_num, 2, "Expected list with 2 "
                           "resources in it but found %d" % resources_num)
 
-        for resource, descriptor in izip(resources, descriptors):
+        for resource, descriptor in zip(resources, descriptors):
             expected_name = descriptor.properties['name']
             self.assertEquals(expected_name, resource.name,
                               "Expected resource with name %r but got %r"
@@ -254,7 +259,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         previous_resources = []
 
-        for _ in xrange(2):
+        for _ in range(2):
             resources = self.client._lock_resources(descriptors=[descriptor],
                                                     timeout=self.LOCK_TIMEOUT)
 
@@ -721,7 +726,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_error_codes = [ResourceAlreadyAvailableError.ERROR_CODE,
                                  ResourceDoesNotExistError.ERROR_CODE]
 
-        for name, expected_code in izip(resources_error_names,
+        for name, expected_code in zip(resources_error_names,
                                         resources_error_codes):
 
             self.assertIn(name, error_list, "%r wasn't found "
@@ -1051,7 +1056,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
@@ -1068,7 +1073,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource2 = resources.values()[0]
+        resource2 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource2])
@@ -1086,7 +1091,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource3 = resources.values()[0]
+        resource3 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the new resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource3])
@@ -1118,7 +1123,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
         # Check that the resource was not finalized yet
@@ -1172,7 +1177,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
@@ -1187,7 +1192,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource2 = resources.values()[0]
+        resource2 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
@@ -1212,7 +1217,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
@@ -1222,7 +1227,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource2 = resources.values()[0]
+        resource2 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource2])
@@ -1236,7 +1241,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource3 = resources.values()[0]
+        resource3 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the new resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource3])

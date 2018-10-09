@@ -1,5 +1,6 @@
 """Test utils for multiprocess functionality UT."""
 # pylint: disable=no-self-use,too-many-public-methods,invalid-name
+from __future__ import absolute_import
 import os
 import time
 from multiprocessing import Process

@@ -1,5 +1,6 @@
 """Json parser and validator."""
 # pylint: disable=multiple-statements
+from __future__ import absolute_import
 import json
 
 from attrdict import AttrDict

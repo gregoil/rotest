@@ -1,5 +1,6 @@
 """Basic unittests for the server resource control operations."""
-import httplib
+from __future__ import absolute_import
+import six.moves.http_client
 from functools import partial
 
 from django.contrib.auth.models import User
@@ -30,7 +31,7 @@ class TestLockResources(TransactionTestCase):
                 "timeout": 0,
                 "token": self.token
             })
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, six.moves.http_client.OK)
         self.assertEqual(len(content.resource_descriptors), 0)
 
     def test_lock_valid_resource(self):
@@ -47,7 +48,7 @@ class TestLockResources(TransactionTestCase):
                 "timeout": 0,
                 "token": self.token
             })
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, six.moves.http_client.OK)
         self.assertEqual(len(content.resource_descriptors), 1)
 
     def test_invalid_resource_field(self):
@@ -66,7 +67,7 @@ class TestLockResources(TransactionTestCase):
                 "timeout": 0,
                 "token": self.token
             })
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
 
     def test_lock_complex(self):
         """Assert trying to lock complex resource."""
@@ -96,7 +97,7 @@ class TestLockResources(TransactionTestCase):
         resource, = resources
         sub_resource = resource.demo1
 
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, six.moves.http_client.OK)
         self.assertFalse(resource.is_available())
         self.assertFalse(sub_resource.is_available())
 
@@ -129,7 +130,7 @@ class TestLockResources(TransactionTestCase):
         resource, = resources
         sub_resource = resource.demo1
 
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
         # no reserved nor owner for main resource
         self.assertFalse(resource.reserved)
         self.assertFalse(resource.owner)
@@ -156,7 +157,7 @@ class TestLockResourcesInvalid(TransactionTestCase):
         """Assert invalid request."""
         # empty data
         response, _ = self.requester(json_data={})
-        self.assertEqual(response.status_code, httplib.INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.status_code, six.moves.http_client.INTERNAL_SERVER_ERROR)
 
     def test_no_user_in_db(self):
         """Assert locking user not in db."""
@@ -167,7 +168,7 @@ class TestLockResourcesInvalid(TransactionTestCase):
                 "timeout": 0,
                 "token": self.token
             })
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
         self.assertEqual(content.details,
                          "User localhost has no matching object in the DB")
 
@@ -175,7 +176,7 @@ class TestLockResourcesInvalid(TransactionTestCase):
         """Assert invalid request content type."""
         # invalid content type
         response, _ = self.requester(content_type="text/html")
-        self.assertEqual(response.status_code, httplib.INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.status_code, six.moves.http_client.INTERNAL_SERVER_ERROR)
 
     def test_invalid_resource(self):
         """Assert invalid resource requested."""
@@ -193,7 +194,7 @@ class TestLockResourcesInvalid(TransactionTestCase):
                 "timeout": 0,
                 "token": self.token
             })
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
         self.assertEqual(content.details,
                          "Failed to extract type u'invalidmodule.invalidtype'."
                          " Reason: No module named invalidmodule.")
@@ -212,6 +213,6 @@ class TestLockResourcesInvalid(TransactionTestCase):
                 "token": self.token
             })
 
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
         self.assertTrue(content.details.startswith(
             "No existing resource meets the requirements"))

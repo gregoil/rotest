@@ -1,5 +1,7 @@
 """Tests for the result client-server mechanism."""
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
+from __future__ import absolute_import
+from builtins import next
 import mock
 from swaggapi.api.builder.client import requester
 
@@ -14,6 +16,7 @@ from rotest.management.models.ut_models import DemoResource, DemoResourceData
 from tests.management.resource_base_test import BaseResourceManagementTest
 from tests.core.utils import (MockTestSuite, MockSuite1, MockSuite2, MockCase,
                               MockCase1, MockCase2, SuccessCase)
+import six
 
 
 class TestResultManagement(BaseResourceManagementTest):
@@ -185,10 +188,10 @@ class TestResultManagement(BaseResourceManagementTest):
                          len(test_case.locked_resources),
                          "Wrong resources count, (expected resources %r, "
                          "actual resources %r)" %
-                         (test_case.locked_resources.values(),
+                         (list(test_case.locked_resources.values()),
                           test_data.resources.all()))
 
-        for resource in test_case.locked_resources.itervalues():
+        for resource in six.itervalues(test_case.locked_resources):
             self.assertEqual(
                      test_data.resources.filter(name=resource.name).count(), 1,
                      "Resource %r wasn't found in %r" %

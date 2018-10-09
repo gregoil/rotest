@@ -1,4 +1,5 @@
 # pylint: disable=protected-access
+from __future__ import absolute_import
 import os
 import unittest
 from fnmatch import fnmatch

@@ -1,5 +1,7 @@
 """Test Rotest's Excel handler."""
 # pylint: disable=protected-access
+from __future__ import absolute_import
+from builtins import range
 import os
 import itertools
 
@@ -10,6 +12,8 @@ from rotest.core.result.handlers.excel_handler import ExcelHandler
 
 from tests.core.handlers_tests.base_result_handler_test import \
     BaseResultHandlerTest
+import six
+from six.moves import range
 
 
 class TestExcelHandler(BaseResultHandlerTest):
@@ -194,7 +198,7 @@ class TestExcelHandler(BaseResultHandlerTest):
         if test.locked_resources is not None:
             resources = '\n'.join("%s:%s" % (request_name, resource.name)
                                   for (request_name, resource) in
-                                  test.locked_resources.iteritems())
+                                  six.iteritems(test.locked_resources))
         actual_resources = self.worksheet.cell_value(rowx=test_row,
                                                     colx=self.RESOURCES_COLUMN)
         self.assertEqual(resources, actual_resources,
@@ -223,8 +227,8 @@ class TestExcelHandler(BaseResultHandlerTest):
         self.assertEqual(actual_sheet.nrows, expected_sheet.nrows)
         self.assertEqual(actual_sheet.ncols, expected_sheet.ncols)
 
-        for row, col in itertools.product(range(actual_sheet.nrows,
-                                                actual_sheet.ncols)):
+        for row, col in itertools.product(list(range(actual_sheet.nrows,
+                                                actual_sheet.ncols))):
             actual_cell = actual_sheet.cell(row, col)
             expected_cell = expected_sheet.cell(row, col)
             self.assertEqual(actual_cell, expected_cell)

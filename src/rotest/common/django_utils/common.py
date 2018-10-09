@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 "Functions that ease the use of Django."""
 # pylint: disable=protected-access
-from django.utils.safestring import SafeUnicode
+from django.utils.safestring import mark_safe
 
 
 def get_fields(model_object, ignore_fields=()):
@@ -62,5 +64,5 @@ def linked_unicode(item):
     """
     app = item._meta.app_label
     pagename = item.__class__.__name__.lower()
-    return SafeUnicode("<a href='/admin/%s/%s/%d/'>%s</a>" %
-                       (app, pagename, item.id, item))
+    return mark_safe("<a href='/admin/%s/%s/%d/'>%s</a>" %
+                     (app, pagename, item.id, item))

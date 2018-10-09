@@ -1,6 +1,8 @@
 """XML result handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
+from builtins import str
 import os
 
 from lxml import etree

@@ -1,5 +1,7 @@
 """Test Rotest's XML handler."""
 # pylint: disable=protected-access
+from __future__ import absolute_import
+from builtins import next
 import os
 
 import xmltodict
@@ -58,7 +60,7 @@ class TestXMLHandler(BaseResultHandlerTest):
         result_xml_file = os.path.join(test.work_dir,
                                        XMLHandler.XML_REPORT_PATH)
 
-        expected_xml_file = self.expected_xml_files.next()
+        expected_xml_file = next(self.expected_xml_files)
 
         expected_xml = xmltodict.parse(open(expected_xml_file, "rt").read(),
                                        dict_constructor=dict)

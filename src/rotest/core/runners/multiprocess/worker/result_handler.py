@@ -1,5 +1,6 @@
 """Multiprocess worker result handler."""
 # pylint: disable=protected-access
+from __future__ import absolute_import
 import os
 import time
 
@@ -101,7 +102,7 @@ class WorkerHandler(AbstractResultHandler):
             test (object): test item instance.
         """
         test_resources = {request_name: resource
-                  for request_name, resource in test.locked_resources.items()
+                  for request_name, resource in list(test.locked_resources.items())
                   if resource.DATA_CLASS is not None}
 
         self.send_message(CloneResources(msg_id=self.worker_pid,

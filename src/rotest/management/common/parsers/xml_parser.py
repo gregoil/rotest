@@ -5,6 +5,8 @@ Note:
     base class of unicode and str type.
 """
 # pylint: disable=too-many-return-statements,protected-access,too-many-locals
+from __future__ import absolute_import
+from builtins import str
 import os
 from numbers import Number
 
@@ -17,6 +19,7 @@ from rotest.management.common.parsers.abstract_parser import \
                                             ParsingError, AbstractParser
 from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
                                             extract_type, extract_type_path)
+import six
 
 
 class XMLParser(AbstractParser):
@@ -151,7 +154,7 @@ class XMLParser(AbstractParser):
         if data is None:
             return self._NONE_TYPE
 
-        if isinstance(data, basestring):
+        if isinstance(data, six.string_types):
             # Strings are surrounded by "" in order to prevent decoding errors.
             # Without "", the string '5' will be wrongly decoded as number 5.
             return '"%s"' % data
@@ -254,8 +257,8 @@ class XMLParser(AbstractParser):
         """
         dict_element = builder.E(self._DICT_TYPE)
 
-        for key, value in dict_data.iteritems():
-            if not isinstance(key, basestring):
+        for key, value in six.iteritems(dict_data):
+            if not isinstance(key, six.string_types):
                 raise ParsingError("Failed to encode dictionary, "
                                    "key %r is not a string" % key)
 
@@ -304,7 +307,7 @@ class XMLParser(AbstractParser):
 
             # Strings are encoded with "" surrounding them, therefore when
             # decoding a string the "" are removed.
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 return value[1:-1]
 
             if isinstance(value, (bool, Number)):
@@ -340,7 +343,7 @@ class XMLParser(AbstractParser):
         resource_properties = self._decode(properties_element)
 
         # Get the related fields.
-        list_field_names = [key for key, value in resource_properties.items()
+        list_field_names = [key for key, value in list(resource_properties.items())
                             if isinstance(value, list)]
 
         list_fields = [(field_name, resource_properties.pop(field_name))

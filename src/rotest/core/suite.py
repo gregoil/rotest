@@ -1,5 +1,7 @@
 """Define Rotest's TestSuite, composed from test suites or test cases."""
 # pylint: disable=method-hidden,bad-super-call,too-many-arguments
+from __future__ import absolute_import
+from builtins import next
 import unittest
 from itertools import count
 
@@ -67,7 +69,7 @@ class TestSuite(unittest.TestSuite):
 
         self.parent = parent
         name = self.get_name()
-        self.identifier = indexer.next()
+        self.identifier = next(indexer)
         self.resource_manager = resource_manager
         self.parents_count = self._get_parents_count()
         self.config = config

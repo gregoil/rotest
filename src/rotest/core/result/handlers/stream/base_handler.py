@@ -1,6 +1,8 @@
 """Base stream handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,super-init-not-called
+from __future__ import absolute_import
+from builtins import object
 from termcolor import colored
 
 from rotest.common.constants import BOLD, RED, BLUE, CYAN, YELLOW

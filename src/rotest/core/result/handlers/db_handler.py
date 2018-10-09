@@ -1,6 +1,8 @@
 """Database result handler."""
 # pylint: disable=unused-argument
+from __future__ import absolute_import
 from .abstract_handler import AbstractResultHandler
+import six
 
 
 class DBHandler(AbstractResultHandler):
@@ -100,7 +102,7 @@ class DBHandler(AbstractResultHandler):
         """
         test.data.resources.clear()
         if test.locked_resources is not None:
-            for resource in test.locked_resources.itervalues():
+            for resource in six.itervalues(test.locked_resources):
                 self._save_resource(resource, test)
 
     def stop_test(self, test):

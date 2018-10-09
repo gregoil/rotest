@@ -1,5 +1,6 @@
 """Basic unittests for the server resource control operations."""
-import httplib
+from __future__ import absolute_import
+import six.moves.http_client
 from functools import partial
 
 from django.test import Client, TransactionTestCase
@@ -21,7 +22,7 @@ class TestQueryResourcesInvalid(TransactionTestCase):
             "type": "invalidmodule.invalidtype",
             "properties": {}
         })
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
 
     def test_query_unavailable_resource(self):
         response, content = self.requester(json_data={
@@ -29,7 +30,7 @@ class TestQueryResourcesInvalid(TransactionTestCase):
                     "DemoResourceData",
             "properties": {}
         })
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
         self.assertTrue(content.details.startswith(
             "No existing resource meets the requirements"))
 
@@ -51,7 +52,7 @@ class TestQueryResources(TransactionTestCase):
                     "DemoResourceData",
             "properties": {}
         })
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, six.moves.http_client.OK)
         self.assertEqual(len(content.resource_descriptors), count)
 
     def test_query_valid_resource_with_filter(self):
@@ -63,5 +64,5 @@ class TestQueryResources(TransactionTestCase):
                 "owner": ""
             }
         })
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, six.moves.http_client.OK)
         self.assertEqual(len(content.resource_descriptors), count)

@@ -1,5 +1,7 @@
 """Excel result file generator script for Rotest projects."""
 # pylint: disable=invalid-name,protected-access
+from __future__ import absolute_import
+from builtins import object
 import os
 import argparse
 

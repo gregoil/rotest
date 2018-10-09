@@ -1,5 +1,6 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
+import six.moves.http_client
 
 from django.db import transaction
 from django.db.models.query_utils import Q
@@ -24,8 +25,8 @@ class QueryResources(DjangoRequestView):
     URI = "resources/query_resources"
     DEFAULT_MODEL = ResourceDescriptorModel
     DEFAULT_RESPONSES = {
-        httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: FailureResponseModel
+        six.moves.http_client.OK: InfluencedResourcesResponseModel,
+        six.moves.http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -61,4 +62,4 @@ class QueryResources(DjangoRequestView):
 
         return Response({
             "resource_descriptors": query_result
-        }, status=httplib.OK)
+        }, status=six.moves.http_client.OK)

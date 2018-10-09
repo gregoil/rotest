@@ -1,4 +1,5 @@
 """Remote database result handler."""
+from __future__ import absolute_import
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.client.result_client import ClientResultManager
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler

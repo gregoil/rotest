@@ -1,4 +1,6 @@
 """Tree format log to screen stream handler."""
+from __future__ import absolute_import
+from builtins import str
 import logging
 
 from rotest.common import core_log

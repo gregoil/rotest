@@ -2,7 +2,9 @@
 # pylint: disable=redefined-outer-name
 
 
-class ServerError(StandardError):
+from builtins import str
+from builtins import object
+class ServerError(Exception):
     """Hold resource related errors.
 
     Attributes:

@@ -1,5 +1,6 @@
 """Basic unittests for the server resource control operations."""
-import httplib
+from __future__ import absolute_import
+import six.moves.http_client
 from functools import partial
 
 from django.db.models.query_utils import Q
@@ -32,7 +33,7 @@ class TestUpdateFields(TransactionTestCase):
                 "reserved": "A_User"
             }
         })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, six.moves.http_client.NO_CONTENT)
         resources = DemoResourceData.objects.all()
         for resource in resources:
             self.assertEqual(resource.reserved, "A_User")
@@ -51,7 +52,7 @@ class TestUpdateFields(TransactionTestCase):
                 "reserved": "A_User"
             }
         })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, six.moves.http_client.NO_CONTENT)
         resources = DemoResourceData.objects.filter(name="available_resource1")
         for resource in resources:
             self.assertEqual(resource.reserved, "A_User")

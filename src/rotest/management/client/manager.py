@@ -6,7 +6,11 @@ also for the resources cleanup procedure and release.
 # pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches
 # pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
-from itertools import izip
+from __future__ import absolute_import
+
+from builtins import zip
+from builtins import str
+from builtins import object
 from threading import Thread
 
 import time
@@ -29,6 +33,8 @@ from rotest.api.resource_control import (LockResources,
 from rotest.api.common.models import (ReleaseResourcesParamsModel,
                                       ResourceDescriptorModel,
                                       LockResourcesParamsModel, TokenModel)
+import six
+from six.moves import zip
 
 SLEEP_TIME_BETWEEN_REQUESTS = 0.25
 
@@ -228,7 +234,7 @@ class ClientResourceManager(AbstractClient):
         Raises:
             ServerError. resource manager failed to lock resources.
         """
-        for resource, request in izip(resources, requests):
+        for resource, request in zip(resources, requests):
 
             resource.set_sub_resources()
 
@@ -264,7 +270,7 @@ class ClientResourceManager(AbstractClient):
 
         self.logger.debug("cleaning up the locked resources")
 
-        for name, resource in resources.iteritems():
+        for name, resource in six.iteritems(resources):
 
             try:
                 resource.logger.debug("Finalizing resource %r", name)
@@ -412,7 +418,7 @@ class ClientResourceManager(AbstractClient):
             matching_resources = [resource for resource in resources
                                   if isinstance(resource, descriptor.type)]
 
-            for field_name, value in descriptor.properties.items():
+            for field_name, value in list(descriptor.properties.items()):
                 for resource in matching_resources[:]:
                     if getattr(resource, field_name, None) != value:
                         matching_resources.remove(resource)
@@ -569,7 +575,7 @@ class ClientResourceManager(AbstractClient):
             self._cleanup_resources(resources)
 
         finally:
-            self._release_resources(resources=resources.values())
+            self._release_resources(resources=list(resources.values()))
 
     def query_resources(self, descriptor):
         """Query the content of the server's DB.

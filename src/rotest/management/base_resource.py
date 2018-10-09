@@ -4,6 +4,7 @@ Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
+from __future__ import absolute_import
 from bdb import BdbQuit
 
 from ipdbugger import debug
@@ -11,6 +12,7 @@ from attrdict import AttrDict
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
+import six
 
 
 class ConvertToKwargsMeta(type):
@@ -29,7 +31,7 @@ class ConvertToKwargsMeta(type):
 
         resource = type.__call__(cls, *args, **kwargs)
         resource.kwargs = kwargs
-        for field_name, field_value in kwargs.iteritems():
+        for field_name, field_value in six.iteritems(kwargs):
             setattr(resource, field_name, field_value)
 
         if isinstance(resource.data, AttrDict):
@@ -38,7 +40,7 @@ class ConvertToKwargsMeta(type):
         return resource
 
 
-class BaseResource(object):
+class BaseResource(six.with_metaclass(ConvertToKwargsMeta, object)):
     """Represent the common interface of all the resources.
 
     To implement a resource, you may override:
@@ -60,7 +62,6 @@ class BaseResource(object):
         force_initialize (bool): a flag to determine if the resource will be
             initialized even if the validation succeeds.
     """
-    __metaclass__ = ConvertToKwargsMeta
 
     DATA_CLASS = None
     PARALLEL_INITIALIZATION = False
@@ -77,7 +78,7 @@ class BaseResource(object):
 
         if data is not None:
             self.data = data
-            for field_name, field_value in self.data.get_fields().iteritems():
+            for field_name, field_value in six.iteritems(self.data.get_fields()):
                 setattr(self, field_name, field_value)
 
         else:

@@ -1,4 +1,5 @@
 """Parameters models of the view requests."""
+from __future__ import absolute_import
 from swaggapi.api.builder.common.model import AbstractAPIModel
 from swaggapi.api.builder.common.fields import (NumberField,
                                                 StringField,

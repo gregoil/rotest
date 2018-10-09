@@ -1,8 +1,9 @@
 """API test utilities."""
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
 import os
 import json
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 from attrdict import AttrDict
 
@@ -28,7 +29,7 @@ def request(client, path, method="post",
         json_data = json.dumps(json_data)
 
     if params is not None:
-        params = urllib.urlencode(params)
+        params = six.moves.urllib.parse.urlencode(params)
 
     response = client.generic(method,
                               "{}?{}".format(os.path.join(BASEPATH, path),

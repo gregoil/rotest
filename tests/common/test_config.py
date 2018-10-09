@@ -1,4 +1,6 @@
 """Testing configuration from CLI, env-vars and YAML files."""
+from __future__ import absolute_import
+from builtins import str
 import unittest
 from collections import OrderedDict
 

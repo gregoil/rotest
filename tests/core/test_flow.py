@@ -1,6 +1,8 @@
 """Test TestSuite behavior and common variables."""
 # pylint: disable=no-init,old-style-class,too-many-public-methods
 # pylint: disable=too-many-lines,too-many-arguments,too-many-locals
+from __future__ import absolute_import
+from builtins import object
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import PipeTo, BlockInput, BlockOutput
@@ -89,7 +91,7 @@ class TestTestFlow(BasicRotestUnitTest):
     def test_invalid_type(self):
         """Test invalid block type raises TypeError."""
 
-        class BadTestType():
+        class BadTestType(object):
             pass
 
         MockFlow.blocks = (SuccessBlock, BadTestType, SuccessBlock)

@@ -1,5 +1,6 @@
 """Define SuiteData model class."""
 # pylint: disable=no-init,old-style-class
+from builtins import object
 from .general_data import GeneralData
 
 
@@ -11,7 +12,7 @@ class SuiteData(GeneralData):
             of the foreign key 'parent' defined in
             :class:`rotest.core.models.general_data.GeneralData`.
     """
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'core'
 

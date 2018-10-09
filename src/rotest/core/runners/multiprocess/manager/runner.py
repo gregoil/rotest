@@ -1,10 +1,12 @@
 """Rotest's multiprocess test runner."""
 # pylint: disable=expression-not-assigned
 # pylint: disable=too-many-instance-attributes,too-many-arguments
+from __future__ import absolute_import
+from builtins import range
 import os
 import time
 import datetime
-from Queue import Empty
+from six.moves.queue import Empty
 from multiprocessing import Queue
 
 from rotest.common import core_log
@@ -17,6 +19,8 @@ from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core.runners.multiprocess.worker.process import WorkerProcess
 from rotest.core.runners.multiprocess.manager.message_handler import \
                                                         RunnerMessageHandler
+import six
+from six.moves import range
 
 
 class MultiprocessRunner(BaseTestRunner):
@@ -220,7 +224,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         Goes over the active workers, terminates and joins them.
         """
-        for worker in self.workers_pool.itervalues():
+        for worker in six.itervalues(self.workers_pool):
             worker.terminate()
 
         self.finished_workers = 0
@@ -239,7 +243,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         minimum_timeout = self.DEFAULT_TIMEOUT
 
-        for worker in self.workers_pool.itervalues():
+        for worker in six.itervalues(self.workers_pool):
             if worker.timeout is not None:
                 test_duration = current_datetime - worker.start_time
                 remaining_time = worker.timeout - test_duration.total_seconds()
@@ -261,7 +265,7 @@ class MultiprocessRunner(BaseTestRunner):
         current_datetime = datetime.datetime.now()
 
         # Note: Using items() because workers_pool may change during iteration.
-        for pid, worker in self.workers_pool.items():
+        for pid, worker in list(self.workers_pool.items()):
             if not worker.is_alive():
                 self.restart_worker(
                     worker=worker,
@@ -304,7 +308,7 @@ class MultiprocessRunner(BaseTestRunner):
         self.queue_test_jobs(self.test_item)
 
         core_log.debug('Creating %d workers processes', self.workers_number)
-        for _ in xrange(self.workers_number):
+        for _ in range(self.workers_number):
             self.initialize_worker()
 
         while self.finished_workers < self.workers_number:

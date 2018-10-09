@@ -1,11 +1,13 @@
 """Describe TestBlock class."""
 # pylint: disable=dangerous-default-value,too-many-arguments
+from __future__ import absolute_import
 from itertools import count
 
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_OPTIONAL,
                                         MODE_FINALLY, MODE_CRITICAL,
                                         BlockInput, BlockOutput)
+import six
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -114,7 +116,7 @@ class TestBlock(AbstractFlowComponent):
         checked_class = cls
         while checked_class is not TestBlock:
             all_inputs.update({key: value for (key, value) in
-                               checked_class.__dict__.iteritems()
+                               six.iteritems(checked_class.__dict__)
                                if (isinstance(value, BlockInput) and
                                    key not in all_inputs)})
 
@@ -133,7 +135,7 @@ class TestBlock(AbstractFlowComponent):
         checked_class = cls
         while checked_class is not TestBlock:
             all_outputs.update({key: value for (key, value) in
-                                checked_class.__dict__.iteritems()
+                                six.iteritems(checked_class.__dict__)
                                 if isinstance(value, BlockOutput)})
 
             checked_class = checked_class.__bases__[0]
@@ -166,10 +168,10 @@ class TestBlock(AbstractFlowComponent):
             AttributeError: not all inputs were passed to the block.
         """
         required_inputs = [name
-                           for (name, value) in self.get_inputs().iteritems()
+                           for (name, value) in six.iteritems(self.get_inputs())
                            if not value.is_optional()]
 
-        required_inputs.extend(self._pipes.itervalues())
+        required_inputs.extend(six.itervalues(self._pipes))
 
         missing_inputs = [input_name for input_name in required_inputs
                           if (input_name not in self.__dict__ and

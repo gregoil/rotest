@@ -3,9 +3,11 @@
 This module contains tests for the multiprocess runner functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
+from __future__ import absolute_import
+from builtins import range
 import os
 import unittest
-from Queue import Empty
+from six.moves.queue import Empty
 from multiprocessing import Queue, Event
 
 import psutil
@@ -18,6 +20,7 @@ from tests.core.multiprocess.utils import (RegisterInSetupFlow,
                                            BasicMultiprocessCase,
                                            SubprocessCreationCase,
                                            ResourceIdRegistrationCase)
+from six.moves import range
 
 
 class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
@@ -63,7 +66,7 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
         Raises:
             AssertionError. of one or more of the processes wasn't killed.
         """
-        for _ in xrange(expected_processes_num):
+        for _ in range(expected_processes_num):
             pid = self.pid_queue.get_nowait()
             self.assertFalse(psutil.pid_exists(pid),
                              "Process %s wasn't killed" % pid)

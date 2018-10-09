@@ -1,4 +1,5 @@
 """Responses models of the view requests."""
+from __future__ import absolute_import
 from swaggapi.api.builder.common.response import AbstractResponse
 from swaggapi.api.builder.common.fields import (StringField,
                                                 ModelField,

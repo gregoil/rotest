@@ -1,6 +1,7 @@
 """Multiprocess worker process."""
 # pylint: disable=invalid-name,too-many-arguments,too-many-instance-attributes
-from Queue import Empty
+from __future__ import absolute_import
+from six.moves.queue import Empty
 from multiprocessing import Process
 
 import psutil

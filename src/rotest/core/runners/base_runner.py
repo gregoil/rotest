@@ -2,6 +2,7 @@
 # pylint: disable=invalid-name,too-many-arguments
 # pylint: disable=expression-not-assigned,no-member
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
+from __future__ import absolute_import
 import json
 from unittest.runner import TextTestRunner
 

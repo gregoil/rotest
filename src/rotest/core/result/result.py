@@ -1,6 +1,7 @@
 """Tests results handling interface."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,dangerous-default-value
+from __future__ import absolute_import
 from unittest.result import TestResult
 import pkg_resources
 

@@ -1,4 +1,5 @@
 """Abstract Testing class for any kind of parser."""
+from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
 from django.test.testcases import TransactionTestCase
@@ -14,9 +15,10 @@ from rotest.management.common.messages import (ErrorReply,
                                                ResourcesReply,
                                                ParsingFailure,
                                                ReleaseResources)
+import six
 
 
-class AbstractTestParser(TransactionTestCase):
+class AbstractTestParser(six.with_metaclass(ABCMeta, TransactionTestCase)):
     """An abstract class to test any parser.
 
     Attributes:
@@ -24,7 +26,6 @@ class AbstractTestParser(TransactionTestCase):
             Should be initiated under setUpClass method in any derived class.
     """
     __test__ = False
-    __metaclass__ = ABCMeta
 
     PARSER = NotImplemented
     LOCK_RESOURCES_TIMEOUT = 10

@@ -1,8 +1,10 @@
 """Test Rotest's multiprocesses behavior on crashes."""
 # pylint: disable=expression-not-assigned,invalid-name,too-many-public-methods
+from __future__ import absolute_import
+from builtins import range
 import sys
 import unittest
-from Queue import Empty
+from six.moves.queue import Empty
 from multiprocessing import Process, Queue, Event, active_children
 
 import pytest
@@ -13,6 +15,7 @@ from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
 from tests.core.multiprocess.utils import TimeoutCase
 from tests.core.utils import MockTestSuite, override_client_creator
+from six.moves import range
 
 
 class AbstractCrashTest(unittest.TestCase):
@@ -94,7 +97,7 @@ class RunnerCrashTest(AbstractCrashTest):
 
         core_log.debug("Waiting for the workers to start")
         workers_pids = [self.pid_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
-                        for _ in xrange(self.WORKERS_NUMBER)]
+                        for _ in range(self.WORKERS_NUMBER)]
 
         runner_process = psutil.Process(self.runner_process.pid)
         self.worker_processes = runner_process.children()
@@ -131,7 +134,7 @@ class WorkerCrashTest(AbstractCrashTest):
 
         core_log.debug("Waiting for the workers to start")
         workers_pids = [self.pid_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
-                        for _ in xrange(self.WORKERS_NUMBER)]
+                        for _ in range(self.WORKERS_NUMBER)]
 
         core_log.debug("Validating no extra workers were created")
         self.assertRaises(Empty, self.pid_queue.get_nowait)
@@ -144,7 +147,7 @@ class WorkerCrashTest(AbstractCrashTest):
 
         core_log.debug("Waiting for the alternative workers to start")
         new_workers_pids = [self.pid_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
-                            for _ in xrange(self.WORKERS_NUMBER)]
+                            for _ in range(self.WORKERS_NUMBER)]
 
         core_log.debug("Validating no extra workers were created")
         self.assertRaises(Empty, self.pid_queue.get_nowait)

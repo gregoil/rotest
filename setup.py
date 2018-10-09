@@ -1,7 +1,8 @@
 """Setup file for handling packaging and distribution."""
+from __future__ import absolute_import
 from setuptools import setup, find_packages
 
-__version__ = "4.2.0"
+__version__ = "4.3.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -23,11 +24,11 @@ result_handlers = [
 ]
 
 requirements = [
-    'django>=1.7,<1.8',
+    'django>=1.8,<1.9',
     'ipdb',
     'py',
     'isort',
-    'ipdbugger>=1.1.2',
+    'ipdbugger>=2',
     'docopt',
     'lxml<4.0.0',
     'xlwt',
@@ -54,7 +55,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=requirements,
-    python_requires=">=2.7.0",
+    python_requires=">=2.7.0,",
     entry_points={
         "console_scripts": [
             "rotest = rotest.cli.main:main"
@@ -73,7 +74,7 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.5',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',

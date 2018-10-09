@@ -1,9 +1,13 @@
 """Define CaseData model class."""
 # pylint: disable=no-member,no-init,too-few-public-methods
 # pylint: disable=too-many-public-methods,no-init,old-style-class
+from __future__ import absolute_import
+from builtins import range
+from builtins import object
 from django.db import models
 
 from .general_data import GeneralData
+from six.moves import range
 
 
 class TestOutcome(object):
@@ -15,7 +19,7 @@ class TestOutcome(object):
             save that outcome as the result of the test.
     """
     (SUCCESS, ERROR, FAILED, SKIPPED,
-     EXPECTED_FAILURE, UNEXPECTED_SUCCESS) = xrange(6)
+     EXPECTED_FAILURE, UNEXPECTED_SUCCESS) = list(range(6))
 
     RESULT_PRIORITY = {SUCCESS: 0,
                        SKIPPED: 1,
@@ -53,10 +57,10 @@ class CaseData(GeneralData):
 
     resources = models.ManyToManyField('management.ResourceData')
     traceback = models.TextField(max_length=MAX_CHAR_LEN, blank=True)
-    exception_type = models.IntegerField(choices=RESULT_CHOICES.items(),
+    exception_type = models.IntegerField(choices=list(RESULT_CHOICES.items()),
                                          blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'core'
 

@@ -1,5 +1,8 @@
 """Define RunData model class."""
 # pylint: disable=too-few-public-methods,no-init,old-style-class
+from __future__ import absolute_import
+from builtins import str
+from builtins import object
 from django.db import models
 
 from rotest.common.django_utils import get_sub_model
@@ -34,7 +37,7 @@ class RunData(models.Model):
 
     GLOBAL_FIELDS = ('run_name', 'run_delta', 'artifact_path', 'config')
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'core'
 

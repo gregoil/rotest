@@ -1,4 +1,5 @@
 """Test Rotest's Logs behavior."""
+from __future__ import absolute_import
 import os
 import time
 import unittest

@@ -1,5 +1,7 @@
 # pylint: disable=unused-argument, no-self-use, too-many-locals
-import httplib
+from __future__ import absolute_import
+from builtins import next
+import six.moves.http_client
 from datetime import datetime
 
 from django.db import transaction
@@ -35,8 +37,8 @@ class LockResources(DjangoRequestView):
     URI = "resources/lock_resources"
     DEFAULT_MODEL = LockResourcesParamsModel
     DEFAULT_RESPONSES = {
-        httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: FailureResponseModel
+        six.moves.http_client.OK: InfluencedResourcesResponseModel,
+        six.moves.http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -126,7 +128,7 @@ class LockResources(DjangoRequestView):
             descriptor, username, groups)
 
         try:
-            resource = availables.next()
+            resource = next(availables)
             self._lock_resource(resource, username)
             return resource
 
@@ -164,4 +166,4 @@ class LockResources(DjangoRequestView):
                     for _resource in locked_resources]
         return Response({
             "resource_descriptors": response
-        }, status=httplib.OK)
+        }, status=six.moves.http_client.OK)

@@ -1,7 +1,9 @@
 """Holds the common resource management messages."""
+from __future__ import absolute_import
 from abc import ABCMeta
 
 from basicstruct import BasicStruct
+import six
 
 
 def slots_extender(new_slots):
@@ -34,7 +36,7 @@ def slots_extender(new_slots):
 
 
 @slots_extender(('msg_id',))
-class AbstractMessage(BasicStruct):
+class AbstractMessage(six.with_metaclass(ABCMeta, BasicStruct)):
     """Basic message class.
 
     Holds the common data for resource management messages.
@@ -42,7 +44,6 @@ class AbstractMessage(BasicStruct):
     Attributes:
         msg_id (number): sending side unique message identifier.
     """
-    __metaclass__ = ABCMeta
 
 
 @slots_extender(('reason',))
@@ -52,13 +53,12 @@ class ParsingFailure(AbstractMessage):
 
 
 @slots_extender(('request_id',))
-class AbstractReply(AbstractMessage):
+class AbstractReply(six.with_metaclass(ABCMeta, AbstractMessage)):
     """Abstract reply message for parsed request.
 
     Attributes:
         request_id (number): msg_id of the requested operation.
     """
-    __metaclass__ = ABCMeta
 
 
 class SuccessReply(AbstractReply):

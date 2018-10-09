@@ -2,6 +2,8 @@
 # pylint: disable=expression-not-assigned,too-many-arguments
 # pylint: disable=no-self-use,too-many-public-methods,unused-argument
 # pylint: disable=redundant-unittest-assert
+from __future__ import absolute_import
+from builtins import map
 import unittest
 
 import django
@@ -19,6 +21,7 @@ from rotest.core.block import TestBlock, BlockOutput, BlockInput
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.common.errors import (ResourceDoesNotExistError,
                                              ResourceUnavailableError)
+from six.moves import map
 
 django.setup()
 
@@ -206,7 +209,7 @@ class MockResourceClient(ClientResourceManager):
         # Make sure the unittest is using the test DB, by assigning the test
         # database path as the database path to use.
         # (this is needed in multiprocess in windows)
-        for db_connection in connections.databases.values():
+        for db_connection in list(connections.databases.values()):
             test_db_name = db_connection['TEST']['NAME']
             db_connection['NAME'] = test_db_name
 

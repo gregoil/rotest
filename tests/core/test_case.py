@@ -1,6 +1,8 @@
 """Test Rotest's TestCase class behavior."""
 # pylint: disable=missing-docstring,unused-argument,protected-access
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
+from __future__ import absolute_import
+from builtins import next
 import os
 import re
 
@@ -16,6 +18,7 @@ from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
                               DynamicResourceLockingCase, ExpectRaisesCase,
                               StoreFailureErrorCase, ExpectedFailureCase,
                               StoreFailureCase, MockTestSuite)
+import six
 
 
 RESOURCE_NAME = 'available_resource1'
@@ -149,7 +152,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_suite = InternalSuite()
         case = test_suite._tests[0]
-        for name, value in kwargs.iteritems():
+        for name, value in six.iteritems(kwargs):
             setattr(case, name, value)
 
         self.run_test(test_suite)
@@ -209,7 +212,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resources = case.all_resources
         locked_names = []
-        for resource in test_resources.values():
+        for resource in list(test_resources.values()):
             self.assertTrue(isinstance(resource, DemoResource),
                             "Got wrong resource %r for the request" % resource)
 

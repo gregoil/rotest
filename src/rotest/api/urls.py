@@ -1,5 +1,6 @@
 """URLs of all the django views."""
 # pylint: disable=unused-argument, no-self-use
+from __future__ import absolute_import
 from django.conf.urls import patterns
 
 from swaggapi.build import Swagger
