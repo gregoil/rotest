@@ -10,7 +10,7 @@ configparser==3.5.0
 constantly==15.1.0
 coverage==4.5.1
 decorator==4.1.2
-Django==1.7.11
+Django==1.8.19
 docopt==0.6.2
 docutils==0.14
 enum34==1.1.6
@@ -54,7 +54,7 @@ scandir==1.5
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0
-swaggapi==0.6.0
+##################################################swaggapi==0.6.1
 termcolor==1.1.0
 traitlets==4.3.2
 Twisted==17.5.0

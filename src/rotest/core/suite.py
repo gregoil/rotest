@@ -37,6 +37,8 @@ class TestSuite(unittest.TestSuite):
     TAGS = []
     IS_COMPLEX = True
 
+    _cleanup = False
+
     def __init__(self, base_work_dir=ROTEST_WORK_DIR, save_state=True,
                  config=None, indexer=count(), parent=None, run_data=None,
                  enable_debug=False, skip_init=False, resource_manager=None):
