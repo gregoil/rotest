@@ -62,7 +62,7 @@ class DemoResource(BaseResource):
     def store_state(self, state_dir_path):
         """Save a fake state file under the state directory."""
         state_file_path = os.path.join(state_dir_path, self.STATE_FILE_NAME)
-        with open(state_file_path, 'wb') as state_file:
+        with open(state_file_path, 'w') as state_file:
             state_file.write('state')
 
     def initialize(self):
