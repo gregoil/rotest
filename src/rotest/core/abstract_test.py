@@ -14,6 +14,7 @@ import unittest
 from bdb import BdbQuit
 from functools import wraps
 from itertools import count
+import platform
 
 from ipdbugger import debug
 from attrdict import AttrDict
@@ -315,12 +316,32 @@ class AbstractTest(unittest.TestCase):
 
     def store_state(self):
         """Store the state of the resources in the work dir."""
-        status = self.data.exception_type
-        if (not self.save_state or status is None or
-                status in TestOutcome.POSITIVE_RESULTS):
-
-            self.logger.debug("Skipping saving error state")
+        # In Python 3 tearDown() is called before result.addError() whereas
+        # in python 2 addError() is called before tearDown().
+        # in python 3 self.data.exception_type would always be None
+        # but we could check the error state via the self._outcome object
+        # and in python2 we could just check the exception_type identifier.
+        if not self.save_state:
+            self.logger.debug("Skipping saving state, --save-state flag was not supplied")
             return
+
+        if platform.python_version().startswith("3"):
+            exceptions_that_occured = len([test
+                                          for test, exc_info
+                                          in self._outcome.errors
+                                          if exc_info is not None])
+
+            if exceptions_that_occured == 0:
+                self.logger.debug("State is not an errored state, "
+                                  "skipping saving state")
+                return
+
+        elif platform.python_version().startswith("2"):
+            status = self.data.exception_type
+            if status is None or status in TestOutcome.POSITIVE_RESULTS:
+                self.logger.debug("State is not an errored state, "
+                                  "skipping saving state")
+                return
 
         store_dir = os.path.join(self.work_dir, self.STATE_DIR_NAME)
 
