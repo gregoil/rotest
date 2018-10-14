@@ -748,9 +748,8 @@ class TestTestCase(BasicRotestUnitTest):
                                                        name=RESOURCE_NAME),)
 
         case = self._run_case(TempUnexpectedSuccessCase)
-
-        self.assertTrue(self.result.wasSuccessful(),
-                        'Case failed when it should have succeeded')
+        self.assertFalse(self.result.wasSuccessful(),
+                        'Case succeeded when it should have failed')
 
         # === Validate case data object ===
         self.assertFalse(case.data.success,

@@ -309,3 +309,14 @@ class Result(TestResult):
                                         self.skipped, self.failures,
                                         self.expectedFailures,
                                         self.unexpectedSuccesses)
+
+    def wasSuccessful(self):
+        # In Python 2 tests with unexpected successes be considered successful
+        # whereas in Python 3 they would be considered unsuccessful.
+        # This method override is meant to achieve uniform result from
+        # this method call.
+        if (hasattr(self, 'unexpectedSuccesses') and
+                len(self.unexpectedSuccesses) > 0):
+            return False
+
+        return super(Result, self).wasSuccessful()
