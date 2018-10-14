@@ -11,7 +11,7 @@ from rotest.core import TestCase, TestFlow
 
 
 BLACK_LIST = [".tox", ".git", ".idea", "setup.py"]
-WHITE_LIST = ["*test*.py"]
+WHITE_LIST = ["*.py"]
 
 
 def is_test_class(test):

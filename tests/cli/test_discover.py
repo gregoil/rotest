@@ -54,7 +54,7 @@ def test_yielding_test_files():
 def test_skipping_files_by_whitelist():
     with Patcher() as patcher:
         patcher.fs.create_dir("root")
-        patcher.fs.create_file("root/some_file.py")
+        patcher.fs.create_file("root/some_file.txt")
 
         assert set(get_test_files(["root"])) == set()
 
