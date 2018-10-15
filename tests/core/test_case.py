@@ -31,6 +31,13 @@ class TempSuccessCase(SuccessCase):
     resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
+class TempSkipCase(SkipCase):
+    """Inherit class and override resources requests."""
+    __test__ = False
+
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
+
+
 class TempComplexRequestCase(SuccessCase):
     """Inherit class and override resources requests."""
     __test__ = False
@@ -879,13 +886,13 @@ class TestTestCase(BasicRotestUnitTest):
             save the state.
         """
         resource_name = 'save_state_resource'
-        SkipCase.resources = (request(resource_name=resource_name,
-                                             resource_class=DemoResource,
-                                             name=RESOURCE_NAME),)
+        TempSkipCase.resources = (request(resource_name=resource_name,
+                                          resource_class=DemoResource,
+                                          name=RESOURCE_NAME),)
 
-        case = self._run_case(SkipCase, save_state=True)
+        case = self._run_case(TempSkipCase, save_state=True)
         expected_state_path = os.path.join(case.work_dir,
-                                           SkipCase.STATE_DIR_NAME)
+                                           TempSkipCase.STATE_DIR_NAME)
 
         self.assertFalse(os.path.exists(expected_state_path))
 
