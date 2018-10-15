@@ -56,7 +56,16 @@ class DBHandler(AbstractResultHandler):
         run_data = self.main_test.data.run_data
         if run_data is not None:
             # Save the run data so it'll have a pk.
-            run_data.save()
+            if run_data.main_test is not None:
+                main_test = run_data.main_test
+                run_data.main_test = None
+                run_data.save()
+                main_test.save()
+                run_data.main_test = main_test
+                run_data.save()
+
+            else:
+                run_data.save()
 
         # Save all the test datas so they'll have a pk.
         self._save_sub_tests(self.main_test, run_data)

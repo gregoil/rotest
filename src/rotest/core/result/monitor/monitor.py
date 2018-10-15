@@ -128,7 +128,7 @@ class AbstractMonitor(AbstractResultHandler):
             test (object): test item instance.
         """
         # Don't register a thread if the monitor doesn't override 'run_monitor'
-        if self.run_monitor.__func__ is AbstractMonitor.run_monitor.__func__ or \
+        if self.__class__.run_monitor is AbstractMonitor.run_monitor or \
                 self.CYCLE is NotImplemented:
 
             return
