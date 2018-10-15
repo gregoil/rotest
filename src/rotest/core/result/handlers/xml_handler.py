@@ -32,7 +32,7 @@ class XMLHandler(AbstractResultHandler):
         """
         xml_report_path = os.path.join(test.work_dir,
                                        self.XML_REPORT_PATH)
-        with open(xml_report_path, 'w') as xml_report:
+        with open(xml_report_path, 'wb') as xml_report:
             xml_report.write(etree.tostring(xml_obj, pretty_print=True))
 
     def _add_test_report(self, test, result_description="",
