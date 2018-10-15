@@ -45,7 +45,7 @@ class QueryResources(DjangoRequestView):
             descriptor = ResourceDescriptor.decode(request.model.obj)
 
         except ResourceTypeError as e:
-            raise BadRequest(e.message)
+            raise BadRequest(str(e))
 
         # query for resources that are usable and match the descriptors
         query = (Q(is_usable=True, **descriptor.properties))

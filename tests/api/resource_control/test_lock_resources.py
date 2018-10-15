@@ -195,9 +195,10 @@ class TestLockResourcesInvalid(TransactionTestCase):
                 "token": self.token
             })
         self.assertEqual(response.status_code, six.moves.http_client.BAD_REQUEST)
-        self.assertEqual(content.details,
-                         "Failed to extract type u'invalidmodule.invalidtype'."
-                         " Reason: No module named invalidmodule.")
+        self.assertIn("Failed to extract type", content.details)
+        self.assertIn("invalidmodule.invalidtype", content.details)
+        self.assertIn("Reason: No module named", content.details)
+        self.assertIn("invalidmodule", content.details)
 
         # no available resources
         response, content = self.requester(

@@ -89,7 +89,7 @@ class LockResources(DjangoRequestView):
                 .filter(query).order_by('-reserved')
 
         except FieldError as e:
-            raise BadRequest(e.message)
+            raise BadRequest(str(e))
 
         if matches.count() == 0:
             raise BadRequest(INVALID_RESOURCES.format(descriptor))
@@ -122,7 +122,7 @@ class LockResources(DjangoRequestView):
             descriptor = ResourceDescriptor.decode(descriptor_dict)
 
         except ResourceTypeError as e:
-            raise BadRequest(e.message)
+            raise BadRequest(str(e))
 
         availables = self._get_available_resources(
             descriptor, username, groups)

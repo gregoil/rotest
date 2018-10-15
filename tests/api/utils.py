@@ -38,7 +38,7 @@ def request(client, path, method="post",
                               content_type=content_type)
 
     try:
-        return response, AttrDict(json.loads(response.content))
+        return response, AttrDict(json.loads(response.content.decode("utf-8")))
 
     except ValueError:  # couldn't decode json object
         return response, response.content

@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import os
 import unittest
 
+import six
 import mock
 import pytest
 from pyfakefs.fake_filesystem_unittest import Patcher
@@ -80,7 +81,7 @@ def test_discovering_tests(loader_mock):
 
     loader_mock.return_value.loadTestsFromModule.return_value = [Case]
 
-    with mock.patch("__builtin__.__import__"):
+    with mock.patch("{}.__import__".format(six.moves.builtins.__name__)):
         assert discover_tests_under_paths(["some_test.py"]) == {Case}
 
 
