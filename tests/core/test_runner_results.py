@@ -10,7 +10,7 @@ standard_library.install_aliases()
 import sys
 import unittest
 from abc import ABCMeta
-from io import StringIO
+from six import StringIO
 from multiprocessing import Queue, Event
 
 from rotest.core.runner import BaseTestRunner
