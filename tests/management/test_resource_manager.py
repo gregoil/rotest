@@ -13,7 +13,7 @@ from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
-from rotest.management import BaseResource
+from rotest.management import BaseResource, DataPointer
 from rotest.management.common.utils import LOCALHOST
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
@@ -1315,10 +1315,6 @@ class TestResourceManagement(BaseResourceManagementTest):
                           "Expected resource with name %r but got %r"
                           % (self.COMPLEX_NAME, resource.name))
 
-        self.assertEquals(resource.name, resource.demo3.name,
-                          "Expected sub-service with name %r but got %r"
-                          % (resource.name, resource.demo3.name))
-
         self.assertIsInstance(resource, request.type,
                               "Expected resource of type %r, but got %r"
                               % (request.type.__name__,
@@ -1327,6 +1323,10 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEquals(len(list(resource.get_sub_resources())), 3,
                           "Expected to have 3 sub-resources, found %r"
                           % resource.get_sub_resources())
+
+        self.assertEquals(resource.name, resource.demo3.name,
+                          "Expected sub-service with name %r but got %r"
+                          % (resource.name, resource.demo3.name))
 
         self.assertTrue(resource.data.initialization_flag,
                         "Resource %r should have been initialized" %
@@ -1378,7 +1378,7 @@ class TestResourceManagement(BaseResourceManagementTest):
             """Fake complex service class, used in resource manager tests."""
             DATA_CLASS = None
             demo1 = DemoService()
-            demo2 = DemoService()
+            demo2 = DemoService(name=DataPointer('name'))
 
             initialized = False
 
@@ -1405,6 +1405,14 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEquals(len(list(resource.get_sub_resources())), 2,
                           "Expected to have 2 sub-resources, found %r"
                           % resource.get_sub_resources())
+
+        self.assertEquals(resource.name, resource.demo2.name,
+                          "Expected sub-service with name %r but got %r"
+                          % (resource.name, resource.demo2.name))
+
+        self.assertNotEquals(resource.name, resource.demo1.name,
+                             "Expected sub-service with name different than %r"
+                             % (resource.name, resource.demo1.name))
 
         self.assertTrue(resource.initialized,
                         "Resource %r should have been initialized" %
