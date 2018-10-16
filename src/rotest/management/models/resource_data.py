@@ -28,7 +28,7 @@ class DataPointer(object):
 class DataBase(ModelBase):
     """Metaclass that creates data pointers for django fields."""
     def __getattr__(cls, key):
-        if '_meta' in cls.__dict__ and key in cls._meta.get_field_names():
+        if hasattr(cls, '_meta') and key in cls._meta.get_all_field_names():
             return DataPointer(key)
 
         raise AttributeError(key)
