@@ -10,6 +10,7 @@ from datetime import datetime
 
 from django.db import models
 from django.utils import six
+from django.db.models import Field
 from django.db.models.base import ModelBase
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -28,8 +29,9 @@ class DataPointer(object):
 class DataBase(ModelBase):
     """Metaclass that creates data pointers for django fields."""
     def add_to_class(cls, name, value):
-        ModelBase.add_to_class(cls, name, value)
-        if hasattr(value, 'contribute_to_class'):
+        super_add = super(DataBase, cls).add_to_class
+        super_add(name, value)
+        if isinstance(value, Field) and hasattr(value, 'contribute_to_class'):
             setattr(cls, name, DataPointer(name))
 
 
