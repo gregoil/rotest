@@ -8,9 +8,12 @@ from bdb import BdbQuit
 
 from ipdbugger import debug
 from attrdict import AttrDict
+from django.db.models.fields.related import \
+                                        ReverseSingleRelatedObjectDescriptor
 
 from rotest.common import core_log
-from rotest.common.utils import get_work_dir
+from rotest.common.utils import get_work_dir, get_class_fields
+from rotest.management.models.resource_data import ResourceData, DataPointer
 
 
 class ConvertToKwargsMeta(type):
@@ -77,8 +80,9 @@ class BaseResource(object):
 
         if data is not None:
             self.data = data
-            for field_name, field_value in self.data.get_fields().iteritems():
-                setattr(self, field_name, field_value)
+            if isinstance(data, ResourceData):
+                for field_name, field_value in data.get_fields().iteritems():
+                    setattr(self, field_name, field_value)
 
         else:
             self.data = AttrDict()
@@ -95,13 +99,34 @@ class BaseResource(object):
     def create_sub_resources(self):
         """Create and return the sub resources if needed.
 
+        By default, this method searches for sub-resources declared as
+        class fields, where the 'data' attribute in the declaration points
+        to the name of the sub-resource's data field under the current's data.
+
         Override and assign sub-resources to fields in the current resource,
         using the 'data' object.
 
         Returns:
             iterable. sub-resources created.
         """
-        return ()
+        sub_resources = []
+        for sub_name, sub_placeholder in get_class_fields(self.__class__,
+                                                          BaseResource):
+            sub_class = sub_placeholder.__class__
+            actual_kwargs = sub_placeholder.kwargs.copy()
+            for key, value in sub_placeholder.kwargs.iteritems():
+                if isinstance(value, ReverseSingleRelatedObjectDescriptor):
+                    actual_kwargs[key] = getattr(self.data, value.field.name)
+
+                elif isinstance(value, DataPointer):
+                    actual_kwargs[key] = getattr(self.data, value.field_name)
+
+            sub_resource = sub_class(**actual_kwargs)
+
+            setattr(self, sub_name, sub_resource)
+            sub_resources.append(sub_resource)
+
+        return sub_resources
 
     def is_available(self, user_name=""):
         """Return whether resource is available for the given user.
