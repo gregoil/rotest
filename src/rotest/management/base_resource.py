@@ -11,7 +11,7 @@ from attrdict import AttrDict
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir, get_class_fields
-from rotest.management.models.resource_data import ResourceData
+from rotest.management.models.resource_data import ResourceData, DataPointer
 
 
 class ConvertToKwargsMeta(type):
@@ -37,12 +37,6 @@ class ConvertToKwargsMeta(type):
             resource.data.update(kwargs)
 
         return resource
-
-
-class DataPointer(object):
-    """Pointer to a field in the resource's data."""
-    def __init__(self, field_name):
-        self.field_name = field_name
 
 
 class BaseResource(object):

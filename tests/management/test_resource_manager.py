@@ -1278,8 +1278,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoResource(data=DataPointer('demo1'))
-            demo2 = DemoResource(data=DataPointer('demo2'))
+            demo1 = DemoResource(data=DemoComplexResourceData.demo1)
+            demo2 = DemoResource(data=DemoComplexResourceData.demo2)
 
             def initialize(self):
                 """Turns on the initialization flag."""
