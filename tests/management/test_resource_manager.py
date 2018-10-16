@@ -13,8 +13,9 @@ from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
-from rotest.management import BaseResource, DataPointer
+from rotest.management import BaseResource
 from rotest.management.common.utils import LOCALHOST
+from rotest.management.models.resource_data import DataPointer
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
@@ -1380,8 +1381,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                 self.data.initialization_flag = True
                 self.data.save()
 
-        resources = DemoComplexResourceData.objects.filter(
-                                                       name=self.FREE1_NAME)
+        resources = DemoResourceData.objects.filter(name=self.FREE1_NAME)
 
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected 1 complex "
@@ -1418,7 +1418,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.assertEquals(resource.name, resource.demo1.name,
                           "Expected sub-service with name %r but got %r"
-                          % (resource.name, resource.demo3.name))
+                          % (resource.name, resource.demo1.name))
 
         self.assertTrue(resource.data.initialization_flag,
                         "Resource %r should have been initialized" %

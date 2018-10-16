@@ -112,7 +112,6 @@ class BaseResource(object):
         sub_resources = []
         for sub_name, sub_placeholder in get_class_fields(self.__class__,
                                                           BaseResource):
-
             sub_class = sub_placeholder.__class__
             actual_kwargs = sub_placeholder.kwargs.copy()
             for key, value in sub_placeholder.kwargs.iteritems():
