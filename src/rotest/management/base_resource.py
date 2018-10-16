@@ -8,6 +8,8 @@ from bdb import BdbQuit
 
 from ipdbugger import debug
 from attrdict import AttrDict
+from django.db.models.fields.related import \
+                                        ReverseSingleRelatedObjectDescriptor
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir, get_class_fields
@@ -114,7 +116,10 @@ class BaseResource(object):
             sub_class = sub_placeholder.__class__
             actual_kwargs = sub_placeholder.kwargs.copy()
             for key, value in sub_placeholder.kwargs.iteritems():
-                if isinstance(value, DataPointer):
+                if isinstance(value, ReverseSingleRelatedObjectDescriptor):
+                    actual_kwargs[key] = getattr(self.data, value.field.name)
+
+                elif isinstance(value, DataPointer):
                     actual_kwargs[key] = getattr(self.data, value.field_name)
 
             sub_resource = sub_class(**actual_kwargs)

@@ -1280,6 +1280,7 @@ class TestResourceManagement(BaseResourceManagementTest):
             DATA_CLASS = DemoComplexResourceData
             demo1 = DemoResource(data=DemoComplexResourceData.demo1)
             demo2 = DemoResource(data=DemoComplexResourceData.demo2)
+            demo3 = DemoService(name=DemoComplexResourceData.name)
 
             def initialize(self):
                 """Turns on the initialization flag."""
@@ -1314,13 +1315,17 @@ class TestResourceManagement(BaseResourceManagementTest):
                           "Expected resource with name %r but got %r"
                           % (self.COMPLEX_NAME, resource.name))
 
+        self.assertEquals(resource.name, resource.demo3.name,
+                          "Expected sub-service with name %r but got %r"
+                          % (resource.name, resource.demo3.name))
+
         self.assertIsInstance(resource, request.type,
                               "Expected resource of type %r, but got %r"
                               % (request.type.__name__,
                                  resource.__class__.__name__))
 
-        self.assertEquals(len(list(resource.get_sub_resources())), 2,
-                          "Expected to have 2 sub-resources, found %r"
+        self.assertEquals(len(list(resource.get_sub_resources())), 3,
+                          "Expected to have 3 sub-resources, found %r"
                           % resource.get_sub_resources())
 
         self.assertTrue(resource.data.initialization_flag,
