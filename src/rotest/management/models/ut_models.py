@@ -3,16 +3,15 @@
 # pylint: disable=too-many-public-methods,old-style-class
 # pylint: disable=no-self-use,no-init,no-member,too-few-public-methods
 from __future__ import absolute_import
-from builtins import range
-from builtins import object
+
 import os
 import shutil
 
 from django.db import models
+from builtins import range, object
 
 from rotest.management.base_resource import BaseResource
 from rotest.management.models.resource_data import ResourceData
-from six.moves import range
 
 
 class DemoResourceData(ResourceData):

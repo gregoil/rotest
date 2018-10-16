@@ -7,17 +7,18 @@ responsible for the resource static & dynamic information.
 # pylint: disable=attribute-defined-outside-init,invalid-name,old-style-class
 # pylint: disable=access-member-before-definition,property-on-old-class,no-init
 from __future__ import absolute_import
-from builtins import object
+
 from datetime import datetime
 
+from builtins import object
 from django.db import models
+from future.utils import itervalues
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from rotest.common.django_utils.fields import NameField
 from rotest.common.django_utils.common import get_fields
 from rotest.common.django_utils import get_sub_model, linked_unicode
-import six
 
 
 class ResourceData(models.Model):
@@ -69,7 +70,8 @@ class ResourceData(models.Model):
 
     def get_sub_resources(self):
         """Return an iterable to the resource's sub-resources."""
-        return (field_value for field_value in six.itervalues(self.get_fields())
+        return (field_value
+                for field_value in itervalues(self.get_fields())
                 if isinstance(field_value, ResourceData))
 
     def _is_sub_resources_available(self, user_name=""):
@@ -161,7 +163,8 @@ class ResourceData(models.Model):
             if isinstance(value, ResourceData):
                 resource_properties[key] = value.duplicate()
 
-        list_field_names = [key for key, value in list(resource_properties.items())
+        list_field_names = [key for
+                            key, value in list(resource_properties.items())
                             if isinstance(value, list)]
 
         list_fields = [(field_name, resource_properties.pop(field_name))

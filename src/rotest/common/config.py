@@ -1,15 +1,14 @@
 """Managing configuration that comes from CLI, env-vars & config files."""
 from __future__ import absolute_import
-from builtins import zip
-from builtins import object
+
 import os
 import sys
 import itertools
 
 import yaml
 from attrdict import AttrDict
-import six
-from six.moves import zip
+from builtins import zip, object
+from future.utils import iteritems
 
 
 ROTEST_CONFIGURATION_FILES = ("rotest.yaml", "rotest.yml",
@@ -196,10 +195,10 @@ def get_configuration(configuration_schema,
             config_content=config_content)
 
     return AttrDict(dict(itertools.chain(
-        six.iteritems(default_configuration),
-        six.iteritems(file_configuration),
-        six.iteritems(env_var_configuration),
-        six.iteritems(cli_configuration),
+        iteritems(default_configuration),
+        iteritems(file_configuration),
+        iteritems(env_var_configuration),
+        iteritems(cli_configuration),
     )))
 
 

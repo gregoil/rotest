@@ -1,21 +1,22 @@
-"""Test Rotest's multiprocesses behavior on crashes."""
+"""Test Rotest's multiprocess behavior on crashes."""
 # pylint: disable=expression-not-assigned,invalid-name,too-many-public-methods
 from __future__ import absolute_import
-from builtins import range
+
 import sys
 import unittest
-from six.moves.queue import Empty
 from multiprocessing import Process, Queue, Event, active_children
 
 import pytest
 import psutil
+from builtins import range
+from six.moves.queue import Empty
+
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.common import kill_process_tree
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
 from tests.core.multiprocess.utils import TimeoutCase
 from tests.core.utils import MockTestSuite, override_client_creator
-from six.moves import range
 
 
 class AbstractCrashTest(unittest.TestCase):

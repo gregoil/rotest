@@ -1,16 +1,15 @@
 """Define GeneralData model class."""
 # pylint: disable=no-init,old-style-class,unused-argument
 from __future__ import absolute_import
-from builtins import range
-from builtins import object
+
 from datetime import datetime
 
 from django.db import models
+from builtins import range, object
 
 from rotest.common.django_utils import linked_unicode
 from rotest.common.django_utils.fields import NameField
 from rotest.common.django_utils.common import get_sub_model
-from six.moves import range
 
 
 class GeneralData(models.Model):

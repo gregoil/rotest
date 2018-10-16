@@ -1,9 +1,7 @@
 """Utils module for pretty-printing the logs."""
 from __future__ import absolute_import
 from __future__ import division
-from builtins import str
-from builtins import object
-from past.utils import old_div
+
 import os
 import sys
 import math
@@ -12,18 +10,19 @@ from abc import ABCMeta, abstractproperty
 
 import enum
 from termcolor import colored
+from builtins import str, object
+from future.utils import with_metaclass, iteritems
 
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite
 from rotest.core.block import TestBlock
-import six
 
 STDERR_HANDLE_NUMBER = -12
 CSBI_BUFFER_SIZE = 22
 
 
-class TitleConfiguration(six.with_metaclass(ABCMeta, object)):
+class TitleConfiguration(with_metaclass(ABCMeta, object)):
     """Interface for specifying the colors that will be printed in a test.
 
     Attributes:
@@ -256,7 +255,7 @@ class Pretty(object):
     def left_decoration(self):
         decoration_color = self.configuration.decoration_color
         decoration_char = self.configuration.decoration_character
-        left_decoration_length = old_div(self._whole_decoration_line_width(), 2)
+        left_decoration_length = self._whole_decoration_line_width() // 2
 
         return colored(left_decoration_length * decoration_char,
                        color=decoration_color)
@@ -265,7 +264,7 @@ class Pretty(object):
         decoration_color = self.configuration.decoration_color
         decoration_char = self.configuration.decoration_character
         right_decoration_length = int(
-            math.ceil(old_div(float(self._whole_decoration_line_width()), 2)))
+            math.ceil(float(self._whole_decoration_line_width()) // 2))
 
         return colored(right_decoration_length * decoration_char,
                        color=decoration_color)
@@ -305,7 +304,7 @@ class Pretty(object):
             TestSuite: "Suite"
         }
 
-        for test_type, representation in six.iteritems(test_types):
+        for test_type, representation in iteritems(test_types):
             if isinstance(self.test, test_type):
                 return representation
 

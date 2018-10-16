@@ -4,6 +4,8 @@ from __future__ import absolute_import
 import os
 import time
 
+from future.utils import iteritems
+
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.common.parsers.xml_parser import XMLParser
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
@@ -101,9 +103,11 @@ class WorkerHandler(AbstractResultHandler):
         Args:
             test (object): test item instance.
         """
-        test_resources = {request_name: resource
-                  for request_name, resource in list(test.locked_resources.items())
-                  if resource.DATA_CLASS is not None}
+        test_resources = {
+            request_name: resource
+            for request_name, resource in iteritems(test.locked_resources)
+            if resource.DATA_CLASS is not None
+        }
 
         self.send_message(CloneResources(msg_id=self.worker_pid,
                                          test_id=test.identifier,

@@ -6,17 +6,19 @@ Note:
 """
 # pylint: disable=too-many-return-statements,protected-access,too-many-locals
 from __future__ import absolute_import
-from builtins import object
+
 from numbers import Number
 
+from builtins import object
+from six import string_types
 from django.db import models
+from future.utils import iteritems
 from django.db.models import ForeignKey
 
 from rotest.management.base_resource import BaseResource
 from rotest.management.common.parsers.abstract_parser import ParsingError
 from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
                                             extract_type, extract_type_path)
-import six
 
 
 class JSONParser(object):
@@ -113,13 +115,14 @@ class JSONParser(object):
         if data is None:
             return self._NONE_TYPE
 
-        base_types = [six.string_types, bool, Number]
+        base_types = [string_types, bool, Number]
 
         for encoder_type in base_types:
             if isinstance(data, encoder_type):
                 return data
 
-        for encoder_type, encoder_handler in list(self.complex_encoders.items()):
+        for encoder_type, encoder_handler in \
+                list(iteritems(self.complex_encoders)):
             if isinstance(data, encoder_type):
                 return encoder_handler(data)
 
@@ -190,8 +193,8 @@ class JSONParser(object):
         """
         dict_return = {}
 
-        for key, value in six.iteritems(dict_data):
-            if not isinstance(key, six.string_types):
+        for key, value in iteritems(dict_data):
+            if not isinstance(key, string_types):
                 raise ParsingError("Failed to encode dictionary, "
                                    "key %r is not a string" % key)
 
@@ -235,7 +238,7 @@ class JSONParser(object):
             if value == self._NONE_TYPE:
                 return None
 
-            if isinstance(value, six.string_types):
+            if isinstance(value, string_types):
                 return value
 
             if isinstance(value, (bool, Number)):
@@ -264,8 +267,9 @@ class JSONParser(object):
         resource_properties = self._decode(properties_element)
 
         # Get the related fields.
-        list_field_names = [key for key, value in list(resource_properties.items())
-                            if isinstance(value, list)]
+        list_field_names = [
+            key for key, value in iteritems(resource_properties)
+            if isinstance(value, list)]
 
         list_fields = [(field_name, resource_properties.pop(field_name))
                        for field_name in list_field_names]

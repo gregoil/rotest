@@ -1,9 +1,8 @@
 """Define all the resource manager errors."""
 # pylint: disable=redefined-outer-name
+from builtins import str, object
 
 
-from builtins import str
-from builtins import object
 class ServerError(Exception):
     """Hold resource related errors.
 

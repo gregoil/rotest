@@ -1,10 +1,13 @@
 """Monitors management module."""
 from __future__ import absolute_import
+
+from functools import partial
+
+from builtins import object
 from future import standard_library
 standard_library.install_aliases()
-from builtins import object
-from functools import partial
-from threading import Event, Thread
+
+from threading import Event, Thread  # noqa
 
 
 class RepeatingTimer(Thread):

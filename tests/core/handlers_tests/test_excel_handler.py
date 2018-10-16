@@ -1,19 +1,19 @@
 """Test Rotest's Excel handler."""
 # pylint: disable=protected-access
 from __future__ import absolute_import
-from builtins import range
+
 import os
 import itertools
 
 import xlrd
+from builtins import range
+from future.utils import iteritems
 
 from rotest.core.block import TestBlock
 from rotest.core.result.handlers.excel_handler import ExcelHandler
 
 from tests.core.handlers_tests.base_result_handler_test import \
     BaseResultHandlerTest
-import six
-from six.moves import range
 
 
 class TestExcelHandler(BaseResultHandlerTest):
@@ -198,7 +198,7 @@ class TestExcelHandler(BaseResultHandlerTest):
         if test.locked_resources is not None:
             resources = '\n'.join("%s:%s" % (request_name, resource.name)
                                   for (request_name, resource) in
-                                  six.iteritems(test.locked_resources))
+                                  iteritems(test.locked_resources))
         actual_resources = self.worksheet.cell_value(rowx=test_row,
                                                     colx=self.RESOURCES_COLUMN)
         self.assertEqual(resources, actual_resources,

@@ -1,12 +1,12 @@
 """Test utils for Rotest UT."""
-# pylint: disable=expression-not-assigned,too-many-arguments
-# pylint: disable=no-self-use,too-many-public-methods,unused-argument
-# pylint: disable=redundant-unittest-assert
+# pylint: disable=expression-not-assigned,redundant-unittest-assert,no-self-use
+# pylint: disable=too-many-public-methods,unused-argument,too-many-arguments
 from __future__ import absolute_import
-from builtins import map
+
 import unittest
 
 import django
+from builtins import map
 from django.db import connections
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.testcases import TransactionTestCase
@@ -21,7 +21,6 @@ from rotest.core.block import TestBlock, BlockOutput, BlockInput
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.common.errors import (ResourceDoesNotExistError,
                                              ResourceUnavailableError)
-from six.moves import map
 
 django.setup()
 

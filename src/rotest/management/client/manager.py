@@ -8,15 +8,14 @@ also for the resources cleanup procedure and release.
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from __future__ import absolute_import
 
-from builtins import zip
-from builtins import str
-from builtins import object
-from threading import Thread
 
 import time
+from threading import Thread
 
 import re
 from attrdict import AttrDict
+from future.utils import iteritems
+from builtins import zip, str, object
 
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
@@ -33,8 +32,6 @@ from rotest.api.resource_control import (LockResources,
 from rotest.api.common.models import (ReleaseResourcesParamsModel,
                                       ResourceDescriptorModel,
                                       LockResourcesParamsModel, TokenModel)
-import six
-from six.moves import zip
 
 SLEEP_TIME_BETWEEN_REQUESTS = 0.25
 
@@ -270,8 +267,7 @@ class ClientResourceManager(AbstractClient):
 
         self.logger.debug("cleaning up the locked resources")
 
-        for name, resource in six.iteritems(resources):
-
+        for name, resource in iteritems(resources):
             try:
                 resource.logger.debug("Finalizing resource %r", name)
                 resource.finalize()

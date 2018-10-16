@@ -5,14 +5,15 @@ responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 from __future__ import absolute_import
+
 from bdb import BdbQuit
 
 from ipdbugger import debug
 from attrdict import AttrDict
+from future.utils import iteritems, with_metaclass
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
-import six
 
 
 class ConvertToKwargsMeta(type):
@@ -31,7 +32,7 @@ class ConvertToKwargsMeta(type):
 
         resource = type.__call__(cls, *args, **kwargs)
         resource.kwargs = kwargs
-        for field_name, field_value in six.iteritems(kwargs):
+        for field_name, field_value in iteritems(kwargs):
             setattr(resource, field_name, field_value)
 
         if isinstance(resource.data, AttrDict):
@@ -40,7 +41,7 @@ class ConvertToKwargsMeta(type):
         return resource
 
 
-class BaseResource(six.with_metaclass(ConvertToKwargsMeta, object)):
+class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
     """Represent the common interface of all the resources.
 
     To implement a resource, you may override:
@@ -78,7 +79,7 @@ class BaseResource(six.with_metaclass(ConvertToKwargsMeta, object)):
 
         if data is not None:
             self.data = data
-            for field_name, field_value in six.iteritems(self.data.get_fields()):
+            for field_name, field_value in iteritems(self.data.get_fields()):
                 setattr(self, field_name, field_value)
 
         else:

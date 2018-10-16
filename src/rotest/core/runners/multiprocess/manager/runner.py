@@ -3,13 +3,15 @@
 # pylint: disable=too-many-instance-attributes,too-many-arguments
 from __future__ import absolute_import
 
-import platform
-from builtins import range
 import os
 import time
 import datetime
-from six.moves.queue import Empty
+import platform
 from multiprocessing import Queue
+
+from builtins import range
+from six.moves.queue import Empty
+from future.utils import itervalues
 
 from rotest.common import core_log
 from rotest.core.case import TestCase
@@ -21,8 +23,6 @@ from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.core.runners.multiprocess.worker.process import WorkerProcess
 from rotest.core.runners.multiprocess.manager.message_handler import \
                                                         RunnerMessageHandler
-import six
-from six.moves import range
 
 
 class MultiprocessRunner(BaseTestRunner):
@@ -233,7 +233,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         Goes over the active workers, terminates and joins them.
         """
-        for worker in six.itervalues(self.workers_pool):
+        for worker in itervalues(self.workers_pool):
             worker.terminate()
 
         self.finished_workers = 0
@@ -252,7 +252,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         minimum_timeout = self.DEFAULT_TIMEOUT
 
-        for worker in six.itervalues(self.workers_pool):
+        for worker in itervalues(self.workers_pool):
             if worker.timeout is not None:
                 test_duration = current_datetime - worker.start_time
                 remaining_time = worker.timeout - test_duration.total_seconds()

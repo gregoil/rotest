@@ -5,14 +5,12 @@ We test resource management behavior under different scenarios.
 # pylint: disable=too-many-lines
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
 from __future__ import absolute_import
-from builtins import zip
-from builtins import range
 import time
-from six.moves import range
 
 from threading import Thread
 
 import mock
+from builtins import zip, range
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
@@ -37,7 +35,6 @@ from rotest.management.common.errors import (ResourceReleaseError,
 from tests.management.resource_base_test import (BaseResourceManagementTest,
                                                  ThreadedParent,
                                                  ThreadedResource)
-from six.moves import zip
 
 
 class TestResourceManagement(BaseResourceManagementTest):

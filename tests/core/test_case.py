@@ -6,6 +6,7 @@ from builtins import next
 import os
 import re
 
+from future.utils import iteritems
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.models.ut_models import (DemoResource,
@@ -18,7 +19,6 @@ from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
                               DynamicResourceLockingCase, ExpectRaisesCase,
                               StoreFailureErrorCase, ExpectedFailureCase,
                               StoreFailureCase, MockTestSuite, SkipCase)
-import six
 
 
 RESOURCE_NAME = 'available_resource1'
@@ -159,7 +159,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_suite = InternalSuite()
         case = test_suite._tests[0]
-        for name, value in six.iteritems(kwargs):
+        for name, value in iteritems(kwargs):
             setattr(case, name, value)
 
         self.run_test(test_suite)
@@ -869,9 +869,10 @@ class TestTestCase(BasicRotestUnitTest):
         When a test has passed it is expected that it WILL NOT save the state.
         """
         resource_name = 'save_state_resource'
-        TempExpectedFailureCase.resources = (request(resource_name=resource_name,
-                                             resource_class=DemoResource,
-                                             name=RESOURCE_NAME),)
+        TempExpectedFailureCase.resources = (
+            request(resource_name=resource_name,
+                    resource_class=DemoResource,
+                    name=RESOURCE_NAME),)
 
         case = self._run_case(TempExpectedFailureCase, save_state=True)
         expected_state_path = os.path.join(

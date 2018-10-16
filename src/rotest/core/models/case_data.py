@@ -2,12 +2,11 @@
 # pylint: disable=no-member,no-init,too-few-public-methods
 # pylint: disable=too-many-public-methods,no-init,old-style-class
 from __future__ import absolute_import
-from builtins import range
-from builtins import object
+
+from builtins import object, range
 from django.db import models
 
 from .general_data import GeneralData
-from six.moves import range
 
 
 class TestOutcome(object):

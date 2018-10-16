@@ -4,11 +4,13 @@
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
 from __future__ import absolute_import
-from builtins import range
-from builtins import object
+
 import unittest
 from functools import wraps
 from itertools import count
+
+from future.utils import iteritems
+from builtins import range, object
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
@@ -16,8 +18,6 @@ from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.abstract_test import AbstractTest
 from rotest.management.common.errors import ServerError
 from rotest.core.models.case_data import TestOutcome, CaseData
-import six
-from six.moves import range
 
 
 # CRITICAL: stop test on failure
@@ -228,10 +228,10 @@ class AbstractFlowComponent(AbstractTest):
                     self._set_parameters(override_previous=False,
                                          **{input_name: value.default
                                             for (input_name, value) in
-                                            six.iteritems(self.get_inputs())
+                                            iteritems(self.get_inputs())
                                             if value.is_optional()})
 
-                    for pipe_name, pipe_target in six.iteritems(self._pipes):
+                    for pipe_name, pipe_target in iteritems(self._pipes):
                         setattr(self, pipe_name, getattr(self, pipe_target))
 
                 if not self.is_main:
@@ -340,7 +340,7 @@ class AbstractFlowComponent(AbstractTest):
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
         """
-        for name, value in six.iteritems(parameters):
+        for name, value in iteritems(parameters):
             if isinstance(value, PipeTo):
                 parameter_name = value.parameter_name
                 if override_previous or (name not in self.__dict__ and
