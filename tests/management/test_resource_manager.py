@@ -13,8 +13,8 @@ from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
+from rotest.management import BaseResource
 from rotest.management.common.utils import LOCALHOST
-from rotest.management import BaseResource, DataPointer
 from rotest.management.client.manager import (ClientResourceManager,
                                               ResourceRequest)
 from rotest.management.common.resource_descriptor import \
