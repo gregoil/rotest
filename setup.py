@@ -40,7 +40,8 @@ requirements = [
     'termcolor',
     'jsonschema',
     'basicstruct',
-    # 'swaggapi',
+    'future',
+    'swaggapi>=0.6.5',
     'python-daemon;platform_system!="Windows"'
 ]
 
