@@ -6,6 +6,7 @@ responsible for the resource static & dynamic information.
 # pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
 # pylint: disable=attribute-defined-outside-init,invalid-name,old-style-class
 # pylint: disable=access-member-before-definition,property-on-old-class,no-init
+# pylint: disable=no-value-for-parameter
 from datetime import datetime
 
 from django.db import models
@@ -28,11 +29,11 @@ class DataPointer(object):
 
 class DataBase(ModelBase):
     """Metaclass that creates data pointers for django fields."""
-    def add_to_class(cls, name, value):
-        super_add = super(DataBase, cls).add_to_class
-        super_add(name, value)
-        if isinstance(value, Field) and hasattr(value, 'contribute_to_class'):
-            setattr(cls, name, DataPointer(name))
+    def __getattr__(cls, key):
+        if '_meta' in cls.__dict__ and key in cls._meta.get_field_names():
+            return DataPointer(key)
+
+        raise AttributeError(key)
 
 
 class ResourceData(six.with_metaclass(DataBase, models.Model)):
