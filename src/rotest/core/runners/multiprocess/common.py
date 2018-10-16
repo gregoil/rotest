@@ -11,7 +11,7 @@ from rotest.common import core_log
 PROCESS_TERMINATION_TIMEOUT = 10
 
 
-class WrappedException(object):
+class WrappedException(Exception):
     """Used to wrapping exceptions so they could be passed via queues.
 
     Queue pickles every object it is requires to pass, and since Traceback

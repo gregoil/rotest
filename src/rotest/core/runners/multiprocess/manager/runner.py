@@ -2,6 +2,8 @@
 # pylint: disable=expression-not-assigned
 # pylint: disable=too-many-instance-attributes,too-many-arguments
 from __future__ import absolute_import
+
+import platform
 from builtins import range
 import os
 import time
@@ -198,7 +200,14 @@ class MultiprocessRunner(BaseTestRunner):
 
         # Check if the worker was restarted before a test started
         if worker.test is not None:
-            self.result.addError(worker.test, (RuntimeError, reason, None))
+            if platform.python_version().startswith("2"):
+                self.result.addError(worker.test, (RuntimeError, reason, None))
+
+            elif platform.python_version().startswith("3"):
+                self.result.addError(worker.test, (RuntimeError,
+                                                   RuntimeError(reason),
+                                                   None))
+
             self.result.stopComposite(worker.test.parent)
 
         worker_to_terminate = self.workers_pool.pop(worker.pid)
