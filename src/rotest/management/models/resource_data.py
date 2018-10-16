@@ -6,12 +6,10 @@ responsible for the resource static & dynamic information.
 # pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
 # pylint: disable=attribute-defined-outside-init,invalid-name,old-style-class
 # pylint: disable=access-member-before-definition,property-on-old-class,no-init
-# pylint: disable=no-value-for-parameter
 from datetime import datetime
 
 from django.db import models
 from django.utils import six
-from django.db.models import Field
 from django.db.models.base import ModelBase
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
