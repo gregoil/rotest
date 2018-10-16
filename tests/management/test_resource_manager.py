@@ -1495,7 +1495,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.assertNotEquals(resource.name, resource.demo1.name,
                              "Expected sub-service with name different than %r"
-                             % (resource.name, resource.demo1.name))
+                             % resource.name)
 
         self.assertTrue(resource.initialized,
                         "Resource %r should have been initialized" %
