@@ -1262,7 +1262,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "%d threads were created instead of 2" %
                          len(ThreadedResource.THREADS))
 
-    def test_lock_alter_complex_resource(self):
+    def test_lock_alternative_complex_resource(self):
         """Lock complex resource with the default 'create_sub_resources'.
 
         * Validates the DB initial state.
@@ -1356,7 +1356,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.client.release_resources(resources=[resource])
 
-    def test_lock_alter_complex_resource_with_service(self):
+    def test_lock_alternative_complex_resource_with_service(self):
         """Lock complex resource with the default 'create_sub_resources'.
 
         * Validates the DB initial state.
@@ -1444,7 +1444,7 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         self.client.release_resources(resources=[resource])
 
-    def test_lock_alter_complex_service(self):
+    def test_lock_alternative_complex_service(self):
         """Lock complex service with the default 'create_sub_resources'.
 
         * Validates the DB initial state.

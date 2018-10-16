@@ -88,7 +88,7 @@ def get_class_fields(cls, field_type):
     Yields:
         tuple. all found (field name, field value).
     """
-    if cls is object:
+    if cls in (object, type):
         return
 
     for parent_class in cls.__bases__:
