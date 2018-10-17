@@ -111,7 +111,7 @@ class ClientResultManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-    def add_result(self, test_item, result_code, info=None):
+    def add_result(self, test_item, result_code, info=""):
         """Update the result of the test item in the result server.
 
         Args:
@@ -203,7 +203,8 @@ class ClientResultManager(AbstractClient):
             resources = [ResourceDescriptor(type(resource),
                                             name=resource.data.name).encode()
                          for resource in
-                         six.itervalues(test_item.locked_resources)]
+                         six.itervalues(test_item.locked_resources)
+                         if resource.DATA_CLASS is not None]
 
         request_data = UpdateResourcesParamsModel({
             "test_details": {

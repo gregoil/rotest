@@ -142,7 +142,9 @@ class AbstractFlowComponent(AbstractTest):
         """
         new_common = cls.common.copy()
         new_common.update(**parameters)
-        return type(cls.__name__, (cls,), {'common': new_common})
+        class_name = new_common.get('name', cls.__name__)
+        return type(class_name, (cls,), {'common': new_common,
+                                         '__doc__': cls.__doc__})
 
     # Shortcut
     params = parametrize

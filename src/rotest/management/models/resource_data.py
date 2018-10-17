@@ -13,6 +13,8 @@ from datetime import datetime
 from future.builtins import object
 from future.utils import itervalues
 from django.db import models
+from django.utils import six
+from django.db.models.base import ModelBase
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
@@ -21,7 +23,24 @@ from rotest.common.django_utils.common import get_fields
 from rotest.common.django_utils import get_sub_model, linked_unicode
 
 
-class ResourceData(models.Model):
+class DataPointer(object):
+    """Pointer to a field in the resource's data."""
+    def __init__(self, field_name):
+        self.field_name = field_name
+
+
+class DataBase(ModelBase):
+    """Metaclass that creates data pointers for django fields."""
+    def __getattr__(cls, key):
+        if hasattr(cls, '_meta') and \
+                key in (field.name for field in cls._meta.fields):
+
+            return DataPointer(key)
+
+        raise AttributeError(key)
+
+
+class ResourceData(six.with_metaclass(DataBase, models.Model)):
     """Represent a container for a resource's global data.
 
     Inheriting resource datas may add more fields, specific to the resource.
