@@ -32,7 +32,7 @@ class DataPointer(object):
 class DataBase(ModelBase):
     """Metaclass that creates data pointers for django fields."""
     def __getattr__(cls, key):
-        if hasattr(cls, '_meta') and \
+        if '_meta' in vars(cls) and \
                 key in (field.name for field in cls._meta.fields):
 
             return DataPointer(key)

@@ -6,6 +6,7 @@ responsible for the resource static & dynamic information.
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 from __future__ import absolute_import
 
+import six
 from bdb import BdbQuit
 
 from ipdbugger import debug
@@ -116,7 +117,7 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
                                                           BaseResource):
             sub_class = sub_placeholder.__class__
             actual_kwargs = sub_placeholder.kwargs.copy()
-            for key, value in sub_placeholder.kwargs.iteritems():
+            for key, value in six.iteritems(sub_placeholder.kwargs):
                 if isinstance(value, ReverseSingleRelatedObjectDescriptor):
                     actual_kwargs[key] = getattr(self.data, value.field.name)
 
