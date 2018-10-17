@@ -2,8 +2,9 @@
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,super-init-not-called
 from __future__ import absolute_import
-from builtins import object
+
 from termcolor import colored
+from future.builtins import object
 
 from rotest.common.constants import BOLD, RED, BLUE, CYAN, YELLOW
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler

@@ -10,9 +10,9 @@ from __future__ import absolute_import
 
 from datetime import datetime
 
-from builtins import object
-from django.db import models
+from future.builtins import object
 from future.utils import itervalues
+from django.db import models
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 

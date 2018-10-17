@@ -1,6 +1,5 @@
 """Utils module for pretty-printing the logs."""
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import absolute_import, division
 
 import os
 import sys
@@ -10,7 +9,7 @@ from abc import ABCMeta, abstractproperty
 
 import enum
 from termcolor import colored
-from builtins import str, object
+from future.builtins import str, object
 from future.utils import with_metaclass, iteritems
 
 from rotest.core.case import TestCase

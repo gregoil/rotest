@@ -10,9 +10,9 @@ from __future__ import absolute_import
 import os
 from numbers import Number
 
-from builtins import str
 from django.db import models
 from six import string_types
+from future.builtins import str
 from future.utils import iteritems
 from lxml import etree, objectify, builder
 

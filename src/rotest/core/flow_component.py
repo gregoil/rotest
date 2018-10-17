@@ -10,7 +10,7 @@ from functools import wraps
 from itertools import count
 
 from future.utils import iteritems
-from builtins import range, object
+from future.builtins import range, object
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir

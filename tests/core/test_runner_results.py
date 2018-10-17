@@ -9,6 +9,7 @@ from __future__ import absolute_import
 import sys
 import unittest
 from abc import ABCMeta
+from multiprocessing import Queue, Event
 
 from six import StringIO
 from future import standard_library
@@ -27,8 +28,6 @@ from tests.core.utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
                               TwoTestsCase, BasicRotestUnitTest)
 
 standard_library.install_aliases()
-
-from multiprocessing import Queue, Event  # noqa
 
 
 class AbstractTestRunnerResult(with_metaclass(ABCMeta, BasicRotestUnitTest)):

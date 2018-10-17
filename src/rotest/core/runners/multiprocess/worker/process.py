@@ -1,10 +1,10 @@
 """Multiprocess worker process."""
 # pylint: disable=invalid-name,too-many-arguments,too-many-instance-attributes
 from __future__ import absolute_import
-from six.moves.queue import Empty
 from multiprocessing import Process
 
 import psutil
+from six.moves import queue
 
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.worker.runner import WorkerRunner
@@ -101,7 +101,7 @@ class WorkerProcess(Process):
         try:
             return self.requests_queue.get(block=False)
 
-        except Empty:
+        except queue.Empty:
             return None
 
     def run(self):

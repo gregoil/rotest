@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
 from __future__ import absolute_import
-import six.moves.http_client
 
+from six.moves import http_client
 from django.db import transaction
 from django.db.models.query_utils import Q
 from swaggapi.api.builder.server.response import Response
@@ -25,8 +25,8 @@ class QueryResources(DjangoRequestView):
     URI = "resources/query_resources"
     DEFAULT_MODEL = ResourceDescriptorModel
     DEFAULT_RESPONSES = {
-        six.moves.http_client.OK: InfluencedResourcesResponseModel,
-        six.moves.http_client.BAD_REQUEST: FailureResponseModel
+        http_client.OK: InfluencedResourcesResponseModel,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -62,4 +62,4 @@ class QueryResources(DjangoRequestView):
 
         return Response({
             "resource_descriptors": query_result
-        }, status=six.moves.http_client.OK)
+        }, status=http_client.OK)

@@ -1,12 +1,14 @@
 """Excel result handler."""
 # pylint: disable=unused-argument
 from __future__ import absolute_import
-from builtins import str
+
 import os
 from collections import OrderedDict
 
 import xlwt
 from xlwt.Style import easyxf
+from future.builtins import str
+from future.utils import iteritems
 
 from rotest.core.suite import TestSuite
 from rotest.core.flow_component import AbstractFlowComponent
@@ -14,7 +16,6 @@ from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.core.result.handlers.remote_db_handler import RemoteDBHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
-import six
 
 
 class ExcelHandler(AbstractResultHandler):
@@ -198,7 +199,7 @@ class ExcelHandler(AbstractResultHandler):
         if test.locked_resources is not None:
             resources = '\n'.join("%s:%s" % (request_name, resource.name)
                                   for (request_name, resource) in
-                                  six.iteritems(test.locked_resources))
+                                  iteritems(test.locked_resources))
         else:
             resources = ''
 

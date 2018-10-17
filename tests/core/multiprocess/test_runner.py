@@ -11,8 +11,8 @@ from multiprocessing import Queue, Event
 
 import psutil
 import pytest
-from builtins import range
-from six.moves.queue import Empty
+from future.builtins import range
+from six.moves import queue
 
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -81,7 +81,7 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
             while True:
                 yield self.pid_queue.get_nowait()
 
-        except Empty:
+        except queue.Empty:
             pass
 
 

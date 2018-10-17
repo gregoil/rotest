@@ -1,12 +1,13 @@
 """Testing configuration from CLI, env-vars and YAML files."""
 from __future__ import absolute_import
-from builtins import str
+
 import unittest
 from collections import OrderedDict
 
 import yaml
 import mock
 import pathlib2
+from future.builtins import str
 
 from rotest.common.config import Option, get_configuration, search_config_file
 

@@ -8,7 +8,7 @@ import os
 import shutil
 
 from django.db import models
-from builtins import range, object
+from future.builtins import range, object
 
 from rotest.management.base_resource import BaseResource
 from rotest.management.models.resource_data import ResourceData

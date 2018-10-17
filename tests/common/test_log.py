@@ -45,8 +45,8 @@ class TestLog(unittest.TestCase):
                 core_log.debug(log_msg)
                 core_log_file_content = core_log_file.read()
                 test_log_file_content = test_log_file.read()
-                self.assertEquals(core_log_file_content.count(log_msg), 1)
-                self.assertEquals(test_log_file_content.count(log_msg), 0)
+                self.assertEqual(core_log_file_content.count(log_msg), 1)
+                self.assertEqual(test_log_file_content.count(log_msg), 0)
 
     def test_test_logger(self):
         """Log in test logger and verify logging occurs in both loggers."""
@@ -58,5 +58,5 @@ class TestLog(unittest.TestCase):
                 self.test_log.debug(log_msg)
                 core_log_file_content = core_log_file.read()
                 test_log_file_content = test_log_file.read()
-                self.assertEquals(core_log_file_content.count(log_msg), 1)
-                self.assertEquals(test_log_file_content.count(log_msg), 1)
+                self.assertEqual(core_log_file_content.count(log_msg), 1)
+                self.assertEqual(test_log_file_content.count(log_msg), 1)

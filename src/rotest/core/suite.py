@@ -1,9 +1,11 @@
 """Define Rotest's TestSuite, composed from test suites or test cases."""
 # pylint: disable=method-hidden,bad-super-call,too-many-arguments
 from __future__ import absolute_import
-from builtins import next
+
 import unittest
 from itertools import count
+
+from future.builtins import next
 
 from rotest.common import core_log
 from rotest.core.case import TestCase

@@ -1,7 +1,7 @@
-# pylint: disable=unused-argument, no-self-use
+# pylint: disable=unused-argument,no-self-use
 from __future__ import absolute_import
-import six.moves.http_client
 
+from six.moves import http_client
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -25,8 +25,8 @@ class ShouldSkip(DjangoRequestView):
     URI = "tests/should_skip"
     DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
-        six.moves.http_client.OK: ShouldSkipResponse,
-        six.moves.http_client.BAD_REQUEST: FailureResponseModel
+        http_client.OK: ShouldSkipResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "get": ["Tests"]
@@ -58,4 +58,4 @@ class ShouldSkip(DjangoRequestView):
         return Response({
             "should_skip": test_should_skip,
             "reason": reason
-        }, status=six.moves.http_client.OK)
+        }, status=http_client.OK)

@@ -3,8 +3,8 @@
 # pylint: disable=too-many-public-methods,no-init,old-style-class
 from __future__ import absolute_import
 
-from builtins import object, range
 from django.db import models
+from future.builtins import object, range
 
 from .general_data import GeneralData
 

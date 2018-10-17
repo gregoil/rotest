@@ -1,11 +1,12 @@
 """Describes Rotest's test running handler class."""
 # pylint: disable=too-many-arguments
 from __future__ import absolute_import
+
 import os
 import sys
 from collections import defaultdict
 
-from builtins import range
+from future.builtins import range
 
 from rotest.common import core_log
 from rotest.core.utils.json_parser import parse

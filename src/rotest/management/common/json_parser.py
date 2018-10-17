@@ -9,10 +9,10 @@ from __future__ import absolute_import
 
 from numbers import Number
 
-from builtins import object
 from six import string_types
-from django.db import models
 from future.utils import iteritems
+from future.builtins import object
+from django.db import models
 from django.db.models import ForeignKey
 
 from rotest.management.base_resource import BaseResource

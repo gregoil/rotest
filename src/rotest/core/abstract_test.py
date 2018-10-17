@@ -3,7 +3,7 @@
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
 # pylint: disable=too-many-arguments,too-many-locals,broad-except,no-self-use
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods,deprecated-method
 from __future__ import absolute_import
 
 import os
@@ -16,7 +16,7 @@ from itertools import count
 
 from ipdbugger import debug
 from attrdict import AttrDict
-from builtins import next, str, object
+from future.builtins import next, str, object
 from future.utils import iteritems, itervalues
 
 from rotest.core.models.case_data import TestOutcome

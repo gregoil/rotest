@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
 from __future__ import absolute_import
-import six.moves.http_client
 
+from six.moves import http_client
 from django.db import transaction
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -23,7 +23,7 @@ class UpdateFields(DjangoRequestView):
     URI = "resources/update_fields"
     DEFAULT_MODEL = UpdateFieldsParamsModel
     DEFAULT_RESPONSES = {
-        six.moves.http_client.NO_CONTENT: SuccessResponse,
+        http_client.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "put": ["Resources"]
@@ -49,4 +49,4 @@ class UpdateFields(DjangoRequestView):
             else:
                 objects.all().update(**kwargs_vars)
 
-        return Response({}, status=six.moves.http_client.NO_CONTENT)
+        return Response({}, status=http_client.NO_CONTENT)

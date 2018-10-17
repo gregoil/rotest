@@ -1,9 +1,10 @@
 """Basic unittests for the server test control operations."""
 # pylint: disable=protected-access
 from __future__ import absolute_import
+
 from functools import partial
 
-from builtins import next
+from future.builtins import next
 from six.moves import http_client
 from django.test import Client, TransactionTestCase
 

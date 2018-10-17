@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
 from __future__ import absolute_import
-import six.moves.http_client
 
+from six.moves import http_client
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -30,8 +30,8 @@ class StartTestRun(DjangoRequestView):
     URI = "tests/start_test_run"
     DEFAULT_MODEL = StartTestRunParamsModel
     DEFAULT_RESPONSES = {
-        six.moves.http_client.NO_CONTENT: SuccessResponse,
-        six.moves.http_client.BAD_REQUEST: FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -99,4 +99,4 @@ class StartTestRun(DjangoRequestView):
         session.run_data = run_data
         session.main_test = main_test
 
-        return Response({}, status=six.moves.http_client.NO_CONTENT)
+        return Response({}, status=http_client.NO_CONTENT)

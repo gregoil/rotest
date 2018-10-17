@@ -1,6 +1,6 @@
 """Define all the resource manager errors."""
 # pylint: disable=redefined-outer-name
-from builtins import str, object
+from future.builtins import str, object
 
 
 class ServerError(Exception):

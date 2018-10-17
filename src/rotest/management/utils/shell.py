@@ -1,14 +1,13 @@
 """Rotest shell module, which enables using resources and running blocks."""
 # pylint: disable=protected-access
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-from __future__ import absolute_import
-from builtins import object
 import sys
 
 import django
 import IPython
 from attrdict import AttrDict
+from future.builtins import object
 from rotest.core.result.result import Result
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ClientResourceManager

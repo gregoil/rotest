@@ -1,8 +1,10 @@
 """Define SignatureData model class."""
 # pylint: disable=no-init,old-style-class
 from __future__ import absolute_import
-from builtins import object
+
 from django.db import models
+from future.builtins import object
+
 from rotest.common.django_utils.fields import NameField
 
 

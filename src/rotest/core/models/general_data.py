@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from datetime import datetime
 
 from django.db import models
-from builtins import range, object
+from future.builtins import range, object
 
 from rotest.common.django_utils import linked_unicode
 from rotest.common.django_utils.fields import NameField

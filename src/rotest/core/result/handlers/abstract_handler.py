@@ -2,11 +2,13 @@
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,unused-argument,no-self-use
 from __future__ import absolute_import
+
 from abc import ABCMeta
-import six
+
+from six import with_metaclass
 
 
-class AbstractResultHandler(six.with_metaclass(ABCMeta, object)):
+class AbstractResultHandler(with_metaclass(ABCMeta, object)):
     """Result handler interface.
 
     Defines the required interface for all the result handlers.

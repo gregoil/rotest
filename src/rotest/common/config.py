@@ -7,8 +7,8 @@ import itertools
 
 import yaml
 from attrdict import AttrDict
-from builtins import zip, object
 from future.utils import iteritems
+from future.builtins import zip, object
 
 
 ROTEST_CONFIGURATION_FILES = ("rotest.yaml", "rotest.yml",

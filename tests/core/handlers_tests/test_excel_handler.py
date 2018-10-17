@@ -6,7 +6,7 @@ import os
 import itertools
 
 import xlrd
-from builtins import range
+from future.builtins import range
 from future.utils import iteritems
 
 from rotest.core.block import TestBlock

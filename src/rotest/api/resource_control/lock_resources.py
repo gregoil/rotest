@@ -1,9 +1,10 @@
 # pylint: disable=unused-argument, no-self-use, too-many-locals
 from __future__ import absolute_import
-from builtins import next
-import six.moves.http_client
+
 from datetime import datetime
 
+from six.moves import http_client
+from future.builtins import next
 from django.db import transaction
 from django.db.models.query_utils import Q
 from django.core.exceptions import FieldError
@@ -37,8 +38,8 @@ class LockResources(DjangoRequestView):
     URI = "resources/lock_resources"
     DEFAULT_MODEL = LockResourcesParamsModel
     DEFAULT_RESPONSES = {
-        six.moves.http_client.OK: InfluencedResourcesResponseModel,
-        six.moves.http_client.BAD_REQUEST: FailureResponseModel
+        http_client.OK: InfluencedResourcesResponseModel,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -166,4 +167,4 @@ class LockResources(DjangoRequestView):
                     for _resource in locked_resources]
         return Response({
             "resource_descriptors": response
-        }, status=six.moves.http_client.OK)
+        }, status=http_client.OK)

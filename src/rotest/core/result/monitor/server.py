@@ -1,13 +1,14 @@
 """Monitors management module."""
+# pylint: disable=wrong-import-position
 from __future__ import absolute_import
 
 from functools import partial
+from threading import Event, Thread
 
-from builtins import object
+from future.builtins import object
 from future import standard_library
-standard_library.install_aliases()
 
-from threading import Event, Thread  # noqa
+standard_library.install_aliases()
 
 
 class RepeatingTimer(Thread):

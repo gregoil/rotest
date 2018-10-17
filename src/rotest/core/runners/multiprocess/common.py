@@ -1,5 +1,5 @@
 """Utilities for multiprocess tests running."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,super-init-not-called
 from __future__ import absolute_import
 
 import os

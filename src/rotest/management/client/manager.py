@@ -8,14 +8,13 @@ also for the resources cleanup procedure and release.
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
 from __future__ import absolute_import
 
-
 import time
 from threading import Thread
 
 import re
 from attrdict import AttrDict
 from future.utils import iteritems
-from builtins import zip, str, object
+from future.builtins import zip, str, object
 
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient

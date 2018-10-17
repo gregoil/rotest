@@ -8,8 +8,8 @@ from multiprocessing import Process, Queue, Event, active_children
 
 import pytest
 import psutil
-from builtins import range
-from six.moves.queue import Empty
+from six.moves import queue
+from future.builtins import range
 
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.common import kill_process_tree
@@ -112,7 +112,7 @@ class RunnerCrashTest(AbstractCrashTest):
             worker.wait(timeout=self.WORKER_SUICIDE_TIMEOUT)
 
         core_log.debug("Validating no new workers were created")
-        self.assertRaises(Empty, self.pid_queue.get_nowait)
+        self.assertRaises(queue.Empty, self.pid_queue.get_nowait)
 
         core_log.debug("Validating the number of cases ran")
         self.assertEqual(len(workers_pids), self.WORKERS_NUMBER,
@@ -138,7 +138,7 @@ class WorkerCrashTest(AbstractCrashTest):
                         for _ in range(self.WORKERS_NUMBER)]
 
         core_log.debug("Validating no extra workers were created")
-        self.assertRaises(Empty, self.pid_queue.get_nowait)
+        self.assertRaises(queue.Empty, self.pid_queue.get_nowait)
 
         core_log.debug("Killing all active workers")
         for worker_pid in workers_pids:
@@ -151,7 +151,7 @@ class WorkerCrashTest(AbstractCrashTest):
                             for _ in range(self.WORKERS_NUMBER)]
 
         core_log.debug("Validating no extra workers were created")
-        self.assertRaises(Empty, self.pid_queue.get_nowait)
+        self.assertRaises(queue.Empty, self.pid_queue.get_nowait)
 
         core_log.debug("Validating new workers differs from older workers")
         self.assertNotEqual(workers_pids, new_workers_pids,

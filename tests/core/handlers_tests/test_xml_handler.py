@@ -1,10 +1,11 @@
 """Test Rotest's XML handler."""
 # pylint: disable=protected-access
 from __future__ import absolute_import
-from builtins import next
+
 import os
 
 import xmltodict
+from future.builtins import next
 
 from rotest.core.block import TestBlock
 from rotest.core.result.handlers.xml_handler import XMLHandler

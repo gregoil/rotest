@@ -6,10 +6,10 @@ from __future__ import absolute_import
 import unittest
 
 import django
-from builtins import map
 from django.db import connections
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.testcases import TransactionTestCase
+from future.builtins import map
 
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite

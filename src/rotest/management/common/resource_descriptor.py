@@ -1,7 +1,9 @@
 """Represent a descriptor of a resource."""
 from __future__ import absolute_import
-from builtins import object
+
 from inspect import isclass
+
+from future.builtins import object
 
 from rotest.management import ResourceData
 from rotest.management.common.errors import ResourceBuildError

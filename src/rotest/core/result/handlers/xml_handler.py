@@ -2,11 +2,12 @@
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments
 from __future__ import absolute_import
-from builtins import str
+
 import os
 
 from lxml import etree
 from lxml.builder import E
+from future.builtins import str
 
 from rotest.core.flow import TestFlow
 from rotest.core.flow_component import AbstractFlowComponent

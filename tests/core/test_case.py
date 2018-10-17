@@ -2,11 +2,13 @@
 # pylint: disable=missing-docstring,unused-argument,protected-access
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
 from __future__ import absolute_import
-from builtins import next
+
 import os
 import re
 
+from future.builtins import next
 from future.utils import iteritems
+
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.models.ut_models import (DemoResource,

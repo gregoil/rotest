@@ -1,11 +1,12 @@
 """Excel result file generator script for Rotest projects."""
 # pylint: disable=invalid-name,protected-access
 from __future__ import absolute_import
-from builtins import object
+
 import os
 import argparse
 
 import django
+from future.builtins import object
 
 from rotest.core.models.run_data import RunData
 from rotest.common.django_utils import get_sub_model

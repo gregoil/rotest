@@ -1,6 +1,7 @@
 """Contain middleware and session handling of test control views."""
-# pylint: disable=unused-argument, no-self-use
-from builtins import object
+# pylint: disable=unused-argument,no-self-use
+from future.builtins import object
+
 SESSIONS = {}
 
 

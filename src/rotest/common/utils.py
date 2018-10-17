@@ -1,12 +1,13 @@
 """Common useful utils."""
 # pylint: disable=protected-access
 from __future__ import absolute_import
-from builtins import next
+
 import os
 from shutil import copy
 from itertools import count
 from datetime import datetime
 
+from future.builtins import next
 
 RUNTIME_ORDER = '-start_time'
 DATE_TIME_FORMAT = '%y.%m.%d_%H_%M_%S'

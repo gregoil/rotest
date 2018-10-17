@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 from abc import ABCMeta, abstractmethod
 
-from builtins import zip
+from future.builtins import zip
 from future.utils import with_metaclass
 from django.test.testcases import TransactionTestCase
 

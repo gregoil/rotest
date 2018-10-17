@@ -1,8 +1,10 @@
 """Database result handler."""
 # pylint: disable=unused-argument
 from __future__ import absolute_import
-from .abstract_handler import AbstractResultHandler
+
 import six
+
+from .abstract_handler import AbstractResultHandler
 
 
 class DBHandler(AbstractResultHandler):

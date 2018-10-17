@@ -1,7 +1,7 @@
+"""Functions that ease the use of Django."""
+# pylint: disable=protected-access
 from __future__ import absolute_import
 
-"Functions that ease the use of Django."""
-# pylint: disable=protected-access
 from django.utils.safestring import mark_safe
 
 

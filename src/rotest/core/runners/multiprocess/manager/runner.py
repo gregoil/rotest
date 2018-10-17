@@ -9,8 +9,8 @@ import datetime
 import platform
 from multiprocessing import Queue
 
-from builtins import range
-from six.moves.queue import Empty
+from six.moves import queue
+from future.builtins import range
 from future.utils import itervalues
 
 from rotest.common import core_log
@@ -183,7 +183,7 @@ class MultiprocessRunner(BaseTestRunner):
             while True:
                 self.requests_queue.get(block=False)
 
-        except Empty:
+        except queue.Empty:
             pass
 
     def restart_worker(self, worker, reason):
@@ -326,7 +326,7 @@ class MultiprocessRunner(BaseTestRunner):
                 message = self.results_queue.get(timeout=self.get_timeout())
                 self.message_handler.handle_message(message)
 
-            except Empty:
+            except queue.Empty:
                 self.handle_workers_events()
 
         result.stopTestRun()

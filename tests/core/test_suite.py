@@ -3,8 +3,9 @@
 # pylint: disable=too-many-public-methods,invalid-name,old-style-class
 # pylint: disable=no-member,protected-access,no-init,too-few-public-methods
 from __future__ import absolute_import
-from builtins import object
 import os
+
+from future.builtins import object
 
 from rotest.core.suite import TestSuite
 from rotest.common.config import ROTEST_WORK_DIR
@@ -49,7 +50,7 @@ class TestTestSuite(BasicRotestUnitTest):
         self.assertTrue(test_suite.data.success,
                         'Suite data result should have been True')
 
-        self.assertEquals(len(list(test_suite)),
+        self.assertEqual(len(list(test_suite)),
                           len(MockTestSuite.components),
                           'Data members number differs form number of tests')
 
@@ -105,7 +106,7 @@ class TestTestSuite(BasicRotestUnitTest):
         self.assertFalse(test_suite.data.success,
                          'Suite data result should have been False')
 
-        self.assertEquals(len(list(test_suite)),
+        self.assertEqual(len(list(test_suite)),
                           len(MockTestSuite.components),
                           'Number of components differs from the actual'
                           'number of tests')
@@ -157,7 +158,7 @@ class TestTestSuite(BasicRotestUnitTest):
         self.assertTrue(test_suite.data.success,
                         'Suite data result should have been True')
 
-        self.assertEquals(
+        self.assertEqual(
             len(list(test_suite)),
             len(MockTestSuite.components),
             'Data members number differs form number of tests')
