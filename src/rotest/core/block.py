@@ -125,7 +125,6 @@ class TestBlock(AbstractFlowComponent):
             dict. block's inputs (name: input placeholder instance).
         """
         return dict(get_class_fields(cls, BlockOutput))
-                                checked_class.__dict__.iteritems()
 
     def _share_outputs(self):
         """Share all the declared outputs of the block."""

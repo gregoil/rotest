@@ -83,8 +83,8 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
         if data is not None:
             self.data = data
             if isinstance(data, ResourceData):
-                for field_name, field_value in iteritems(self.data.get_fields()):
-                    setattr(self, field_name, field_value)
+                for field_name, value in iteritems(self.data.get_fields()):
+                    setattr(self, field_name, value)
 
         else:
             self.data = AttrDict()
