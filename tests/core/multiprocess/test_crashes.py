@@ -1,5 +1,5 @@
 """Test Rotest's multiprocess behavior on crashes."""
-# pylint: disable=expression-not-assigned,invalid-name,too-many-public-methods
+# pylint: disable=expression-not-assigned,invalid-name,not-callable
 from __future__ import absolute_import
 
 import sys

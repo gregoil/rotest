@@ -6,9 +6,9 @@ responsible for the resource static & dynamic information.
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 from __future__ import absolute_import
 
-import six
 from bdb import BdbQuit
 
+import six
 from ipdbugger import debug
 from attrdict import AttrDict
 from future.utils import iteritems, with_metaclass
