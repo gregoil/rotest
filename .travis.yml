@@ -12,6 +12,11 @@ script: tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d .)
 after_success: coveralls
 jobs:
   include:
+  - name: docs
+    stage: test
+    python: '3.6'
+    install: pip install tox
+    script: tox -e docs
   - stage: deploy
     python: '3.6'
     install: skip
