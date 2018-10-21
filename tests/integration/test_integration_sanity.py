@@ -4,12 +4,15 @@ import sys
 import delegator
 
 
+THIS_FILE = os.path.abspath(__file__)
+
+
 def test_sanity():
-    playground = os.path.join("tests", "integration", "playground.py")
+    playground = os.path.join(os.path.dirname(THIS_FILE), "playground.py")
     process = delegator.run("{python} {playground}"
                             .format(python=sys.executable,
                                     playground=playground),
-                            env={"DJANGO_SETTING_MODULE":
+                            env={"DJANGO_SETTINGS_MODULE":
                                  "rotest.common.django_utils.settings"})
 
     process.block()
