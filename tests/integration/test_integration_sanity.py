@@ -1,14 +1,16 @@
 import sys
 
 import delegator
+from pathlib import Path
 
 
 def test_sanity():
-    process = delegator.run("{python} "
-                            "tests/integration/playground.py"
-                            .format(python=sys.executable),
+    playground = Path("tests") / "integration" / "playground.py"
+    process = delegator.run("{python} {playground}"
+                            .format(python=sys.executable,
+                                    playground=playground),
                             env={"DJANGO_SETTING_MODULE":
-                                     "rotest.common.django_utils.settings"})
+                                 "rotest.common.django_utils.settings"})
 
     process.block()
     assert "Test run has started" in process.err
