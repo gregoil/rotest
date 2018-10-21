@@ -1,11 +1,11 @@
+import os
 import sys
 
 import delegator
-from pathlib import Path
 
 
 def test_sanity():
-    playground = Path("tests") / "integration" / "playground.py"
+    playground = os.path.join("tests", "integration", "playground.py")
     process = delegator.run("{python} {playground}"
                             .format(python=sys.executable,
                                     playground=playground),
