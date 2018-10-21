@@ -1,10 +1,14 @@
 """Managing configuration that comes from CLI, env-vars & config files."""
+from __future__ import absolute_import
+
 import os
 import sys
 import itertools
 
 import yaml
 from attrdict import AttrDict
+from future.utils import iteritems
+from future.builtins import zip, object
 
 
 ROTEST_CONFIGURATION_FILES = ("rotest.yaml", "rotest.yml",
@@ -64,7 +68,7 @@ def get_command_line_configuration(configuration_schema, command_line_options):
                 not command_line_option.startswith("-")):
             pass
 
-        for target, option in configuration_schema.items():
+        for target, option in list(configuration_schema.items()):
             if command_line_option in option.command_line_options:
                 configuration[target] = value
 
@@ -85,7 +89,7 @@ def get_environment_variables_configuration(configuration_schema,
         dict: a match between each target option to the given value.
     """
     configuration = {}
-    for target, option in configuration_schema.items():
+    for target, option in list(configuration_schema.items()):
         for environment_variable in option.environment_variables:
             if environment_variable in environment_variables:
                 configuration[target] = \
@@ -136,7 +140,7 @@ def get_file_configuration(configuration_schema, config_content):
     yaml_configuration = yaml_configuration["rotest"]
 
     configuration = {}
-    for target, option in configuration_schema.items():
+    for target, option in list(configuration_schema.items()):
         for config_file_option in option.config_file_options:
             if config_file_option in yaml_configuration:
                 configuration[target] = yaml_configuration[config_file_option]
@@ -167,7 +171,7 @@ def get_configuration(configuration_schema,
     """
     default_configuration = {
         target: option.default_value
-        for target, option in configuration_schema.items()}
+        for target, option in list(configuration_schema.items())}
 
     if command_line_options is None:
         cli_configuration = {}
@@ -191,10 +195,10 @@ def get_configuration(configuration_schema,
             config_content=config_content)
 
     return AttrDict(dict(itertools.chain(
-        default_configuration.iteritems(),
-        file_configuration.iteritems(),
-        env_var_configuration.iteritems(),
-        cli_configuration.iteritems(),
+        iteritems(default_configuration),
+        iteritems(file_configuration),
+        iteritems(env_var_configuration),
+        iteritems(cli_configuration),
     )))
 
 

@@ -1,14 +1,16 @@
 """Test Rotest's Monitor class behavior."""
+from __future__ import print_function
+
 import time
 import threading
+
+from future.builtins import next
 
 from rotest.core.case import request
 from rotest.management.models.ut_models import DemoResource
 from rotest.core.result.monitor import AbstractMonitor, AbstractResourceMonitor
 
-from tests.core.utils import (MockCase,
-                              MockTestSuite,
-                              BasicRotestUnitTest)
+from tests.core.utils import MockCase, MockTestSuite, BasicRotestUnitTest
 
 COMMON_LIST = []
 RESOURCE_NAME = 'available_resource1'
@@ -202,7 +204,7 @@ class TestSingleFailure(AbstractMonitorTest):
                         'Case failed when it should have succeeded')
 
         fail_nums = len(self.result.failures)
-        print self.result.failures
+        print(self.result.failures)
         self.assertEqual(fail_nums, 1,
                          "Unexpected number of failures, expected %d got %d" %
                          (1, fail_nums))

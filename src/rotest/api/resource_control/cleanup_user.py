@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
 
+from six.moves import http_client
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
@@ -16,7 +17,7 @@ class CleanupUser(DjangoRequestView):
     URI = "resources/cleanup_user"
     DEFAULT_MODEL = TokenModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: SuccessResponse,
+        http_client.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "post": ["Resources"]
@@ -39,4 +40,4 @@ class CleanupUser(DjangoRequestView):
 
         return Response({
             "details": "User {} was successfully cleaned".format(username)
-        }, status=httplib.NO_CONTENT)
+        }, status=http_client.NO_CONTENT)

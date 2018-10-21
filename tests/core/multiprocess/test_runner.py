@@ -3,13 +3,16 @@
 This module contains tests for the multiprocess runner functionality.
 """
 # pylint: disable=protected-access,too-many-public-methods,invalid-name
+from __future__ import absolute_import
+
 import os
 import unittest
-from Queue import Empty
 from multiprocessing import Queue, Event
 
 import psutil
 import pytest
+from future.builtins import range
+from six.moves import queue
 
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -63,7 +66,7 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
         Raises:
             AssertionError. of one or more of the processes wasn't killed.
         """
-        for _ in xrange(expected_processes_num):
+        for _ in range(expected_processes_num):
             pid = self.pid_queue.get_nowait()
             self.assertFalse(psutil.pid_exists(pid),
                              "Process %s wasn't killed" % pid)
@@ -78,7 +81,7 @@ class AbstractMultiprocessRunnerTest(BasicRotestUnitTest):
             while True:
                 yield self.pid_queue.get_nowait()
 
-        except Empty:
+        except queue.Empty:
             pass
 
 

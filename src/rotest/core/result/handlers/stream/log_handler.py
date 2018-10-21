@@ -1,5 +1,9 @@
 """Tree format log to screen stream handler."""
+from __future__ import absolute_import
+
 import logging
+
+from future.builtins import str
 
 from rotest.common import core_log
 from rotest.common.log import ColoredFormatter

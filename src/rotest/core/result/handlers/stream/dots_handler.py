@@ -1,6 +1,7 @@
 """"Stream dots layout result handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,super-init-not-called,unused-argument
+from __future__ import absolute_import
 from functools import wraps
 
 from rotest.core.flow_component import AbstractFlowComponent

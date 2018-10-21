@@ -4,6 +4,7 @@ Implement monitors and use them as output handlers to monitor background
 processes, statuses and resources.
 """
 # pylint: disable=broad-except
+from __future__ import absolute_import
 from functools import wraps
 
 from rotest.core.case import TestCase
@@ -127,7 +128,7 @@ class AbstractMonitor(AbstractResultHandler):
             test (object): test item instance.
         """
         # Don't register a thread if the monitor doesn't override 'run_monitor'
-        if self.run_monitor.im_func is AbstractMonitor.run_monitor.im_func or \
+        if self.__class__.run_monitor is AbstractMonitor.run_monitor or \
                 self.CYCLE is NotImplemented:
 
             return

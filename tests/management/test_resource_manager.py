@@ -4,11 +4,14 @@ We test resource management behavior under different scenarios.
 """
 # pylint: disable=too-many-lines
 # pylint: disable=invalid-name,too-many-public-methods,protected-access
+from __future__ import absolute_import
+
 import time
-from itertools import izip
+
 from threading import Thread
 
 import mock
+from future.builtins import zip, range
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
@@ -114,13 +117,13 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         locked_resource, = resources
-        self.assertEquals(locked_resource.name, self.FREE1_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.FREE1_NAME, locked_resource.name))
+        self.assertEqual(locked_resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, locked_resource.name))
 
         self.assertIsInstance(locked_resource, descriptor.type,
                               "Expected resource of type %r, but got %r"
@@ -133,9 +136,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = [resource for resource in resources
                      if resource.owner == host]
 
-        self.assertEquals(len(resources), 1, "Expected 1 locked resource "
-                          "with name %r and owner %r in DB, found %d"
-                          % (self.FREE1_NAME, host, resources_num))
+        self.assertEqual(len(resources), 1, "Expected 1 locked resource "
+                         "with name %r and owner %r in DB, found %d"
+                         % (self.FREE1_NAME, host, resources_num))
 
     def test_lock_reserved_for_other_resource(self):
         """Try to lock a resource that reserved for other.
@@ -173,13 +176,13 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.FREE1_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.FREE1_NAME, resource.name))
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
 
         self.assertIsInstance(resource, descriptor.type,
                               "Expected resource of type %r, but got %r"
@@ -190,9 +193,9 @@ class TestResourceManagement(BaseResourceManagementTest):
             descriptor.type.DATA_CLASS.objects.filter(~Q(owner=""),
                                            name=self.FREE1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.FREE1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
 
         self.client._release_resources(resources=[resource])
 
@@ -219,14 +222,14 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 2, "Expected list with 2 "
-                          "resources in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 2, "Expected list with 2 "
+                         "resources in it but found %d" % resources_num)
 
-        for resource, descriptor in izip(resources, descriptors):
+        for resource, descriptor in zip(resources, descriptors):
             expected_name = descriptor.properties['name']
-            self.assertEquals(expected_name, resource.name,
-                              "Expected resource with name %r but got %r"
-                              % (expected_name, resource.name))
+            self.assertEqual(expected_name, resource.name,
+                             "Expected resource with name %r but got %r"
+                             % (expected_name, resource.name))
 
             self.assertIsInstance(resource, descriptor.type,
                                   "Expected resource of type %r, but got %r"
@@ -236,9 +239,9 @@ class TestResourceManagement(BaseResourceManagementTest):
             resources_num = descriptor.type.DATA_CLASS.objects.filter(
                 ~Q(owner=""), name=expected_name).count()
 
-            self.assertEquals(resources_num, 1, "Expected 1 locked "
-                              "resource with name %r in DB, found %d"
-                              % (expected_name, resources_num))
+            self.assertEqual(resources_num, 1, "Expected 1 locked "
+                             "resource with name %r in DB, found %d"
+                             % (expected_name, resources_num))
 
         self.client._release_resources(resources=resources)
 
@@ -256,18 +259,18 @@ class TestResourceManagement(BaseResourceManagementTest):
 
         previous_resources = []
 
-        for _ in xrange(2):
+        for _ in range(2):
             resources = self.client._lock_resources(descriptors=[descriptor],
                                                     timeout=self.LOCK_TIMEOUT)
 
             resources_num = len(resources)
-            self.assertEquals(resources_num, 1, "Expected list with 1 "
-                              "resource in it but found %d" % resources_num)
+            self.assertEqual(resources_num, 1, "Expected list with 1 "
+                             "resource in it but found %d" % resources_num)
 
             resource, = resources
-            self.assertEquals(resource.name, self.FREE1_NAME,
-                              "Expected resource with name %r but got %r"
-                              % (self.FREE1_NAME, resource.name))
+            self.assertEqual(resource.name, self.FREE1_NAME,
+                             "Expected resource with name %r but got %r"
+                             % (self.FREE1_NAME, resource.name))
 
             self.assertIsInstance(resource, descriptor.type,
                                   "Expected resource of type %r, but got %r"
@@ -328,9 +331,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = DemoResourceData.objects.filter(~Q(owner=""),
                                   name=self.LOCKED1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB found %d"
-                          % (self.LOCKED1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB found %d"
+                         % (self.LOCKED1_NAME, resources_num))
 
         descriptor = Descriptor(DemoResource, name=self.LOCKED1_NAME)
         self.assertRaises(ResourceUnavailableError,
@@ -349,9 +352,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = DemoResourceData.objects.filter(~Q(owner=""),
                                   name=self.LOCKED1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB found %d"
-                          % (self.LOCKED1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB found %d"
+                         % (self.LOCKED1_NAME, resources_num))
 
         descriptor = Descriptor(DemoResource, name=self.LOCKED1_NAME)
 
@@ -416,13 +419,13 @@ class TestResourceManagement(BaseResourceManagementTest):
                             duration, new_client.REPLY_OVERHEAD_TIME))
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.FREE1_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.FREE1_NAME, resource.name))
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
 
         self.assertIsInstance(resource, descriptor.type,
                               "Expected resource of type %r, but got %r"
@@ -433,9 +436,9 @@ class TestResourceManagement(BaseResourceManagementTest):
             descriptor.type.DATA_CLASS.objects.filter(~Q(owner=""),
                                            name=self.FREE1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.FREE1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
 
     def test_wait_for_unavailable_resource_with_timeout(self):
         """Wait for a locked resource with timeout & validate success."""
@@ -455,26 +458,26 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = DemoResourceData.objects.filter(owner="",
                                                 **common_parameters).count()
 
-        self.assertEquals(resources_num, 2, "Expected 2 available "
-                          "resources with parameters %r in DB found %d"
-                          % (common_parameters, resources_num))
+        self.assertEqual(resources_num, 2, "Expected 2 available "
+                         "resources with parameters %r in DB found %d"
+                         % (common_parameters, resources_num))
 
         descriptor = Descriptor(DemoResource, **common_parameters)
         resources = self.client._lock_resources(descriptors=[descriptor],
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         locked_resource_name = resources[0].name
 
         resources_num = descriptor.type.DATA_CLASS.objects.filter(~Q(owner=""),
                                   name=locked_resource_name).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (locked_resource_name, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (locked_resource_name, resources_num))
 
         resources_num = descriptor.type.DATA_CLASS.objects.filter(owner="",
                                     **common_parameters).count()
@@ -497,9 +500,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = DemoResourceData.objects.filter(~Q(owner=""),
                                             name=self.LOCKED1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB found %d"
-                          % (self.LOCKED1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB found %d"
+                         % (self.LOCKED1_NAME, resources_num))
 
         descriptors = [Descriptor(DemoResource, name=self.FREE1_NAME),
                        Descriptor(DemoResource, name=self.LOCKED1_NAME)]
@@ -512,9 +515,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = DemoResourceData.objects.filter(~Q(owner=""),
                                   name=self.LOCKED1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.LOCKED1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.LOCKED1_NAME, resources_num))
 
         self.get_resource(name=self.FREE1_NAME, owner="")
 
@@ -548,13 +551,13 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.COMPLEX_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.COMPLEX_NAME, resource.name))
+        self.assertEqual(resource.name, self.COMPLEX_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.COMPLEX_NAME, resource.name))
 
         self.assertIsInstance(resource, descriptor.type,
                               "Expected resource of type %r, but got %r"
@@ -565,9 +568,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                    name=self.COMPLEX_NAME)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.COMPLEX_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
 
         resource, = resources
         for sub_resource in resource.get_sub_resources():
@@ -723,7 +726,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_error_codes = [ResourceAlreadyAvailableError.ERROR_CODE,
                                  ResourceDoesNotExistError.ERROR_CODE]
 
-        for name, expected_code in izip(resources_error_names,
+        for name, expected_code in zip(resources_error_names,
                                         resources_error_codes):
 
             self.assertIn(name, error_list, "%r wasn't found "
@@ -758,9 +761,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = DemoResourceData.objects.filter(~Q(owner=""),
                                   name=self.LOCKED1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.FREE1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
 
         error_list = cm.exception.errors
         num_of_errors = len(error_list)
@@ -796,13 +799,13 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.FREE1_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.FREE1_NAME, resource.name))
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
 
         self.assertIsInstance(resource, descriptor.type,
                               "Expected resource of type %r, but got %r"
@@ -813,9 +816,9 @@ class TestResourceManagement(BaseResourceManagementTest):
             descriptor.type.DATA_CLASS.objects.filter(~Q(owner=""),
                                            name=self.FREE1_NAME).count()
 
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.FREE1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
 
         locked_resource = self.FREE1_NAME
         self.client.disconnect()
@@ -853,13 +856,13 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.COMPLEX_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.COMPLEX_NAME, resource.name))
+        self.assertEqual(resource.name, self.COMPLEX_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.COMPLEX_NAME, resource.name))
 
         self.assertIsInstance(resource, descriptor.type,
                               "Expected resource of type %r, but got %r"
@@ -870,9 +873,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                    name=self.COMPLEX_NAME)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.COMPLEX_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
 
         resource, = resources
         for sub_resource in resource.get_sub_resources():
@@ -928,18 +931,18 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.FREE1_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.FREE1_NAME, resource.name))
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
 
         expected_host = LOCALHOST
-        self.assertEquals(resource.owner, expected_host,
-                          "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, resource.owner))
+        self.assertEqual(resource.owner, expected_host,
+                         "Expected 1 locked resource with owner %r in DB. "
+                         "Got %r" % (expected_host, resource.owner))
 
     def test_locking_other_group_resource(self):
         """Lock another group resource & validate failure.
@@ -973,18 +976,18 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                 timeout=self.LOCK_TIMEOUT)
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.NO_GROUP_RESOURCE,
-                          "Expected resource with name %r but got %r"
-                          % (self.NO_GROUP_RESOURCE, resource.name))
+        self.assertEqual(resource.name, self.NO_GROUP_RESOURCE,
+                         "Expected resource with name %r but got %r"
+                         % (self.NO_GROUP_RESOURCE, resource.name))
 
         expected_host = LOCALHOST
-        self.assertEquals(resource.owner, expected_host,
-                          "Expected 1 locked resource with owner %r in DB. "
-                          "Got %r" % (expected_host, resource.owner))
+        self.assertEqual(resource.owner, expected_host,
+                         "Expected 1 locked resource with owner %r in DB. "
+                         "Got %r" % (expected_host, resource.owner))
 
     def test_update_fields(self):
         """Test the UpdateFields message.
@@ -996,12 +999,12 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Validate initial state.
         resource1 = DemoResourceData.objects.get(name='available_resource1')
         resource2 = DemoResourceData.objects.get(name='available_resource2')
-        self.assertEquals(resource1.version, 1,
-                          "Unexpected initial resource1 state (%r != %r)" %
-                          (resource1.version, 1))
-        self.assertEquals(resource2.version, 2,
-                          "Unexpected initial resource2 state (%r != %r)" %
-                          (resource2.version, 2))
+        self.assertEqual(resource1.version, 1,
+                         "Unexpected initial resource1 state (%r != %r)" %
+                         (resource1.version, 1))
+        self.assertEqual(resource2.version, 2,
+                         "Unexpected initial resource2 state (%r != %r)" %
+                         (resource2.version, 2))
 
         # Change version of a single resource.
         self.client.update_fields(DemoResourceData,
@@ -1011,12 +1014,12 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Validate change.
         resource1 = DemoResourceData.objects.get(name='available_resource1')
         resource2 = DemoResourceData.objects.get(name='available_resource2')
-        self.assertEquals(resource1.version, 3,
-                          "Failed to change fields in resource1 (%r != %r)" %
-                          (resource1.version, 3))
-        self.assertEquals(resource2.version, 2,
-                          "Unexpected change fields in resource2 (%r != %r)" %
-                          (resource2.version, 2))
+        self.assertEqual(resource1.version, 3,
+                         "Failed to change fields in resource1 (%r != %r)" %
+                         (resource1.version, 3))
+        self.assertEqual(resource2.version, 2,
+                         "Unexpected change fields in resource2 (%r != %r)" %
+                         (resource2.version, 2))
 
         # Change version of all resources.
         self.client.update_fields(DemoResourceData,
@@ -1025,12 +1028,12 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Validate change.
         resource1 = DemoResourceData.objects.get(name='available_resource1')
         resource2 = DemoResourceData.objects.get(name='available_resource2')
-        self.assertEquals(resource1.version, 4,
-                          "Failed to change fields in resource1 (%r != %r)" %
-                          (resource1.version, 4))
-        self.assertEquals(resource2.version, 4,
-                          "Failed to change fields in resource2 (%r != %r)" %
-                          (resource2.version, 4))
+        self.assertEqual(resource1.version, 4,
+                         "Failed to change fields in resource1 (%r != %r)" %
+                         (resource1.version, 4))
+        self.assertEqual(resource2.version, 4,
+                         "Failed to change fields in resource2 (%r != %r)" %
+                         (resource2.version, 4))
 
     def test_keeping_locked_resources(self):
         """Test work with keeping previously locked resources.
@@ -1053,7 +1056,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
@@ -1070,7 +1073,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource2 = resources.values()[0]
+        resource2 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource2])
@@ -1088,7 +1091,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource3 = resources.values()[0]
+        resource3 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the new resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource3])
@@ -1120,7 +1123,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
         # Check that the resource was not finalized yet
@@ -1174,7 +1177,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
@@ -1189,7 +1192,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource2 = resources.values()[0]
+        resource2 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
@@ -1214,7 +1217,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource1 = resources.values()[0]
+        resource1 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
@@ -1224,7 +1227,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource2 = resources.values()[0]
+        resource2 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource2])
@@ -1238,7 +1241,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        resource3 = resources.values()[0]
+        resource3 = list(resources.values())[0]
         self.client.release_resources(resources)
         # Check that the new resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource3])
@@ -1307,22 +1310,22 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests=[request]).values()
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.COMPLEX_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.COMPLEX_NAME, resource.name))
+        self.assertEqual(resource.name, self.COMPLEX_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.COMPLEX_NAME, resource.name))
 
         self.assertIsInstance(resource, request.type,
                               "Expected resource of type %r, but got %r"
                               % (request.type.__name__,
                                  resource.__class__.__name__))
 
-        self.assertEquals(len(list(resource.get_sub_resources())), 2,
-                          "Expected to have 2 sub-resources, found %r"
-                          % resource.get_sub_resources())
+        self.assertEqual(len(list(resource.get_sub_resources())), 2,
+                         "Expected to have 2 sub-resources, found %r"
+                         % resource.get_sub_resources())
 
         self.assertTrue(resource.data.initialization_flag,
                         "Resource %r should have been initialized" %
@@ -1351,9 +1354,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                    name=self.COMPLEX_NAME)
 
         resources_num = len(resources_data)
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.COMPLEX_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
 
         self.client.release_resources(resources=[resource])
 
@@ -1399,26 +1402,26 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests=[request]).values()
 
         resources_num = len(resources)
-        self.assertEquals(resources_num, 1, "Expected list with 1 "
-                          "resource in it but found %d" % resources_num)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
 
         resource, = resources
-        self.assertEquals(resource.name, self.FREE1_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.FREE1_NAME, resource.name))
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
 
         self.assertIsInstance(resource, request.type,
                               "Expected resource of type %r, but got %r"
                               % (request.type.__name__,
                                  resource.__class__.__name__))
 
-        self.assertEquals(len(list(resource.get_sub_resources())), 1,
-                          "Expected to have 1 sub-resources, found %r"
-                          % resource.get_sub_resources())
+        self.assertEqual(len(list(resource.get_sub_resources())), 1,
+                         "Expected to have 1 sub-resources, found %r"
+                         % resource.get_sub_resources())
 
-        self.assertEquals(resource.name, resource.demo1.name,
-                          "Expected sub-service with name %r but got %r"
-                          % (resource.name, resource.demo1.name))
+        self.assertEqual(resource.name, resource.demo1.name,
+                         "Expected sub-service with name %r but got %r"
+                         % (resource.name, resource.demo1.name))
 
         self.assertTrue(resource.data.initialization_flag,
                         "Resource %r should have been initialized" %
@@ -1438,9 +1441,9 @@ class TestResourceManagement(BaseResourceManagementTest):
                                                    name=self.FREE1_NAME)
 
         resources_num = len(resources_data)
-        self.assertEquals(resources_num, 1, "Expected 1 locked "
-                          "resource with name %r in DB, found %d"
-                          % (self.FREE1_NAME, resources_num))
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
 
         self.client.release_resources(resources=[resource])
 
@@ -1476,26 +1479,26 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests=[request]).values()
 
         resource, = resources
-        self.assertEquals(resource.name, self.COMPLEX_NAME,
-                          "Expected resource with name %r but got %r"
-                          % (self.COMPLEX_NAME, resource.name))
+        self.assertEqual(resource.name, self.COMPLEX_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.COMPLEX_NAME, resource.name))
 
         self.assertIsInstance(resource, request.type,
                               "Expected resource of type %r, but got %r"
                               % (request.type.__name__,
                                  resource.__class__.__name__))
 
-        self.assertEquals(len(list(resource.get_sub_resources())), 2,
-                          "Expected to have 2 sub-resources, found %r"
-                          % resource.get_sub_resources())
+        self.assertEqual(len(list(resource.get_sub_resources())), 2,
+                         "Expected to have 2 sub-resources, found %r"
+                         % resource.get_sub_resources())
 
-        self.assertEquals(resource.name, resource.demo2.name,
-                          "Expected sub-service with name %r but got %r"
-                          % (resource.name, resource.demo2.name))
+        self.assertEqual(resource.name, resource.demo2.name,
+                         "Expected sub-service with name %r but got %r"
+                         % (resource.name, resource.demo2.name))
 
-        self.assertNotEquals(resource.name, resource.demo1.name,
-                             "Expected sub-service with name different than %r"
-                             % resource.name)
+        self.assertNotEqual(resource.name, resource.demo1.name,
+                            "Expected sub-service with name different than %r"
+                            % resource.name)
 
         self.assertTrue(resource.initialized,
                         "Resource %r should have been initialized" %

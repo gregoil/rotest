@@ -1,11 +1,17 @@
 """Rotest's multiprocess test runner."""
 # pylint: disable=expression-not-assigned
 # pylint: disable=too-many-instance-attributes,too-many-arguments
+from __future__ import absolute_import
+
 import os
 import time
 import datetime
-from Queue import Empty
+import platform
 from multiprocessing import Queue
+
+from six.moves import queue
+from future.builtins import range
+from future.utils import itervalues
 
 from rotest.common import core_log
 from rotest.core.case import TestCase
@@ -177,7 +183,7 @@ class MultiprocessRunner(BaseTestRunner):
             while True:
                 self.requests_queue.get(block=False)
 
-        except Empty:
+        except queue.Empty:
             pass
 
     def restart_worker(self, worker, reason):
@@ -194,7 +200,14 @@ class MultiprocessRunner(BaseTestRunner):
 
         # Check if the worker was restarted before a test started
         if worker.test is not None:
-            self.result.addError(worker.test, (RuntimeError, reason, None))
+            if platform.python_version().startswith("2"):
+                self.result.addError(worker.test, (RuntimeError, reason, None))
+
+            elif platform.python_version().startswith("3"):
+                self.result.addError(worker.test, (RuntimeError,
+                                                   RuntimeError(reason),
+                                                   None))
+
             self.result.stopComposite(worker.test.parent)
 
         worker_to_terminate = self.workers_pool.pop(worker.pid)
@@ -220,7 +233,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         Goes over the active workers, terminates and joins them.
         """
-        for worker in self.workers_pool.itervalues():
+        for worker in itervalues(self.workers_pool):
             worker.terminate()
 
         self.finished_workers = 0
@@ -239,7 +252,7 @@ class MultiprocessRunner(BaseTestRunner):
 
         minimum_timeout = self.DEFAULT_TIMEOUT
 
-        for worker in self.workers_pool.itervalues():
+        for worker in itervalues(self.workers_pool):
             if worker.timeout is not None:
                 test_duration = current_datetime - worker.start_time
                 remaining_time = worker.timeout - test_duration.total_seconds()
@@ -261,7 +274,7 @@ class MultiprocessRunner(BaseTestRunner):
         current_datetime = datetime.datetime.now()
 
         # Note: Using items() because workers_pool may change during iteration.
-        for pid, worker in self.workers_pool.items():
+        for pid, worker in list(self.workers_pool.items()):
             if not worker.is_alive():
                 self.restart_worker(
                     worker=worker,
@@ -304,7 +317,7 @@ class MultiprocessRunner(BaseTestRunner):
         self.queue_test_jobs(self.test_item)
 
         core_log.debug('Creating %d workers processes', self.workers_number)
-        for _ in xrange(self.workers_number):
+        for _ in range(self.workers_number):
             self.initialize_worker()
 
         while self.finished_workers < self.workers_number:
@@ -313,7 +326,7 @@ class MultiprocessRunner(BaseTestRunner):
                 message = self.results_queue.get(timeout=self.get_timeout())
                 self.message_handler.handle_message(message)
 
-            except Empty:
+            except queue.Empty:
                 self.handle_workers_events()
 
         result.stopTestRun()

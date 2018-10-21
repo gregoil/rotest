@@ -1,5 +1,7 @@
 """Utilities for multiprocess tests running."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,super-init-not-called
+from __future__ import absolute_import
+
 import os
 import psutil
 
@@ -9,7 +11,7 @@ from rotest.common import core_log
 PROCESS_TERMINATION_TIMEOUT = 10
 
 
-class WrappedException(object):
+class WrappedException(Exception):
     """Used to wrapping exceptions so they could be passed via queues.
 
     Queue pickles every object it is requires to pass, and since Traceback

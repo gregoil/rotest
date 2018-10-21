@@ -1,7 +1,10 @@
 """Abstract class for all result handler tests."""
-from itertools import izip
+from __future__ import absolute_import
+
 from abc import ABCMeta, abstractmethod
 
+from future.builtins import zip
+from future.utils import with_metaclass
 from django.test.testcases import TransactionTestCase
 
 from rotest.core.suite import TestSuite
@@ -31,10 +34,9 @@ def get_tests(test):
                 yield leaf
 
 
-class BaseResultHandlerTest(TransactionTestCase):
+class BaseResultHandlerTest(with_metaclass(ABCMeta, TransactionTestCase)):
     """Base class for testing result handlers."""
     __test__ = False
-    __metaclass__ = ABCMeta
 
     fixtures = ['resource_ut.json']
 
@@ -130,7 +132,7 @@ class BaseResultHandlerTest(TransactionTestCase):
             TestOutcome.UNEXPECTED_SUCCESS:
                 self.handler.add_unexpected_success}
 
-        for case, result_index in izip(self.components, self.EXPECTED_RESULTS):
+        for case, result_index in zip(self.components, self.EXPECTED_RESULTS):
             result = CaseData.RESULT_CHOICES[result_index]
             self.handler.start_test(case)
             case.data.exception_type = result_index

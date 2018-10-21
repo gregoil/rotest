@@ -1,8 +1,10 @@
 """API test utilities."""
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
+
 import os
 import json
-import urllib
+from six.moves import urllib
 
 from attrdict import AttrDict
 
@@ -28,7 +30,7 @@ def request(client, path, method="post",
         json_data = json.dumps(json_data)
 
     if params is not None:
-        params = urllib.urlencode(params)
+        params = urllib.parse.urlencode(params)
 
     response = client.generic(method,
                               "{}?{}".format(os.path.join(BASEPATH, path),
@@ -37,7 +39,7 @@ def request(client, path, method="post",
                               content_type=content_type)
 
     try:
-        return response, AttrDict(json.loads(response.content))
+        return response, AttrDict(json.loads(response.content.decode("utf-8")))
 
     except ValueError:  # couldn't decode json object
         return response, response.content

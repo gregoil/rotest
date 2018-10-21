@@ -1,5 +1,9 @@
 """Represent a descriptor of a resource."""
+from __future__ import absolute_import
+
 from inspect import isclass
+
+from future.builtins import object
 
 from rotest.management import ResourceData
 from rotest.management.common.errors import ResourceBuildError
@@ -7,6 +11,7 @@ from rotest.management.common.utils import (TYPE_NAME,
                                             PROPERTIES,
                                             extract_type,
                                             extract_type_path)
+import six
 
 
 class ResourceDescriptor(object):
@@ -25,7 +30,7 @@ class ResourceDescriptor(object):
         """Returns the descriptor's repr string."""
         type_name = self.type.__name__
         keywords = ', '.join(['%s=%r' % (key, val)
-                              for key, val in self.properties.iteritems()])
+                              for key, val in six.iteritems(self.properties)])
         return "%s(%s)" % (type_name, keywords)
 
     def build_resource(self):

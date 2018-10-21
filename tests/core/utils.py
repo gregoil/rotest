@@ -1,13 +1,15 @@
 """Test utils for Rotest UT."""
-# pylint: disable=expression-not-assigned,too-many-arguments
-# pylint: disable=no-self-use,too-many-public-methods,unused-argument
-# pylint: disable=redundant-unittest-assert
+# pylint: disable=expression-not-assigned,redundant-unittest-assert,no-self-use
+# pylint: disable=too-many-public-methods,unused-argument,too-many-arguments
+from __future__ import absolute_import
+
 import unittest
 
 import django
 from django.db import connections
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.testcases import TransactionTestCase
+from future.builtins import map
 
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite
@@ -206,7 +208,7 @@ class MockResourceClient(ClientResourceManager):
         # Make sure the unittest is using the test DB, by assigning the test
         # database path as the database path to use.
         # (this is needed in multiprocess in windows)
-        for db_connection in connections.databases.values():
+        for db_connection in list(connections.databases.values()):
             test_db_name = db_connection['TEST']['NAME']
             db_connection['NAME'] = test_db_name
 

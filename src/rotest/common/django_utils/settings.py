@@ -1,5 +1,6 @@
 """Django configuration file for developement."""
 # pylint: disable=wildcard-import,unused-wildcard-import
+from __future__ import absolute_import
 import os
 
 

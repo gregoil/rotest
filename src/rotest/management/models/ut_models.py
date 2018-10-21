@@ -2,10 +2,13 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=too-many-public-methods,old-style-class
 # pylint: disable=no-self-use,no-init,no-member,too-few-public-methods
+from __future__ import absolute_import
+
 import os
 import shutil
 
 from django.db import models
+from future.builtins import range, object
 
 from rotest.management.base_resource import BaseResource
 from rotest.management.models.resource_data import ResourceData
@@ -27,7 +30,7 @@ class DemoResourceData(ResourceData):
         fails_on_finalize (bool): the resource should fail on finalization.
         fails_on_initialize (bool): the resource should fail on initialization.
     """
-    BOOT_MODE, PROD_MODE = xrange(2)
+    BOOT_MODE, PROD_MODE = list(range(2))
 
     MODE_CHOICE = ((BOOT_MODE, 'Boot'),
                    (PROD_MODE, 'Production'))
@@ -45,7 +48,7 @@ class DemoResourceData(ResourceData):
     fails_on_finalize = models.BooleanField(default=False)
     fails_on_initialize = models.BooleanField(default=False)
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'management'
 
@@ -58,7 +61,7 @@ class DemoResource(BaseResource):
     def store_state(self, state_dir_path):
         """Save a fake state file under the state directory."""
         state_file_path = os.path.join(state_dir_path, self.STATE_FILE_NAME)
-        with open(state_file_path, 'wb') as state_file:
+        with open(state_file_path, 'w') as state_file:
             state_file.write('state')
 
     def initialize(self):
@@ -153,7 +156,7 @@ class DemoComplexResourceData(ResourceData):
     demo1 = models.ForeignKey(DemoResourceData, related_name="demo_resource1")
     demo2 = models.ForeignKey(DemoResourceData, related_name="demo_resource2")
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'management'
 
@@ -208,7 +211,7 @@ class NonExistingResource(BaseResource):
     DATA_CLASS = ResourceData
 
 
-class InitializationError(StandardError):
+class InitializationError(Exception):
     """Will be thrown intentionally on connect."""
     pass
 

@@ -1,12 +1,16 @@
-"""Test Rotest's multiprocesses behavior on crashes."""
-# pylint: disable=expression-not-assigned,invalid-name,too-many-public-methods
+"""Test Rotest's multiprocess behavior on crashes."""
+# pylint: disable=expression-not-assigned,invalid-name,not-callable
+from __future__ import absolute_import
+
 import sys
 import unittest
-from Queue import Empty
 from multiprocessing import Process, Queue, Event, active_children
 
 import pytest
 import psutil
+from six.moves import queue
+from future.builtins import range
+
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.common import kill_process_tree
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
@@ -94,7 +98,7 @@ class RunnerCrashTest(AbstractCrashTest):
 
         core_log.debug("Waiting for the workers to start")
         workers_pids = [self.pid_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
-                        for _ in xrange(self.WORKERS_NUMBER)]
+                        for _ in range(self.WORKERS_NUMBER)]
 
         runner_process = psutil.Process(self.runner_process.pid)
         self.worker_processes = runner_process.children()
@@ -108,7 +112,7 @@ class RunnerCrashTest(AbstractCrashTest):
             worker.wait(timeout=self.WORKER_SUICIDE_TIMEOUT)
 
         core_log.debug("Validating no new workers were created")
-        self.assertRaises(Empty, self.pid_queue.get_nowait)
+        self.assertRaises(queue.Empty, self.pid_queue.get_nowait)
 
         core_log.debug("Validating the number of cases ran")
         self.assertEqual(len(workers_pids), self.WORKERS_NUMBER,
@@ -131,10 +135,10 @@ class WorkerCrashTest(AbstractCrashTest):
 
         core_log.debug("Waiting for the workers to start")
         workers_pids = [self.pid_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
-                        for _ in xrange(self.WORKERS_NUMBER)]
+                        for _ in range(self.WORKERS_NUMBER)]
 
         core_log.debug("Validating no extra workers were created")
-        self.assertRaises(Empty, self.pid_queue.get_nowait)
+        self.assertRaises(queue.Empty, self.pid_queue.get_nowait)
 
         core_log.debug("Killing all active workers")
         for worker_pid in workers_pids:
@@ -144,10 +148,10 @@ class WorkerCrashTest(AbstractCrashTest):
 
         core_log.debug("Waiting for the alternative workers to start")
         new_workers_pids = [self.pid_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
-                            for _ in xrange(self.WORKERS_NUMBER)]
+                            for _ in range(self.WORKERS_NUMBER)]
 
         core_log.debug("Validating no extra workers were created")
-        self.assertRaises(Empty, self.pid_queue.get_nowait)
+        self.assertRaises(queue.Empty, self.pid_queue.get_nowait)
 
         core_log.debug("Validating new workers differs from older workers")
         self.assertNotEqual(workers_pids, new_workers_pids,

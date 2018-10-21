@@ -1,6 +1,10 @@
 """Test trimming utilities by filtering of tags."""
 # pylint: disable=protected-access,eval-used
+from __future__ import absolute_import
+
 from fnmatch import fnmatch
+
+from future.builtins import str
 
 
 VALID_LITERALS = ["and", "or", "not", "(", ")", "True", "False"]

@@ -4,11 +4,16 @@ This module contains tests for the runners' results.
 """
 # pylint: disable=too-many-arguments
 # pylint: disable=relative-import,invalid-name,too-many-public-methods
+from __future__ import absolute_import
+
 import sys
 import unittest
 from abc import ABCMeta
-from StringIO import StringIO
 from multiprocessing import Queue, Event
+
+from six import StringIO
+from future import standard_library
+from future.utils import with_metaclass
 
 from rotest.core.runner import BaseTestRunner
 from rotest.core.models.general_data import GeneralData
@@ -22,14 +27,14 @@ from tests.core.utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
                               StoreMultipleFailuresCase, StoreFailureErrorCase,
                               TwoTestsCase, BasicRotestUnitTest)
 
+standard_library.install_aliases()
 
-class AbstractTestRunnerResult(BasicRotestUnitTest):
+
+class AbstractTestRunnerResult(with_metaclass(ABCMeta, BasicRotestUnitTest)):
     """Abstract test class for testing the runners' behavior."""
     __test__ = False
 
     fixtures = ['case_ut.json']
-
-    __metaclass__ = ABCMeta
 
     def get_runner(self):
         """Create and return the relevant test runner.

@@ -1,6 +1,10 @@
 """Multiprocess runner message handler."""
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
 # pylint: disable=expression-not-assigned,too-many-arguments,unused-argument
+from __future__ import absolute_import
+
+from future.builtins import object
+
 from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.models.general_data import GeneralData
@@ -78,8 +82,8 @@ class RunnerMessageHandler(object):
         core_log.debug(message)
 
         if message.msg_id not in self.runner.workers_pool:
-            core_log.warn('Ignoring restarted process %r message',
-                          message.msg_id)
+            core_log.warning('Ignoring restarted process %r message',
+                             message.msg_id)
             return
 
         message_type = type(message)

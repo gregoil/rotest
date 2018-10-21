@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
 
+from six.moves import http_client
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -21,8 +22,8 @@ class UpdateRunData(DjangoRequestView):
     URI = "tests/update_run_data"
     DEFAULT_MODEL = UpdateRunDataParamsModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: SuccessResponse,
-        httplib.BAD_REQUEST: FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -42,4 +43,4 @@ class UpdateRunData(DjangoRequestView):
         RunData.objects.filter(pk=run_data.pk).update(
             **request.model.run_data)
 
-        return Response({}, status=httplib.NO_CONTENT)
+        return Response({}, status=http_client.NO_CONTENT)

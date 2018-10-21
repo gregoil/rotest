@@ -1,5 +1,6 @@
 """Contain common module fields."""
 # pylint: disable=too-many-public-methods
+from __future__ import absolute_import
 import re
 
 from django.db import models

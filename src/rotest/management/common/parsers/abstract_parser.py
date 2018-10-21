@@ -1,16 +1,17 @@
 """An interface of a typical parser."""
+from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
 from rotest.management.common.messages import AbstractMessage
+import six
 
 
 class ParsingError(Exception):
     pass
 
 
-class AbstractParser(object):
+class AbstractParser(six.with_metaclass(ABCMeta, object)):
     """Basic parser class."""
-    __metaclass__ = ABCMeta
 
     def encode(self, message):
         """Encode a message.

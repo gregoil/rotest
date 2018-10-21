@@ -6,6 +6,7 @@ tell what and when tests and tests containers were run (including their
 hierarchial structure), what were their results and error descriptions, and
 additional data about the run.
 """
+from __future__ import absolute_import
 from rotest.api.common.models import (StartTestRunParamsModel,
                                       UpdateRunDataParamsModel,
                                       AddTestResultParamsModel,
@@ -30,6 +31,7 @@ from rotest.management.common.utils import (TEST_ID_KEY,
                                             TEST_NAME_KEY,
                                             TEST_SUBTESTS_KEY,
                                             TEST_CLASS_CODE_KEY)
+import six
 
 
 class ClientResultManager(AbstractClient):
@@ -201,7 +203,7 @@ class ClientResultManager(AbstractClient):
             resources = [ResourceDescriptor(type(resource),
                                             name=resource.data.name).encode()
                          for resource in
-                         test_item.locked_resources.itervalues()
+                         six.itervalues(test_item.locked_resources)
                          if resource.DATA_CLASS is not None]
 
         request_data = UpdateResourcesParamsModel({

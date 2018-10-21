@@ -1,7 +1,9 @@
 """Basic unittests for the server resource control operations."""
-import httplib
+from __future__ import absolute_import
+
 from functools import partial
 
+from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
 from tests.api.utils import request
@@ -29,7 +31,7 @@ class TestReleaseResources(TransactionTestCase):
             "token": self.token
         })
 
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, http_client.BAD_REQUEST)
 
     def test_release_complex_resource_with_sub_resource_available(self):
         """Assert trying to release complex resource - sub-resource available.
@@ -53,7 +55,7 @@ class TestReleaseResources(TransactionTestCase):
         })
 
         # bad request because sub-resources was not owned.
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, http_client.BAD_REQUEST)
         self.assertEqual(len(content.errors["complex_resource1"]), 2)
         # refresh from db
         resources = DemoComplexResourceData.objects.filter(
@@ -87,7 +89,7 @@ class TestReleaseResources(TransactionTestCase):
             name='available_resource1')
 
         resource, = resources
-        self.assertEqual(response.status_code, httplib.BAD_REQUEST)
+        self.assertEqual(response.status_code, http_client.BAD_REQUEST)
         self.assertEqual(resource.owner, "unknown_user")
 
     def test_valid_release(self):
@@ -110,5 +112,5 @@ class TestReleaseResources(TransactionTestCase):
             name='available_resource1')
 
         resource, = resources
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
         self.assertEqual(resource.owner, "")

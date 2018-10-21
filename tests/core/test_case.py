@@ -1,8 +1,13 @@
 """Test Rotest's TestCase class behavior."""
 # pylint: disable=missing-docstring,unused-argument,protected-access
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
+from __future__ import absolute_import
+
 import os
 import re
+
+from future.builtins import next
+from future.utils import iteritems
 
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome, CaseData
@@ -15,13 +20,20 @@ from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
                               UnexpectedSuccessCase, BasicRotestUnitTest,
                               DynamicResourceLockingCase, ExpectRaisesCase,
                               StoreFailureErrorCase, ExpectedFailureCase,
-                              StoreFailureCase, MockTestSuite)
+                              StoreFailureCase, MockTestSuite, SkipCase)
 
 
 RESOURCE_NAME = 'available_resource1'
 
 
 class TempSuccessCase(SuccessCase):
+    """Inherit class and override resources requests."""
+    __test__ = False
+
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
+
+
+class TempSkipCase(SkipCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
@@ -149,7 +161,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_suite = InternalSuite()
         case = test_suite._tests[0]
-        for name, value in kwargs.iteritems():
+        for name, value in iteritems(kwargs):
             setattr(case, name, value)
 
         self.run_test(test_suite)
@@ -209,7 +221,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resources = case.all_resources
         locked_names = []
-        for resource in test_resources.values():
+        for resource in list(test_resources.values()):
             self.assertTrue(isinstance(resource, DemoResource),
                             "Got wrong resource %r for the request" % resource)
 
@@ -745,9 +757,8 @@ class TestTestCase(BasicRotestUnitTest):
                                                        name=RESOURCE_NAME),)
 
         case = self._run_case(TempUnexpectedSuccessCase)
-
-        self.assertTrue(self.result.wasSuccessful(),
-                        'Case failed when it should have succeeded')
+        self.assertFalse(self.result.wasSuccessful(),
+                        'Case succeeded when it should have failed')
 
         # === Validate case data object ===
         self.assertFalse(case.data.success,
@@ -820,12 +831,10 @@ class TestTestCase(BasicRotestUnitTest):
         self.validate_resource(available_resource, validated=False,
                                initialized=False, finalized=False)
 
-    def test_store_state(self):
-        """Test the resource store sate method.
+    def test_save_state_on_failed_test(self):
+        """Test the usage of the save_state flag when a test has failed.
 
-        * Define a resource as required resource.
-        * Run the test under a test suite.
-        * Validate store_state method was called (it writes a file).
+        When a test has failed it is expected that it WILL save the state.
         """
         resource_name = 'store_resource'
         TempErrorCase.resources = (request(resource_name=resource_name,
@@ -839,12 +848,10 @@ class TestTestCase(BasicRotestUnitTest):
 
         self.assertTrue(os.path.exists(expected_state_path))
 
-    def test_save_state(self):
-        """Test the save_sate flag.
+    def test_save_state_on_passed_test(self):
+        """Test the usage of the save_state flag when a test has passed.
 
-        * Defines a resource as required resource that not save state.
-        * Runs the test under a test suite.
-        * Validates store_state method wasn't called.
+        When a test has passed it is expected that it WILL NOT save the state.
         """
         resource_name = 'save_state_resource'
         TempSuccessCase.resources = (request(resource_name=resource_name,
@@ -854,6 +861,41 @@ class TestTestCase(BasicRotestUnitTest):
         case = self._run_case(TempSuccessCase, save_state=True)
         expected_state_path = os.path.join(case.work_dir,
                                            TempSuccessCase.STATE_DIR_NAME)
+
+        self.assertFalse(os.path.exists(expected_state_path))
+
+    def test_save_state_on_expected_failure_test(self):
+        """Test the usage of the save_state flag when a test has
+            passed with an expected failure.
+
+        When a test has passed it is expected that it WILL NOT save the state.
+        """
+        resource_name = 'save_state_resource'
+        TempExpectedFailureCase.resources = (
+            request(resource_name=resource_name,
+                    resource_class=DemoResource,
+                    name=RESOURCE_NAME),)
+
+        case = self._run_case(TempExpectedFailureCase, save_state=True)
+        expected_state_path = os.path.join(
+            case.work_dir, TempExpectedFailureCase.STATE_DIR_NAME)
+
+        self.assertFalse(os.path.exists(expected_state_path))
+
+    def test_save_state_on_skipped_test(self):
+        """Test the usage of the save_state flag when a test was skipped.
+
+        When a test has been skipped it is expected that it WILL NOT
+            save the state.
+        """
+        resource_name = 'save_state_resource'
+        TempSkipCase.resources = (request(resource_name=resource_name,
+                                          resource_class=DemoResource,
+                                          name=RESOURCE_NAME),)
+
+        case = self._run_case(TempSkipCase, save_state=True)
+        expected_state_path = os.path.join(case.work_dir,
+                                           TempSkipCase.STATE_DIR_NAME)
 
         self.assertFalse(os.path.exists(expected_state_path))
 

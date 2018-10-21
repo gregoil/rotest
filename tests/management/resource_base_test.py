@@ -1,6 +1,7 @@
 """Abstract TestCase for all resources related tests."""
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=too-many-public-methods,invalid-name
+from __future__ import absolute_import
 import time
 from threading import current_thread
 

@@ -3,9 +3,14 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
+from __future__ import absolute_import
+
 import unittest
 from functools import wraps
 from itertools import count
+
+from future.utils import iteritems
+from future.builtins import range, object
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
@@ -18,7 +23,7 @@ from rotest.core.models.case_data import TestOutcome, CaseData
 # CRITICAL: stop test on failure
 # FINALLY: always run test, unskippable
 # OPTIONAL: don't stop test on failure (but do so on error)
-MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = xrange(1, 4)
+MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = list(range(1, 4))
 
 
 class PipeTo(object):
@@ -225,10 +230,10 @@ class AbstractFlowComponent(AbstractTest):
                     self._set_parameters(override_previous=False,
                                          **{input_name: value.default
                                             for (input_name, value) in
-                                            self.get_inputs().iteritems()
+                                            iteritems(self.get_inputs())
                                             if value.is_optional()})
 
-                    for pipe_name, pipe_target in self._pipes.iteritems():
+                    for pipe_name, pipe_target in iteritems(self._pipes):
                         setattr(self, pipe_name, getattr(self, pipe_target))
 
                 if not self.is_main:
@@ -337,7 +342,7 @@ class AbstractFlowComponent(AbstractTest):
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
         """
-        for name, value in parameters.iteritems():
+        for name, value in iteritems(parameters):
             if isinstance(value, PipeTo):
                 parameter_name = value.parameter_name
                 if override_previous or (name not in self.__dict__ and

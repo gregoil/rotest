@@ -1,7 +1,10 @@
 # pylint: disable=unused-argument, no-self-use, too-many-locals
-import httplib
+from __future__ import absolute_import
+
 from datetime import datetime
 
+from six.moves import http_client
+from future.builtins import next
 from django.db import transaction
 from django.db.models.query_utils import Q
 from django.core.exceptions import FieldError
@@ -35,8 +38,8 @@ class LockResources(DjangoRequestView):
     URI = "resources/lock_resources"
     DEFAULT_MODEL = LockResourcesParamsModel
     DEFAULT_RESPONSES = {
-        httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: FailureResponseModel
+        http_client.OK: InfluencedResourcesResponseModel,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -87,7 +90,7 @@ class LockResources(DjangoRequestView):
                 .filter(query).order_by('-reserved')
 
         except FieldError as e:
-            raise BadRequest(e.message)
+            raise BadRequest(str(e))
 
         if matches.count() == 0:
             raise BadRequest(INVALID_RESOURCES.format(descriptor))
@@ -120,13 +123,13 @@ class LockResources(DjangoRequestView):
             descriptor = ResourceDescriptor.decode(descriptor_dict)
 
         except ResourceTypeError as e:
-            raise BadRequest(e.message)
+            raise BadRequest(str(e))
 
         availables = self._get_available_resources(
             descriptor, username, groups)
 
         try:
-            resource = availables.next()
+            resource = next(availables)
             self._lock_resource(resource, username)
             return resource
 
@@ -164,4 +167,4 @@ class LockResources(DjangoRequestView):
                     for _resource in locked_resources]
         return Response({
             "resource_descriptors": response
-        }, status=httplib.OK)
+        }, status=http_client.OK)

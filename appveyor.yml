@@ -1,15 +1,16 @@
 environment:
-    matrix:
-        - PYTHON: "C:\\Python27"
+  matrix:
+  - TOXENV: "py27"
+  - TOXENV: "py35"
+  - TOXENV: "py36"
 
 build: off
 
 install:
-    - "%PYTHON%\\python.exe -m pip install tox"
+- C:\Python36\python -m pip install tox
 
 test_script:
-    - '%PYTHON%\\python.exe -c "import sys; print sys.platform"'
-    - "%PYTHON%\\Scripts\\tox.exe"
+- C:\Python36\python -m tox
 
 on_failure:
-    - appveyor PushArtifact "%userprofile%\\.rotest\\core_logger\\core_logger.log"
+- appveyor PushArtifact "%userprofile%\\.rotest\\core_logger\\core_logger.log"

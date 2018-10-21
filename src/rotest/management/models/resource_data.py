@@ -6,8 +6,12 @@ responsible for the resource static & dynamic information.
 # pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
 # pylint: disable=attribute-defined-outside-init,invalid-name,old-style-class
 # pylint: disable=access-member-before-definition,property-on-old-class,no-init
+from __future__ import absolute_import
+
 from datetime import datetime
 
+from future.builtins import object
+from future.utils import itervalues
 from django.db import models
 from django.utils import six
 from django.db.models.base import ModelBase
@@ -28,7 +32,7 @@ class DataPointer(object):
 class DataBase(ModelBase):
     """Metaclass that creates data pointers for django fields."""
     def __getattr__(cls, key):
-        if hasattr(cls, '_meta') and \
+        if '_meta' in vars(cls) and \
                 key in (field.name for field in cls._meta.fields):
 
             return DataPointer(key)
@@ -75,7 +79,7 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
     owner_time = models.DateTimeField(null=True, blank=True)
     reserved_time = models.DateTimeField(null=True, blank=True)
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'management'
 
@@ -85,7 +89,8 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
 
     def get_sub_resources(self):
         """Return an iterable to the resource's sub-resources."""
-        return (field_value for field_value in self.get_fields().itervalues()
+        return (field_value
+                for field_value in itervalues(self.get_fields())
                 if isinstance(field_value, ResourceData))
 
     def _is_sub_resources_available(self, user_name=""):
@@ -173,11 +178,12 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
 
         # Clone the class instance.
         resource_properties = self.get_fields()
-        for key, value in resource_properties.items():
+        for key, value in list(resource_properties.items()):
             if isinstance(value, ResourceData):
                 resource_properties[key] = value.duplicate()
 
-        list_field_names = [key for key, value in resource_properties.items()
+        list_field_names = [key for
+                            key, value in list(resource_properties.items())
                             if isinstance(value, list)]
 
         list_fields = [(field_name, resource_properties.pop(field_name))

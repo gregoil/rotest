@@ -4,10 +4,14 @@ Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
+from __future__ import absolute_import
+
 from bdb import BdbQuit
 
+import six
 from ipdbugger import debug
 from attrdict import AttrDict
+from future.utils import iteritems, with_metaclass
 from django.db.models.fields.related import \
                                         ReverseSingleRelatedObjectDescriptor
 
@@ -32,7 +36,7 @@ class ConvertToKwargsMeta(type):
 
         resource = type.__call__(cls, *args, **kwargs)
         resource.kwargs = kwargs
-        for field_name, field_value in kwargs.iteritems():
+        for field_name, field_value in iteritems(kwargs):
             setattr(resource, field_name, field_value)
 
         if isinstance(resource.data, AttrDict):
@@ -41,7 +45,7 @@ class ConvertToKwargsMeta(type):
         return resource
 
 
-class BaseResource(object):
+class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
     """Represent the common interface of all the resources.
 
     To implement a resource, you may override:
@@ -63,7 +67,6 @@ class BaseResource(object):
         force_initialize (bool): a flag to determine if the resource will be
             initialized even if the validation succeeds.
     """
-    __metaclass__ = ConvertToKwargsMeta
 
     DATA_CLASS = None
     PARALLEL_INITIALIZATION = False
@@ -81,8 +84,8 @@ class BaseResource(object):
         if data is not None:
             self.data = data
             if isinstance(data, ResourceData):
-                for field_name, field_value in data.get_fields().iteritems():
-                    setattr(self, field_name, field_value)
+                for field_name, value in iteritems(self.data.get_fields()):
+                    setattr(self, field_name, value)
 
         else:
             self.data = AttrDict()
@@ -114,7 +117,7 @@ class BaseResource(object):
                                                           BaseResource):
             sub_class = sub_placeholder.__class__
             actual_kwargs = sub_placeholder.kwargs.copy()
-            for key, value in sub_placeholder.kwargs.iteritems():
+            for key, value in six.iteritems(sub_placeholder.kwargs):
                 if isinstance(value, ReverseSingleRelatedObjectDescriptor):
                     actual_kwargs[key] = getattr(self.data, value.field.name)
 

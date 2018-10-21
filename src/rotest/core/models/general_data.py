@@ -1,8 +1,11 @@
 """Define GeneralData model class."""
 # pylint: disable=no-init,old-style-class,unused-argument
+from __future__ import absolute_import
+
 from datetime import datetime
 
 from django.db import models
+from future.builtins import range, object
 
 from rotest.common.django_utils import linked_unicode
 from rotest.common.django_utils.fields import NameField
@@ -29,7 +32,7 @@ class GeneralData(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True,
                                related_name='tests')
 
-    (INITIALIZED, IN_PROGRESS, FINISHED) = xrange(3)
+    (INITIALIZED, IN_PROGRESS, FINISHED) = list(range(3))
 
     STATUS_CHOICES = ((INITIALIZED, 'Initialized'),
                       (IN_PROGRESS, 'In Progress'),
@@ -44,7 +47,7 @@ class GeneralData(models.Model):
     run_data = models.ForeignKey('core.RunData', null=True, blank=True,
                                  related_name='tests')
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'core'
 

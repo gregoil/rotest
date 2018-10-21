@@ -1,6 +1,10 @@
 """Define SignatureData model class."""
 # pylint: disable=no-init,old-style-class
+from __future__ import absolute_import
+
 from django.db import models
+from future.builtins import object
+
 from rotest.common.django_utils.fields import NameField
 
 
@@ -25,7 +29,7 @@ class SignatureData(models.Model):
     link = models.CharField(max_length=MAX_LINK_LENGTH)
     pattern = models.CharField(max_length=MAX_PATTERN_LENGTH)
 
-    class Meta:
+    class Meta(object):
         """Define the Django application for this model."""
         app_label = 'core'
 

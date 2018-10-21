@@ -1,6 +1,8 @@
 """Common result utils."""
 # pylint: disable=dangerous-default-value
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
+from future.builtins import str
 
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow

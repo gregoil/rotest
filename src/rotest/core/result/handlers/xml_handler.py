@@ -1,10 +1,13 @@
 """XML result handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
+
 import os
 
 from lxml import etree
 from lxml.builder import E
+from future.builtins import str
 
 from rotest.core.flow import TestFlow
 from rotest.core.flow_component import AbstractFlowComponent
@@ -30,7 +33,7 @@ class XMLHandler(AbstractResultHandler):
         """
         xml_report_path = os.path.join(test.work_dir,
                                        self.XML_REPORT_PATH)
-        with open(xml_report_path, 'w') as xml_report:
+        with open(xml_report_path, 'wb') as xml_report:
             xml_report.write(etree.tostring(xml_obj, pretty_print=True))
 
     def _add_test_report(self, test, result_description="",

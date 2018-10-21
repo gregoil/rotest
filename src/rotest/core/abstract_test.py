@@ -3,16 +3,21 @@
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
 # pylint: disable=too-many-arguments,too-many-locals,broad-except,no-self-use
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods,deprecated-method
+from __future__ import absolute_import
+
 import os
 import sys
 import unittest
+import platform
 from bdb import BdbQuit
 from functools import wraps
 from itertools import count
 
 from ipdbugger import debug
 from attrdict import AttrDict
+from future.builtins import next, str, object
+from future.utils import iteritems, itervalues
 
 from rotest.common.utils import get_class_fields
 from rotest.core.models.case_data import TestOutcome
@@ -79,7 +84,7 @@ class AbstractTest(unittest.TestCase):
         self.parent = parent
         self.skip_init = skip_init
         self.save_state = save_state
-        self.identifier = indexer.next()
+        self.identifier = next(indexer)
         self.enable_debug = enable_debug
         self.force_initialize = force_initialize
         self.parents_count = self._get_parents_count()
@@ -95,12 +100,12 @@ class AbstractTest(unittest.TestCase):
 
     def override_resource_loggers(self):
         """Replace the resources' logger with the test's logger."""
-        for resource in self.all_resources.itervalues():
+        for resource in itervalues(self.all_resources):
             resource.override_logger(self.logger)
 
     def release_resource_loggers(self):
         """Revert logger replacement."""
-        for resource in self.all_resources.itervalues():
+        for resource in itervalues(self.all_resources):
             resource.release_logger(self.logger)
 
     @classmethod
@@ -162,7 +167,7 @@ class AbstractTest(unittest.TestCase):
                 instance.
         """
         self.all_resources.update(resources)
-        for name, resource in resources.iteritems():
+        for name, resource in iteritems(resources):
             setattr(self, name, resource)
 
     def request_resources(self, resources_to_request, use_previous=False):
@@ -193,7 +198,7 @@ class AbstractTest(unittest.TestCase):
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
-        for resource in requested_resources.itervalues():
+        for resource in itervalues(requested_resources):
             resource.override_logger(self.logger)
 
         if self.result is not None:
@@ -212,22 +217,24 @@ class AbstractTest(unittest.TestCase):
                 or enable saving them for next tests.
         """
         if resources is None:
-            resources = self.locked_resources.keys()
+            resources = list(self.locked_resources.keys())
 
         if len(resources) == 0:
             # No resources to release locked
             return
 
-        resources_dict = {name: resource
-                          for name, resource in self.locked_resources.items()
-                          if name in resources}
+        resources_dict = {
+            name: resource
+            for name, resource in iteritems(self.locked_resources)
+            if name in resources
+        }
 
         self.resource_manager.release_resources(resources_dict,
                                                 dirty=dirty,
                                                 force_release=force_release)
 
         # Remove the resources from the test's resource to avoid double release
-        for resource in resources_dict.itervalues():
+        for resource in itervalues(resources_dict):
             self.locked_resources.pop(resource, None)
 
     def _get_parents_count(self):
@@ -294,12 +301,32 @@ class AbstractTest(unittest.TestCase):
 
     def store_state(self):
         """Store the state of the resources in the work dir."""
-        status = self.data.exception_type
-        if (not self.save_state or status is None or
-                status in TestOutcome.POSITIVE_RESULTS):
-
-            self.logger.debug("Skipping saving error state")
+        # In Python 3 tearDown() is called before result.addError() whereas
+        # in python 2 addError() is called before tearDown().
+        # in python 3 self.data.exception_type would always be None
+        # but we could check the error state via the self._outcome object
+        # and in python2 we could just check the exception_type identifier.
+        if not self.save_state:
+            self.logger.debug("Skipping saving state")
             return
+
+        if platform.python_version().startswith("3"):
+            exceptions_that_occured = len([test
+                                          for test, exc_info
+                                          in self._outcome.errors
+                                          if exc_info is not None])
+
+            if exceptions_that_occured == 0:
+                self.logger.debug("State is not an errored state, "
+                                  "skipping saving state")
+                return
+
+        elif platform.python_version().startswith("2"):
+            status = self.data.exception_type
+            if status is None or status in TestOutcome.POSITIVE_RESULTS:
+                self.logger.debug("State is not an errored state, "
+                                  "skipping saving state")
+                return
 
         store_dir = os.path.join(self.work_dir, self.STATE_DIR_NAME)
 
@@ -314,7 +341,7 @@ class AbstractTest(unittest.TestCase):
         self.logger.debug("Creating state dir %r", store_dir)
         os.makedirs(store_dir)
 
-        for resource in self.all_resources.itervalues():
+        for resource in itervalues(self.all_resources):
             resource.store_state(store_dir)
 
     def _wrap_assert(self, assert_method, *args, **kwargs):

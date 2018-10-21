@@ -1,10 +1,14 @@
 """Excel result handler."""
 # pylint: disable=unused-argument
+from __future__ import absolute_import
+
 import os
 from collections import OrderedDict
 
 import xlwt
 from xlwt.Style import easyxf
+from future.builtins import str
+from future.utils import iteritems
 
 from rotest.core.suite import TestSuite
 from rotest.core.flow_component import AbstractFlowComponent
@@ -195,7 +199,7 @@ class ExcelHandler(AbstractResultHandler):
         if test.locked_resources is not None:
             resources = '\n'.join("%s:%s" % (request_name, resource.name)
                                   for (request_name, resource) in
-                                  test.locked_resources.iteritems())
+                                  iteritems(test.locked_resources))
         else:
             resources = ''
 
@@ -361,7 +365,7 @@ class ExcelHandler(AbstractResultHandler):
 
     def _align_columns(self):
         """Align the columns width."""
-        for header, col_width in self.HEADER_TO_WIDTH.items():
+        for header, col_width in list(self.HEADER_TO_WIDTH.items()):
             self.sheet.col(self.HEADERS.index(header)).width = col_width
 
     def _create_result_summary(self):

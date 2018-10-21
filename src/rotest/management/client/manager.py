@@ -6,13 +6,15 @@ also for the resources cleanup procedure and release.
 # pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches
 # pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 # pylint: disable=no-member,method-hidden,broad-except,too-many-public-methods
-from itertools import izip
-from threading import Thread
+from __future__ import absolute_import
 
 import time
+from threading import Thread
 
 import re
 from attrdict import AttrDict
+from future.utils import iteritems
+from future.builtins import zip, str, object
 
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
@@ -228,7 +230,7 @@ class ClientResourceManager(AbstractClient):
         Raises:
             ServerError. resource manager failed to lock resources.
         """
-        for resource, request in izip(resources, requests):
+        for resource, request in zip(resources, requests):
 
             resource.set_sub_resources()
 
@@ -264,8 +266,7 @@ class ClientResourceManager(AbstractClient):
 
         self.logger.debug("cleaning up the locked resources")
 
-        for name, resource in resources.iteritems():
-
+        for name, resource in iteritems(resources):
             try:
                 resource.logger.debug("Finalizing resource %r", name)
                 resource.finalize()
@@ -412,7 +413,7 @@ class ClientResourceManager(AbstractClient):
             matching_resources = [resource for resource in resources
                                   if isinstance(resource, descriptor.type)]
 
-            for field_name, value in descriptor.properties.items():
+            for field_name, value in list(descriptor.properties.items()):
                 for resource in matching_resources[:]:
                     if getattr(resource, field_name, None) != value:
                         matching_resources.remove(resource)
@@ -569,7 +570,7 @@ class ClientResourceManager(AbstractClient):
             self._cleanup_resources(resources)
 
         finally:
-            self._release_resources(resources=resources.values())
+            self._release_resources(resources=list(resources.values()))
 
     def query_resources(self, descriptor):
         """Query the content of the server's DB.

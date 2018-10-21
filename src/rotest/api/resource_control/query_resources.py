@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
 
+from six.moves import http_client
 from django.db import transaction
 from django.db.models.query_utils import Q
 from swaggapi.api.builder.server.response import Response
@@ -24,8 +25,8 @@ class QueryResources(DjangoRequestView):
     URI = "resources/query_resources"
     DEFAULT_MODEL = ResourceDescriptorModel
     DEFAULT_RESPONSES = {
-        httplib.OK: InfluencedResourcesResponseModel,
-        httplib.BAD_REQUEST: FailureResponseModel
+        http_client.OK: InfluencedResourcesResponseModel,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -44,7 +45,7 @@ class QueryResources(DjangoRequestView):
             descriptor = ResourceDescriptor.decode(request.model.obj)
 
         except ResourceTypeError as e:
-            raise BadRequest(e.message)
+            raise BadRequest(str(e))
 
         # query for resources that are usable and match the descriptors
         query = (Q(is_usable=True, **descriptor.properties))
@@ -61,4 +62,4 @@ class QueryResources(DjangoRequestView):
 
         return Response({
             "resource_descriptors": query_result
-        }, status=httplib.OK)
+        }, status=http_client.OK)

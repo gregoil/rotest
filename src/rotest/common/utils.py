@@ -1,10 +1,13 @@
 """Common useful utils."""
 # pylint: disable=protected-access
+from __future__ import absolute_import
+
 import os
 from shutil import copy
 from itertools import count
 from datetime import datetime
 
+from future.builtins import next
 
 RUNTIME_ORDER = '-start_time'
 DATE_TIME_FORMAT = '%y.%m.%d_%H_%M_%S'
@@ -68,7 +71,7 @@ def get_work_dir(base_dir, test_name, test_item):
 
     copy_count = count()
     while os.path.exists(work_dir):
-        work_dir = basic_work_dir + '(%s)' % copy_count.next()
+        work_dir = basic_work_dir + '(%s)' % next(copy_count)
 
     os.makedirs(work_dir)
     return work_dir

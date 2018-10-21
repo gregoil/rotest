@@ -1,10 +1,14 @@
 """Abstract result handler."""
 # pylint: disable=invalid-name,too-few-public-methods,arguments-differ
 # pylint: disable=too-many-arguments,unused-argument,no-self-use
+from __future__ import absolute_import
+
 from abc import ABCMeta
 
+from six import with_metaclass
 
-class AbstractResultHandler(object):
+
+class AbstractResultHandler(with_metaclass(ABCMeta, object)):
     """Result handler interface.
 
     Defines the required interface for all the result handlers.
@@ -13,7 +17,6 @@ class AbstractResultHandler(object):
         main_test (rotest.core.abstract_test.AbstractTest): the main test
             instance (e.g. TestSuite instance or TestFlow instance).
     """
-    __metaclass__ = ABCMeta
 
     NAME = NotImplemented
 

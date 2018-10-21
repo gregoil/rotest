@@ -1,8 +1,9 @@
 """Define all the resource manager errors."""
 # pylint: disable=redefined-outer-name
+from future.builtins import str, object
 
 
-class ServerError(StandardError):
+class ServerError(Exception):
     """Hold resource related errors.
 
     Attributes:

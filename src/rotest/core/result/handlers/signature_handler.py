@@ -1,4 +1,5 @@
 """Known issues result handler."""
+from __future__ import absolute_import
 import re
 import os
 

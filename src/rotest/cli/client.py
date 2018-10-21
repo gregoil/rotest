@@ -40,6 +40,7 @@ Options:
 # pylint: disable=unused-argument
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
 from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import inspect
 import argparse
@@ -58,6 +59,7 @@ from rotest.cli.discover import discover_tests_under_paths
 from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
                                 update_resource_requests, run as rotest_runner,
                                 parse_resource_identifiers)
+import six
 
 
 def parse_outputs_option(outputs):
@@ -123,7 +125,7 @@ def filter_valid_values(dictionary):
         iterator: (key, value) tuples where the value isn't None.
     """
     return ((key, value)
-            for key, value in dictionary.iteritems()
+            for key, value in six.iteritems(dictionary)
             if value is not None)
 
 
@@ -197,8 +199,8 @@ def main(*tests):
     arguments = parser.parse_args()
 
     config = AttrDict(chain(
-        parse_config_file(DEFAULT_CONFIG_PATH).items(),
-        parse_config_file(arguments.config_path).items(),
+        list(parse_config_file(DEFAULT_CONFIG_PATH).items()),
+        list(parse_config_file(arguments.config_path).items()),
         filter_valid_values(vars(arguments)),
     ))
 

@@ -1,6 +1,8 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
 
+from six.moves import http_client
+from future.builtins import str
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from swaggapi.api.builder.server.response import Response
@@ -33,8 +35,8 @@ class ReleaseResources(DjangoRequestView):
     URI = "resources/release_resources"
     DEFAULT_MODEL = ReleaseResourcesParamsModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: SuccessResponse,
-        httplib.BAD_REQUEST: FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -111,6 +113,6 @@ class ReleaseResources(DjangoRequestView):
             return Response({
                 "errors": errors,
                 "details": "errors occurred while releasing resource"
-            }, status=httplib.BAD_REQUEST)
+            }, status=http_client.BAD_REQUEST)
 
-        return Response({}, status=httplib.NO_CONTENT)
+        return Response({}, status=http_client.NO_CONTENT)

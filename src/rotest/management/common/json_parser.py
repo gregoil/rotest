@@ -5,8 +5,13 @@ Note:
     base class of unicode and str type.
 """
 # pylint: disable=too-many-return-statements,protected-access,too-many-locals
+from __future__ import absolute_import
+
 from numbers import Number
 
+from six import string_types
+from future.utils import iteritems
+from future.builtins import object
 from django.db import models
 from django.db.models import ForeignKey
 
@@ -110,13 +115,14 @@ class JSONParser(object):
         if data is None:
             return self._NONE_TYPE
 
-        base_types = [basestring, bool, Number]
+        base_types = [string_types, bool, Number]
 
         for encoder_type in base_types:
             if isinstance(data, encoder_type):
                 return data
 
-        for encoder_type, encoder_handler in self.complex_encoders.items():
+        for encoder_type, encoder_handler in \
+                list(iteritems(self.complex_encoders)):
             if isinstance(data, encoder_type):
                 return encoder_handler(data)
 
@@ -187,8 +193,8 @@ class JSONParser(object):
         """
         dict_return = {}
 
-        for key, value in dict_data.iteritems():
-            if not isinstance(key, basestring):
+        for key, value in iteritems(dict_data):
+            if not isinstance(key, string_types):
                 raise ParsingError("Failed to encode dictionary, "
                                    "key %r is not a string" % key)
 
@@ -226,19 +232,19 @@ class JSONParser(object):
             ParsingError: failed to decode the element.
         """
         if not isinstance(element, dict) or \
-                        element.keys()[0] not in self.complex_decoders:
+                        list(element.keys())[0] not in self.complex_decoders:
             value = element
 
             if value == self._NONE_TYPE:
                 return None
 
-            if isinstance(value, basestring):
+            if isinstance(value, string_types):
                 return value
 
             if isinstance(value, (bool, Number)):
                 return value
 
-        decoder_type = element.keys()[0]
+        decoder_type = list(element.keys())[0]
 
         decoder = self.complex_decoders[decoder_type]
         return decoder(element[decoder_type])
@@ -261,8 +267,9 @@ class JSONParser(object):
         resource_properties = self._decode(properties_element)
 
         # Get the related fields.
-        list_field_names = [key for key, value in resource_properties.items()
-                            if isinstance(value, list)]
+        list_field_names = [
+            key for key, value in iteritems(resource_properties)
+            if isinstance(value, list)]
 
         list_fields = [(field_name, resource_properties.pop(field_name))
                        for field_name in list_field_names]
@@ -340,7 +347,7 @@ class JSONParser(object):
             dict. decoded dictionary.`
         """
         dictionary = {}
-        for key, value in dict_element.items():
+        for key, value in list(dict_element.items()):
             dictionary[key] = self._decode(value)
 
         return dictionary

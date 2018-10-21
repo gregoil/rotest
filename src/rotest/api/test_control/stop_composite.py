@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
 
+from six.moves import http_client
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -20,8 +21,8 @@ class StopComposite(DjangoRequestView):
     URI = "tests/stop_composite"
     DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: SuccessResponse,
-        httplib.BAD_REQUEST: FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -47,4 +48,4 @@ class StopComposite(DjangoRequestView):
         test_data.end()
         test_data.save()
 
-        return Response({}, status=httplib.NO_CONTENT)
+        return Response({}, status=http_client.NO_CONTENT)

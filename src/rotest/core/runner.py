@@ -1,8 +1,12 @@
 """Describes Rotest's test running handler class."""
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
+
 import os
 import sys
 from collections import defaultdict
+
+from future.builtins import range
 
 from rotest.common import core_log
 from rotest.core.utils.json_parser import parse
@@ -115,7 +119,7 @@ def run(test_class, save_state=None, outputs=None, config=None,
                              run_delta=bool(delta_iterations),
                              processes_number=processes_number)
 
-    for _ in xrange(times_to_run):
+    for _ in range(times_to_run):
         runs_data.append(test_runner.run(test_class))
 
     return runs_data

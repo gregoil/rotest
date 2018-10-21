@@ -1,4 +1,5 @@
 """Defines mock classes that will be used in the tests."""
+from __future__ import absolute_import
 import unittest
 
 

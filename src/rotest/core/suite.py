@@ -1,7 +1,11 @@
 """Define Rotest's TestSuite, composed from test suites or test cases."""
 # pylint: disable=method-hidden,bad-super-call,too-many-arguments
+from __future__ import absolute_import
+
 import unittest
 from itertools import count
+
+from future.builtins import next
 
 from rotest.common import core_log
 from rotest.core.case import TestCase
@@ -35,6 +39,8 @@ class TestSuite(unittest.TestSuite):
     TAGS = []
     IS_COMPLEX = True
 
+    _cleanup = False
+
     def __init__(self, base_work_dir=ROTEST_WORK_DIR, save_state=True,
                  config=None, indexer=count(), parent=None, run_data=None,
                  enable_debug=False, skip_init=False, resource_manager=None):
@@ -67,7 +73,7 @@ class TestSuite(unittest.TestSuite):
 
         self.parent = parent
         name = self.get_name()
-        self.identifier = indexer.next()
+        self.identifier = next(indexer)
         self.resource_manager = resource_manager
         self.parents_count = self._get_parents_count()
         self.config = config

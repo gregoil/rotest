@@ -1,8 +1,11 @@
 """Basic unittests for the server test control operations."""
 # pylint: disable=protected-access
-import httplib
+from __future__ import absolute_import
+
 from functools import partial
 
+from future.builtins import next
+from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
 from rotest.core.models import RunData
@@ -58,7 +61,7 @@ class TestControl(TransactionTestCase):
                                          "tests": tests_tree_dict,
                                          "token": self.token
                                      })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
         self.test_suite = next(iter(self.main_test))
         self.test_case = next(iter(self.test_suite))
 
@@ -72,7 +75,7 @@ class TestControl(TransactionTestCase):
                     "run_name": "name2"
                 }
             })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
     def test_update_resources(self):
         """Assert that the request has the right server response."""
@@ -91,7 +94,7 @@ class TestControl(TransactionTestCase):
                     }
                 }]
             })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
     def test_should_skip(self):
         """Assert that the request has the right server response."""
@@ -101,7 +104,7 @@ class TestControl(TransactionTestCase):
                                                "test_id":
                                                    self.test_case.identifier
                                            }, method="get")
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, http_client.OK)
         self.assertFalse(content.should_skip)
 
     def test_add_test_result(self):
@@ -118,7 +121,7 @@ class TestControl(TransactionTestCase):
                     "info": "This test failed!"
                 }
             })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
     def test_start_test_stop_test(self):
         """Assert that the request has the right server response."""
@@ -129,7 +132,7 @@ class TestControl(TransactionTestCase):
                                              self.test_case.identifier
                                      })
 
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
         response, _ = self.requester(path="tests/stop_test",
                                      params={
@@ -137,7 +140,7 @@ class TestControl(TransactionTestCase):
                                          "test_id":
                                              self.test_case.identifier
                                      })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
     def test_start_test_stop_composite(self):
         """Assert that the request has the right server response."""
@@ -147,7 +150,7 @@ class TestControl(TransactionTestCase):
                                          "test_id":
                                              self.test_case.identifier
                                      })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
         response, _ = self.requester(path="tests/stop_composite",
                                      params={
@@ -155,4 +158,4 @@ class TestControl(TransactionTestCase):
                                          "test_id":
                                              self.test_case.identifier
                                      })
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)

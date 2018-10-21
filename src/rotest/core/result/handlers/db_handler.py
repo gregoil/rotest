@@ -1,5 +1,9 @@
 """Database result handler."""
 # pylint: disable=unused-argument
+from __future__ import absolute_import
+
+import six
+
 from .abstract_handler import AbstractResultHandler
 
 
@@ -54,7 +58,16 @@ class DBHandler(AbstractResultHandler):
         run_data = self.main_test.data.run_data
         if run_data is not None:
             # Save the run data so it'll have a pk.
-            run_data.save()
+            if run_data.main_test is not None:
+                main_test = run_data.main_test
+                run_data.main_test = None
+                run_data.save()
+                main_test.save()
+                run_data.main_test = main_test
+                run_data.save()
+
+            else:
+                run_data.save()
 
         # Save all the test datas so they'll have a pk.
         self._save_sub_tests(self.main_test, run_data)
@@ -100,7 +113,7 @@ class DBHandler(AbstractResultHandler):
         """
         test.data.resources.clear()
         if test.locked_resources is not None:
-            for resource in test.locked_resources.itervalues():
+            for resource in six.itervalues(test.locked_resources):
                 self._save_resource(resource, test)
 
     def stop_test(self, test):

@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument, no-self-use
-import httplib
+from __future__ import absolute_import
 
+from six.moves import http_client
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
@@ -22,8 +23,8 @@ class UpdateResources(DjangoRequestView):
     URI = "tests/update_resources"
     DEFAULT_MODEL = UpdateResourcesParamsModel
     DEFAULT_RESPONSES = {
-        httplib.NO_CONTENT: SuccessResponse,
-        httplib.BAD_REQUEST: FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -55,4 +56,4 @@ class UpdateResources(DjangoRequestView):
 
         test_data.save()
 
-        return Response({}, status=httplib.NO_CONTENT)
+        return Response({}, status=http_client.NO_CONTENT)

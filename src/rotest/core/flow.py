@@ -1,6 +1,7 @@
 """Define TestFlow composed of test blocks or other test flows."""
 # pylint: disable=protected-access
 # pylint: disable=dangerous-default-value,unused-variable,too-many-arguments
+from __future__ import absolute_import
 from itertools import count
 
 from rotest.core.block import TestBlock
@@ -147,7 +148,7 @@ class TestFlow(AbstractFlowComponent):
         for block in self:
             block.validate_inputs(fields)
             if isinstance(block, TestBlock):
-                fields.extend(block.get_outputs().keys())
+                fields.extend(list(block.get_outputs().keys()))
 
     @classmethod
     def get_name(cls):

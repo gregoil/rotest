@@ -1,5 +1,8 @@
 """Define an abstract client."""
-# pylint: disable=too-many-arguments, too-many-instance-attributes
+# pylint: disable=too-many-arguments,too-many-instance-attributes
+from __future__ import absolute_import
+
+from future.builtins import object
 from swaggapi.api.builder.client.requester import Requester
 
 from rotest.common import core_log

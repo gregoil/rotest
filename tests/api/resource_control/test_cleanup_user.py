@@ -1,7 +1,9 @@
 """Basic unittests for the server resource control operations."""
-import httplib
+from __future__ import absolute_import
+
 from functools import partial
 
+from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
 from tests.api.utils import request
@@ -25,7 +27,7 @@ class TestCleanupUser(TransactionTestCase):
     def test_no_resources_locked(self):
         """Assert response - cleanup when user didn't lock anything."""
         response, _ = self.requester(json_data={"token": self.token})
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
     def test_release_owner_complex_resource(self):
         """Assert response - cleanup of complex resource."""
@@ -41,7 +43,7 @@ class TestCleanupUser(TransactionTestCase):
         sub_resource.save()
         SESSIONS[self.token].resources = [resource]
         response, _ = self.requester(json_data={"token": self.token})
-        self.assertEqual(response.status_code, httplib.NO_CONTENT)
+        self.assertEqual(response.status_code, http_client.NO_CONTENT)
 
         resources = DemoComplexResourceData.objects.filter(
             name='complex_resource1')

@@ -5,11 +5,14 @@ test logger inherits from core_logger
 and resource_logger inherits from test_logger.
 """
 # pylint: disable=too-many-arguments
+from __future__ import absolute_import
+
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 
 from termcolor import colored
+from future.builtins import str
 
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.constants import WHITE, BOLD, CYAN, YELLOW, RED, MAGENTA
