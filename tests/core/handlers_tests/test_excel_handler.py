@@ -227,8 +227,8 @@ class TestExcelHandler(BaseResultHandlerTest):
         self.assertEqual(actual_sheet.nrows, expected_sheet.nrows)
         self.assertEqual(actual_sheet.ncols, expected_sheet.ncols)
 
-        for row, col in itertools.product(list(range(actual_sheet.nrows,
-                                                actual_sheet.ncols))):
+        for row, col in itertools.product(range(actual_sheet.nrows,
+                                                actual_sheet.ncols)):
             actual_cell = actual_sheet.cell(row, col)
             expected_cell = expected_sheet.cell(row, col)
             self.assertEqual(actual_cell, expected_cell)

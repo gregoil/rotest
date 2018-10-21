@@ -17,6 +17,8 @@ from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.core.result.handlers.remote_db_handler import RemoteDBHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
+import six
+
 
 class ExcelHandler(AbstractResultHandler):
     """Excel result handler.
@@ -365,7 +367,7 @@ class ExcelHandler(AbstractResultHandler):
 
     def _align_columns(self):
         """Align the columns width."""
-        for header, col_width in list(self.HEADER_TO_WIDTH.items()):
+        for header, col_width in six.iteritems(self.HEADER_TO_WIDTH):
             self.sheet.col(self.HEADERS.index(header)).width = col_width
 
     def _create_result_summary(self):

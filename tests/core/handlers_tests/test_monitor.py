@@ -1,6 +1,4 @@
 """Test Rotest's Monitor class behavior."""
-from __future__ import print_function
-
 import time
 import threading
 
@@ -204,7 +202,7 @@ class TestSingleFailure(AbstractMonitorTest):
                         'Case failed when it should have succeeded')
 
         fail_nums = len(self.result.failures)
-        print(self.result.failures)
+
         self.assertEqual(fail_nums, 1,
                          "Unexpected number of failures, expected %d got %d" %
                          (1, fail_nums))

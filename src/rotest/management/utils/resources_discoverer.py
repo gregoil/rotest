@@ -1,6 +1,7 @@
 """Auxiliary module for discovering Rotest resources within an app."""
 from __future__ import absolute_import
 import os
+import six
 from fnmatch import fnmatch
 
 import py
@@ -39,7 +40,7 @@ def _import_resources_from_module(module_path):
 
     module = py.path.local(module_path).pyimport()
 
-    return {item.__name__: item for item in list(module.__dict__.values())
+    return {item.__name__: item for item in six.itervalues(module.__dict__)
             if _is_resource_class(item)}
 
 

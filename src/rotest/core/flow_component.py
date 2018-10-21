@@ -23,7 +23,7 @@ from rotest.core.models.case_data import TestOutcome, CaseData
 # CRITICAL: stop test on failure
 # FINALLY: always run test, unskippable
 # OPTIONAL: don't stop test on failure (but do so on error)
-MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = list(range(1, 4))
+MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = range(1, 4)
 
 
 class PipeTo(object):

@@ -12,6 +12,7 @@ configparser==3.5.0
 constantly==15.1.0
 coverage==4.5.1
 decorator==4.1.2
+delegator.py==0.1.1
 Django==1.8.19
 docopt==0.6.2
 docutils==0.14

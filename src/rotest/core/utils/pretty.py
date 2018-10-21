@@ -220,6 +220,9 @@ class TestResult(enum.Enum):
     def __eq__(self, other):
         return str(self) == other
 
+    def __hash__(self):
+        return hash(str(self))
+
 
 class Pretty(object):
     """Title with decoration.
