@@ -11,7 +11,7 @@ def test_sanity():
                                      "rotest.common.django_utils.settings"})
 
     process.block()
-    assert("Test run has started" in process.err)
-    assert('ExampleBlock1 ran' in process.out)
-    assert('ExampleBlock2 ran' in process.out)
-    assert(process.ok)
+    assert "Test run has started" in process.err
+    assert 'ExampleBlock1 ran' in process.out
+    assert 'ExampleBlock2 ran' in process.out
+    assert process.ok

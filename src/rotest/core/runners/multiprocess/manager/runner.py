@@ -4,11 +4,11 @@
 from __future__ import absolute_import
 
 import os
-import six
 import time
 import datetime
 from multiprocessing import Queue
 
+import six
 from six.moves import queue
 from future.builtins import range
 from future.utils import itervalues

@@ -1,10 +1,10 @@
 """Auxiliary module for discovering Rotest resources within an app."""
 from __future__ import absolute_import
 import os
-import six
 from fnmatch import fnmatch
 
 import py
+import six
 import django
 from rotest.common.config import DISCOVERER_BLACKLIST
 from rotest.management.base_resource import BaseResource

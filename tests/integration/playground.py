@@ -7,6 +7,7 @@ from rotest.core import TestBlock, TestFlow
 class ExampleBlock1(TestBlock):
     __test__ = False
 
+    # pylint: disable=no-self-use
     def test_method(self):
         print("ExampleBlock1 ran")
 
@@ -14,6 +15,7 @@ class ExampleBlock1(TestBlock):
 class ExampleBlock2(TestBlock):
     __test__ = False
 
+    # pylint: disable=no-self-use
     def test_method(self):
         print("ExampleBlock2 ran")
 
