@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 import os
 import re
+import six
 
 from future.builtins import next
 from future.utils import iteritems
@@ -221,7 +222,7 @@ class TestTestCase(BasicRotestUnitTest):
 
         test_resources = case.all_resources
         locked_names = []
-        for resource in list(test_resources.values()):
+        for resource in six.itervalues(test_resources):
             self.assertTrue(isinstance(resource, DemoResource),
                             "Got wrong resource %r for the request" % resource)
 

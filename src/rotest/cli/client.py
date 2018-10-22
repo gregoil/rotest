@@ -199,8 +199,8 @@ def main(*tests):
     arguments = parser.parse_args()
 
     config = AttrDict(chain(
-        list(parse_config_file(DEFAULT_CONFIG_PATH).items()),
-        list(parse_config_file(arguments.config_path).items()),
+        six.iteritems(parse_config_file(DEFAULT_CONFIG_PATH)),
+        six.iteritems(parse_config_file(arguments.config_path)),
         filter_valid_values(vars(arguments)),
     ))
 

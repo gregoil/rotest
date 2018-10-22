@@ -10,6 +10,8 @@ from attrdict import AttrDict
 from future.utils import iteritems
 from future.builtins import zip, object
 
+import six
+
 
 ROTEST_CONFIGURATION_FILES = ("rotest.yaml", "rotest.yml",
                               ".rotest.yaml", ".rotest.yml")
@@ -68,7 +70,7 @@ def get_command_line_configuration(configuration_schema, command_line_options):
                 not command_line_option.startswith("-")):
             pass
 
-        for target, option in list(configuration_schema.items()):
+        for target, option in six.iteritems(configuration_schema):
             if command_line_option in option.command_line_options:
                 configuration[target] = value
 
@@ -89,7 +91,7 @@ def get_environment_variables_configuration(configuration_schema,
         dict: a match between each target option to the given value.
     """
     configuration = {}
-    for target, option in list(configuration_schema.items()):
+    for target, option in six.iteritems(configuration_schema):
         for environment_variable in option.environment_variables:
             if environment_variable in environment_variables:
                 configuration[target] = \
@@ -140,7 +142,7 @@ def get_file_configuration(configuration_schema, config_content):
     yaml_configuration = yaml_configuration["rotest"]
 
     configuration = {}
-    for target, option in list(configuration_schema.items()):
+    for target, option in six.iteritems(configuration_schema):
         for config_file_option in option.config_file_options:
             if config_file_option in yaml_configuration:
                 configuration[target] = yaml_configuration[config_file_option]
@@ -171,7 +173,7 @@ def get_configuration(configuration_schema,
     """
     default_configuration = {
         target: option.default_value
-        for target, option in list(configuration_schema.items())}
+        for target, option in six.iteritems(configuration_schema)}
 
     if command_line_options is None:
         cli_configuration = {}

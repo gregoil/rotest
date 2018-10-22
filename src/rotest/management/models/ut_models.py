@@ -30,7 +30,7 @@ class DemoResourceData(ResourceData):
         fails_on_finalize (bool): the resource should fail on finalization.
         fails_on_initialize (bool): the resource should fail on initialization.
     """
-    BOOT_MODE, PROD_MODE = list(range(2))
+    BOOT_MODE, PROD_MODE = range(2)
 
     MODE_CHOICE = ((BOOT_MODE, 'Boot'),
                    (PROD_MODE, 'Production'))

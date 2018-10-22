@@ -18,7 +18,7 @@ class TestOutcome(object):
             save that outcome as the result of the test.
     """
     (SUCCESS, ERROR, FAILED, SKIPPED,
-     EXPECTED_FAILURE, UNEXPECTED_SUCCESS) = list(range(6))
+     EXPECTED_FAILURE, UNEXPECTED_SUCCESS) = range(6)
 
     RESULT_PRIORITY = {SUCCESS: 0,
                        SKIPPED: 1,

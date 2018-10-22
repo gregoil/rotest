@@ -6,9 +6,9 @@ from __future__ import absolute_import
 import os
 import time
 import datetime
-import platform
 from multiprocessing import Queue
 
+import six
 from six.moves import queue
 from future.builtins import range
 from future.utils import itervalues
@@ -200,10 +200,10 @@ class MultiprocessRunner(BaseTestRunner):
 
         # Check if the worker was restarted before a test started
         if worker.test is not None:
-            if platform.python_version().startswith("2"):
+            if six.PY2:
                 self.result.addError(worker.test, (RuntimeError, reason, None))
 
-            elif platform.python_version().startswith("3"):
+            elif six.PY3:
                 self.result.addError(worker.test, (RuntimeError,
                                                    RuntimeError(reason),
                                                    None))
