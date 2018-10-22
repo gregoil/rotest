@@ -11,11 +11,11 @@ ROTEST_WORK_DIR = os.path.join(os.path.expanduser("~"), ".rotest")
 def test_sanity():
     python = sys.executable
     playground = os.path.join(THIS_DIRECTORY, "playground.py")
-    environment_variables = {
-        "DJANGO_SETTINGS_MODULE":
-            "rotest.common.django_utils.settings",
-        "ROTEST_WORK_DIR": ROTEST_WORK_DIR
-    }
+    environment_variables = dict(
+        os.environ,
+        DJANGO_SETTINGS_MODULE="rotest.common.django_utils.settings",
+        ROTEST_WORK_DIR=ROTEST_WORK_DIR
+    )
 
     p = subprocess.Popen([python, playground], env=environment_variables,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
