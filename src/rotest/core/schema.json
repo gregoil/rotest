@@ -25,6 +25,11 @@
             "description": "Run only tests that match the filter expression",
             "type": ["string", "null"]
         },
+        "order": {
+            "description": "Order discovered tests by these tags, where the tests answering the first tag run firsts",
+            "type": "array",
+            "minItems": 0
+        },
         "run_name": {
             "description": "Assign run name",
             "type": ["string", "null"]

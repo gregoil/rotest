@@ -139,7 +139,8 @@ class GeneralData(models.Model):
             NotImplementedError: calling on abstract class.
             RuntimeError: calling on a non-complex test.
         """
-        return [get_sub_model(test_data) for test_data in self.tests.all()]
+        return [get_sub_model(test_data)
+                for test_data in self.tests.order_by("id")]
 
     @classmethod
     def should_skip(cls, test_name, run_data=None, exclude_pk=None):

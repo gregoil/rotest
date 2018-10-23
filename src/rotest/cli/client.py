@@ -162,6 +162,10 @@ def create_client_options_parser():
     parser.add_argument("--filter", "-f", metavar="query",
                         help="Run only tests that match the filter "
                              "expression, e.g. 'Tag1* and not Tag13'")
+    parser.add_argument("--order", "-O",
+                        type=lambda tags: tags.split(','),
+                        help="Order discovered tests by these tags, "
+                             "separated by comma, e.g. 'Tag1,Tag2'")
     parser.add_argument("--name", "-n", metavar="name",
                         dest="run_name",
                         help="Assign a name for current launch")
@@ -210,11 +214,17 @@ def main(*tests):
         config.paths = (main_module,)
 
     if len(tests) == 0:
-        tests = discover_tests_under_paths(config.paths)
+        tests = list(discover_tests_under_paths(config.paths))
 
     if config.filter is not None:
         tests = [test for test in tests
                  if match_tags(get_tags_by_class(test), config.filter)]
+
+    for tag in reversed(config.order):
+        tests.sort(
+            reverse=True,
+            key=lambda test_class: match_tags(get_tags_by_class(test_class),
+                                              tag))
 
     for entry_point in \
             pkg_resources.iter_entry_points("rotest.cli_client_actions"):

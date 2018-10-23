@@ -4,6 +4,7 @@
   "processes": null,
   "outputs": ["pretty", "excel"],
   "filter": null,
+  "order": [],
   "run_name": null,
   "list": false,
   "fail_fast": false,
