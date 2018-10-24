@@ -93,8 +93,8 @@ If you're not sure what you can do, the help options :option:`-h` and
                 Specify resources to request by attributes,
                 e.g. '-r res1.group=QA,res2.comment=CI'.
 
-Listing and Filtering
-=====================
+Listing, Filtering and Ordering
+===============================
 
 .. option:: -l, --list
 
@@ -211,6 +211,13 @@ insensitive):
         |   |   SuccessFlow ['FLOW']
         |   |   |   PassingBlock.test_method
         |   |   |   PassingBlock.test_method
+
+.. option:: -O <tags>, --order <tags>
+
+    Order discovered tests according to this list of tags,
+    where tests answering the first tag (which syntax is similar
+    to a filter expression) will get higher priority,
+    tests answering the second tag will have a secondry priority, etc.
 
 Stopping at first failure
 =========================
