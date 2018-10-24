@@ -214,7 +214,7 @@ def main(*tests):
         config.paths = (main_module,)
 
     if len(tests) == 0:
-        tests = list(discover_tests_under_paths(config.paths))
+        tests = discover_tests_under_paths(config.paths)
 
     if config.filter is not None:
         tests = [test for test in tests

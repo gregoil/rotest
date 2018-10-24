@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+import re
 import sys
 
 import mock
@@ -331,3 +333,36 @@ def test_discarding_some_tests_by_tag(capsys):
             out, _ = capsys.readouterr()
             assert "Case1.test_something" not in out
             assert "Case2.test_something" in out
+
+
+def test_ordering_tests(capsys):
+    class Case1(TestCase):
+        TAGS = ["2", "3"]
+
+        def test_something(self):
+            pass
+
+    class Case2(TestCase):
+        TAGS = ["1"]
+
+        def test_something(self):
+            pass
+
+    class Case3(TestCase):
+        TAGS = ["1", "2"]
+
+        def test_something(self):
+            pass
+
+    with Patcher() as patcher:
+        patcher.fs.add_real_file(DEFAULT_CONFIG_PATH)
+        patcher.fs.add_real_file(DEFAULT_SCHEMA_PATH)
+        patcher.fs.create_file("some_test.py")
+
+        with mock.patch("rotest.cli.client.discover_tests_under_paths",
+                        return_value=[Case1, Case2, Case3]):
+            sys.argv = ["rotest", "some_test.py", "--order", "1,2", "--list"]
+
+            main()
+            out, _ = capsys.readouterr()
+            assert out.find("Case3") < out.find("Case2") < out.find("Case1")
