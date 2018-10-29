@@ -136,6 +136,9 @@ class Result(TestResult):
         test.logger.debug("Test %r has stopped running", test.data)
 
         test.data.end()
+        if test.data.exception_type is None:
+            test.end(test_outcome=TestOutcome.ERROR, details="Terminated")
+
         test.release_resource_loggers()
         for result_handler in self.result_handlers:
             result_handler.stop_test(test)
