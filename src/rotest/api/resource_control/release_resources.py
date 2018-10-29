@@ -86,9 +86,15 @@ class ReleaseResources(DjangoRequestView):
     @session_middleware
     def post(self, request, sessions, *args, **kwargs):
         """Release the given resources one by one."""
+        try:
+            session = sessions[request.model.token]
+
+        except KeyError:
+            raise BadRequest("Invalid token/test_id provided!")
+
         errors = {}
         username = get_username(request)
-        session = sessions[request.model.token]
+
         with transaction.atomic():
             for name in request.model.resources:
                 try:

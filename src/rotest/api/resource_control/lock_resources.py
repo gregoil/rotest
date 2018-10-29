@@ -144,8 +144,13 @@ class LockResources(DjangoRequestView):
             If one of the resources fails to lock, all the resources that has
             been locked until that resource will be released.
         """
+        try:
+            session = sessions[request.model.token]
+
+        except KeyError:
+            raise BadRequest("Invalid token/test_id provided!")
+
         username = get_username(request)
-        session = sessions[request.model.token]
         descriptors = request.model.descriptors
 
         if not auth_models.User.objects.filter(username=username).exists():
