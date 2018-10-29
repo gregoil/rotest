@@ -6,6 +6,7 @@ from future.builtins import str
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from swaggapi.api.builder.server.response import Response
+from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management import ResourceData
