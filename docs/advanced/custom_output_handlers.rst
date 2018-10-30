@@ -19,11 +19,26 @@ You can make your own Output Handler, following the next two steps:
   :class:`rotest.core.result.handlers.abstract_handler.AbstractResultHandler`,
   and overriding the relevant methods.
 
-* Register the above inheriting class as an entrypoint, in a setup.py file, and
-  make sure it's being install on the environment.
+* Register the above inheriting class as an entrypoint in your setup.py file inside ``setup()``:
 
-For an example, please refer to
+    .. code-block:: python
+
+        entry_points={
+            "rotest.result_handlers":
+                ["<handler tag, e.g. my_handler> = <import path to the monitor's module>:<monitor class name>"]
+        },
+
+* Make sure it's being installed in the environment by calling
+
+    .. code-block:: console
+
+        python setup.py develop
+
+
+For an example, you can refer to
 `rotest_reportportal <https://github.com/gregoil/rotest_reportportal>`_ plugin.
+
+.. _available_events:
 
 Available Events
 ================

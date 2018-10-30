@@ -20,8 +20,9 @@ Advanced
 .. toctree::
     :maxdepth: 2
 
-    advanced/custom_output_handlers
     advanced/blocks
+    advanced/custom_output_handlers
+    advanced/monitors
 
 Indices and tables
 ==================

@@ -428,3 +428,45 @@ with the output handlers separated using commas:
     $ rotest some_test_file.py --outputs excel,logdebug
 
 For more about output handlers, read on :ref:`output_handlers`.
+
+Adding New Options
+==================
+
+You can create new CLI options and behavior using the two entrypoints:
+``cli_client_parsers`` and ``cli_client_actions``.
+
+For example:
+
+.. code-block:: python
+
+    # utils/baz.py
+
+    def add_baz_option(parser):
+        """Add the 'baz' flag to the CLI options."""
+        parser.add_argument("--baz", "-B", action="store_true",
+                            help="The amazing Baz flag")
+
+
+    def use_baz_option(tests, config):
+        """Print the list of tests if 'baz' is on."""
+        if config.baz is True:
+            print tests
+
+
+And in your ``setup.py`` file inside ``setup()``:
+
+    .. code-block:: python
+
+        entry_points={
+            "rotest.cli_client_parsers":
+                ["baz_parser = utils.baz:add_baz_option"],
+            "rotest.cli_client_actions":
+                ["baz_func = utils.baz:use_baz_option"]
+        },
+
+
+* Make sure it's being installed in the environment by calling
+
+    .. code-block:: console
+
+        python setup.py develop

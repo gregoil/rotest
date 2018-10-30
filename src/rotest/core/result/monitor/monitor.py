@@ -2,6 +2,15 @@
 
 Implement monitors and use them as output handlers to monitor background
 processes, statuses and resources.
+
+A monitor is an output handler that uses tests' attributes, like resources.
+There are two kinds of monitors:
+1. basic monitors - react to the test's event - start, finish, error, etc.
+2. cyclic monitors - run periodically in the background during the test.
+
+To implement a cyclic monitor, override 'run_monitor' and specify 'CYCLE',
+if not implemented, the monitor will be a basic one (cyclic monitors can
+react to tests' event too).
 """
 # pylint: disable=broad-except
 from __future__ import absolute_import
@@ -74,17 +83,20 @@ def skip_if_block(func):
     return wrapped_func
 
 
+def skip_if_not_main(func):
+    """Avoid running the method if the test is a TestBlock or sub-flow."""
+    @wraps(func)
+    def wrapped_func(self, test, *args, **kwargs):
+        if isinstance(test, TestCase) or \
+                (isinstance(test, TestFlow) and test.is_main):
+
+            return func(self, test, *args, **kwargs)
+
+    return wrapped_func
+
+
 class AbstractMonitor(AbstractResultHandler):
     """Abstract monitor class.
-
-    A monitor is an output handler that uses tests' attributes, like resources.
-    There are two kinds of monitors:
-    1. basic monitors - react to the test's event - start, finish, error, etc.
-    2. cyclic monitors - run periodically in the background during the test.
-
-    To implement a cyclic monitor, override 'run_monitor' and specify 'CYCLE',
-    if not implemented, the monitor will be a basic one (cyclic monitors can
-    react to tests' event too).
 
     Attributes:
         CYCLE (number): sleep time in seconds between monitor runs.
@@ -121,6 +133,7 @@ class AbstractMonitor(AbstractResultHandler):
             test.logger.exception("Got an error while running monitor %r",
                                   self.NAME)
 
+    @skip_if_not_main
     def setup_finished(self, test):
         """Handle test start event - register the monitor.
 
@@ -133,23 +146,19 @@ class AbstractMonitor(AbstractResultHandler):
 
             return
 
-        if isinstance(test, TestCase) or \
-                (isinstance(test, TestFlow) and test.is_main):
-            test.logger.debug("Registering monitor %r", self.NAME)
-            self._failed = False
-            MonitorServer.register_monitor(self, test)
+        test.logger.debug("Registering monitor %r", self.NAME)
+        self._failed = False
+        MonitorServer.register_monitor(self, test)
 
+    @skip_if_not_main
     def start_teardown(self, test):
         """Handle test teardown event - unregister the monitor.
 
         Args:
             test (object): test item instance.
         """
-        if isinstance(test, TestCase) or \
-                (isinstance(test, TestFlow) and test.is_main):
-
-            test.logger.debug("Unregistering monitor %r", self.NAME)
-            MonitorServer.unregister_monitor(self)
+        test.logger.debug("Unregistering monitor %r", self.NAME)
+        MonitorServer.unregister_monitor(self)
 
     def fail_test(self, test, message):
         """Add a monitor failure to the test without stopping it.
@@ -170,7 +179,7 @@ class AbstractResourceMonitor(AbstractMonitor):
     """Abstract cyclic monitor that depends on a resource to run.
 
     This class extends the AbstractMonitor behavior and also waits for the
-    resource to be ready for work before starting the monitoring process.
+    resource to be ready for work before calling `run_monitor`.
 
     Attributes:
         RESOURCE_NAME (str): expected field name of the resource in the test.
