@@ -2,6 +2,15 @@
 
 Implement monitors and use them as output handlers to monitor background
 processes, statuses and resources.
+
+A monitor is an output handler that uses tests' attributes, like resources.
+There are two kinds of monitors:
+1. basic monitors - react to the test's event - start, finish, error, etc.
+2. cyclic monitors - run periodically in the background during the test.
+
+To implement a cyclic monitor, override 'run_monitor' and specify 'CYCLE',
+if not implemented, the monitor will be a basic one (cyclic monitors can
+react to tests' event too).
 """
 # pylint: disable=broad-except
 from __future__ import absolute_import
@@ -88,15 +97,6 @@ def skip_if_not_main(func):
 
 class AbstractMonitor(AbstractResultHandler):
     """Abstract monitor class.
-
-    A monitor is an output handler that uses tests' attributes, like resources.
-    There are two kinds of monitors:
-    1. basic monitors - react to the test's event - start, finish, error, etc.
-    2. cyclic monitors - run periodically in the background during the test.
-
-    To implement a cyclic monitor, override 'run_monitor' and specify 'CYCLE',
-    if not implemented, the monitor will be a basic one (cyclic monitors can
-    react to tests' event too).
 
     Attributes:
         CYCLE (number): sleep time in seconds between monitor runs.

@@ -19,7 +19,7 @@ You can make your own Output Handler, following the next two steps:
   :class:`rotest.core.result.handlers.abstract_handler.AbstractResultHandler`,
   and overriding the relevant methods.
 
-* Register the above inheriting class as an entrypoint in your setup.py file inside ``Setup()``:
+* Register the above inheriting class as an entrypoint in your setup.py file inside ``setup()``:
 
     .. code-block:: python
 
@@ -37,6 +37,8 @@ You can make your own Output Handler, following the next two steps:
 
 For an example, you can refer to
 `rotest_reportportal <https://github.com/gregoil/rotest_reportportal>`_ plugin.
+
+.. _available_events:
 
 Available Events
 ================

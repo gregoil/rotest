@@ -439,27 +439,34 @@ For example:
 
 .. code-block:: python
 
-    # utils/foo.py
+    # utils/baz.py
 
-    def add_foo_option(parser):
-        """Add the 'foo' flag to the CLI options."""
-        parser.add_argument("--foo", "-B", action="store_true",
-                        help="The amazing Foo flag")
+    def add_baz_option(parser):
+        """Add the 'baz' flag to the CLI options."""
+        parser.add_argument("--baz", "-B", action="store_true",
+                            help="The amazing Baz flag")
 
 
-    def use_foo_option(tests, config):
-        """Print the list of tests if 'foo' is on."""
-        if config.foo is True:
+    def use_baz_option(tests, config):
+        """Print the list of tests if 'baz' is on."""
+        if config.baz is True:
             print tests
 
 
-And in your ``setup.py`` file inside ``Setup()``:
+And in your ``setup.py`` file inside ``setup()``:
 
     .. code-block:: python
 
         entry_points={
             "rotest.cli_client_parsers":
-                ["foo_parser = utils.foo:add_foo_option"],
+                ["baz_parser = utils.baz:add_baz_option"],
             "rotest.cli_client_actions":
-                ["foo_func = utils.foo:use_foo_option"]
+                ["baz_func = utils.baz:use_baz_option"]
         },
+
+
+* Make sure it's being installed in the environment by calling
+
+    .. code-block:: console
+
+        python setup.py develop
