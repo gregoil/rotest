@@ -74,6 +74,18 @@ def skip_if_block(func):
     return wrapped_func
 
 
+def skip_if_not_main(func):
+    """Avoid running the method if the test is a TestBlock or sub-flow."""
+    @wraps(func)
+    def wrapped_func(self, test, *args, **kwargs):
+        if isinstance(test, TestCase) or \
+                (isinstance(test, TestFlow) and test.is_main):
+
+            return func(self, test, *args, **kwargs)
+
+    return wrapped_func
+
+
 class AbstractMonitor(AbstractResultHandler):
     """Abstract monitor class.
 
@@ -121,6 +133,7 @@ class AbstractMonitor(AbstractResultHandler):
             test.logger.exception("Got an error while running monitor %r",
                                   self.NAME)
 
+    @skip_if_not_main
     def setup_finished(self, test):
         """Handle test start event - register the monitor.
 
@@ -133,23 +146,19 @@ class AbstractMonitor(AbstractResultHandler):
 
             return
 
-        if isinstance(test, TestCase) or \
-                (isinstance(test, TestFlow) and test.is_main):
-            test.logger.debug("Registering monitor %r", self.NAME)
-            self._failed = False
-            MonitorServer.register_monitor(self, test)
+        test.logger.debug("Registering monitor %r", self.NAME)
+        self._failed = False
+        MonitorServer.register_monitor(self, test)
 
+    @skip_if_not_main
     def start_teardown(self, test):
         """Handle test teardown event - unregister the monitor.
 
         Args:
             test (object): test item instance.
         """
-        if isinstance(test, TestCase) or \
-                (isinstance(test, TestFlow) and test.is_main):
-
-            test.logger.debug("Unregistering monitor %r", self.NAME)
-            MonitorServer.unregister_monitor(self)
+        test.logger.debug("Unregistering monitor %r", self.NAME)
+        MonitorServer.unregister_monitor(self)
 
     def fail_test(self, test, message):
         """Add a monitor failure to the test without stopping it.
@@ -170,7 +179,7 @@ class AbstractResourceMonitor(AbstractMonitor):
     """Abstract cyclic monitor that depends on a resource to run.
 
     This class extends the AbstractMonitor behavior and also waits for the
-    resource to be ready for work before starting the monitoring process.
+    resource to be ready for work before calling `run_monitor`.
 
     Attributes:
         RESOURCE_NAME (str): expected field name of the resource in the test.
