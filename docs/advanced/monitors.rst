@@ -45,7 +45,7 @@ There are two types of monitors:
     Since monitors inherit from ``AbstractResultHandler``, you can react
     to any test event by overriding the appropriate method.
 
-    See :ref:`custom_output_handlers` for a list of events.
+    See :ref:`advanced.custom_output_handlers` for a list of events.
 
     Each of those event methods get the test instance as the first parameter,
     through which you can access its fields (test.<resource>, test.config, test.work_dir, etc.)
