@@ -428,3 +428,38 @@ with the output handlers separated using commas:
     $ rotest some_test_file.py --outputs excel,logdebug
 
 For more about output handlers, read on :ref:`output_handlers`.
+
+Adding New Options
+==================
+
+You can create new CLI options and behavior using the two entrypoints:
+``cli_client_parsers`` and ``cli_client_actions``.
+
+For example:
+
+.. code-block:: python
+
+    # utils/foo.py
+
+    def add_foo_option(parser):
+        """Add the 'foo' flag to the CLI options."""
+        parser.add_argument("--foo", "-B", action="store_true",
+                        help="The amazing Foo flag")
+
+
+    def use_foo_option(tests, config):
+        """Print the list of tests if 'foo' is on."""
+        if config.foo is True:
+            print tests
+
+
+And in your ``setup.py`` file inside ``Setup()``:
+
+    .. code-block:: python
+
+        entry_points={
+            "rotest.cli_client_parsers":
+                ["foo_parser = utils.foo:add_foo_option"],
+            "rotest.cli_client_actions":
+                ["foo_func = utils.foo:use_foo_option"]
+        },

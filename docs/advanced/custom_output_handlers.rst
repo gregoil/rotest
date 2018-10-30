@@ -19,7 +19,7 @@ You can make your own Output Handler, following the next two steps:
   :class:`rotest.core.result.handlers.abstract_handler.AbstractResultHandler`,
   and overriding the relevant methods.
 
-* Register the above inheriting class as an entrypoint in your setup.py file:
+* Register the above inheriting class as an entrypoint in your setup.py file inside ``Setup()``:
 
     .. code-block:: python
 
