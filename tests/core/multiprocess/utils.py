@@ -27,7 +27,7 @@ class BasicMultiprocessCase(MockCase):
     """
     __test__ = False
 
-    TIMEOUT = 1.5  # Seconds.
+    TIMEOUT = 3.0  # Seconds.
     EXTRA_TIME = 0.25  # Seconds.
 
     pid_queue = None
