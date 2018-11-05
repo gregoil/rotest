@@ -44,11 +44,19 @@ class ThreadedResource(BaseResource):
     DATA_CLASS = DemoResourceData
     THREADS = []
 
+    RAISE_EXCEPTION = False
+    EXCEPTION_MESSAGE = "Intentional Error in initialization"
+
     def validate(self):
         """Mock validate, register the thread and wait for another."""
         self.THREADS.append(current_thread().ident)
         while len(self.THREADS) <= 1:
             time.sleep(0.1)
+
+    def initialize(self):
+        """Mock initialize, raises an error according to a flag."""
+        if self.RAISE_EXCEPTION:
+            raise RuntimeError(self.EXCEPTION_MESSAGE)
 
 
 class ThreadedParent(BaseResource):

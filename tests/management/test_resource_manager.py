@@ -1258,6 +1258,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                                     name=self.COMPLEX_NAME)]
 
         # Request the free resource
+        ThreadedResource.RAISE_EXCEPTION = False
         resources = self.client.request_resources(requests)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
@@ -1265,6 +1266,18 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEqual(len(ThreadedResource.THREADS), 2,
                          "%d threads were created instead of 2" %
                          len(ThreadedResource.THREADS))
+
+    def test_threaded_initialize_error(self):
+        """Test multi-threaded resources initialize."""
+        requests = [ResourceRequest('res1', ThreadedParent,
+                                    name=self.COMPLEX_NAME)]
+
+        # Request the free resource
+        ThreadedResource.RAISE_EXCEPTION = True
+        with self.assertRaisesMessage(RuntimeError,
+                                      ThreadedResource.EXCEPTION_MESSAGE):
+
+            self.client.request_resources(requests)
 
     def test_lock_alternative_complex_resource(self):
         """Lock complex resource with the default 'create_sub_resources'.
