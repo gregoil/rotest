@@ -120,7 +120,7 @@ Sometimes, you want to have a better visualization of the results. Rotest can
 output the results into a human-readable :file:`results.xls` file, which can be
 sent via email for instance. The relevant option is ``-o excel``.
 
-This artifacts is saved in the working directory of Rotest. For more about
+This artifact is saved in the working directory of Rotest. For more about
 this location, see :ref:`configurations`.
 
 Remote

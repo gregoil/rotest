@@ -104,7 +104,6 @@ def parse_json(json_path, schema_path=None):
         json_content = json.load(config_file)
 
     if schema_path is not None:
-
         with open(schema_path) as schema:
             schema_content = json.load(schema)
 
