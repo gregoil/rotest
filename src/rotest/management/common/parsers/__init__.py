@@ -1,4 +1,4 @@
 """Define all parsers that supports resource_management messages"""
-from .xml_parser import XMLParser
+from .json_parser import JSONParser
 
-DEFAULT_PARSER = XMLParser
+DEFAULT_PARSER = JSONParser

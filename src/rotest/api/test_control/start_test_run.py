@@ -7,7 +7,7 @@ from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.core.models import RunData
-from rotest.management.common.json_parser import JSONParser
+from rotest.management.common.parsers import JSONParser
 from rotest.api.common.models import StartTestRunParamsModel
 from rotest.api.test_control.middleware import session_middleware
 from rotest.api.common.responses import (SuccessResponse,

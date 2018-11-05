@@ -30,7 +30,6 @@ requirements = [
     'isort',
     'ipdbugger>=2',
     'docopt',
-    'lxml<4.0.0',
     'xlwt',
     'attrdict',
     'pyyaml',

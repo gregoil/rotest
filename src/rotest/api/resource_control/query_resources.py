@@ -8,8 +8,8 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
+from rotest.management.common.parsers import JSONParser
 from rotest.management.common.errors import ResourceTypeError
-from rotest.management.common.json_parser import JSONParser
 from rotest.api.common.models import ResourceDescriptorModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.api.common.responses import (InfluencedResourcesResponseModel,

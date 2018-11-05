@@ -14,7 +14,7 @@ from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
 from rotest.management.common.utils import get_username
-from rotest.management.common.json_parser import JSONParser
+from rotest.management.common.parsers import JSONParser
 from rotest.management.common.errors import ResourceTypeError
 from rotest.api.common.models import LockResourcesParamsModel
 from rotest.api.test_control.middleware import session_middleware
