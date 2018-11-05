@@ -60,7 +60,7 @@ class ClientResultManager(AbstractClient):
         test_dict = {TEST_ID_KEY: test_item.identifier,
                      TEST_NAME_KEY: test_item.data.name}
 
-        test_dict[TEST_CLASS_CODE_KEY] = cls.parser.encode(
+        test_dict[TEST_CLASS_CODE_KEY] = cls.parser.recursive_encode(
             type(test_item.data))
 
         if test_item.IS_COMPLEX:

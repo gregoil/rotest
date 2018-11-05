@@ -168,7 +168,7 @@ class LockResources(DjangoRequestView):
             session.resources.append(resource)
 
         encoder = JSONParser()
-        response = [encoder.encode(_resource)
+        response = [encoder.recursive_encode(_resource)
                     for _resource in locked_resources]
         return Response({
             "resource_descriptors": response

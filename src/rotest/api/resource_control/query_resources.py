@@ -58,7 +58,8 @@ class QueryResources(DjangoRequestView):
                                  "the requirements: {!r}".format(descriptor))
 
             encoder = JSONParser()
-            query_result = [encoder.encode(resource) for resource in matches]
+            query_result = [encoder.recursive_encode(resource)
+                            for resource in matches]
 
         return Response({
             "resource_descriptors": query_result
