@@ -293,8 +293,14 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
             else:
                 sub_resource.setup_resource()
 
-        for sub_thread in sub_threads:
+        for sub_thread, sub_resource in zip(sub_threads,
+                                            self.get_sub_resources()):
+
             sub_thread.join()
+            if sub_thread.traceback_tuple is not None:
+                self.logger.error("Got an error while preparing resource %s",
+                                  sub_resource.name,
+                                  exc_info=sub_thread.traceback_tuple)
 
         for sub_thread in sub_threads:
             if sub_thread.traceback_tuple is not None:
