@@ -10,7 +10,7 @@ from rotest.api.request_token import RequestToken
 from rotest.api.common.models import GenericModel
 from rotest.api.resource_control import UpdateFields
 from rotest.api.common import UpdateFieldsParamsModel
-from rotest.management.common.json_parser import JSONParser
+from rotest.management.common.parsers import JSONParser
 from rotest.api.common.responses import FailureResponseModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.common.config import (DJANGO_MANAGER_PORT,

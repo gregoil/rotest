@@ -9,7 +9,7 @@ from collections import defaultdict
 from future.builtins import range
 
 from rotest.common import core_log
-from rotest.core.utils.json_parser import parse
+from rotest.core.utils.common import parse_json
 from rotest.common.utils import get_class_fields
 from rotest.management.base_resource import BaseResource
 from rotest.core.runners.base_runner import BaseTestRunner
@@ -140,8 +140,8 @@ def parse_config_file(json_path, schema_path=DEFAULT_SCHEMA_PATH):
         raise ValueError("Illegal config-path: %r" % json_path)
 
     core_log.debug('Parsing configuration file %r', json_path)
-    config = parse(json_path=json_path,
-                   schema_path=schema_path)
+    config = parse_json(json_path=json_path,
+                        schema_path=schema_path)
 
     return config
 

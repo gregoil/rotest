@@ -11,17 +11,18 @@ from numbers import Number
 
 from six import string_types
 from future.utils import iteritems
-from future.builtins import object
 from django.db import models
 from django.db.models import ForeignKey
 
+from rotest.management.common import messages
 from rotest.management.base_resource import BaseResource
 from rotest.management.common.parsers.abstract_parser import ParsingError
 from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
                                             extract_type, extract_type_path)
+from .abstract_parser import AbstractParser
 
 
-class JSONParser(object):
+class JSONParser(AbstractParser):
     """json messages parser.
 
     This message parser allows to encode & decode resource management messages.
@@ -66,37 +67,38 @@ class JSONParser(object):
             BaseResource: self._encode_resource
         }
 
-    def encode(self, resource_data):
-        """Encode a resource.
+    def _encode_message(self, message):
+        """Encode a message to JSON-compatible format.
 
         Args:
-            resource_data (ResourceData): a resource to encode.
+            message (AbstractMessage): message to encode.
 
         Returns:
-            object. encoded data, depends on the parser type.
-
-        Raises:
-            TypeError: given 'resource' is not of type 'ResourceData'.
-            ParsingError: encoding failure.
+            object. JSON compatible encoded object.
         """
-        return self._encode(resource_data)
+        encoded_message = {"message_type": message.__class__.__name__}
+        for slot in message.__slots__:
+            slot_value = getattr(message, slot)
+            encoded_message[slot] = self.recursive_encode(slot_value)
 
-    def decode(self, data):
-        """Decode a message.
+        return encoded_message
+
+    def _decode_message(self, data):
+        """Decode a message from JSON format.
 
         Args:
-            data (object): data to decode, encoded data of 'AbstractMessage',
-                depends on the parser type.
+            data (object): message to decode.
 
         Returns:
-            AbstractMessage. decoded message.
-
-        Raises:
-            ParsingError: decoding failure.
+            AbstractMessage. message after decoding from json.
         """
-        return self._decode(data)
+        message_class = getattr(messages, data.pop("message_type"))
+        kwargs = {key: self.recursive_decode(value)
+                  for key, value in data.items()}
 
-    def _encode(self, data):
+        return message_class(**kwargs)
+
+    def recursive_encode(self, data):
         """Encode the given data according to its type.
 
         Warning:
@@ -126,7 +128,7 @@ class JSONParser(object):
             if isinstance(data, encoder_type):
                 return encoder_handler(data)
 
-        raise TypeError("Type %r isn't supported by the parser", type(data))
+        raise TypeError("Type %r isn't supported by the parser" % type(data))
 
     def _encode_resource(self, resource):
         """Encode a resource to an json string.
@@ -141,8 +143,8 @@ class JSONParser(object):
 
         return {
             self._RESOURCE_TYPE: {
-                TYPE_NAME: self._encode(type_name),
-                DATA_NAME: self._encode(resource.data)
+                TYPE_NAME: self.recursive_encode(type_name),
+                DATA_NAME: self.recursive_encode(resource.data)
             }
         }
 
@@ -159,8 +161,8 @@ class JSONParser(object):
 
         return {
             self._RESOURCE_DATA_TYPE: {
-                TYPE_NAME: self._encode(type_name),
-                PROPERTIES: self._encode(resource_data.get_fields())
+                TYPE_NAME: self.recursive_encode(type_name),
+                PROPERTIES: self.recursive_encode(resource_data.get_fields())
             }
         }
 
@@ -175,7 +177,7 @@ class JSONParser(object):
         """
         return {
             self._CLASS_TYPE: {
-                TYPE_NAME: self._encode(extract_type_path(data_type))
+                TYPE_NAME: self.recursive_encode(extract_type_path(data_type))
             }
         }
 
@@ -198,7 +200,7 @@ class JSONParser(object):
                 raise ParsingError("Failed to encode dictionary, "
                                    "key %r is not a string" % key)
 
-            dict_return[key] = self._encode(value)
+            dict_return[key] = self.recursive_encode(value)
 
         return {
             self._DICT_TYPE: dict_return
@@ -214,12 +216,12 @@ class JSONParser(object):
             dict. json element represent a list.
         """
         list_data = \
-            [self._encode(item) for item in list_data]
+            [self.recursive_encode(item) for item in list_data]
         return {
             self._LIST_TYPE: list_data
         }
 
-    def _decode(self, element):
+    def recursive_decode(self, element):
         """Decode an JSON element according to its inner type.
 
         Args:
@@ -260,11 +262,11 @@ class JSONParser(object):
             BaseResource. decoded resource.
         """
         type_element = resource_element[TYPE_NAME]
-        type_name = self._decode(type_element)
+        type_name = self.recursive_decode(type_element)
         resource_type = extract_type(type_name)
 
         properties_element = resource_element[PROPERTIES]
-        resource_properties = self._decode(properties_element)
+        resource_properties = self.recursive_decode(properties_element)
 
         # Get the related fields.
         list_field_names = [
@@ -313,11 +315,11 @@ class JSONParser(object):
             BaseResource. decoded resource.
         """
         type_element = resource_element[TYPE_NAME]
-        type_name = self._decode(type_element)
+        type_name = self.recursive_decode(type_element)
         resource_type = extract_type(type_name)
 
         data_element = resource_element[DATA_NAME]
-        resource_data = self._decode(data_element)
+        resource_data = self.recursive_decode(data_element)
 
         resource = resource_type(data=resource_data)
 
@@ -334,7 +336,7 @@ class JSONParser(object):
             type. decoded class.
         """
         type_element = class_element[TYPE_NAME]
-        type_path = self._decode(type_element)
+        type_path = self.recursive_decode(type_element)
         return extract_type(type_path)
 
     def _decode_dict(self, dict_element):
@@ -348,7 +350,7 @@ class JSONParser(object):
         """
         dictionary = {}
         for key, value in list(dict_element.items()):
-            dictionary[key] = self._decode(value)
+            dictionary[key] = self.recursive_decode(value)
 
         return dictionary
 
@@ -361,4 +363,4 @@ class JSONParser(object):
         Returns:
             list. decoded list.
         """
-        return [self._decode(item) for item in list_element]
+        return [self.recursive_decode(item) for item in list_element]

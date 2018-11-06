@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 
 from django.test.testcases import TransactionTestCase
 
-from rotest.management.common.parsers.xml_parser import XMLParser
+from rotest.management.common.parsers import JSONParser
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.management.models.ut_models import (DemoResource,
                                                 DemoResourceData,
@@ -119,11 +119,11 @@ class AbstractTestParser(six.with_metaclass(ABCMeta, TransactionTestCase)):
         self.validate(msg)
 
 
-class TestXMLParser(AbstractTestParser):
-    """Test the XML parser module."""
+class TestJSONParser(AbstractTestParser):
+    """Test the JSON parser module."""
     __test__ = True
 
     @classmethod
     def setUpClass(cls):
         """Initialize the parser."""
-        cls.PARSER = XMLParser()
+        cls.PARSER = JSONParser()
