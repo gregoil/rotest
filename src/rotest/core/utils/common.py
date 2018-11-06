@@ -2,7 +2,11 @@
 # pylint: disable=dangerous-default-value
 from __future__ import print_function, absolute_import
 
+import json
 from future.builtins import str
+
+from attrdict import AttrDict
+from jsonschema import validate
 
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
@@ -81,3 +85,28 @@ def print_test_hierarchy(test, tag_filter, tags=[], depth=0):
             print_test_hierarchy(sub_test,
                                  PASS_ALL_FILTER if is_colored else None,
                                  tags, depth + 1)
+
+
+def parse_json(json_path, schema_path=None):
+    """Parse the Json file into attribute dictionary.
+
+    Args:
+        json_path (str): path of the Json file.
+        schema_path (str): path of the schema file - optional.
+
+    Returns:
+        AttrDict. representing the Json file .
+
+    Raises:
+        jsonschema.ValidationError: Json file does not comply with the schema.
+    """
+    with open(json_path) as config_file:
+        json_content = json.load(config_file)
+
+    if schema_path is not None:
+        with open(schema_path) as schema:
+            schema_content = json.load(schema)
+
+        validate(json_content, schema_content)
+
+    return AttrDict(json_content)

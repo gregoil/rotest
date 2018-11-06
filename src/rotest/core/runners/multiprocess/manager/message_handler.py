@@ -8,8 +8,8 @@ from future.builtins import object
 from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.models.general_data import GeneralData
+from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.core.flow_component import AbstractFlowComponent
-from rotest.management.common.parsers.xml_parser import XMLParser
 from rotest.core.runners.multiprocess.common import (WrappedException,
                                                      get_item_by_id)
 from rotest.management.common.messages import (StopTest,
@@ -47,7 +47,7 @@ class RunnerMessageHandler(object):
         """
         self.result = result
         self.main_test = main_test
-        self.decoder = XMLParser()
+        self.decoder = DEFAULT_PARSER()
         self.runner = multiprocess_runner
 
         self.result_event_handlers = {

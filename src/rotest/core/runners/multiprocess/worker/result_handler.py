@@ -7,7 +7,7 @@ import time
 from future.utils import iteritems
 
 from rotest.core.models.case_data import TestOutcome
-from rotest.management.common.parsers.xml_parser import XMLParser
+from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 from rotest.management.common.messages import (StopTest,
                                                AddResult,
@@ -44,7 +44,7 @@ class WorkerHandler(AbstractResultHandler):
                 data from the main runner to this specific worker.
         """
         super(WorkerHandler, self).__init__()
-        self.xml_parser = XMLParser()
+        self.parser = DEFAULT_PARSER()
         self.worker_pid = os.getpid()
         self.reply_queue = reply_queue
         self.results_queue = results_queue
@@ -55,7 +55,7 @@ class WorkerHandler(AbstractResultHandler):
         Args:
             message (collections.namedtuple): message to send.
         """
-        self.results_queue.put(self.xml_parser.encode(message))
+        self.results_queue.put(self.parser.encode(message))
         # Wait for the lock to be released on both sides of the queue.
         time.sleep(0.1)
 
@@ -66,7 +66,7 @@ class WorkerHandler(AbstractResultHandler):
             timeout (number): waiting timeout.
         """
         message = self.reply_queue.get(timeout=timeout, block=True)
-        return self.xml_parser.decode(message)
+        return self.parser.decode(message)
 
     def start_test(self, test):
         """Notify the manager about the starting of a test run via queue."""

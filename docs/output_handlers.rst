@@ -113,16 +113,14 @@ higher or equal to ``DEBUG`` (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``,
 is higher or equal to ``INFO`` (``INFO``, ``WARNING``, ``ERROR``,
 ``CRITICAL``).
 
-XML & Excel
+Excel
 ===========
 
 Sometimes, you want to have a better visualization of the results. Rotest can
 output the results into a human-readable :file:`results.xls` file, which can be
-sent via email for instance. Alternatively, it can output a Junit-compatible
-XML, which lots of reporting systems can parse and display. The two relevant
-options are ``-o excel`` and ``-o xml``.
+sent via email for instance. The relevant option is ``-o excel``.
 
-Those artifacts are saved in the working directory of Rotest. For more about
+This artifact is saved in the working directory of Rotest. For more about
 this location, see :ref:`configurations`.
 
 Remote

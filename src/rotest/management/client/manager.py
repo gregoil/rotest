@@ -321,7 +321,7 @@ class ClientResourceManager(AbstractClient):
                 self._wait_until_resources_are_locked(server_requests, timeout)
 
             response_resources = \
-                [self.parser.decode(resource)
+                [self.parser.recursive_decode(resource)
                  for resource in response.resource_descriptors]
 
             resources.extend(descriptor.type(data=resource_data)
@@ -551,5 +551,5 @@ class ClientResourceManager(AbstractClient):
         if isinstance(response, FailureResponseModel):
             raise Exception(response.details)
 
-        return [self.parser.decode(resource)
+        return [self.parser.recursive_decode(resource)
                 for resource in response.resource_descriptors]
