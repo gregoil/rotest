@@ -9,7 +9,6 @@ also for the resources cleanup procedure and release.
 from __future__ import absolute_import
 
 import time
-from threading import Thread
 
 import re
 from attrdict import AttrDict
@@ -142,7 +141,7 @@ class ClientResourceManager(AbstractClient):
 
         try:
             self.logger.debug("Initializing resource %r", resource.name)
-            self._validate_resource(resource)
+            resource.setup_resource()
             self.logger.debug("Resource %r was initialized", resource.name)
 
         except Exception:
@@ -150,40 +149,6 @@ class ClientResourceManager(AbstractClient):
                                   resource.name)
             resource.finalize()
             raise
-
-    def _validate_resource(self, resource):
-        """Validate and initialize if needed the resource and its subresources.
-
-        Args:
-            resource (BaseResource): resource to validate and initialize.
-        """
-        sub_threads = []
-        for sub_resource in resource.get_sub_resources():
-            if resource.PARALLEL_INITIALIZATION:
-                sub_resource.logger.debug("Initializing %r in a new thread",
-                                          sub_resource.name)
-
-                initialize_thread = Thread(target=self._validate_resource,
-                                           args=[sub_resource])
-                initialize_thread.start()
-                sub_threads.append(initialize_thread)
-
-            else:
-                self._validate_resource(sub_resource)
-
-        for sub_thread in sub_threads:
-            sub_thread.join()
-
-        if resource.force_initialize or not resource.validate():
-            if not resource.force_initialize:
-                self.logger.debug("Resource %r validation failed",
-                                  resource.name)
-
-            resource.initialize()
-
-        else:
-            self.logger.debug("Resource %r skipped initialization",
-                              resource.name)
 
     def _propagate_attributes(self, resource, config, force_initialize):
         """Update the resource's config dictionary recursively.

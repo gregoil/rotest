@@ -6,7 +6,9 @@ responsible for the resource static & dynamic information.
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
 from __future__ import absolute_import
 
+import sys
 from bdb import BdbQuit
+from threading import Thread
 
 import six
 from ipdbugger import debug
@@ -43,6 +45,21 @@ class ConvertToKwargsMeta(type):
             resource.data.update(kwargs)
 
         return resource
+
+
+class ExceptionCatchingThread(Thread):
+    """A thread that saves traceback information if one occurs."""
+    def __init__(self, *args, **kwargs):
+        super(ExceptionCatchingThread, self).__init__(*args, **kwargs)
+        self.traceback_tuple = None
+
+    def run(self):
+        try:
+            super(ExceptionCatchingThread, self).run()
+
+        except Exception:
+            self.traceback_tuple = sys.exc_info()
+            raise
 
 
 class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
@@ -258,6 +275,47 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
             bool. True if validation succeeded, False otherwise.
         """
         return False
+
+    def setup_resource(self):
+        """Validate and initialize if needed the resource and subresources."""
+        sub_threads = []
+        for sub_resource in self.get_sub_resources():
+            if self.PARALLEL_INITIALIZATION:
+                sub_resource.logger.debug("Initializing %r in a new thread",
+                                          sub_resource.name)
+
+                initialize_thread = ExceptionCatchingThread(
+                                        target=sub_resource.setup_resource)
+
+                initialize_thread.start()
+                sub_threads.append(initialize_thread)
+
+            else:
+                sub_resource.setup_resource()
+
+        for sub_thread, sub_resource in zip(sub_threads,
+                                            self.get_sub_resources()):
+
+            sub_thread.join()
+            if sub_thread.traceback_tuple is not None:
+                self.logger.error("Got an error while preparing resource %s",
+                                  sub_resource.name,
+                                  exc_info=sub_thread.traceback_tuple)
+
+        for sub_thread in sub_threads:
+            if sub_thread.traceback_tuple is not None:
+                six.reraise(*sub_thread.traceback_tuple)
+
+        if self.force_initialize or not self.validate():
+            if not self.force_initialize:
+                self.logger.debug("Resource %r validation failed",
+                                  self.name)
+
+            self.initialize()
+
+        else:
+            self.logger.debug("Resource %r skipped initialization",
+                              self.name)
 
     def override_logger(self, new_logger):
         """Replace the resource's logger.
