@@ -17,7 +17,7 @@ class TestGetOrCreateSignature(TransactionTestCase):
     def setUp(self):
         """Setup test environment."""
         self.client = Client()
-        self.requester = partial(request, client=self.client,
+        self.requester = partial(request, method="get", client=self.client,
                                  path="signatures/get_or_create")
 
     def test_new_signature(self):
