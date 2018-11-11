@@ -5,10 +5,10 @@ import re
 
 from six.moves import http_client
 
-from rotest.core.models import SignatureData
 from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.request import DjangoRequestView
 
+from rotest.core.models import SignatureData
 from rotest.api.common.responses import SignatureResponse
 from rotest.api.common.models import SignatureControlParamsModel
 
