@@ -2,6 +2,8 @@
 # pylint: disable=no-init,old-style-class
 from __future__ import absolute_import
 
+import re
+
 from django.db import models
 from future.builtins import object
 
@@ -22,10 +24,9 @@ class SignatureData(models.Model):
         link (str): link to the issue page.
         pattern (str): pattern of the signature.
     """
-    MAX_LINK_LENGTH = 100
+    MAX_LINK_LENGTH = 200
     MAX_PATTERN_LENGTH = 1000
 
-    name = NameField(unique=True)
     link = models.CharField(max_length=MAX_LINK_LENGTH)
     pattern = models.CharField(max_length=MAX_PATTERN_LENGTH)
 
@@ -33,10 +34,15 @@ class SignatureData(models.Model):
         """Define the Django application for this model."""
         app_label = 'core'
 
-    def __unicode__(self):
-        """Django version of __str__"""
-        return self.name
+    @staticmethod
+    def create_pattern(error_message):
+        """Create a pattern from a failure or error message.
 
-    def __repr__(self):
-        """Unique Representation for data"""
-        return self.name
+        args:
+            error_message (str): error message to parse.
+
+        returns:
+            str. pattern for the given error message.
+        """
+        return re.sub(r"\d+(\\.\d+)?(e\\-?\d+)?", ".+",
+                      re.escape(error_message))

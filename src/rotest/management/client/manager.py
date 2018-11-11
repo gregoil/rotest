@@ -31,8 +31,6 @@ from rotest.api.common.models import (ReleaseResourcesParamsModel,
                                       ResourceDescriptorModel,
                                       LockResourcesParamsModel, TokenModel)
 
-SLEEP_TIME_BETWEEN_REQUESTS = 0.25
-
 
 class ResourceRequest(object):
     """Holds the data for a resource request.

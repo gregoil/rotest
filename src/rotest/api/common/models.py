@@ -197,3 +197,14 @@ class StartTestRunParamsModel(AbstractAPIModel):
         ModelField(name="tests", model=TestModel, required=True),
         ModelField(name="run_data", model=RunDataModel, required=True)
     ]
+
+
+class SignatureControlParamsModel(AbstractAPIModel):
+    """Model structure of signature control operation.
+
+    Args:
+        error (str): error message.
+    """
+    PROPERTIES = [
+        StringField(name="error", required=True, location="query"),
+    ]
