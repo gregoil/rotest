@@ -173,7 +173,7 @@ class AbstractFlowComponent(AbstractTest):
         for traceback in self.data.traceback.split(
                     CaseData.TB_SEPARATOR):
 
-            bottom_line = traceback.rsplits("\n", 1)[-1].strip()
+            bottom_line = traceback.rsplit("\n", 1)[-1].strip()
             yield "{}: {}".format(self.data.name, bottom_line)
 
     @classmethod
