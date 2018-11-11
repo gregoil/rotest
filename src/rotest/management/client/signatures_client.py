@@ -1,29 +1,12 @@
 """Signature manager client implementation."""
 from __future__ import absolute_import
 
-import time
-
-import re
-from attrdict import AttrDict
-from future.utils import iteritems
-from future.builtins import zip, str, object
-
-from rotest.api.signature_control import GetOrCreate
 from rotest.common import core_log
+from rotest.api.signature_control import GetOrCreate
+from rotest.common.config import RESOURCE_MANAGER_HOST
 from rotest.management.client.client import AbstractClient
 from rotest.api.common.responses import FailureResponseModel
-from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
-from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
-from rotest.management.common.resource_descriptor import ResourceDescriptor
-from rotest.management.common.errors import (ResourceReleaseError,
-                                             ResourceUnavailableError,
-                                             UnknownUserError)
-from rotest.api.resource_control import (LockResources,
-                                         QueryResources,
-                                         ReleaseResources, CleanupUser)
-from rotest.api.common.models import (ReleaseResourcesParamsModel,
-                                      ResourceDescriptorModel,
-                                      LockResourcesParamsModel, TokenModel, SignatureControlParamsModel)
+from rotest.api.common.models import SignatureControlParamsModel
 
 
 class ClientSignatureManager(AbstractClient):
