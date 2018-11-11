@@ -164,6 +164,18 @@ class AbstractFlowComponent(AbstractTest):
             self._set_parameters(override_previous=override_previous,
                                  **parameters)
 
+    def get_short_errors(self):
+        """Get short description of errors and failures.
+
+        Yields:
+            str. bottom line of all the errors.
+        """
+        for traceback in self.data.traceback.split(
+                    CaseData.TB_SEPARATOR):
+
+            bottom_line = traceback.rsplits("\n", 1)[-1].strip()
+            yield "{}: {}".format(self.data.name, bottom_line)
+
     @classmethod
     def get_test_method_name(cls):
         """Return the test method name to run.

@@ -8,6 +8,7 @@ from rotest.core.block import TestBlock
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
                                         MODE_FINALLY, MODE_OPTIONAL)
+from rotest.core.models import CaseData
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -223,21 +224,22 @@ class TestFlow(AbstractFlowComponent):
         for test in self:
             test(self.result)
 
+        all_issues = []
+
+        for block in self:
+            all_issues.extend(block.get_short_errors())
+
         if self.had_error():
-            error_blocks_list = [block.data.name for block in self if
-                                 block.had_error()]
-            flow_result_str = 'The following components had errors:' \
-                              ' {}'.format(error_blocks_list)
+            flow_result_str = 'The flow ended in error:\n' \
+                              ' {}'.format('\n'.join(all_issues))
 
             failure = AssertionError(flow_result_str)
             self.result.addError(self, (failure.__class__, failure, None))
             return
 
         if not self.was_successful():
-            failed_blocks_list = [block.data.name for block in self if
-                                  not block.was_successful()]
-            flow_result_str = 'The following components have failed:' \
-                              ' {}'.format(failed_blocks_list)
+            flow_result_str = 'The flow ended in failure:\n' \
+                              ' {}'.format('\n'.join(all_issues))
 
             failure = AssertionError(flow_result_str)
             self.result.addFailure(self, (failure.__class__, failure, None))
