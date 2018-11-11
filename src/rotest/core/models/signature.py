@@ -7,8 +7,6 @@ import re
 from django.db import models
 from future.builtins import object
 
-from rotest.common.django_utils.fields import NameField
-
 
 class SignatureData(models.Model):
     """Contain & manage signatures about test exceptions.
