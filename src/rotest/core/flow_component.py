@@ -170,11 +170,12 @@ class AbstractFlowComponent(AbstractTest):
         Yields:
             str. bottom line of all the errors.
         """
-        for traceback in self.data.traceback.split(
-                    CaseData.TB_SEPARATOR):
+        if self.data.traceback:
+            for traceback in self.data.traceback.split(
+                        CaseData.TB_SEPARATOR):
 
-            bottom_line = traceback.rsplit("\n", 1)[-1].strip()
-            yield "{}: {}".format(self.data.name, bottom_line)
+                bottom_line = traceback.rsplit("\n", 1)[-1].strip()
+                yield "{}: {}".format(self.data.name, bottom_line)
 
     @classmethod
     def get_test_method_name(cls):
