@@ -131,14 +131,10 @@ class AbstractFlowComponent(AbstractTest):
 
     @classmethod
     def parametrize(cls, **parameters):
-        """Return a class instantiator for this class with the given args.
+        """Return a clone of this class with the given args in the common.
 
         Use this method (or its syntactic sugar 'params') to pass values to
         components under a flow.
-
-        Note:
-            This class method does not instantiate the component, but states
-            values be injected into it after it would be initialized.
         """
         new_common = cls.common.copy()
         new_common.update(**parameters)

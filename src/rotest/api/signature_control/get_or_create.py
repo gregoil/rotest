@@ -28,8 +28,6 @@ class GetOrCreate(DjangoRequestView):
         "post": ["Signatures"]
     }
 
-    signatures_cache = None
-
     def _match_signatures(self, error_str):
         """Return the data of the matched signature.
 
@@ -39,9 +37,9 @@ class GetOrCreate(DjangoRequestView):
         Returns:
             SignatureData. the signature of the given exception.
         """
-        for signature in self.signatures_cache:
+        for signature in SignatureData.objects.all():
             signature_reg = re.compile(signature.pattern,
-                                       re.DOTALL | re.MULTILINE)
+                                       re.MULTILINE)
             if signature_reg.match(error_str):
                 return signature
 
@@ -51,9 +49,6 @@ class GetOrCreate(DjangoRequestView):
         """Get signature data for an error or create a new one."""
         error_message = request.model.error
 
-        if self.signatures_cache is None:
-            self.signatures_cache = list(SignatureData.objects.all())
-
         match = self._match_signatures(error_message)
 
         is_new = False
@@ -62,8 +57,6 @@ class GetOrCreate(DjangoRequestView):
             pattern = SignatureData.create_pattern(error_message)
             match = SignatureData.objects.create(link="",
                                                  pattern=pattern)
-
-            self.signatures_cache.append(match)
 
         return Response({
             "is_new": is_new,
