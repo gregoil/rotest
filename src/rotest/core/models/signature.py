@@ -26,7 +26,7 @@ class SignatureData(models.Model):
     MAX_PATTERN_LENGTH = 1000
 
     link = models.CharField(max_length=MAX_LINK_LENGTH)
-    pattern = models.CharField(max_length=MAX_PATTERN_LENGTH)
+    pattern = models.TextField(max_length=MAX_PATTERN_LENGTH)
 
     class Meta(object):
         """Define the Django application for this model."""
@@ -45,5 +45,8 @@ class SignatureData(models.Model):
         return re.sub(r"\d+(\\.\d+)?(e\\-?\d+)?", ".+",
                       re.escape(error_message))
 
-    def __repr__(self):
+    def __unicode__(self):
         return "Signature {}".format(self.id)
+
+    def __repr__(self):
+        return self.__unicode__()

@@ -230,7 +230,7 @@ class TestFlow(AbstractFlowComponent):
 
         if self.had_error():
             flow_result = 'The flow ended in error:\n' \
-                          ' {}'.format('\n'.join(all_issues))
+                          '{}  '.format('\n  '.join(all_issues))
 
             failure = AssertionError(flow_result)
             self.result.addError(self, (failure.__class__, failure, None))
@@ -238,7 +238,7 @@ class TestFlow(AbstractFlowComponent):
 
         if not self.was_successful():
             flow_result = 'The flow ended in failure:\n' \
-                          ' {}'.format('\n'.join(all_issues))
+                          '{}  '.format('\n  '.join(all_issues))
 
             failure = AssertionError(flow_result)
             self.result.addFailure(self, (failure.__class__, failure, None))
