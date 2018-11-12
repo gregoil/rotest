@@ -44,3 +44,6 @@ class SignatureData(models.Model):
         """
         return re.sub(r"\d+(\\.\d+)?(e\\-?\d+)?", ".+",
                       re.escape(error_message))
+
+    def __repr__(self):
+        return "Signature {}".format(self.id)

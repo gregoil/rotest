@@ -206,5 +206,5 @@ class SignatureControlParamsModel(AbstractAPIModel):
         error (str): error message.
     """
     PROPERTIES = [
-        StringField(name="error", required=True, location="query"),
+        StringField(name="error", required=True),
     ]

@@ -25,7 +25,7 @@ class GetOrCreate(DjangoRequestView):
         http_client.OK: SignatureResponse,
     }
     TAGS = {
-        "get": ["Signatures"]
+        "post": ["Signatures"]
     }
 
     signatures_cache = None
@@ -47,7 +47,7 @@ class GetOrCreate(DjangoRequestView):
 
         return None
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         """Get signature data for an error or create a new one."""
         error_message = request.model.error
 

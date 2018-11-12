@@ -36,7 +36,7 @@ class ClientSignatureManager(AbstractClient):
 
         response = self.requester.request(GetOrCreate,
                                           data=request_data,
-                                          method="get")
+                                          method="post")
 
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
