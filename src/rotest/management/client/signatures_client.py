@@ -16,7 +16,6 @@ class ClientSignatureManager(AbstractClient):
     """
 
     def __init__(self, host=None, logger=core_log):
-        """Initialize the result client."""
         if host is None:
             host = RESOURCE_MANAGER_HOST
 

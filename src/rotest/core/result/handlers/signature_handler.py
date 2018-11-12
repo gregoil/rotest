@@ -1,6 +1,7 @@
 """Known issues result handler."""
 from __future__ import absolute_import
 
+from rotest.core import skip_if_not_main
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 from rotest.management.client.signatures_client import ClientSignatureManager
 
@@ -24,7 +25,7 @@ class SignatureHandler(AbstractResultHandler):
         """Handle signature match response.
 
         Args:
-            test_item (object): test item instance.
+            test_item (AbstractTest): test item instance.
             response_data (SignatureResponse): signature match response.
         """
         if response_data.is_new:
@@ -37,21 +38,23 @@ class SignatureHandler(AbstractResultHandler):
 
             test_item.logger.warning("Issue link=%s", response_data.link)
 
+    @skip_if_not_main
     def add_error(self, test, exception_str):
         """Check if the test error matches any known issues.
 
         Args:
-            test (object): test item instance.
+            test (AbstractTest): test item instance.
             exception_str (str): exception traceback string.
         """
         response = self.client.get_or_create_signature(exception_str)
         self.handle_response(test, response)
 
+    @skip_if_not_main
     def add_failure(self, test, exception_str):
         """Check if the test failure matches any known issues.
 
         Args:
-            test (object): test item instance.
+            test (AbstractTest): test item instance.
             exception_str (str): exception traceback string.
         """
         response = self.client.get_or_create_signature(exception_str)

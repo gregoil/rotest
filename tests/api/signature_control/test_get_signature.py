@@ -21,7 +21,7 @@ class TestGetOrCreateSignature(TransactionTestCase):
                                  path="signatures/get_or_create")
 
     def test_new_signature(self):
-        """."""
+        """Validate creating and then using a new signature."""
         response, content = self.requester(json_data={
             "error": "new error traceback"
         })
@@ -38,7 +38,7 @@ class TestGetOrCreateSignature(TransactionTestCase):
         self.assertFalse(content.is_new)
 
     def test_precise_match(self):
-        """."""
+        """Validate match with a simple string match."""
         link = "Some link"
         SignatureData.objects.create(pk=1, link=link,
                                      pattern="some traceback")
@@ -53,7 +53,7 @@ class TestGetOrCreateSignature(TransactionTestCase):
         self.assertEqual(content.link, link)
 
     def test_pattern_match(self):
-        """."""
+        """Validate match with a regular expression pattern."""
         link = "Some link"
         error = "error.level over 9000.0"
         pattern = SignatureData.create_pattern(error)

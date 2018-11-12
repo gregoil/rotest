@@ -114,7 +114,7 @@ is higher or equal to ``INFO`` (``INFO``, ``WARNING``, ``ERROR``,
 ``CRITICAL``).
 
 Excel
-===========
+=====
 
 Sometimes, you want to have a better visualization of the results. Rotest can
 output the results into a human-readable :file:`results.xls` file, which can be
@@ -149,3 +149,14 @@ debugging or evaluation.
 Those artifacts are saved in the artifacts directory of Rotest. It is
 recommended to make this folder a shared folder between all your users.
 For more about this location, see :ref:`configurations`.
+
+Signature
+=========
+
+This handler saves in the remote DB patterns for errors and failures
+it encounters. You can also link the signatures to issues in your bug tracking system,
+e.g. JIRA. In the next encounters the handler will issue a warning with the
+supplied link via the log. The relevant option is ``-o signature``.
+
+To see the patterns, change them, and add links - go to the admin page
+of the server under core/signatures.

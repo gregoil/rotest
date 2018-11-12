@@ -41,7 +41,6 @@ class ClientResultManager(AbstractClient):
     """
 
     def __init__(self, host=None, logger=core_log):
-        """Initialize the result client."""
         if host is None:
             host = RESOURCE_MANAGER_HOST
 
@@ -88,7 +87,7 @@ class ClientResultManager(AbstractClient):
         })
 
         response = self.requester.request(StartTestRun,
-                                          data=request_data,
+                                              data=request_data,
                                           method="post")
 
         if isinstance(response, FailureResponseModel):

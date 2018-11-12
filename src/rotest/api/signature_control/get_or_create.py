@@ -17,7 +17,7 @@ class GetOrCreate(DjangoRequestView):
     """Get or create error signature in the DB.
 
     Args:
-        error_string (str): string of the error.
+        error (str): string of the error.
     """
     URI = "signatures/get_or_create"
     DEFAULT_MODEL = SignatureControlParamsModel
@@ -58,13 +58,11 @@ class GetOrCreate(DjangoRequestView):
 
         is_new = False
         if match is None:
-            # Create a new signature
             is_new = True
             pattern = SignatureData.create_pattern(error_message)
             match = SignatureData.objects.create(link="",
                                                  pattern=pattern)
 
-            # Add to cache
             self.signatures_cache.append(match)
 
         return Response({
