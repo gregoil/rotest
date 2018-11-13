@@ -3,7 +3,9 @@ from __future__ import absolute_import
 from swaggapi.api.builder.common.response import AbstractResponse
 from swaggapi.api.builder.common.fields import (StringField,
                                                 ModelField,
-                                                ArrayField, BoolField)
+                                                ArrayField,
+                                                BoolField,
+                                                NumberField)
 
 from rotest.api.common import GenericModel
 
@@ -43,4 +45,16 @@ class ShouldSkipResponse(AbstractResponse):
     PROPERTIES = [
         BoolField(name="should_skip", required=True),
         StringField(name="reason", required=True)
+    ]
+
+
+class SignatureResponse(AbstractResponse):
+    """Returns in response to get or create signature data action.
+
+    The response contains data of a matching signature if there is one.
+    """
+    PROPERTIES = [
+        BoolField(name="is_new", required=True),
+        NumberField(name="id", required=True),
+        StringField(name="link", required=True)
     ]

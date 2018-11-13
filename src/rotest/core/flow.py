@@ -223,23 +223,24 @@ class TestFlow(AbstractFlowComponent):
         for test in self:
             test(self.result)
 
-        if self.had_error():
-            error_blocks_list = [block.data.name for block in self if
-                                 block.had_error()]
-            flow_result_str = 'The following components had errors:' \
-                              ' {}'.format(error_blocks_list)
+        all_issues = []
 
-            failure = AssertionError(flow_result_str)
+        for block in self:
+            all_issues.extend(block.get_short_errors())
+
+        if self.had_error():
+            flow_result = 'The flow ended in error:\n  ' \
+                          '{}'.format('\n  '.join(all_issues))
+
+            failure = AssertionError(flow_result)
             self.result.addError(self, (failure.__class__, failure, None))
             return
 
         if not self.was_successful():
-            failed_blocks_list = [block.data.name for block in self if
-                                  not block.was_successful()]
-            flow_result_str = 'The following components have failed:' \
-                              ' {}'.format(failed_blocks_list)
+            flow_result = 'The flow ended in failure:\n  ' \
+                          '{}'.format('\n  '.join(all_issues))
 
-            failure = AssertionError(flow_result_str)
+            failure = AssertionError(flow_result)
             self.result.addFailure(self, (failure.__class__, failure, None))
             return
 

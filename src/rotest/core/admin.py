@@ -40,7 +40,7 @@ class CaseDataAdmin(TestDataAdmin):
 
 class SignatureDataAdmin(admin.ModelAdmin):
     """ModelAdmin for :class:`rotest.core.models.SignatureData` model."""
-    fields = ['name', 'link', 'pattern']
+    fields = ['link', 'pattern']
 
 
 class CaseInline(TestDataInline):
