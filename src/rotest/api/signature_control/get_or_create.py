@@ -28,7 +28,8 @@ class GetOrCreate(DjangoRequestView):
         "post": ["Signatures"]
     }
 
-    def _match_signatures(self, error_str):
+    @staticmethod
+    def _match_signatures(error_str):
         """Return the data of the matched signature.
 
         Args:
