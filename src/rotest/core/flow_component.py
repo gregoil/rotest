@@ -166,7 +166,7 @@ class AbstractFlowComponent(AbstractTest):
         Yields:
             str. bottom line of all the errors.
         """
-        if self.data.traceback:
+        if not self.was_successful():
             for traceback in self.data.traceback.split(
                         CaseData.TB_SEPARATOR):
 
