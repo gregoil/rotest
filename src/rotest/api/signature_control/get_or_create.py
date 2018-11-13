@@ -48,6 +48,8 @@ class GetOrCreate(DjangoRequestView):
     def post(self, request, *args, **kwargs):
         """Get signature data for an error or create a new one."""
         error_message = request.model.error
+        # Normalize newline char
+        error_message = error_message.replace("\r\n", "\n")
 
         match = self._match_signatures(error_message)
 

@@ -50,3 +50,8 @@ class SignatureData(models.Model):
 
     def __repr__(self):
         return self.__unicode__()
+
+    def save(self, *args, **kwargs):
+        """Override Django's 'save' to normalize newline char."""
+        self.pattern = self.pattern.replace("\r\n", "\n")
+        super(SignatureData, self).save(*args, **kwargs)
