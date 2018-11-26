@@ -4,9 +4,10 @@ from __future__ import absolute_import
 import time
 from threading import Thread
 
-from .middleware import SESSIONS
 from rotest.core.models import GeneralData, CaseData
 from rotest.core.models.case_data import TestOutcome
+
+from .middleware import SESSIONS
 
 
 CLEANER_CYCLE = 60  # Seconds
