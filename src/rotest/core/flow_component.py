@@ -131,14 +131,10 @@ class AbstractFlowComponent(AbstractTest):
 
     @classmethod
     def parametrize(cls, **parameters):
-        """Return a class instantiator for this class with the given args.
+        """Return a clone of this class with the given args in the common.
 
         Use this method (or its syntactic sugar 'params') to pass values to
         components under a flow.
-
-        Note:
-            This class method does not instantiate the component, but states
-            values be injected into it after it would be initialized.
         """
         new_common = cls.common.copy()
         new_common.update(**parameters)
@@ -163,6 +159,20 @@ class AbstractFlowComponent(AbstractTest):
         else:
             self._set_parameters(override_previous=override_previous,
                                  **parameters)
+
+    def get_short_errors(self):
+        """Get short description of errors and failures.
+
+        Yields:
+            str. bottom line of all the errors.
+        """
+        if not self.was_successful():
+            for traceback in self.data.traceback.split(
+                        CaseData.TB_SEPARATOR):
+
+                traceback = traceback.strip(" \n")
+                bottom_line = traceback.rsplit("\n", 1)[-1].strip()
+                yield "{}: {}".format(self.data.name, bottom_line)
 
     @classmethod
     def get_test_method_name(cls):

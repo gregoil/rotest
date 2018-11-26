@@ -7,6 +7,7 @@ from swaggapi.build import Swagger
 from swaggapi.api.openapi.models import Info, License, Tag
 
 from rotest.api.request_token import RequestToken
+from rotest.api.signature_control import GetOrCreate
 from rotest.api.resource_control import (CleanupUser,
                                          LockResources,
                                          ReleaseResources,
@@ -20,19 +21,20 @@ from rotest.api.test_control import (StartTestRun,
                                      StopComposite,
                                      StartComposite,
                                      ShouldSkip,
-                                     AddTestResult, UpdateResources)
+                                     AddTestResult,
+                                     UpdateResources)
 
 requests = [
     RequestToken,
 
-    # resources
+    # Resources
     LockResources,
     ReleaseResources,
     CleanupUser,
     QueryResources,
     UpdateFields,
 
-    # tests
+    # Tests
     StartTestRun,
     UpdateRunData,
     StopTest,
@@ -42,7 +44,10 @@ requests = [
     StartComposite,
     ShouldSkip,
     AddTestResult,
-    UpdateResources
+    UpdateResources,
+
+    # Signatures
+    GetOrCreate
 ]
 
 info = Info(title="Rotest OpenAPI",
@@ -51,6 +56,8 @@ info = Info(title="Rotest OpenAPI",
             license=License(name="MIT"))
 tags = [Tag(name="Tests",
             description="All requests for managing remote test handler"),
+        Tag(name="Signatures",
+            description="All requests for managing signatures handler"),
         Tag(name="Resources",
             description="All requests for managing resources")]
 swagger = Swagger(info, mount_url="api", requests=requests, tags=tags)
