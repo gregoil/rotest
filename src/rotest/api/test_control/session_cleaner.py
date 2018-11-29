@@ -1,4 +1,4 @@
-"""Module for dead sessions cleanup logic.."""
+"""Module for dead sessions cleanup logic."""
 from __future__ import absolute_import
 
 import time
@@ -15,10 +15,9 @@ CLEANER_CYCLE = 60  # Seconds
 
 def revalidate_sessions():
     """Go over the sessions and clear dead ones."""
-    current_time = time.time()
     for session_key in list(SESSIONS.keys()):
         session_data = SESSIONS[session_key]
-        if session_data.timeout and session_data.timeout < current_time:
+        if session_data.timeout and session_data.timeout < time.time():
             for test in session_data.all_tests.values():
                 if test.status == GeneralData.IN_PROGRESS:
                     if isinstance(test, CaseData):
