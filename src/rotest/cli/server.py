@@ -2,8 +2,8 @@ from __future__ import absolute_import
 
 from django.core.management import call_command
 
+from rotest.common.config import DJANGO_MANAGER_PORT
 from rotest.api.test_control.session_cleaner import run_session_cleaner
-from rotest.common.config import DJANGO_MANAGER_PORT, search_config_file
 
 
 def start_server():
