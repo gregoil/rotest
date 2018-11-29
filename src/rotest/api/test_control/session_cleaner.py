@@ -40,4 +40,6 @@ def run_session_cleaner():
             revalidate_sessions()
             time.sleep(CLEANER_CYCLE)
 
-    Thread(target=cleaner_main).start()
+    cleaner_thread = Thread(target=cleaner_main)
+    cleaner_thread.daemon = True
+    cleaner_thread.start()

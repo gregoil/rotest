@@ -161,7 +161,7 @@ class ClientResultManager(AbstractClient):
             timeout (number): timeout value to set.
         """
         request_data = SetSessionTimeoutModel({
-            "route": timeout,
+            "timeout": timeout,
             "token": self.token
         })
         response = self.requester.request(SetSessionTimeout,

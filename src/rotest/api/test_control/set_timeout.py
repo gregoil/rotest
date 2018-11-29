@@ -20,7 +20,7 @@ class SetSessionTimeout(DjangoRequestView):
         timeout (number): the timeout to set.
         token (str): token of the session.
     """
-    URI = "tests/start_test"
+    URI = "tests/set_timeout"
     DEFAULT_MODEL = SetSessionTimeoutModel
     DEFAULT_RESPONSES = {
         http_client.NO_CONTENT: SuccessResponse,
