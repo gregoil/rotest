@@ -162,7 +162,7 @@ class TestControl(TransactionTestCase):
 
     def test_set_session_timeout(self):
         """Assert that the request has the right server response."""
-        response, _ = self.requester(path="tests/start_test",
+        response, _ = self.requester(path="tests/set_timeout",
                                      params={
                                          "token": self.token,
                                          "timeout": 50
