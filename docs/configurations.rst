@@ -225,10 +225,10 @@ Discoverer Blacklist
 --------------------
 
 Rotest enables loading resources from an app, a thing that happens automatically
-when running "rotest shell", but some files can / must be skipped when searching
+when running ``rotest shell``, but some files can / must be skipped when searching
 for the resources.
 
-Also, tests discovering (via ``rotest <some_dir>`` takes this blacklist into consideration.
+Also, tests discovering (via ``rotest <some_dir>``) takes this blacklist into consideration.
 
 Define it in the following ways:
 
