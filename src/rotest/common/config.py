@@ -227,7 +227,7 @@ CONFIGURATION_SCHEMA = {
         default_value="rotest/api/"),
     "discoverer_blacklist": Option(
         config_file_options=["discoverer_blacklist"],
-        default_value=[]),
+        default_value=[".tox", ".git", ".idea", "setup.py"]),
     "shell_apps": Option(
         config_file_options=["shell_apps"],
         default_value=[]),

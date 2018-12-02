@@ -9,9 +9,9 @@ from isort.pie_slice import OrderedSet
 
 from rotest.common import core_log
 from rotest.core import TestCase, TestFlow
+from rotest.common.config import DISCOVERER_BLACKLIST
 
 
-BLACK_LIST = [".tox", ".git", ".idea", "setup.py"]
 WHITE_LIST = ["*.py"]
 
 
@@ -43,7 +43,7 @@ def get_test_files(paths):
         path = os.path.abspath(path)
         filename = os.path.basename(path)
 
-        if any(fnmatch(filename, pattern) for pattern in BLACK_LIST):
+        if any(fnmatch(filename, pattern) for pattern in DISCOVERER_BLACKLIST):
             continue
 
         if os.path.isfile(path):
