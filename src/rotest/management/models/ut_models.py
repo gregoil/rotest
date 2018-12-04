@@ -36,7 +36,7 @@ class DemoResourceData(ResourceData):
                    (PROD_MODE, 'Production'))
 
     version = models.PositiveSmallIntegerField()
-    ip_address = models.IPAddressField()
+    ip_address = models.GenericIPAddressField()
     mode = models.IntegerField(choices=MODE_CHOICE, default=BOOT_MODE)
 
     validation_result = models.BooleanField(default=False)
