@@ -311,12 +311,12 @@ class AbstractTest(unittest.TestCase):
             return
 
         if platform.python_version().startswith("3"):
-            exceptions_that_occured = len([test
+            exceptions_that_occurred = len([test
                                           for test, exc_info
                                           in self._outcome.errors
                                           if exc_info is not None])
 
-            if exceptions_that_occured == 0:
+            if exceptions_that_occurred == 0:
                 self.logger.debug("State is not an errored state, "
                                   "skipping saving state")
                 return
@@ -341,7 +341,7 @@ class AbstractTest(unittest.TestCase):
         self.logger.debug("Creating state dir %r", store_dir)
         os.makedirs(store_dir)
 
-        for resource in itervalues(self.all_resources):
+        for resource in itervalues(self.locked_resources):
             resource.store_state(store_dir)
 
     def _wrap_assert(self, assert_method, *args, **kwargs):
