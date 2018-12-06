@@ -1349,13 +1349,13 @@ class TestResourceManagement(BaseResourceManagementTest):
         request = ResourceRequest('res1', AlterDemoComplexResource,
                                   name=self.COMPLEX_NAME)
 
-        resources = self.client.request_resources(requests=[request]).values()
+        resources = self.client.request_resources(requests=[request])
 
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected list with 1 "
                          "resource in it but found %d" % resources_num)
 
-        resource, = resources
+        resource, = resources.values()
         self.assertEqual(resource.name, self.COMPLEX_NAME,
                          "Expected resource with name %r but got %r"
                          % (self.COMPLEX_NAME, resource.name))
@@ -1441,13 +1441,13 @@ class TestResourceManagement(BaseResourceManagementTest):
         request = ResourceRequest('res1', AlterDemoComplexResource,
                                   name=self.FREE1_NAME)
 
-        resources = self.client.request_resources(requests=[request]).values()
+        resources = self.client.request_resources(requests=[request])
 
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected list with 1 "
                          "resource in it but found %d" % resources_num)
 
-        resource, = resources
+        resource, = resources.values()
         self.assertEqual(resource.name, self.FREE1_NAME,
                          "Expected resource with name %r but got %r"
                          % (self.FREE1_NAME, resource.name))
@@ -1518,9 +1518,9 @@ class TestResourceManagement(BaseResourceManagementTest):
         request = ResourceRequest('res1', AlterDemoComplexService,
                                   name=self.COMPLEX_NAME)
 
-        resources = self.client.request_resources(requests=[request]).values()
+        resources = self.client.request_resources(requests=[request])
 
-        resource, = resources
+        resource, = resources.values()
         self.assertEqual(resource.name, self.COMPLEX_NAME,
                          "Expected resource with name %r but got %r"
                          % (self.COMPLEX_NAME, resource.name))
