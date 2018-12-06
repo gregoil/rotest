@@ -1400,7 +1400,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.COMPLEX_NAME, resources_num))
 
-        self.client.release_resources(resources=[resource])
+        self.client.release_resources(resources, force=True)
 
     def test_lock_alternative_complex_resource_with_service(self):
         """Lock complex resource with the default 'create_sub_resources'.
@@ -1487,7 +1487,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.FREE1_NAME, resources_num))
 
-        self.client.release_resources(resources=[resource])
+        self.client.release_resources(resources, force=True)
 
     def test_lock_alternative_complex_service(self):
         """Lock complex service with the default 'create_sub_resources'.
@@ -1556,4 +1556,4 @@ class TestResourceManagement(BaseResourceManagementTest):
                                   % (DemoResource.__name__,
                                      sub_resource.__class__.__name__))
 
-        self.client.release_resources(resources=[resource])
+        self.client.release_resources(resources, force=True)
