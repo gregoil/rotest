@@ -1049,7 +1049,6 @@ class TestResourceManagement(BaseResourceManagementTest):
         requests = [ResourceRequest('res1', DemoResource,
                                     name=self.FREE1_NAME)]
 
-        db_res = self.get_resource(self.FREE1_NAME)[0]
         # Make sure the client has no locked resources
         self.assertEqual(len(self.client.locked_resources), 0)
         # Request the free resource
@@ -1060,8 +1059,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.client.release_resources(resources)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
-        self.assertEqual(resource1.name, db_res.name)
         db_res = self.get_resource(self.FREE1_NAME)[0]
+        self.assertEqual(resource1.name, db_res.name)
         # Check that the locked resource was initialized
         self.assertTrue(db_res.initialization_flag)
         # Check that the locked resource wasn't finalized
@@ -1106,6 +1105,38 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that the new resource was finalized after disconnection
         self.assertTrue(db_res.finalization_flag)
 
+    def test_requesting_twice(self):
+        """Validate that the client only reuses unused resources.
+
+        * Make a request, use 'keep_resources'.
+        * Make the same request without releasing the previous.
+        * Validate that we got 2 different resources for the two requests.
+        """
+        self.client.keep_resources = True
+
+        requests = [ResourceRequest('res1', DemoResource)]
+
+        # Make sure the client has no locked resources
+        self.assertEqual(len(self.client.locked_resources), 0)
+        # Request the free resource
+        resources = self.client.request_resources(requests, use_previous=True)
+        # Check that it locked 1 resource
+        self.assertEqual(len(resources), 1)
+        resource1 = list(resources.values())[0]
+        # Check that the resource is saved in the client
+        self.assertEqual(self.client.locked_resources, [resource1])
+        # Make a similar request
+        resources = self.client.request_resources(requests, use_previous=True)
+        # Check that it locked 1 resource
+        self.assertEqual(len(resources), 1)
+        resource2 = list(resources.values())[0]
+        # Check that the resource is saved in the client
+        self.assertEqual(self.client.locked_resources, [resource1, resource2])
+        # Check that it's not the same resource that was saved before
+        self.assertFalse(resource1 is resource2)
+        
+        self.client.disconnect()
+
     def test_releasing_locked_resources_on_disconnect(self):
         """Test that disconnecting the client releases the locked resources.
 
@@ -1116,7 +1147,6 @@ class TestResourceManagement(BaseResourceManagementTest):
         requests = [ResourceRequest('res1', DemoResource,
                                     name=self.FREE1_NAME)]
 
-        db_res = self.get_resource(self.FREE1_NAME)[0]
         # Make sure the client has no locked resources
         self.assertEqual(len(self.client.locked_resources), 0)
         # Request the free resource
@@ -1127,6 +1157,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
         # Check that the resource was not finalized yet
+        db_res = self.get_resource(self.FREE1_NAME)[0]
         self.assertFalse(db_res.finalization_flag)
 
         self.client.disconnect()
@@ -1144,7 +1175,6 @@ class TestResourceManagement(BaseResourceManagementTest):
         requests = [ResourceRequest('res1', DemoResource,
                                     name=self.FREE1_NAME)]
 
-        db_res = self.get_resource(self.FREE1_NAME)[0]
         # Make sure the client has no locked resources
         self.assertEqual(len(self.client.locked_resources), 0)
         # Request the free resource
@@ -1170,7 +1200,6 @@ class TestResourceManagement(BaseResourceManagementTest):
         requests = [ResourceRequest('res1', DemoResource,
                                     name=self.FREE1_NAME)]
 
-        db_res = self.get_resource(self.FREE1_NAME)[0]
         # Make sure the client has no locked resources
         self.assertEqual(len(self.client.locked_resources), 0)
         # Request the free resource
@@ -1181,8 +1210,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.client.release_resources(resources)
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
-        self.assertEqual(resource1.name, db_res.name)
         db_res = self.get_resource(self.FREE1_NAME)[0]
+        self.assertEqual(resource1.name, db_res.name)
         # Check that the resource was initialized
         self.assertTrue(db_res.initialization_flag)
         # Check that the resource was finalized

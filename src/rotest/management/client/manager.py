@@ -78,6 +78,9 @@ class ClientResourceManager(AbstractClient):
     Attributes:
         locked_resources (list): resources locked and initialized by the client
             that are yet to be released.
+        unused_resources (list): a sub-set of 'locked_resources' which
+            are marked as not needed anymore - i.e. the test that requested
+            them finished running.
         keep_resources (bool): whether to keep the resources locked until
             they are not needed.
     """
@@ -90,6 +93,7 @@ class ClientResourceManager(AbstractClient):
             host = RESOURCE_MANAGER_HOST
 
         self.locked_resources = []
+        self.unused_resources = []
         self.keep_resources = keep_resources
 
         super(ClientResourceManager, self).__init__(logger=logger, host=host)
@@ -406,18 +410,17 @@ class ClientResourceManager(AbstractClient):
             AttrDict. resources AttrDict {name: BaseResource}.
         """
         retrieved_resources = AttrDict()
-        unused_locked_resources = self.locked_resources[:]
-        if len(unused_locked_resources) == 0:
+        if len(self.unused_resources) == 0:
             return retrieved_resources
 
         for descriptor, request in zip(descriptors[:], requests[:]):
             # Check if the previously locked holds a similar resource
             if any(resource.DATA_CLASS == descriptor.type.DATA_CLASS
-                   for resource in unused_locked_resources):
+                   for resource in self.unused_resources):
 
                 matching_resources = self._find_matching_resources(
                     descriptor,
-                    unused_locked_resources)
+                    self.unused_resources)
 
                 if len(matching_resources) > 0:
                     previous_resource = matching_resources[0]
@@ -428,16 +431,16 @@ class ClientResourceManager(AbstractClient):
 
                     retrieved_resources[request.name] = previous_resource
 
-                    unused_locked_resources.remove(previous_resource)
+                    self.unused_resources.remove(previous_resource)
                     descriptors.remove(descriptor)
                     requests.remove(request)
 
-        if len(unused_locked_resources) > 0:
+        if len(self.unused_resources) > 0:
             self.logger.debug("Releasing unused locked resources %r",
-                              unused_locked_resources)
+                              self.unused_resources)
 
             self.release_resources({res.name: res for
-                                    res in unused_locked_resources},
+                                    res in self.unused_resources},
                                    force_release=True)
 
         return retrieved_resources
@@ -526,7 +529,8 @@ class ClientResourceManager(AbstractClient):
             RuntimeError. releasing resources failed.
         """
         if self.keep_resources and not force_release and not dirty:
-            self.logger.debug("Refraining from releasing the resources")
+            self.logger.debug("Refraining from releasing the resources yet")
+            self.unused_resources.extend(list(resources.values()))
             return
 
         try:
