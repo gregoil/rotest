@@ -1134,7 +1134,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEqual(self.client.locked_resources, [resource1, resource2])
         # Check that it's not the same resource that was saved before
         self.assertFalse(resource1 is resource2)
-        
+
         self.client.disconnect()
 
     def test_releasing_locked_resources_on_disconnect(self):
