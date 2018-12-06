@@ -2,7 +2,8 @@
 from __future__ import absolute_import
 from setuptools import setup, find_packages
 
-__version__ = "5.2.1"
+
+__version__ = "5.3.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
