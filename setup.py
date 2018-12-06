@@ -32,7 +32,6 @@ requirements = [
     'xlwt',
     'attrdict',
     'pyyaml',
-    'twisted',
     'psutil',
     'colorama',
     'termcolor',
@@ -54,6 +53,17 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=requirements,
+    extras_require={
+        "dev": ["pytest",
+                "pytest-django",
+                "pytest-cov",
+                "mock",
+                "pyfakefs",
+                "xlrd",
+                "pathlib2",
+                "flake8",
+                "pylint"]
+    },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*",
     entry_points={
         "console_scripts": [
@@ -76,6 +86,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',
