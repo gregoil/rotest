@@ -174,7 +174,6 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
                          resources_locked)
 
 
-@pytest.mark.skip(reason="known bug")
 class TestMultipleWorkers(AbstractMultiprocessRunnerTest):
     """Test class for testing MultiprocessRunner."""
 

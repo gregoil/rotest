@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 from inspect import isclass
 
+import six
 from future.builtins import object
 
 from rotest.management import ResourceData
@@ -11,7 +12,6 @@ from rotest.management.common.utils import (TYPE_NAME,
                                             PROPERTIES,
                                             extract_type,
                                             extract_type_path)
-import six
 
 
 class ResourceDescriptor(object):

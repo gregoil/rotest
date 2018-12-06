@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
+import six
 from django.test.testcases import TransactionTestCase
 
 from rotest.management.common.parsers import JSONParser
@@ -15,7 +16,6 @@ from rotest.management.common.messages import (ErrorReply,
                                                ResourcesReply,
                                                ParsingFailure,
                                                ReleaseResources)
-import six
 
 
 class AbstractTestParser(six.with_metaclass(ABCMeta, TransactionTestCase)):

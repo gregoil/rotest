@@ -1,5 +1,5 @@
 """Define SignatureData model class."""
-# pylint: disable=no-init,old-style-class
+# pylint: disable=no-init
 from __future__ import absolute_import
 
 import re

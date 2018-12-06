@@ -300,7 +300,7 @@ class AbstractFlowComponent(AbstractTest):
                 self.data.exception_type not in TestOutcome.POSITIVE_RESULTS:
             return True
 
-        elif self.mode in (MODE_OPTIONAL,) and \
+        if self.mode in (MODE_OPTIONAL,) and \
                 self.data.exception_type not in TestOutcome.UNCRITICAL_RESULTS:
             return True
 

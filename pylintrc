@@ -52,7 +52,9 @@ confidence=
 # --disable=W"
 disable=bad-continuation,no-member,missing-docstring,relative-import,
         invalid-name,too-few-public-methods,duplicate-code,cyclic-import,
-        len-as-condition,arguments-differ,unbalanced-tuple-unpacking
+        len-as-condition,arguments-differ,unbalanced-tuple-unpacking,
+        unnecessary-pass,keyword-arg-before-vararg,
+        inconsistent-return-statements
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

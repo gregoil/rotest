@@ -42,7 +42,7 @@ class AbstractTestRunnerResult(with_metaclass(ABCMeta, BasicRotestUnitTest)):
         Returns:
             BaseTestRunner. test runner object.
         """
-        pass
+        raise NotImplementedError()
 
     def setUp(self):
         """Initialize the test runner."""

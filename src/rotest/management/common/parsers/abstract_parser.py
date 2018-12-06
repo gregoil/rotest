@@ -2,8 +2,9 @@
 from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
-from rotest.management.common.messages import AbstractMessage
 import six
+
+from rotest.management.common.messages import AbstractMessage
 
 
 class ParsingError(Exception):

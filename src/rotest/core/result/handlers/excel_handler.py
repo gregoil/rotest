@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import os
 from collections import OrderedDict
 
+import six
 import xlwt
 from xlwt.Style import easyxf
 from future.builtins import str
@@ -16,8 +17,6 @@ from rotest.core.result.handlers.db_handler import DBHandler
 from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.core.result.handlers.remote_db_handler import RemoteDBHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
-
-import six
 
 
 class ExcelHandler(AbstractResultHandler):

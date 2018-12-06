@@ -22,26 +22,6 @@ result_handlers = [
     "rotest.core.result.handlers.stream.stream_handler:EventStreamHandler",
 ]
 
-requirements = [
-    'django>=1.8,<1.9',
-    'ipdb',
-    'py',
-    'isort',
-    'ipdbugger>=2',
-    'docopt',
-    'xlwt',
-    'attrdict',
-    'pyyaml',
-    'psutil',
-    'colorama',
-    'termcolor',
-    'jsonschema',
-    'basicstruct',
-    'future',
-    'swaggapi>=0.6.5',
-    'python-daemon;platform_system!="Windows"'
-]
-
 setup(
     name='rotest',
     version=__version__,
@@ -52,17 +32,34 @@ setup(
     author_email="gregoil@walla.co.il",
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
-    install_requires=requirements,
+    install_requires=[
+        'django>=1.8,<1.9',
+        'py',
+        'isort',
+        'ipdbugger>=2',
+        'xlwt',
+        'attrdict',
+        'pyyaml',
+        'psutil',
+        'colorama',
+        'termcolor',
+        'jsonschema',
+        'basicstruct',
+        'future',
+        'swaggapi>=0.6.5',
+    ],
     extras_require={
-        "dev": ["pytest",
-                "pytest-django",
-                "pytest-cov",
-                "mock",
-                "pyfakefs",
-                "xlrd",
-                "pathlib2",
-                "flake8",
-                "pylint < 1.8.0"]
+        "dev": [
+            "pytest",
+            "pytest-django",
+            "pytest-cov",
+            "mock",
+            "pyfakefs",
+            "xlrd",
+            "pathlib2",
+            "flake8",
+            "pylint",
+        ]
     },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*",
     entry_points={
