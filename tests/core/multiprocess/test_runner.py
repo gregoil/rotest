@@ -10,7 +10,6 @@ import unittest
 from multiprocessing import Queue, Event
 
 import psutil
-import pytest
 from future.builtins import range
 from six.moves import queue
 

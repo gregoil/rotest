@@ -106,6 +106,19 @@ class TestControlOperationParamsModel(AbstractAPIModel):
     ]
 
 
+class SetSessionTimeoutModel(AbstractAPIModel):
+    """Set a timeout to the session, override the previous one.
+
+    Args:
+        token (str): the session token of the current test run.
+        timeout (number): timeout to set to the session.
+    """
+    PROPERTIES = [
+        StringField(name="token", required=True, location="query"),
+        NumberField(name="timeout", required=True, location="query")
+    ]
+
+
 class UpdateResourcesParamsModel(AbstractAPIModel):
     """Update the given resources test data.
 
