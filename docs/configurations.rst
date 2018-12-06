@@ -225,9 +225,10 @@ Discoverer Blacklist
 --------------------
 
 Rotest enables loading resources from an app, a thing that happens automatically
-when running "rotest shell", but some files can / must be skipped when searching
-for the resources. The methods (under ``rotest.management.utils.resources_discoverer``)
-do get a `blacklist` argument, but the default value is extracted from the config.
+when running ``rotest shell``, but some files can / must be skipped when searching
+for the resources.
+
+Also, tests discovering (via ``rotest <some_dir>``) takes this blacklist into consideration.
 
 Define it in the following ways:
 
@@ -238,4 +239,4 @@ Define it in the following ways:
       rotest:
           discoverer_blacklist: ["*/scripts/*", "*static.py"]
 
-* Use the default, which is ``[]``.
+* Use the default, which is ``[".tox", ".git", ".idea", "setup.py"]``.
