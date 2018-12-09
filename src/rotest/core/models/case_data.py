@@ -1,6 +1,6 @@
 """Define CaseData model class."""
+# pylint: disable=too-many-public-methods,no-init
 # pylint: disable=no-member,no-init,too-few-public-methods
-# pylint: disable=too-many-public-methods,no-init,old-style-class
 from __future__ import absolute_import
 
 from django.db import models

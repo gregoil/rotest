@@ -1,5 +1,5 @@
 """Define GeneralData model class."""
-# pylint: disable=no-init,old-style-class,unused-argument
+# pylint: disable=no-init,unused-argument
 from __future__ import absolute_import
 
 from datetime import datetime

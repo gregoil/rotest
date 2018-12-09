@@ -46,6 +46,7 @@ import inspect
 import argparse
 from itertools import chain
 
+import six
 import django
 import pkg_resources
 from attrdict import AttrDict
@@ -59,7 +60,6 @@ from rotest.cli.discover import discover_tests_under_paths
 from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
                                 update_resource_requests, run as rotest_runner,
                                 parse_resource_identifiers)
-import six
 
 
 def parse_outputs_option(outputs):

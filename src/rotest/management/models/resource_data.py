@@ -3,9 +3,9 @@
 Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
+# pylint: disable=access-member-before-definition,no-init
+# pylint: disable=attribute-defined-outside-init,invalid-name
 # pylint: disable=no-self-use,too-many-public-methods,too-few-public-methods
-# pylint: disable=attribute-defined-outside-init,invalid-name,old-style-class
-# pylint: disable=access-member-before-definition,property-on-old-class,no-init
 from __future__ import absolute_import
 
 from datetime import datetime

@@ -1,5 +1,6 @@
 """Multiprocess worker process."""
-# pylint: disable=invalid-name,too-many-arguments,too-many-instance-attributes
+# pylint: disable=invalid-name,too-many-arguments
+# pylint: disable=too-many-locals,too-many-instance-attributes
 from __future__ import absolute_import
 from multiprocessing import Process
 

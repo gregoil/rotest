@@ -7,13 +7,24 @@ hierarchial structure), what were their results and error descriptions, and
 additional data about the run.
 """
 from __future__ import absolute_import
+
+import six
+
+from rotest.common import core_log
+from rotest.common.config import RESOURCE_MANAGER_HOST
+from rotest.management.client.client import AbstractClient
+from rotest.api.common.responses import FailureResponseModel
+from rotest.management.common.resource_descriptor import ResourceDescriptor
+from rotest.management.common.utils import (TEST_ID_KEY,
+                                            TEST_NAME_KEY,
+                                            TEST_SUBTESTS_KEY,
+                                            TEST_CLASS_CODE_KEY)
 from rotest.api.common.models import (SetSessionTimeoutModel,
                                       StartTestRunParamsModel,
                                       UpdateRunDataParamsModel,
                                       AddTestResultParamsModel,
                                       TestControlOperationParamsModel,
                                       UpdateResourcesParamsModel)
-from rotest.api.common.responses import FailureResponseModel
 from rotest.api.test_control import (StartTestRun,
                                      UpdateRunData,
                                      AddTestResult,
@@ -24,16 +35,6 @@ from rotest.api.test_control import (StartTestRun,
                                      UpdateResources,
                                      StartComposite,
                                      StopComposite)
-
-from rotest.common import core_log
-from rotest.common.config import RESOURCE_MANAGER_HOST
-from rotest.management.client.client import AbstractClient
-from rotest.management.common.resource_descriptor import ResourceDescriptor
-from rotest.management.common.utils import (TEST_ID_KEY,
-                                            TEST_NAME_KEY,
-                                            TEST_SUBTESTS_KEY,
-                                            TEST_CLASS_CODE_KEY)
-import six
 
 
 class ClientResultManager(AbstractClient):

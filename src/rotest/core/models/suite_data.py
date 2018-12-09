@@ -1,5 +1,5 @@
 """Define SuiteData model class."""
-# pylint: disable=no-init,old-style-class
+# pylint: disable=no-init
 from future.builtins import object
 
 from .general_data import GeneralData

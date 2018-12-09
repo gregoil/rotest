@@ -1,6 +1,6 @@
 """Test TestSuite behavior and common variables."""
 # pylint: disable=too-many-locals,protected-access
-# pylint: disable=too-many-public-methods,invalid-name,old-style-class
+# pylint: disable=too-many-public-methods,invalid-name
 # pylint: disable=no-member,protected-access,no-init,too-few-public-methods
 from __future__ import absolute_import
 import os

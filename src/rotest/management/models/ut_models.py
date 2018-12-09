@@ -1,7 +1,6 @@
 """Define Rotest UT model classes."""
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=too-many-public-methods,old-style-class
 # pylint: disable=no-self-use,no-init,no-member,too-few-public-methods
+# pylint: disable=attribute-defined-outside-init,too-many-public-methods
 from __future__ import absolute_import
 
 import os

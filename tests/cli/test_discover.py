@@ -86,10 +86,10 @@ def test_discovering_tests(loader_mock):
 
 
 def test_importing_bad_file():
+    """Assert that importing a class with bugs raises an import error."""
     with Patcher() as patcher:
-        patcher.fs.create_file("some_bad_test.py")
+        patcher.fs.create_file("some_bad_test.py",
+                               contents="from lie import non_existing")
 
         with pytest.raises(ImportError):
-            with mock.patch("__builtin__.__import__",
-                            side_effect=ImportError):
-                discover_tests_under_paths(["some_bad_test.py"])
+            discover_tests_under_paths(["some_bad_test.py"])
