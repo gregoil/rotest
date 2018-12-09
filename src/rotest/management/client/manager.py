@@ -365,6 +365,9 @@ class ClientResourceManager(AbstractClient):
             if resource in self.locked_resources:
                 self.locked_resources.remove(resource)
 
+            if resource in self.unused_resources:
+                self.unused_resources.remove(resource)
+
     def _find_matching_resources(self, descriptor, resources):
         """Get all similar resources that match the resource descriptor.
 
