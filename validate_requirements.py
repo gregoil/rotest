@@ -11,18 +11,14 @@ GET_DEPENDENCIES_COMMAND = ["pip", "freeze", "--exclude-editable"]
 
 def main():
     with open("requirements.txt", "rt") as requirements_file:
-        written_requirements = dict(
-            line.split("==")
-            for line in requirements_file.read().split())
+        written_requirements = set(requirements_file.read().split())
 
-    actual_requirements = dict(
-        line.split("==")
-        for line in check_output(
-            GET_DEPENDENCIES_COMMAND).decode("utf-8").split())
+    actual_requirements = set(check_output(
+        GET_DEPENDENCIES_COMMAND).decode("utf-8").split())
 
     try:
         diff = "Difference: {}".format(
-            ", ".join(set(actual_requirements) ^ set(written_requirements)))
+            ", ".join(actual_requirements ^ written_requirements))
         assert actual_requirements == written_requirements, diff
 
     finally:
