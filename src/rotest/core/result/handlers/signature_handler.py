@@ -33,7 +33,7 @@ class SignatureHandler(BaseStreamHandler):
                                                             response_data.id)
 
         else:
-            encounter = "Encountered known issue ID=%s, link=%s".format(
+            encounter = "Encountered known issue ID={}, link={}".format(
                                         response_data.id, response_data.link)
 
         self.encounters.append(encounter)
@@ -66,3 +66,5 @@ class SignatureHandler(BaseStreamHandler):
         self.stream.writeln("Signatures summary:")
         for encounter in self.encounters:
             self.stream.writeln('\t'+encounter)
+
+        self.stream.writeln()
