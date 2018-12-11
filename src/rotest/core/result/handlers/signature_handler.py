@@ -65,6 +65,6 @@ class SignatureHandler(BaseStreamHandler):
         """Called by TestRunner after test run."""
         self.stream.writeln("Signatures summary:")
         for encounter in self.encounters:
-            self.stream.writeln('\t'+encounter)
+            self.stream.writeln('\t' + encounter)
 
         self.stream.writeln()
