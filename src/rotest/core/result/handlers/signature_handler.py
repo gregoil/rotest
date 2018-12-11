@@ -61,7 +61,7 @@ class SignatureHandler(BaseStreamHandler):
         response = self.client.get_or_create_signature(exception_str)
         self.handle_response(test, response)
 
-    def print_errors(self, *args):
+    def print_errors(self, *_args):
         """Called by TestRunner after test run."""
         self.stream.writeln("Signatures summary:")
         for encounter in self.encounters:
