@@ -2,11 +2,11 @@
 from __future__ import absolute_import
 
 from rotest.core import skip_if_not_main
-from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
+from rotest.core.result.handlers.stream.base_handler import BaseStreamHandler
 from rotest.management.client.signatures_client import ClientSignatureManager
 
 
-class SignatureHandler(AbstractResultHandler):
+class SignatureHandler(BaseStreamHandler):
     """Failures and errors signatures result handler.
 
     Matches the tests' exceptions with a given pattern,
@@ -19,9 +19,9 @@ class SignatureHandler(AbstractResultHandler):
         super(SignatureHandler, self).__init__(*args, **kwargs)
         self.client = ClientSignatureManager()
         self.client.connect()
+        self.encounters = []
 
-    @staticmethod
-    def handle_response(test_item, response_data):
+    def handle_response(self, test_item, response_data):
         """Handle signature match response.
 
         Args:
@@ -29,14 +29,15 @@ class SignatureHandler(AbstractResultHandler):
             response_data (SignatureResponse): signature match response.
         """
         if response_data.is_new:
-            test_item.logger.warning("Encountered new issue. Assigned ID=%s",
-                                     response_data.id)
+            encounter = "Encountered new issue. Assigned ID={}".format(
+                                                            response_data.id)
 
         else:
-            test_item.logger.warning("Encountered known issue ID=%s",
-                                     response_data.id)
+            encounter = "Encountered known issue ID=%s, link=%s".format(
+                                        response_data.id, response_data.link)
 
-            test_item.logger.warning("Issue link=%s", response_data.link)
+        self.encounters.append(encounter)
+        test_item.logger.warning(encounter)
 
     @skip_if_not_main
     def add_error(self, test, exception_str):
@@ -59,3 +60,9 @@ class SignatureHandler(AbstractResultHandler):
         """
         response = self.client.get_or_create_signature(exception_str)
         self.handle_response(test, response)
+
+    def print_errors(self, *args):
+        """Called by TestRunner after test run."""
+        self.stream.writeln("Signatures summary:")
+        for encounter in self.encounters:
+            self.stream.writeln('\t'+encounter)
