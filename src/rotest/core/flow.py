@@ -1,13 +1,16 @@
 """Define TestFlow composed of test blocks or other test flows."""
 # pylint: disable=protected-access
 # pylint: disable=dangerous-default-value,unused-variable,too-many-arguments
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+import sys
 from itertools import count
+from unittest import SkipTest
 
 from rotest.core.block import TestBlock
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
-                                        MODE_FINALLY, MODE_OPTIONAL)
+                                        MODE_FINALLY, MODE_OPTIONAL,
+                                        JumpException)
 
 assert MODE_FINALLY
 assert MODE_CRITICAL
@@ -85,6 +88,7 @@ class TestFlow(AbstractFlowComponent):
                  skip_init=False, resource_manager=None):
 
         self._tests = []
+        self._run_index = 0
         super(TestFlow, self).__init__(parent=parent,
                                        config=config,
                                        indexer=indexer,
@@ -208,6 +212,44 @@ class TestFlow(AbstractFlowComponent):
         for block in all_blocks[start_index:]:
             block.add_resources(resources)
 
+    def list_blocks(self, indent=0):
+        """Print the hierarchy down starting from the current component.
+
+        It also prints blocks indexes and the next block to run.
+
+        Args:
+            indent (number): recursion counter, to help print sub-flows better.
+        """
+        super(TestFlow, self).list_blocks(indent)
+        for index, block in enumerate(self):
+            print("    " * indent, end='')
+            if index == self._run_index:
+                print(" ->", index, '- ', end='')
+
+            else:
+                print("   ", index, '- ', end='')
+
+            block.list_blocks(index + 1)
+
+    def jump_to(self, index):
+        """Immediately jump to the start of the block at the given index.
+
+        Args:
+            index (number): block index to run.
+        """
+        self._run_index = index
+
+        tracer = sys.gettrace()
+        if tracer:
+            def raise_jump(*_args):
+                raise JumpException(self)
+
+            sys.settrace(raise_jump)
+            tracer.im_self.postcmd = lambda *args: True
+
+        else:
+            raise JumpException(self)
+
     def was_successful(self):
         """Return whether the result of the flow-run was success or not."""
         return (all(block.was_successful() for block in self) and
@@ -220,7 +262,10 @@ class TestFlow(AbstractFlowComponent):
 
     def test_run_blocks(self):
         """Main test method, run the blocks under the test-flow."""
-        for test in self:
+        self._run_index = 0
+        while self._run_index < len(self._tests):
+            test = self._tests[self._run_index]
+            self._run_index += 1
             test(self.result)
 
         all_issues = []

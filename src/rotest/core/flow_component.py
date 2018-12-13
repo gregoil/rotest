@@ -47,6 +47,17 @@ class BlockOutput(object):
     pass
 
 
+class JumpException(KeyboardInterrupt):
+    """An exception raised when the current scope should be skipped.
+
+    Attributes:
+        jump_target (AbstractFlowComponent): the component which's scope
+            should run next.
+    """
+    def __init__(self, jump_target):
+        self.jump_target = jump_target
+
+
 class AbstractFlowComponent(AbstractTest):
     """Define TestBlock, which is a part of a test.
 
@@ -288,7 +299,12 @@ class AbstractFlowComponent(AbstractTest):
         setattr(self, self.TEARDOWN_METHOD_NAME,
                 self._decorate_teardown(teardown_method, result))
 
-        super(AbstractFlowComponent, self).run(result)
+        try:
+            super(AbstractFlowComponent, self).run(result)
+
+        except JumpException as e:
+            if e.jump_target is not self.parent:
+                raise
 
     def is_failing(self):
         """State if the component fails the flow (according to its mode).
@@ -307,6 +323,10 @@ class AbstractFlowComponent(AbstractTest):
         return False
 
     # override in subs
+
+    def list_blocks(self, _):
+        """Print the hierarchy down starting from the current component."""
+        print(self.get_name())
 
     def was_successful(self):
         """Indicate whether or not the component was successful.
