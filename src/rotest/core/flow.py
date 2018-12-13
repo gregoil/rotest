@@ -4,7 +4,6 @@
 from __future__ import absolute_import, print_function
 import sys
 from itertools import count
-from unittest import SkipTest
 
 from rotest.core.block import TestBlock
 from rotest.common.config import ROTEST_WORK_DIR
