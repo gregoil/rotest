@@ -55,7 +55,7 @@ class JumpException(KeyboardInterrupt):
             should run next.
     """
     def __init__(self, jump_target):
-        super(KeyboardInterrupt, self).__init__()
+        super(JumpException, self).__init__()
         self.jump_target = jump_target
 
 
