@@ -1,6 +1,6 @@
 """Describe TestBlock class."""
 # pylint: disable=dangerous-default-value,too-many-arguments
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import
 
 from itertools import count
 
