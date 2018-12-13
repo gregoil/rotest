@@ -178,12 +178,13 @@ Rotest comes with easy ways to debug tests:
 
 * Post run
 
-  The builtin features in Rotest helps you greatly when trying to figure out
+  The builtin features in Rotest help you greatly when trying to figure out
   what went wrong in a test.
 
   The working directory of your project contains the ``logs`` of your tests and resources,
-  as well ``saved state`` of resources (if you used the option `save-state`).
-  If you used the `artifact` output handler, a zip of the test workdir would
+  a summary ``excel`` file (which is created when using the `excel` output handler),
+  as well as ``saved state`` of resources (if you used the option `--save-state`).
+  If you used the `artifact` output handler, a zip of the test workdir should
   also be sent to your artifacts directory.
 
   The tests metadata, including traceback and timestamps,
@@ -205,9 +206,9 @@ Rotest comes with easy ways to debug tests:
   .. code-block:: python
 
       self.parent.list_blocks()  # Prints the hierarchy down from the parent flow
-      self.parent.jump_to(1)  # Jumps to the beginning of the block in index 0
+      self.parent.jump_to(1)  # Jumps to the beginning of the block at index 1
 
-  It is also recommended to use `rotest shell` when debugging new code,
+  It is also recommended to use ``rotest shell`` when debugging new code,
   especially when writing new TestFlows and TestBlocks (use the `shared_data`
   and `run_block` methods to simulate a containing TestFlow). Combining with
-  IPython's `autoreload` ability, writing tests this way can be made easy and quick.
+  IPython's ``autoreload`` ability, writing tests this way can be made easy and quick.

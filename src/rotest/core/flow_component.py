@@ -3,7 +3,7 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import unittest
 from functools import wraps
@@ -55,6 +55,7 @@ class JumpException(KeyboardInterrupt):
             should run next.
     """
     def __init__(self, jump_target):
+        super(KeyboardInterrupt, self).__init__()
         self.jump_target = jump_target
 
 
@@ -303,6 +304,7 @@ class AbstractFlowComponent(AbstractTest):
             super(AbstractFlowComponent, self).run(result)
 
         except JumpException as e:
+            self.data.exception_type = TestOutcome.SKIPPED
             if e.jump_target is not self.parent:
                 raise
 
