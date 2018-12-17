@@ -244,6 +244,7 @@ class TestFlow(AbstractFlowComponent):
                 raise JumpException(self)
 
             sys.settrace(raise_jump)
+            tracer.im_self.dispatch_exception = raise_jump
             tracer.im_self.postcmd = lambda *args: True
 
         else:

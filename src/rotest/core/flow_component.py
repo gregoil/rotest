@@ -314,6 +314,9 @@ class AbstractFlowComponent(AbstractTest):
         Returns:
             bool. True if the flow failed, False otherwise.
         """
+        if self.data.exception_type is None:
+            return False
+
         if self.mode in (MODE_CRITICAL, MODE_FINALLY) and \
                 self.data.exception_type not in TestOutcome.POSITIVE_RESULTS:
             return True
