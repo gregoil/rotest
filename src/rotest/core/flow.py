@@ -223,7 +223,7 @@ class TestFlow(AbstractFlowComponent):
         super(TestFlow, self).list_blocks(indent)
         for index, block in enumerate(self):
             print("    " * indent, end='')
-            if index == self._run_index:
+            if index == self._run_index - 1:
                 print(" ->", index, '- ', end='')
 
             else:
