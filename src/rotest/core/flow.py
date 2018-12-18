@@ -3,6 +3,7 @@
 # pylint: disable=dangerous-default-value,unused-variable,too-many-arguments
 from __future__ import absolute_import, print_function
 import sys
+import platform
 from itertools import count
 
 from rotest.core.block import TestBlock
@@ -240,12 +241,18 @@ class TestFlow(AbstractFlowComponent):
 
         tracer = sys.gettrace()
         if tracer:
+            if platform.python_version().startswith("3"):
+                debugger = tracer.__self__
+
+            else:
+                debugger = tracer.im_self
+
             def raise_jump(*_args):
                 raise JumpException(self)
 
+            debugger.postcmd = lambda *args: True
+            debugger.do_continue(None)
             sys.settrace(raise_jump)
-            tracer.im_self.dispatch_exception = raise_jump
-            tracer.im_self.postcmd = lambda *args: True
 
         else:
             raise JumpException(self)
