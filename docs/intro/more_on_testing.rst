@@ -194,7 +194,7 @@ Rotest comes with easy ways to debug tests:
 
   When running tests locally, using the ``ipdbugger`` (`--debug` flag)
   can be a real life saver. It pops an ipdb interactive shell whenever an
-  unexpected exception occurs (including failures) without existing the scope
+  unexpected exception occurs (including failures) without exiting the scope
   of the test, giving the user full control over it.
 
   For example, if an AttributeError has occurred, you can add the missing

@@ -88,7 +88,7 @@ class TestFlow(AbstractFlowComponent):
                  skip_init=False, resource_manager=None):
 
         self._tests = []
-        self._run_index = 0
+        self._run_index = 0  # Index of the next block to run
         super(TestFlow, self).__init__(parent=parent,
                                        config=config,
                                        indexer=indexer,
