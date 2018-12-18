@@ -3,7 +3,6 @@
 # pylint: disable=dangerous-default-value,unused-variable,too-many-arguments
 from __future__ import absolute_import, print_function
 import sys
-import platform
 from itertools import count
 
 import six
