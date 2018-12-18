@@ -6,6 +6,8 @@ import sys
 import platform
 from itertools import count
 
+import six
+
 from rotest.core.block import TestBlock
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow_component import (AbstractFlowComponent, MODE_CRITICAL,
@@ -241,11 +243,7 @@ class TestFlow(AbstractFlowComponent):
 
         tracer = sys.gettrace()
         if tracer:
-            if platform.python_version().startswith("3"):
-                debugger = tracer.__self__
-
-            else:
-                debugger = tracer.im_self
+            debugger = six.get_method_self(tracer)
 
             def raise_jump(*_args):
                 raise JumpException(self)

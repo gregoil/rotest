@@ -183,7 +183,7 @@ Rotest comes with easy ways to debug tests:
 
   The working directory of your project contains the ``logs`` of your tests and resources,
   a summary ``excel`` file (which is created when using the `excel` output handler),
-  as well as ``saved state`` of resources (if you used the option `--save-state`).
+  as well as ``saved state`` of resources (if you used the option ``--save-state``).
   If you used the `artifact` output handler, a zip of the test workdir should
   also be sent to your artifacts directory.
 
