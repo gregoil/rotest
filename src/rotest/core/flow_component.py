@@ -3,7 +3,7 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import unittest
 from functools import wraps
@@ -45,6 +45,18 @@ class BlockInput(object):
 class BlockOutput(object):
     """Used as declaration for an output for a block."""
     pass
+
+
+class JumpException(KeyboardInterrupt):
+    """An exception raised when the current scope should be skipped.
+
+    Attributes:
+        jump_target (AbstractFlowComponent): the component which's scope
+            should run next.
+    """
+    def __init__(self, jump_target):
+        super(JumpException, self).__init__()
+        self.jump_target = jump_target
 
 
 class AbstractFlowComponent(AbstractTest):
@@ -288,7 +300,13 @@ class AbstractFlowComponent(AbstractTest):
         setattr(self, self.TEARDOWN_METHOD_NAME,
                 self._decorate_teardown(teardown_method, result))
 
-        super(AbstractFlowComponent, self).run(result)
+        try:
+            super(AbstractFlowComponent, self).run(result)
+
+        except JumpException as e:
+            self.data.exception_type = TestOutcome.SKIPPED
+            if e.jump_target is not self.parent:
+                raise
 
     def is_failing(self):
         """State if the component fails the flow (according to its mode).
@@ -296,6 +314,9 @@ class AbstractFlowComponent(AbstractTest):
         Returns:
             bool. True if the flow failed, False otherwise.
         """
+        if self.data.exception_type is None:
+            return False
+
         if self.mode in (MODE_CRITICAL, MODE_FINALLY) and \
                 self.data.exception_type not in TestOutcome.POSITIVE_RESULTS:
             return True
@@ -307,6 +328,10 @@ class AbstractFlowComponent(AbstractTest):
         return False
 
     # override in subs
+
+    def list_blocks(self, _):
+        """Print the hierarchy down starting from the current component."""
+        print(self.get_name())
 
     def was_successful(self):
         """Indicate whether or not the component was successful.

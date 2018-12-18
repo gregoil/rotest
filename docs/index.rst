@@ -21,6 +21,7 @@ Advanced
     :maxdepth: 2
 
     advanced/blocks
+    advanced/debugging
     advanced/custom_output_handlers
     advanced/monitors
 
