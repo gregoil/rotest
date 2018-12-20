@@ -4,6 +4,7 @@ import sys
 
 import mock
 import pytest
+import argparse
 from attrdict import AttrDict
 from pyfakefs.fake_filesystem_unittest import Patcher
 
@@ -24,10 +25,10 @@ def test_parsing_output_handlers():
 
 
 def test_bad_option_in_output_parser():
-    with pytest.raises(ValueError,
-                       match="The following output handlers are not existing: "
-                             "asd.\nAvailable options:.*pretty"):
-        parse_outputs_option("pretty,asd")
+    with pytest.raises(argparse.ArgumentTypeError,
+                       match="Illegal output handlers: asd.\n"
+                             "Available options:.*tree"):
+        parse_outputs_option("tree,asd")
 
 
 @mock.patch("rotest.cli.client.run_tests")
