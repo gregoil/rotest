@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
 import sys
+import argparse
 
 import mock
 import pytest
-import argparse
 from attrdict import AttrDict
 from pyfakefs.fake_filesystem_unittest import Patcher
 
