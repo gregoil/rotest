@@ -81,10 +81,10 @@ def parse_outputs_option(outputs):
     non_existing_handlers = set(requested_handlers) - set(available_handlers)
 
     if non_existing_handlers:
-        raise ValueError("The following output handlers are not "
-                         "existing: {}.\nAvailable options: {}.".format(
-                              ", ".join(non_existing_handlers),
-                              ", ".join(available_handlers)))
+        raise argparse.ArgumentTypeError(
+            "Illegal output handlers: {}.\n"
+            "Available options: {}.".format(", ".join(non_existing_handlers),
+                                            ", ".join(available_handlers)))
 
     return requested_handlers
 
