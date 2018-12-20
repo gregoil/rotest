@@ -39,7 +39,7 @@ psutil==5.4.8
 ptyprocess==0.6.0
 py==1.7.0
 pycodestyle==2.4.0
-pyfakefs==3.5.3
+pyfakefs==3.5.4
 pyflakes==2.0.0
 Pygments==2.3.1
 pylint==1.9.3
