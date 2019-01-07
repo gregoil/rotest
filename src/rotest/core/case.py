@@ -9,6 +9,7 @@ from itertools import count
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
+from rotest.core.result.result import Result
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.models.case_data import CaseData
 from rotest.core.abstract_test import AbstractTest, request
@@ -54,19 +55,22 @@ class TestCase(AbstractTest):
     IS_COMPLEX = False
     test_methods_names = None
 
-    def __init__(self, indexer=count(), methodName='runTest',
+    def __init__(self, methodName='test_method', parent=None, indexer=count(),
                  base_work_dir=ROTEST_WORK_DIR, save_state=True,
-                 force_initialize=False, config=None, parent=None,
-                 run_data=None, enable_debug=True, resource_manager=None,
-                 skip_init=False):
+                 force_initialize=False, config=None, run_data=None,
+                 enable_debug=False, resource_manager=None, skip_init=False):
 
-        super(TestCase, self).__init__(indexer, methodName, save_state,
-                                       force_initialize, config, parent,
-                                       enable_debug, resource_manager,
-                                       skip_init)
+        super(TestCase, self).__init__(methodName=methodName,
+                                       parent=parent,
+                                       indexer=indexer,
+                                       save_state=save_state,
+                                       force_initialize=force_initialize,
+                                       config=config,
+                                       enable_debug=enable_debug,
+                                       resource_manager=resource_manager,
+                                       skip_init=skip_init)
 
         self.skip_reason = None
-        self.skip_determined = False
 
         name = self.get_name(methodName)
         core_log.debug("Initializing %r test-case", name)
@@ -120,7 +124,9 @@ class TestCase(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            skip_reason = self.result.shouldSkip(self)
+            if isinstance(self.result, Result):
+                skip_reason = self.result.shouldSkip(self)
+
             if skip_reason is not None:
                 self.skipTest(skip_reason)
 
@@ -129,7 +135,8 @@ class TestCase(AbstractTest):
 
             try:
                 setup_method(*args, **kwargs)
-                self.result.setupFinished(self)
+                if isinstance(self.result, Result):
+                    self.result.setupFinished(self)
 
             except Exception:
                 self.release_resources(dirty=True)
@@ -159,6 +166,6 @@ class TestCase(AbstractTest):
 
         teardown_method = getattr(self, self.TEARDOWN_METHOD_NAME)
         setattr(self, self.TEARDOWN_METHOD_NAME,
-                self._decorate_teardown(teardown_method, result))
+                self._decorate_teardown(teardown_method))
 
         super(TestCase, self).run(result)

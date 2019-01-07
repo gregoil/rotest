@@ -73,10 +73,11 @@ class TestBlock(AbstractFlowComponent):
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
     IS_COMPLEX = False
+    __test__ = False
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
-                 parent=None, run_data=None, enable_debug=True,
+                 parent=None, run_data=None, enable_debug=False,
                  resource_manager=None, skip_init=False, is_main=True):
 
         super(TestBlock, self).__init__(parent=parent,
