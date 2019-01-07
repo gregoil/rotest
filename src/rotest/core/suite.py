@@ -1,6 +1,6 @@
 """Define Rotest's TestSuite, composed from test suites or test cases."""
 # pylint: disable=method-hidden,bad-super-call,too-many-arguments
-# pylint: too-many-locals
+# pylint: disable=too-many-locals
 from __future__ import absolute_import
 
 import unittest

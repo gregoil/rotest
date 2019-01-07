@@ -179,8 +179,11 @@ class RunnerMessageHandler(object):
             test (object): test item to update.
             message (StartTest): worker message object.
         """
+        # Since the logger is only created in the worker, we create it here
+        test.create_logger()
+
         self.result.startTest(test)
-        if not isinstance(test, AbstractFlowComponent) or test.is_main:
+        if test.is_main:
             self.runner.update_worker(worker_pid=message.msg_id, test=test)
             self.runner.update_timeout(worker_pid=message.msg_id,
                                        timeout=test.TIMEOUT)
@@ -238,7 +241,7 @@ class RunnerMessageHandler(object):
             message (StopTest): worker message object.
         """
         self.result.stopTest(test)
-        if not isinstance(test, AbstractFlowComponent) or test.is_main:
+        if test.is_main:
             self._update_parent_stop(test)
 
     def _handle_composite_stop_message(self, test, message):
