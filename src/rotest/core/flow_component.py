@@ -3,6 +3,7 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
+# pylint: disable=too-many-branches
 from __future__ import absolute_import, print_function
 
 import unittest
