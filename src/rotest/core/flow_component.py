@@ -227,7 +227,7 @@ class AbstractFlowComponent(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            self.create_logger()
+            self.override_resource_loggers()
 
             if self.is_main:
                 if isinstance(self.result, Result):
@@ -303,6 +303,7 @@ class AbstractFlowComponent(AbstractTest):
             result (rotest.core.result.result.Result): test result information.
         """
         self.result = result
+        self.create_logger()
 
         # === Decorate the setUp and tearDown methods ===
         setup_method = getattr(self, self.SETUP_METHOD_NAME)

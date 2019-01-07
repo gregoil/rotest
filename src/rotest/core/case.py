@@ -122,7 +122,7 @@ class TestCase(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            self.create_logger()
+            self.override_resource_loggers()
 
             if isinstance(self.result, Result):
                 skip_reason = self.result.shouldSkip(self)
@@ -158,6 +158,7 @@ class TestCase(AbstractTest):
         # method signature, but the Rotest test case does not support it.
         self.assertIsNotNone(result, 'TestCase must run inside a TestSuite')
         self.result = result
+        self.create_logger()
 
         # === Decorate the setUp, test and tearDown methods. ===
         setup_method = getattr(self, self.SETUP_METHOD_NAME)

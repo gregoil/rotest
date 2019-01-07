@@ -82,6 +82,7 @@ class AbstractTest(unittest.TestCase):
         super(AbstractTest, self).__init__(methodName)
 
         self.result = None
+        self.logger = None
         self.is_main = True
         self.config = config
         self.parent = parent
@@ -252,10 +253,10 @@ class AbstractTest(unittest.TestCase):
         return self.parent.parents_count + 1
 
     def create_logger(self):
-        """Create logger instance for the test and propagate it."""
-        self.logger = get_test_logger(get_tree_path(self), self.work_dir)
-        self.logger.info("Test %r has started running", self.data)
-        self.override_resource_loggers()
+        """Create logger instance for the test."""
+        if self.logger is None:
+            self.logger = get_test_logger(get_tree_path(self), self.work_dir)
+            self.logger.info("Test %r has started running", self.data)
 
     def start(self):
         """Update the data that the test started."""
