@@ -9,7 +9,6 @@ from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.models.general_data import GeneralData
 from rotest.management.common.parsers import DEFAULT_PARSER
-from rotest.core.flow_component import AbstractFlowComponent
 from rotest.core.runners.multiprocess.common import (WrappedException,
                                                      get_item_by_id)
 from rotest.management.common.messages import (StopTest,
