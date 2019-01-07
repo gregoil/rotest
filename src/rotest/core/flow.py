@@ -83,7 +83,7 @@ class TestFlow(AbstractFlowComponent):
 
     TEST_METHOD_NAME = "test_run_blocks"
 
-    def __init__(self, indexer=count(),base_work_dir=ROTEST_WORK_DIR,
+    def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
                  parent=None, run_data=None, enable_debug=False, is_main=True,
                  skip_init=False, resource_manager=None):
