@@ -23,6 +23,7 @@ from rotest.core.result.result import Result
 from rotest.common.utils import get_class_fields
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.base_resource import BaseResource
+from rotest.common.log import get_test_logger, get_tree_path
 from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
 
@@ -81,6 +82,7 @@ class AbstractTest(unittest.TestCase):
         super(AbstractTest, self).__init__(methodName)
 
         self.result = None
+        self.is_main = True
         self.config = config
         self.parent = parent
         self.skip_init = skip_init
@@ -248,6 +250,12 @@ class AbstractTest(unittest.TestCase):
             return 0
 
         return self.parent.parents_count + 1
+
+    def create_logger(self):
+        """Create logger instance for the test and propagate it."""
+        self.logger = get_test_logger(get_tree_path(self), self.work_dir)
+        self.logger.info("Test %r has started running", self.data)
+        self.override_resource_loggers()
 
     def start(self):
         """Update the data that the test started."""

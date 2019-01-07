@@ -124,11 +124,13 @@ class TestCase(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            if isinstance(self.result, Result):
-                skip_reason = self.result.shouldSkip(self)
+            self.create_logger()
 
-            if skip_reason is not None:
-                self.skipTest(skip_reason)
+            if isinstance(self.result, Result):
+                self.skip_reason = self.result.shouldSkip(self)
+
+            if self.skip_reason is not None:
+                self.skipTest(self.skip_reason)
 
             self.request_resources(self.get_resource_requests(),
                                    use_previous=True)

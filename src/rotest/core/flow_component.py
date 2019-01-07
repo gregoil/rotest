@@ -226,6 +226,8 @@ class AbstractFlowComponent(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
+            self.create_logger()
+
             if self.is_main:
                 if isinstance(self.result, Result):
                     skip_reason = self.result.shouldSkip(self)
