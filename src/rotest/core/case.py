@@ -70,8 +70,6 @@ class TestCase(AbstractTest):
                                        resource_manager=resource_manager,
                                        skip_init=skip_init)
 
-        self.skip_reason = None
-
         name = self.get_name(methodName)
         core_log.debug("Initializing %r test-case", name)
 
@@ -127,10 +125,10 @@ class TestCase(AbstractTest):
             self.create_logger()
 
             if isinstance(self.result, Result):
-                self.skip_reason = self.result.shouldSkip(self)
+                skip_reason = self.result.shouldSkip(self)
 
-            if self.skip_reason is not None:
-                self.skipTest(self.skip_reason)
+                if skip_reason is not None:
+                    self.skipTest(skip_reason)
 
             self.request_resources(self.get_resource_requests(),
                                    use_previous=True)

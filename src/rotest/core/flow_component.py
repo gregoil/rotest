@@ -232,9 +232,9 @@ class AbstractFlowComponent(AbstractTest):
                 if isinstance(self.result, Result):
                     skip_reason = self.result.shouldSkip(self)
 
-                if skip_reason is not None:
-                    self.skip_sub_components(skip_reason)
-                    self.skipTest(skip_reason)
+                    if skip_reason is not None:
+                        self.skip_sub_components(skip_reason)
+                        self.skipTest(skip_reason)
 
             else:
                 if self.mode in (MODE_CRITICAL, MODE_OPTIONAL):

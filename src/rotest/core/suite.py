@@ -85,7 +85,7 @@ class TestSuite(unittest.TestSuite):
             parent.addTest(self)
 
         core_log.debug("Initializing %r test-suite", name)
-        if len(self.components) == 0:
+        if len(self.components) == 0 and len(tests) == 0:
             raise AttributeError("%s: Components tuple can't be empty" % name)
 
         core_log.debug("Creating database entry for %r test-suite", name)
@@ -168,13 +168,13 @@ class TestSuite(unittest.TestSuite):
             rotest.core.result.result.Result. holder for test result
                 information.
         """
-        if isinstance(self.result, Result):
+        if isinstance(result, Result):
             result.startComposite(self)
 
         core_log.debug("Running %r test-suite", self.data)
         result = super(TestSuite, self).run(result, debug)
 
-        if isinstance(self.result, Result):
+        if isinstance(result, Result):
             result.stopComposite(self)
 
         return result
