@@ -227,8 +227,6 @@ class AbstractFlowComponent(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            self.override_resource_loggers()
-
             if self.is_main:
                 if isinstance(self.result, Result):
                     skip_reason = self.result.shouldSkip(self)
@@ -252,6 +250,8 @@ class AbstractFlowComponent(AbstractTest):
             try:
                 self.request_resources(self.get_resource_requests(),
                                        use_previous=True)
+
+                self.override_resource_loggers()
 
             except Exception as err:
                 if isinstance(err, ServerError):

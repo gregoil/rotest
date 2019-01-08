@@ -122,8 +122,6 @@ class TestCase(AbstractTest):
             * Executes the original setUp method.
             * Upon exception, finalizes the resources.
             """
-            self.override_resource_loggers()
-
             if isinstance(self.result, Result):
                 skip_reason = self.result.shouldSkip(self)
 
@@ -132,6 +130,8 @@ class TestCase(AbstractTest):
 
             self.request_resources(self.get_resource_requests(),
                                    use_previous=True)
+
+            self.override_resource_loggers()
 
             try:
                 setup_method(*args, **kwargs)
