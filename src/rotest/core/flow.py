@@ -1,5 +1,5 @@
 """Define TestFlow composed of test blocks or other test flows."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,unused-argument
 # pylint: disable=dangerous-default-value,unused-variable,too-many-arguments
 from __future__ import absolute_import, print_function
 import sys
@@ -83,9 +83,10 @@ class TestFlow(AbstractFlowComponent):
 
     TEST_METHOD_NAME = "test_run_blocks"
 
-    def __init__(self, base_work_dir=ROTEST_WORK_DIR, save_state=True,
-                 force_initialize=False, config=None, indexer=count(),
-                 parent=None, run_data=None, enable_debug=False, is_main=True,
+    def __init__(self, methodName='test_method', indexer=count(),
+                 base_work_dir=ROTEST_WORK_DIR, save_state=True,
+                 force_initialize=False, config=None, parent=None,
+                 run_data=None, enable_debug=False, is_main=True,
                  skip_init=False, resource_manager=None):
 
         self._tests = []
@@ -134,6 +135,12 @@ class TestFlow(AbstractFlowComponent):
 
     def addTest(self, test_item):
         self._tests.append(test_item)
+
+    def create_logger(self):
+        """Create logger instances for the test and its components."""
+        super(TestFlow, self).create_logger()
+        for block in self._tests:
+            block.create_logger()
 
     def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.

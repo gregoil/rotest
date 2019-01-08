@@ -19,9 +19,11 @@ from attrdict import AttrDict
 from future.builtins import next, str, object
 from future.utils import iteritems, itervalues
 
+from rotest.core.result.result import Result
 from rotest.common.utils import get_class_fields
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.base_resource import BaseResource
+from rotest.common.log import get_test_logger, get_tree_path
 from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
 
@@ -64,9 +66,9 @@ class AbstractTest(unittest.TestCase):
 
     STATE_DIR_NAME = "state"
 
-    def __init__(self, indexer=count(), methodName='runTest', save_state=True,
-                 force_initialize=False, config=None, parent=None,
-                 enable_debug=True, resource_manager=None, skip_init=False):
+    def __init__(self, methodName='test_method', indexer=count(), parent=None,
+                 save_state=True, force_initialize=False, config=None,
+                 enable_debug=False, resource_manager=None, skip_init=False):
 
         if enable_debug:
             for method_name in (methodName, self.SETUP_METHOD_NAME,
@@ -80,6 +82,8 @@ class AbstractTest(unittest.TestCase):
         super(AbstractTest, self).__init__(methodName)
 
         self.result = None
+        self.logger = None
+        self.is_main = True
         self.config = config
         self.parent = parent
         self.skip_init = skip_init
@@ -201,7 +205,7 @@ class AbstractTest(unittest.TestCase):
         for resource in itervalues(requested_resources):
             resource.override_logger(self.logger)
 
-        if self.result is not None:
+        if isinstance(self.result, Result):
             self.result.updateResources(self)
 
     def release_resources(self, resources=None, dirty=False,
@@ -248,6 +252,12 @@ class AbstractTest(unittest.TestCase):
 
         return self.parent.parents_count + 1
 
+    def create_logger(self):
+        """Create logger instance for the test."""
+        if self.logger is None:
+            self.logger = get_test_logger(get_tree_path(self), self.work_dir)
+            self.logger.info("Test %r has started running", self.data)
+
     def start(self):
         """Update the data that the test started."""
         self.data.start()
@@ -262,12 +272,11 @@ class AbstractTest(unittest.TestCase):
         """
         self.data.update_result(test_outcome, details)
 
-    def _decorate_teardown(self, teardown_method, result):
+    def _decorate_teardown(self, teardown_method):
         """Decorate the tearDown method to handle resource release.
 
         Args:
             teardown_method (function): the original tearDown method.
-            result (rotest.core.result.result.Result): test result information.
 
         Returns:
             function. the wrapped tearDown method.
@@ -280,12 +289,14 @@ class AbstractTest(unittest.TestCase):
             * Releases the test resources.
             * Closes the client if needed
             """
-            self.result.startTeardown(self)
+            if isinstance(self.result, Result):
+                self.result.startTeardown(self)
+
             try:
                 teardown_method(*args, **kwargs)
 
             except Exception:
-                result.addError(self, sys.exc_info())
+                self.result.addError(self, sys.exc_info())
 
             finally:
                 self.store_state()

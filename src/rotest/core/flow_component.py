@@ -3,6 +3,7 @@
 # pylint: disable=too-many-arguments,too-many-locals,broad-except
 # pylint: disable=dangerous-default-value,access-member-before-definition
 # pylint: disable=bare-except,protected-access,too-many-instance-attributes
+# pylint: disable=too-many-branches
 from __future__ import absolute_import, print_function
 
 import unittest
@@ -14,6 +15,7 @@ from future.builtins import range, object
 
 from rotest.common import core_log
 from rotest.common.utils import get_work_dir
+from rotest.core.result.result import Result
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.abstract_test import AbstractTest
 from rotest.management.common.errors import ServerError
@@ -118,14 +120,20 @@ class AbstractFlowComponent(AbstractTest):
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
-                 parent=None, run_data=None, enable_debug=True,
+                 parent=None, run_data=None, enable_debug=False,
                  resource_manager=None, skip_init=False, is_main=True):
 
         test_method_name = self.get_test_method_name()
-        super(AbstractFlowComponent, self).__init__(indexer, test_method_name,
-                                        save_state, force_initialize, config,
-                                        parent, enable_debug, resource_manager,
-                                        skip_init)
+        super(AbstractFlowComponent, self).__init__(
+                                        methodName=test_method_name,
+                                        parent=parent,
+                                        indexer=indexer,
+                                        save_state=save_state,
+                                        force_initialize=force_initialize,
+                                        config=config,
+                                        enable_debug=enable_debug,
+                                        resource_manager=resource_manager,
+                                        skip_init=skip_init)
 
         self._pipes = {}
         self.is_main = is_main
@@ -220,10 +228,12 @@ class AbstractFlowComponent(AbstractTest):
             * Upon exception, finalizes the resources.
             """
             if self.is_main:
-                skip_reason = self.result.shouldSkip(self)
-                if skip_reason is not None:
-                    self.skip_sub_components(skip_reason)
-                    self.skipTest(skip_reason)
+                if isinstance(self.result, Result):
+                    skip_reason = self.result.shouldSkip(self)
+
+                    if skip_reason is not None:
+                        self.skip_sub_components(skip_reason)
+                        self.skipTest(skip_reason)
 
             else:
                 if self.mode in (MODE_CRITICAL, MODE_OPTIONAL):
@@ -240,6 +250,8 @@ class AbstractFlowComponent(AbstractTest):
             try:
                 self.request_resources(self.get_resource_requests(),
                                        use_previous=True)
+
+                self.override_resource_loggers()
 
             except Exception as err:
                 if isinstance(err, ServerError):
@@ -263,7 +275,8 @@ class AbstractFlowComponent(AbstractTest):
                     self.validate_inputs()
 
                 setup_method(*args, **kwargs)
-                self.result.setupFinished(self)
+                if isinstance(self.result, Result):
+                    self.result.setupFinished(self)
 
             except Exception:
                 self.release_resources(self.locked_resources, dirty=True)
@@ -290,6 +303,7 @@ class AbstractFlowComponent(AbstractTest):
             result (rotest.core.result.result.Result): test result information.
         """
         self.result = result
+        self.create_logger()
 
         # === Decorate the setUp and tearDown methods ===
         setup_method = getattr(self, self.SETUP_METHOD_NAME)
@@ -298,7 +312,7 @@ class AbstractFlowComponent(AbstractTest):
 
         teardown_method = getattr(self, self.TEARDOWN_METHOD_NAME)
         setattr(self, self.TEARDOWN_METHOD_NAME,
-                self._decorate_teardown(teardown_method, result))
+                self._decorate_teardown(teardown_method))
 
         try:
             super(AbstractFlowComponent, self).run(result)

@@ -9,7 +9,6 @@ from rotest.common import core_log
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.models.general_data import GeneralData
 from rotest.management.common.parsers import DEFAULT_PARSER
-from rotest.core.flow_component import AbstractFlowComponent
 from rotest.core.runners.multiprocess.common import (WrappedException,
                                                      get_item_by_id)
 from rotest.management.common.messages import (StopTest,
@@ -179,8 +178,11 @@ class RunnerMessageHandler(object):
             test (object): test item to update.
             message (StartTest): worker message object.
         """
+        # Since the logger is only created in the worker, we create it here
+        test.create_logger()
+
         self.result.startTest(test)
-        if not isinstance(test, AbstractFlowComponent) or test.is_main:
+        if test.is_main:
             self.runner.update_worker(worker_pid=message.msg_id, test=test)
             self.runner.update_timeout(worker_pid=message.msg_id,
                                        timeout=test.TIMEOUT)
@@ -238,7 +240,7 @@ class RunnerMessageHandler(object):
             message (StopTest): worker message object.
         """
         self.result.stopTest(test)
-        if not isinstance(test, AbstractFlowComponent) or test.is_main:
+        if test.is_main:
             self._update_parent_stop(test)
 
     def _handle_composite_stop_message(self, test, message):

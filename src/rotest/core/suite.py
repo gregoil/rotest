@@ -1,9 +1,10 @@
 """Define Rotest's TestSuite, composed from test suites or test cases."""
 # pylint: disable=method-hidden,bad-super-call,too-many-arguments
+# pylint: disable=too-many-locals
 from __future__ import absolute_import
 
 import unittest
-from itertools import count
+from itertools import count, chain
 
 from future.builtins import next
 
@@ -11,6 +12,7 @@ from rotest.common import core_log
 from rotest.core.case import TestCase
 from rotest.core.flow import TestFlow
 from rotest.common.utils import get_work_dir
+from rotest.core.result.result import Result
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.models.suite_data import SuiteData
 
@@ -41,14 +43,16 @@ class TestSuite(unittest.TestSuite):
 
     _cleanup = False
 
-    def __init__(self, base_work_dir=ROTEST_WORK_DIR, save_state=True,
-                 config=None, indexer=count(), parent=None, run_data=None,
-                 enable_debug=False, skip_init=False, resource_manager=None):
+    def __init__(self, tests=(), indexer=count(),
+                 base_work_dir=ROTEST_WORK_DIR, save_state=True, config=None,
+                 parent=None, run_data=None, enable_debug=False,
+                 skip_init=False, resource_manager=None):
         """Initialize 'components' & add them to the suite.
 
         Validates & initializes the TestSuite components & data object.
 
         Args:
+            tests (iterable): tests to add to the suite.
             base_work_dir (str): the base directory of the tests.
             save_state (bool): flag to determine if storing the states of
                 resources is required.
@@ -82,14 +86,14 @@ class TestSuite(unittest.TestSuite):
             parent.addTest(self)
 
         core_log.debug("Initializing %r test-suite", name)
-        if len(self.components) == 0:
+        if len(self.components) == 0 and len(tests) == 0:
             raise AttributeError("%s: Components tuple can't be empty" % name)
 
         core_log.debug("Creating database entry for %r test-suite", name)
         self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = SuiteData(name=name, run_data=run_data)
 
-        for test_component in self.components:
+        for test_component in chain(self.components, tests):
 
             if issubclass(test_component, TestCase):
                 for method_name in test_component.load_test_method_names():
@@ -121,14 +125,14 @@ class TestSuite(unittest.TestSuite):
 
             elif issubclass(test_component, TestSuite):
                 test_item = test_component(parent=self,
-                               config=config,
-                               indexer=indexer,
-                               run_data=run_data,
-                               skip_init=skip_init,
-                               save_state=save_state,
-                               enable_debug=enable_debug,
-                               base_work_dir=self.work_dir,
-                               resource_manager=resource_manager)
+                                           config=config,
+                                           indexer=indexer,
+                                           run_data=run_data,
+                                           skip_init=skip_init,
+                                           save_state=save_state,
+                                           enable_debug=enable_debug,
+                                           base_work_dir=self.work_dir,
+                                           resource_manager=resource_manager)
 
                 core_log.debug("Adding %r to %r", test_item, self.data)
 
@@ -165,12 +169,14 @@ class TestSuite(unittest.TestSuite):
             rotest.core.result.result.Result. holder for test result
                 information.
         """
-        result.startComposite(self)
+        if isinstance(result, Result):
+            result.startComposite(self)
 
         core_log.debug("Running %r test-suite", self.data)
         result = super(TestSuite, self).run(result, debug)
 
-        result.stopComposite(self)
+        if isinstance(result, Result):
+            result.stopComposite(self)
 
         return result
 

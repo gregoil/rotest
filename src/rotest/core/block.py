@@ -73,10 +73,11 @@ class TestBlock(AbstractFlowComponent):
         IS_COMPLEX (bool): if this test is complex (may contain sub-tests).
     """
     IS_COMPLEX = False
+    __test__ = False
 
     def __init__(self, indexer=count(), base_work_dir=ROTEST_WORK_DIR,
                  save_state=True, force_initialize=False, config=None,
-                 parent=None, run_data=None, enable_debug=True,
+                 parent=None, run_data=None, enable_debug=False,
                  resource_manager=None, skip_init=False, is_main=True):
 
         super(TestBlock, self).__init__(parent=parent,
@@ -131,8 +132,8 @@ class TestBlock(AbstractFlowComponent):
         outputs_dict = {}
         for output_name in self.get_outputs():
             if output_name not in self.__dict__:
-                self.logger.warn("Block %r didn't create output %r",
-                                 self.data.name, output_name)
+                self.logger.warning("Block %r didn't create output %r",
+                                    self.data.name, output_name)
 
             outputs_dict[output_name] = getattr(self, output_name)
 
