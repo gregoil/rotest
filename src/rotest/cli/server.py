@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
-import django
 import pkg_resources
+import django
 from django.core.management import call_command
 
 from rotest.common import core_log
