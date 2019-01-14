@@ -184,7 +184,7 @@ def create_client_options_parser():
 
     for entry_point in \
             pkg_resources.iter_entry_points("rotest.cli_client_parsers"):
-        core_log.debug("Applying entry point %s", entry_point.name)
+        core_log.debug("Applying client entry point %s", entry_point.name)
         extension_parser = entry_point.load()
         extension_parser(parser)
 
