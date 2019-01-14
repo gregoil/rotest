@@ -17,7 +17,6 @@ class AbstractResultHandler(with_metaclass(ABCMeta, object)):
         main_test (rotest.core.abstract_test.AbstractTest): the main test
             instance (e.g. TestSuite instance or TestFlow instance).
     """
-
     NAME = NotImplemented
 
     def __init__(self, main_test=None, *args, **kwargs):

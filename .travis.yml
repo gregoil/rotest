@@ -20,11 +20,6 @@ jobs:
     python: '3.6'
     install: pip install tox
     script: tox -e docs
-  - name: validate requirements
-    stage: test
-    python: '2.7'
-    install: pip install tox
-    script: tox -e validate_requirements
   - stage: deploy
     python: '3.6'
     install: skip
@@ -38,3 +33,10 @@ jobs:
       user: gregoil
       password:
         secure: LwMeVGDt2AKlz/4W9c6Qde57QHV0zn1TA3WqR5s4lFJYJTDGawB/mmIBq7SC/DLl3zsgLg/ybMjxkex03mXdkxp+f9W5svxHCJ9xoPfk+LekaZqCuLUA9dQmQJ4p0ZH4u22cbNZv3h27uvP5aefT04coEhZ8yZxlw/H92LSpsMvm/xZAx/oVr8457Xfr6Qhqp+X/AGkqLlzqXeCEcPlsmTf4HEaOb6e84h9+ZJic6fTPZB7sOlZlhHt23XKQs2jp9paqGD5MVoYSYAzAsKV5CRhZ2cJdFe3vvDgMVCJ9IMJMDw1fdKnT7W9DBnuEA+d4635cZWJLwD8tjLHN2DApvpZ99Hj9il2yWyFWiVn3/Auz6+TfGgsoj3DMTcApJqbep0ooVS5qXqh2WBWgvIqLmi+NPcKkG3xLWRfzU+Xsk0VP83AiUo6RZzhhvKRTw7T7n2XZD/3m473I6rniiajc3cgG6M0O5iOCRGBJEB9CvBb3Z3I1Jw5qtnELyMGOHQvhSGU1Sy9JQBmhJ5xFYmrHIaNUtw072Xn5ertvMgCjSbZcAJg8LG1AJFHkd2m4oUBzOfX6cXjpZDtwAMB3g+HZrNinY8Vbky48gMrNDXZJTQC0F7ta3alqe/q4uP2mEbhSq7iCnvnNIy9SJ+nyERPI9KIzj7qzEoWAHh5cuGDNEi8=
+
+  allow_failures:
+  - name: validate requirements
+    stage: test
+    python: '2.7'
+    install: pip install tox
+    script: tox -e validate_requirements

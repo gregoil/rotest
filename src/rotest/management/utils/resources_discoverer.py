@@ -54,7 +54,6 @@ def get_resources(app_name, blacklist=DISCOVERER_BLACKLIST):
     Returns:
         dict. all resource classes found in the application {name: class}.
     """
-    django.setup()
     app_configs = django.apps.apps.app_configs
     if app_name not in app_configs:
         raise RuntimeError("Application %r was not found" % app_name)
