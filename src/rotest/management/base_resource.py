@@ -117,7 +117,8 @@ class BaseResource(object):
             if 'name' not in self.data:
                 self.data.name = "%s-%d" % (self.__class__.__name__, id(self))
 
-            self.name = self.data.name
+            for field_name, field_value in iteritems(data):
+                setattr(self, field_name, field_value)
 
         self.config = config
         self.parent = None
