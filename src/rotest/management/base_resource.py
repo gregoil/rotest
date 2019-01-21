@@ -13,38 +13,46 @@ from threading import Thread
 import six
 from ipdbugger import debug
 from attrdict import AttrDict
-from future.utils import iteritems, with_metaclass
+from future.utils import iteritems
 from django.db.models.fields.related import \
                                         ReverseSingleRelatedObjectDescriptor
 
 from rotest.common import core_log
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.utils import get_work_dir, get_class_fields
 from rotest.management.models.resource_data import ResourceData, DataPointer
 
 
-class ConvertToKwargsMeta(type):
-    """Metaclass that validates no positional args are passed to constructor.
+class ResourceRequest(object):
+    """Holds the data for a resource request.
 
-    This enables avoiding requesting resources is coherent, i.e.:
-        Assuming ResClass gets 'x' in the __init__, then when requesting:
-            res1 = ResClass(5)
-        The x=5 is not passed to kwargs, thus is not propagated when
-        creating the actual resource when the test starts.
+    Attributes:
+        resource_name (str): attribute name to be assigned.
+        resource_class (type): resource type.
+        force_initialize (bool): a flag to determine if the resources will be
+            initialized even if their validation succeeds.
+        kwargs (dict): requested resource arguments.
     """
-    def __call__(cls, *args, **kwargs):
-        if len(args) > 0:
-            raise RuntimeError("BaseResource constructors must not get "
-                               "positional arguments")
 
-        resource = type.__call__(cls, *args, **kwargs)
-        resource.kwargs = kwargs
-        for field_name, field_value in iteritems(kwargs):
-            setattr(resource, field_name, field_value)
+    def __init__(self, resource_name, resource_class, **kwargs):
+        """Initialize the required parameters of resource request."""
+        self.name = resource_name
+        self.type = resource_class
 
-        if isinstance(resource.data, AttrDict):
-            resource.data.update(kwargs)
+        self.kwargs = kwargs
 
-        return resource
+    def __eq__(self, oth):
+        """Compare with another request."""
+        return oth.name == self.name
+
+    def __repr__(self):
+        """Return a string representing the request."""
+        return "Request %r of type %r (kwargs=%r)" % (self.name, self.type,
+                                                      self.kwargs)
+
+    def clone(self):
+        """Create a copy of the request."""
+        return ResourceRequest(self.name, self.type, **self.kwargs)
 
 
 class ExceptionCatchingThread(Thread):
@@ -62,7 +70,7 @@ class ExceptionCatchingThread(Thread):
             raise
 
 
-class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
+class BaseResource(object):
     """Represent the common interface of all the resources.
 
     To implement a resource, you may override:
@@ -81,8 +89,6 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
         data (ResourceData): assigned data instance.
         config (AttrDict): run configuration.
         work_dir (str): working directory for this resource.
-        force_initialize (bool): a flag to determine if the resource will be
-            initialized even if the validation succeeds.
     """
 
     DATA_CLASS = None
@@ -91,10 +97,10 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
     _SHELL_CLIENT = None
     _SHELL_REQUEST_NAME = 'shell_resource'
 
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data=None, config=None, base_work_dir=ROTEST_WORK_DIR,
+                 **kwargs):
         # We use core_log as default logger in case
         # that resource is used outside case.
-        self.kwargs = kwargs
         self.logger = core_log
         self._prev_loggers = []
 
@@ -105,16 +111,27 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
                     setattr(self, field_name, value)
 
         else:
-            self.data = AttrDict()
-            self.name = "%s-%d" % (self.__class__.__name__, id(self))
-            self.data.name = self.name
+            self.data = AttrDict(**kwargs)
+            if 'name' not in self.data:
+                self.data.name = "%s-%d" % (self.__class__.__name__, id(self))
 
-        self.config = None
+            self.name = self.data.name
+
+        self.config = config
         self.parent = None
         self.work_dir = None
-        self.force_initialize = None
-
         self._sub_resources = None
+
+        self.set_work_dir(self.name, base_work_dir)
+        self.logger.debug("Resource %r work dir was created under %r",
+                          self.name, base_work_dir)
+
+        self.set_sub_resources()
+
+    @classmethod
+    def request(cls, **kwargs):
+        """Create a resource request for an instance of this class."""
+        return ResourceRequest(None, cls, **kwargs)
 
     def create_sub_resources(self):
         """Create and return the sub resources if needed.
@@ -130,11 +147,13 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
             iterable. sub-resources created.
         """
         sub_resources = []
-        for sub_name, sub_placeholder in get_class_fields(self.__class__,
-                                                          BaseResource):
-            sub_class = sub_placeholder.__class__
-            actual_kwargs = sub_placeholder.kwargs.copy()
-            for key, value in six.iteritems(sub_placeholder.kwargs):
+        for sub_name, sub_request in get_class_fields(self.__class__,
+                                                      ResourceRequest):
+            sub_class = sub_request.type
+            actual_kwargs = sub_request.kwargs.copy()
+            actual_kwargs['config'] = self.config
+            actual_kwargs['base_work_dir'] = self.work_dir
+            for key, value in six.iteritems(sub_request.kwargs):
                 if isinstance(value, ReverseSingleRelatedObjectDescriptor):
                     actual_kwargs[key] = getattr(self.data, value.field.name)
 
@@ -147,6 +166,38 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
             sub_resources.append(sub_resource)
 
         return sub_resources
+
+    def setup_resource(self, skip_init=False, force_initialize=False):
+        """Try to initialize the resource.
+
+        Note:
+            Initialization failure will cause a finalization attempt.
+
+        Args:
+            force_initialize(bool): True to always initialize.
+            skip_init (bool): True to skip initialize and validation.
+        """
+        try:
+            self.connect()
+
+        except Exception:
+            self.logger.exception("Connecting to %r failed", self.name)
+            raise
+
+        if skip_init:
+            self.logger.debug("Skipping validation and initialization")
+            return
+
+        try:
+            self.logger.debug("Initializing resource %r", self.name)
+            self._initialize_resource(force_initialize)
+            self.logger.debug("Resource %r was initialized", self.name)
+
+        except Exception:
+            self.logger.exception("Failed initializing %r, calling finalize",
+                                  self.name)
+            self.finalize()
+            raise
 
     def is_available(self, user_name=""):
         """Return whether resource is available for the given user.
@@ -219,9 +270,6 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
         """
         self.work_dir = get_work_dir(containing_work_dir, resource_name, None)
 
-        for resource in self.get_sub_resources():
-            resource.set_work_dir(resource.name, self.work_dir)
-
     def store_state(self, state_dir_path):
         """Hook method for backing up the resource state.
 
@@ -276,7 +324,7 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
         """
         return False
 
-    def setup_resource(self):
+    def _initialize_resource(self, force_initialize=False):
         """Validate and initialize if needed the resource and subresources."""
         sub_threads = []
         for sub_resource in self.get_sub_resources():
@@ -285,13 +333,14 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
                                           sub_resource.name)
 
                 initialize_thread = ExceptionCatchingThread(
-                                        target=sub_resource.setup_resource)
+                                    target=sub_resource._initialize_resource,
+                                    args=(force_initialize,))
 
                 initialize_thread.start()
                 sub_threads.append(initialize_thread)
 
             else:
-                sub_resource.setup_resource()
+                sub_resource._initialize_resource(force_initialize)
 
         for sub_thread, sub_resource in zip(sub_threads,
                                             self.get_sub_resources()):
@@ -306,8 +355,8 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
             if sub_thread.traceback_tuple is not None:
                 six.reraise(*sub_thread.traceback_tuple)
 
-        if self.force_initialize or not self.validate():
-            if not self.force_initialize:
+        if force_initialize or not self.validate():
+            if not force_initialize:
                 self.logger.debug("Resource %r validation failed",
                                   self.name)
 
@@ -345,6 +394,7 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
         debug(self.finalize, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.validate, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
         debug(self.store_state, ignore_exceptions=[KeyboardInterrupt, BdbQuit])
+
         for resource in self.get_sub_resources():
             resource.enable_debug()
 
@@ -363,8 +413,7 @@ class BaseResource(with_metaclass(ConvertToKwargsMeta, object)):
         """
         # These runtime imports are done to avoid cyclic imports.
         from rotest.core.runner import parse_config_file
-        from rotest.management.client.manager import (ClientResourceManager,
-                                                      ResourceRequest)
+        from rotest.management.client.manager import ClientResourceManager
 
         if BaseResource._SHELL_CLIENT is None:
             BaseResource._SHELL_CLIENT = ClientResourceManager()

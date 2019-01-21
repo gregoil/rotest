@@ -32,41 +32,6 @@ from rotest.api.common.models import (ReleaseResourcesParamsModel,
                                       LockResourcesParamsModel, TokenModel)
 
 
-class ResourceRequest(object):
-    """Holds the data for a resource request.
-
-    Attributes:
-        resource_name (str): attribute name to be assigned.
-        resource_class (type): resource type.
-        force_initialize (bool): a flag to determine if the resources will be
-            initialized even if their validation succeeds.
-        kwargs (dict): requested resource arguments.
-    """
-
-    def __init__(self, resource_name, resource_class,
-                 force_initialize=False, **kwargs):
-        """Initialize the required parameters of resource request."""
-        self.name = resource_name
-        self.type = resource_class
-        self.force_initialize = force_initialize
-
-        self.kwargs = kwargs
-
-    def __eq__(self, oth):
-        """Compare with another request."""
-        return oth.name == self.name
-
-    def __repr__(self):
-        """Return a string representing the request."""
-        return "Request %r of type %r (kwargs=%r)" % (self.name, self.type,
-                                                      self.kwargs)
-
-    def clone(self):
-        """Create a copy of the request."""
-        return ResourceRequest(self.name, self.type, self.force_initialize,
-                               **self.kwargs)
-
-
 class ClientResourceManager(AbstractClient):
     """Client side resource manager.
 
@@ -120,58 +85,8 @@ class ClientResourceManager(AbstractClient):
                                    data=TokenModel({"token": self.token}))
             super(ClientResourceManager, self).disconnect()
 
-    def _initialize_resource(self, resource, skip_init=False):
-        """Try to initialize the resource.
-
-        Note:
-            Initialization failure will cause a finalization attempt.
-
-        Args:
-            resource(BaseResource): resource to initialize.
-            skip_init (bool): True to skip initialize and validation.
-        """
-        try:
-            resource.connect()
-
-        except Exception:
-            self.logger.exception("Connecting to %r failed", resource.name)
-            raise
-
-        if skip_init:
-            self.logger.debug("Skipping validation and initialization")
-            return
-
-        try:
-            self.logger.debug("Initializing resource %r", resource.name)
-            resource.setup_resource()
-            self.logger.debug("Resource %r was initialized", resource.name)
-
-        except Exception:
-            self.logger.exception("Failed initializing %r, calling finalize",
-                                  resource.name)
-            resource.finalize()
-            raise
-
-    def _propagate_attributes(self, resource, config, force_initialize):
-        """Update the resource's config dictionary recursively.
-
-        Args:
-            resource (BaseResource): resource to update.
-            config (dict): run configuration dictionary.
-            force_initialize (bool): determines if the resources will be
-                initialized even if their validation succeeds.
-        """
-        resource.config = config
-        resource.logger = self.logger
-        resource.force_initialize = force_initialize
-
-        for sub_resource in resource.get_sub_resources():
-            if sub_resource is not None:
-                self._propagate_attributes(sub_resource, config,
-                                           force_initialize)
-
     def _setup_resources(self, requests, resources, force_initialize,
-                         base_work_dir, config, enable_debug, skip_init):
+                         enable_debug, skip_init):
         """Prepare the resources for work.
 
         Iterates over the resources and tries to prepare them for
@@ -186,8 +101,6 @@ class ClientResourceManager(AbstractClient):
             resources (list): list of the resources instances.
             force_initialize (bool): determines if the resources will be
                 initialized even if their validation succeeds.
-            base_work_dir (str): base work directory path.
-            config (dict): run configuration dictionary.
             enable_debug (bool): True to wrap the resource's method with debug.
             skip_init (bool): True to skip initialization and validation.
 
@@ -197,23 +110,14 @@ class ClientResourceManager(AbstractClient):
         Raises:
             ServerError. resource manager failed to lock resources.
         """
+        self.logger.debug("Setting up the locked resources")
+
         for resource, request in zip(resources, requests):
-
-            resource.set_sub_resources()
-
-            self._propagate_attributes(
-                resource=resource,
-                config=config,
-                force_initialize=request.force_initialize or force_initialize)
-
-            resource.set_work_dir(request.name, base_work_dir)
-            resource.logger.debug("Resource %r work dir was created under %r",
-                                  request.name, base_work_dir)
-
             if enable_debug:
                 resource.enable_debug()
 
-            self._initialize_resource(resource, skip_init)
+            resource.setup_resource(skip_init=skip_init,
+                                    force_initialize=force_initialize)
 
             yield (request.name, resource)
 
@@ -231,7 +135,7 @@ class ClientResourceManager(AbstractClient):
         """
         exceptions = []
 
-        self.logger.debug("cleaning up the locked resources")
+        self.logger.debug("Cleaning up the locked resources")
 
         for name, resource in iteritems(resources):
             try:
@@ -293,7 +197,8 @@ class ClientResourceManager(AbstractClient):
 
         return response
 
-    def _lock_resources(self, descriptors, timeout=None):
+    def _lock_resources(self, descriptors, config=None,
+                        base_work_dir=ROTEST_WORK_DIR, timeout=None):
         """Send LockResources request to resource manager server.
 
         Note:
@@ -326,7 +231,9 @@ class ClientResourceManager(AbstractClient):
                 [self.parser.recursive_decode(resource)
                  for resource in response.resource_descriptors]
 
-            resources.extend(descriptor.type(data=resource_data)
+            resources.extend(descriptor.type(data=resource_data,
+                                             config=config,
+                                             base_work_dir=base_work_dir)
                              for (descriptor, resource_data) in
                              zip(server_requests, response_resources))
 
@@ -334,7 +241,9 @@ class ClientResourceManager(AbstractClient):
             if descriptor.type.DATA_CLASS is None:
                 # it's a service
                 resources.insert(index,
-                                 descriptor.type(**descriptor.properties))
+                                 descriptor.type(config=config,
+                                                 base_work_dir=base_work_dir,
+                                                 **descriptor.properties))
 
         return resources
 
@@ -490,7 +399,9 @@ class ClientResourceManager(AbstractClient):
                                                             descriptors)
 
         self.logger.debug("Requesting resources from resource manager")
-        locked_resources = self._lock_resources(descriptors)
+        locked_resources = self._lock_resources(descriptors, config,
+                                                base_work_dir)
+
         self.logger.info("Locked resources %s", locked_resources)
 
         try:
@@ -499,8 +410,6 @@ class ClientResourceManager(AbstractClient):
             for name, resource in self._setup_resources(requests,
                                                         locked_resources,
                                                         force_initialize,
-                                                        base_work_dir,
-                                                        config,
                                                         enable_debug,
                                                         skip_init):
 

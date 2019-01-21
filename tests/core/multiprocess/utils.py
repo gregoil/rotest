@@ -7,7 +7,7 @@ from multiprocessing import Process
 
 import psutil
 from rotest.core.case import request
-from rotest.management.models.ut_models import DemoResource
+from rotest.management.models.ut_resources import DemoResource
 
 from tests.core.utils import (MockCase, MockFlow, SuccessBlock, MockBlock,
                               IP_ADDRESS1)

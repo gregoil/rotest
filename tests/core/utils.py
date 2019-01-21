@@ -11,12 +11,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.test.testcases import TransactionTestCase
 from future.builtins import map
 
+from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.flow import TestFlow
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.core.runner import BaseTestRunner
 from rotest.core.case import TestCase, request
-from rotest.management.models.ut_models import DemoResource
+from rotest.management.models.ut_resources import DemoResource
 from rotest.core.block import TestBlock, BlockOutput, BlockInput
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.common.errors import (ResourceDoesNotExistError,
@@ -188,7 +189,8 @@ class MockResourceClient(ClientResourceManager):
         """Suppressed connect method."""
         self.token = "tmptoken"
 
-    def _lock_resources(self, descriptors, timeout=None):
+    def _lock_resources(self, descriptors, config=None,
+                        base_work_dir=ROTEST_WORK_DIR, timeout=None):
         """Return resources from the DB according to the descriptors.
 
         Args:
@@ -216,7 +218,9 @@ class MockResourceClient(ClientResourceManager):
         for descriptor in descriptors:
             data_type = descriptor.type.DATA_CLASS
             if data_type is None:
-                resource = descriptor.type(**descriptor.properties)
+                resource = descriptor.type(config=config,
+                                           base_work_dir=base_work_dir,
+                                           **descriptor.properties)
 
             else:
                 if not self.is_connected():
@@ -234,7 +238,9 @@ class MockResourceClient(ClientResourceManager):
                     if len(available_resources) == 0:
                         raise ResourceDoesNotExistError()
 
-                    resource = descriptor.type(data=available_resources[0])
+                    resource = descriptor.type(data=available_resources[0],
+                                               config=config,
+                                               base_work_dir=base_work_dir)
 
                 except ObjectDoesNotExist:  # The resource doesn't exist.
                     raise ResourceDoesNotExistError()

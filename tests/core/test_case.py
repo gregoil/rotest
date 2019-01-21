@@ -12,9 +12,9 @@ from future.utils import iteritems
 
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome, CaseData
-from rotest.management.models.ut_models import (DemoResource,
-                                                DemoResourceData,
-                                                NonExistingResource)
+from rotest.management.models.ut_models import DemoResourceData
+from rotest.management.models.ut_resources import (DemoResource,
+                                                   NonExistingResource)
 
 from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
                               ErrorCase, StoreMultipleFailuresCase,
@@ -46,7 +46,7 @@ class TempComplexRequestCase(SuccessCase):
     __test__ = False
 
     resources = (request('res1', DemoResource, name='available_resource1'),)
-    res2 = DemoResource(name='available_resource2')
+    res2 = DemoResource.request(name='available_resource2')
 
 
 class TempInheritRequestCase(TempComplexRequestCase):
@@ -919,10 +919,9 @@ class TestTestCase(BasicRotestUnitTest):
         TempSuccessCase.resources = (request(
                                           resource_name='validate_resource',
                                           resource_class=DemoResource,
-                                          force_initialize=True,
                                           name=RESOURCE_NAME),)
 
-        self._run_case(TempSuccessCase)
+        self._run_case(TempSuccessCase, force_initialize=True)
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
         test_resource.validation_result = False
@@ -951,7 +950,6 @@ class TestTestCase(BasicRotestUnitTest):
         TempSuccessCase.resources = (request(
                                           resource_name='validate_resource',
                                           resource_class=DemoResource,
-                                          force_initialize=False,
                                           name=RESOURCE_NAME),)
 
         self._run_case(TempSuccessCase)

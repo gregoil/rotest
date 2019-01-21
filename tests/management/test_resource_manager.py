@@ -16,18 +16,17 @@ from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
-from rotest.management import BaseResource
 from rotest.management.common.utils import LOCALHOST
+from rotest.management import BaseResource, ResourceRequest
 from rotest.management.models.resource_data import DataPointer
-from rotest.management.client.manager import (ClientResourceManager,
-                                              ResourceRequest)
+from rotest.management.client.manager import ClientResourceManager
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
-from rotest.management.models.ut_models import (DemoService,
-                                                DemoResource,
-                                                DemoResourceData,
-                                                DemoComplexResource,
+from rotest.management.models.ut_models import (DemoResourceData,
                                                 DemoComplexResourceData)
+from rotest.management.models.ut_resources import (DemoService,
+                                                   DemoResource,
+                                                   DemoComplexResource)
 from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourcePermissionError,
                                              ResourceUnavailableError,
@@ -1324,8 +1323,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoResource(data=DemoComplexResourceData.demo1)
-            demo2 = DemoResource(data=DemoComplexResourceData.demo2)
+            demo1 = DemoResource.request(data=DemoComplexResourceData.demo1)
+            demo2 = DemoResource.request(data=DemoComplexResourceData.demo2)
 
             def initialize(self):
                 """Turns on the initialization flag."""
@@ -1418,7 +1417,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoResourceData
-            demo1 = DemoService(name=DemoComplexResourceData.name)
+            demo1 = DemoService.request(name=DemoResourceData.name)
 
             def initialize(self):
                 """Turns on the initialization flag."""
@@ -1505,8 +1504,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexService(BaseResource):
             """Fake complex service class, used in resource manager tests."""
             DATA_CLASS = None
-            demo1 = DemoService()
-            demo2 = DemoService(name=DataPointer('name'))
+            demo1 = DemoService.request()
+            demo2 = DemoService.request(name=DataPointer('name'))
 
             initialized = False
 

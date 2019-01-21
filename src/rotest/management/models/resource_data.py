@@ -30,7 +30,14 @@ class DataPointer(object):
 
 
 class DataBase(ModelBase):
-    """Metaclass that creates data pointers for django fields."""
+    """Metaclass that creates data pointers for django fields.
+
+    This allows requesting sub-resources with dependency on the parent's data,
+    e.g:
+        class AlterDemoComplexResource(BaseResource):
+            DATA_CLASS = DemoResourceData
+            demo1 = DemoService.request(name=DemoResourceData.name).
+    """
     def __getattr__(cls, key):
         if '_meta' in vars(cls) and \
                 key in (field.name for field in cls._meta.fields):

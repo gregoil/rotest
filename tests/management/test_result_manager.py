@@ -12,8 +12,9 @@ from rotest.core.models.run_data import RunData
 from rotest.management.common.utils import LOCALHOST
 from rotest.common.django_utils.common import get_sub_model
 from rotest.core.models.case_data import TestOutcome, CaseData
+from rotest.management.models.ut_resources import DemoResource
+from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.client.result_client import ClientResultManager
-from rotest.management.models.ut_models import DemoResource, DemoResourceData
 
 from tests.management.resource_base_test import BaseResourceManagementTest
 from tests.core.utils import (MockTestSuite, MockSuite1, MockSuite2, MockCase,

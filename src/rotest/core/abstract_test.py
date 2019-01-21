@@ -22,9 +22,8 @@ from future.utils import iteritems, itervalues
 from rotest.core.result.result import Result
 from rotest.common.utils import get_class_fields
 from rotest.core.models.case_data import TestOutcome
-from rotest.management.base_resource import BaseResource
+from rotest.management.base_resource import ResourceRequest
 from rotest.common.log import get_test_logger, get_tree_path
-from rotest.management.client.manager import ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
 
 request = ResourceRequest
@@ -124,11 +123,10 @@ class AbstractTest(unittest.TestCase):
             list. resource requests of the test class.
         """
         all_requests = list(cls.resources)
-        for (field_name, field) in get_class_fields(cls, BaseResource):
-            new_request = request(field_name,
-                                  field.__class__,
-                                  **field.kwargs)
+        for (field_name, new_request) in get_class_fields(cls,
+                                                          ResourceRequest):
 
+            new_request.name = field_name
             if new_request not in all_requests:
                 all_requests.append(new_request)
 
