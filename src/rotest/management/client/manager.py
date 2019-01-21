@@ -13,7 +13,7 @@ import time
 import re
 from attrdict import AttrDict
 from future.utils import iteritems
-from future.builtins import zip, str, object
+from future.builtins import zip, str
 
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient

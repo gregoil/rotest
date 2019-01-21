@@ -14,6 +14,7 @@ import six
 from ipdbugger import debug
 from attrdict import AttrDict
 from future.utils import iteritems
+from future.builtins import zip, object
 from django.db.models.fields.related import \
                                         ReverseSingleRelatedObjectDescriptor
 
