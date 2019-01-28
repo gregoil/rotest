@@ -138,31 +138,31 @@ Note the following:
 The methods of BaseResource that can be overridden:
 
  * connect() - Always called at the start of the resource's setup process,
-    override this method to start the command interface to your resource,
-    e.g. setting up a SSH connection, creating a Selenium client, etc.
+   override this method to start the command interface to your resource,
+   e.g. setting up a SSH connection, creating a Selenium client, etc.
 
  * validate() - Called after ``connect`` if the ``skip_init`` flag was off
-    (which is the default). This method should return `False` if further
-    initialization is needed to set up the resource, or `True` if it is ready
-    to work as it is. The default ``validate`` method always returns `False`,
-    prompting the resource's initialization process after ``connect``
-    (see next method).
+   (which is the default). This method should return `False` if further
+   initialization is needed to set up the resource, or `True` if it is ready
+   to work as it is. The default ``validate`` method always returns `False`,
+   prompting the resource's initialization process after ``connect``
+   (see next method).
 
  * initialize() - Called after ``connect`` if the ``skip_init`` flag was off
-    (which is the default) and ``validate`` returned `False` (which is also
-    the default). Override this method to further prepare the resource for work,
-    e.g. installing versions and files, starting up processes, etc.
+   (which is the default) and ``validate`` returned `False` (which is also
+   the default). Override this method to further prepare the resource for work,
+   e.g. installing versions and files, starting up processes, etc.
 
  * finalize() - Called when the resource is released, override this method to
-    to clean temporary files, shut down processes, destroy the remote connection,
-    etc.
+   to clean temporary files, shut down processes, destroy the remote connection,
+   etc.
 
  * store_state(state_dir_path) - Called after the teardown of a test, but only
-    if ``save_state`` flag was on (which is `False` by default) and the test
-    ended in an error or a failure. The directory path which is passed to this
-    method is a dedicated folder inside the test's working directory.
-    Override this method to create a snapshot of the resource's state for
-    debugging purposes, e.g. copying logs, etc.
+   if ``save_state`` flag was on (which is `False` by default) and the test
+   ended in an error or a failure. The directory path which is passed to this
+   method is a dedicated folder inside the test's working directory.
+   Override this method to create a snapshot of the resource's state for
+   debugging purposes, e.g. copying logs, etc.
 
 Running the Resource Management Server
 ======================================

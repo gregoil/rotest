@@ -161,11 +161,11 @@ data, and even fields (e.g. `self.parent._rpyc`).
 When writing sub-resources and services, remember two things:
 
  * Always call `super` when overriding BaseResource's methods (connect, initialize,
- validate, finalize, store_state), since the basic method propagate the call to
- sub-resources.
+   validate, finalize, store_state), since the basic method propagate the call to
+   sub-resources.
 
  * It is ok to use `self.parent` and `self.<sub-resource-name>` , but mind the context.
- E.g. `self.parent._rpyc` in the above example is accessible from the sub-resource,
- but only after the ``connect()`` method (since firstly the sub-resource connects,
- and only afterwards the containing resource connects). The same applies for the
- other basic methods (first the sub-resources initialize, then the containing).
+   E.g. `self.parent._rpyc` in the above example is accessible from the sub-resource,
+   but only after the ``connect()`` method (since firstly the sub-resource connects,
+   and only afterwards the containing resource connects). The same applies for the
+   other basic methods (first the sub-resources initialize, then the containing).
