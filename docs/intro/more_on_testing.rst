@@ -82,7 +82,7 @@ following content:
 
 
     class AddTest(TestCase):
-        calc = Calculator()
+        calc = Calculator.request()
 
         def test_add(self):
             result = self.calc.calculate("1 + 1")
@@ -94,7 +94,7 @@ We can request resources in the test's scope in two different ways.
 
   .. code-block:: python
 
-    <request_name> = <resource_class>(<request_filters or service_parameters>)
+    <request_name> = <resource_class>.request(<request_filters or service_parameters>)
 
   The optional ``request filters`` (in case of a resource that has data) are of the same
   syntax as the options passed to Django models ``<Model>.objects.filter()`` method,
@@ -102,7 +102,7 @@ We can request resources in the test's scope in two different ways.
 
   .. code-block:: python
 
-    calc = Calculator(name='calc')
+    calc = Calculator.request(name='calc')
 
   If the resource doesn't point to ``DATA_CLASS`` (is None) then the resource is a service,
   and ``request_filters`` become initialization parameters.
@@ -124,6 +124,16 @@ We can request resources in the test's scope in two different ways.
   In the test method, you can call ``self.request_resources([<request1>, <request2>, ...])``
 
   The requests are instances of ``rotest.core.request``, as in the previous method.
+
+.. warning::
+   The method for declaring test resource and sub-resources changed since
+   version 6.0.0.
+
+   The previous method didn't use the `request` classmethod, and instead
+   used the constructor, e.g. calc = Calculator().
+
+   That form is no longer supported!
+
 
 Now, let's run the test:
 
