@@ -126,7 +126,7 @@ We can request resources in the test's scope in two different ways.
   The requests are instances of ``rotest.core.request``, as in the previous method.
 
 .. warning::
-   The method for declaring test resource and sub-resources changed since
+   The method for declaring test resource and sub-resources has changed since
    version 6.0.0.
 
    The previous method didn't use the `request` classmethod, and instead
