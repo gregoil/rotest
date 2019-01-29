@@ -6,9 +6,9 @@ import six
 from django.test.testcases import TransactionTestCase
 
 from rotest.management.common.parsers import JSONParser
+from rotest.management.models.ut_resources import DemoResource
 from rotest.management.common.resource_descriptor import ResourceDescriptor
-from rotest.management.models.ut_models import (DemoResource,
-                                                DemoResourceData,
+from rotest.management.models.ut_models import (DemoResourceData,
                                                 DemoComplexResourceData)
 from rotest.management.common.messages import (ErrorReply,
                                                SuccessReply,

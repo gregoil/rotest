@@ -20,6 +20,7 @@ Advanced
 .. toctree::
     :maxdepth: 2
 
+    advanced/complex_resources
     advanced/blocks
     advanced/debugging
     advanced/custom_output_handlers

@@ -9,9 +9,9 @@ from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import PipeTo, BlockInput, BlockOutput
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
-from rotest.management.models.ut_models import (DemoResource,
-                                                DemoResourceData,
-                                                InitializeErrorResource)
+from rotest.management.models.ut_models import DemoResourceData
+from rotest.management.models.ut_resources import (DemoResource,
+                                                   InitializeErrorResource)
 
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,

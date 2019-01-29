@@ -5,7 +5,7 @@ import threading
 from future.builtins import next
 
 from rotest.core.case import request
-from rotest.management.models.ut_models import DemoResource
+from rotest.management.models.ut_resources import DemoResource
 from rotest.core.result.monitor import AbstractMonitor, AbstractResourceMonitor
 
 from tests.core.utils import MockCase, MockTestSuite, BasicRotestUnitTest
