@@ -448,6 +448,21 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=2)
 
+    def test_pipes_with_formula(self):
+        """Validate parametrize behavior when using formulas."""
+        MockFlow.blocks = (
+            create_writer_block(inject_name='some_name', inject_value=5),
+            create_reader_block(inject_name='pipe_target', inject_value=6).params(
+                pipe_target=PipeTo('some_name', formula=lambda value: value+1)))
+
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
     def test_pipes_in_common(self):
         """Validate parametrize behavior when using pipes in common."""
         ReadingBlock = create_reader_block(inject_name='pipe_target',

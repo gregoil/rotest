@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 from itertools import count
 
-from future.utils import iteritems, itervalues
+from future.utils import iteritems
 
 from rotest.common.utils import get_class_fields
 from rotest.common.config import ROTEST_WORK_DIR
@@ -156,7 +156,8 @@ class TestBlock(AbstractFlowComponent):
                            for (name, value) in iteritems(self.get_inputs())
                            if not value.is_optional()]
 
-        required_inputs.extend(itervalues(self._pipes))
+        for pipe in self._pipes:
+            required_inputs.append(pipe.parameter_name)
 
         missing_inputs = [input_name for input_name in required_inputs
                           if (input_name not in self.__dict__ and

@@ -30,8 +30,24 @@ MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = range(1, 4)
 
 class PipeTo(object):
     """Used as reference to another parameter when using blocks and flows."""
-    def __init__(self, parameter_name):
+    def __init__(self, parameter_name, formula=None):
         self.parameter_name = parameter_name
+        self.formula = formula
+
+    def get_value(self, block):
+        """Extract the pointed value from the block.
+
+        Args:
+            block (AbstractFlowComponent): component to extract value from.
+
+        Returns:
+            object. pointed value.
+        """
+        value = getattr(block, self.parameter_name)
+        if self.formula is not None:
+            value = self.formula(value)
+
+        return value
 
 
 class BlockInput(object):
@@ -267,8 +283,8 @@ class AbstractFlowComponent(AbstractTest):
                                             iteritems(self.get_inputs())
                                             if value.is_optional()})
 
-                    for pipe_name, pipe_target in iteritems(self._pipes):
-                        setattr(self, pipe_name, getattr(self, pipe_target))
+                    for pipe_name, pipe in iteritems(self._pipes):
+                        setattr(self, pipe_name, pipe.get_value(self))
 
                 if not self.is_main:
                     # Validate all required inputs were passed
@@ -393,11 +409,10 @@ class AbstractFlowComponent(AbstractTest):
         """
         for name, value in iteritems(parameters):
             if isinstance(value, PipeTo):
-                parameter_name = value.parameter_name
                 if override_previous or (name not in self.__dict__ and
                                          name not in self._pipes):
 
-                    self._pipes[name] = parameter_name
+                    self._pipes[name] = value
 
             else:
                 if override_previous or (name not in self.__dict__ and
