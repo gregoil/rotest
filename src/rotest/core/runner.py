@@ -11,8 +11,8 @@ from future.builtins import range
 from rotest.common import core_log
 from rotest.core.utils.common import parse_json
 from rotest.common.utils import get_class_fields
-from rotest.management.base_resource import BaseResource
 from rotest.core.runners.base_runner import BaseTestRunner
+from rotest.management.base_resource import ResourceRequest
 from rotest.core import TestCase, TestFlow, TestBlock, TestSuite
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
@@ -209,7 +209,9 @@ def _update_test_resources(test_element, identifiers_dict):
                 identifiers_dict[resource_request.name])
             requests_found.add(resource_request.name)
 
-    for (field_name, field) in get_class_fields(test_element, BaseResource):
+    for (field_name, field) in get_class_fields(test_element,
+                                                ResourceRequest):
+
         if field_name in identifiers_dict:
             field.kwargs.update(identifiers_dict[field_name])
             requests_found.add(field_name)
