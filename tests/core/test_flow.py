@@ -450,10 +450,17 @@ class TestTestFlow(BasicRotestUnitTest):
 
     def test_pipes_with_formula(self):
         """Validate parametrize behavior when using formulas."""
+        writer_block = create_writer_block(inject_name='some_name',
+                                           inject_value=5)
+
+        reader_block = create_reader_block(inject_name='pipe_target',
+                                           inject_value=6)
+
         MockFlow.blocks = (
-            create_writer_block(inject_name='some_name', inject_value=5),
-            create_reader_block(inject_name='pipe_target', inject_value=6).params(
-                pipe_target=PipeTo('some_name', formula=lambda value: value+1)))
+            writer_block,
+            reader_block.params(pipe_target=PipeTo(
+                'some_name',
+                formula=lambda value: value + 1)))
 
         test_flow = MockFlow()
         self.run_test(test_flow)
