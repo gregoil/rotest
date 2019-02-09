@@ -102,10 +102,10 @@ class DemoComplexResource(BaseResource):
     """
     DATA_CLASS = DemoComplexResourceData
 
-    def create_sub_resources(self):
+    def create_sub_resources(self, **kwargs):
         """Return an iterable to the complex resource's sub-resources."""
-        self.demo1 = DemoResource(data=self.data.demo1)
-        self.demo2 = DemoResource(data=self.data.demo2)
+        self.demo1 = DemoResource(data=self.data.demo1, **kwargs)
+        self.demo2 = DemoResource(data=self.data.demo2, **kwargs)
         return (self.demo1, self.demo2)
 
     def initialize(self):
