@@ -1556,3 +1556,157 @@ class TestResourceManagement(BaseResourceManagementTest):
                                      sub_resource.__class__.__name__))
 
         self.client.release_resources(resources, dirty=True)
+
+    def test_complex_resource_child_field_overwrite(self):
+        """Lock complex resource and overwrite a field using the declaration.
+
+        * Overwrite sub-resource's field in the sub-resource declaration.
+        * Validate that the field was overwritten in the sub-resource.
+        """
+        assign_version = 15
+
+        class AlterDemoComplexResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoComplexResourceData
+            demo1 = DemoResource.request(data=DemoComplexResourceData.demo1,
+                                         version=assign_version)
+            demo2 = DemoResource.request(data=DemoComplexResourceData.demo2)
+
+        request = ResourceRequest('res1', AlterDemoComplexResource,
+                                  name=self.COMPLEX_NAME)
+
+        resources = self.client.request_resources(requests=[request])
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources.values()
+
+        self.assertEqual(resource.demo1.version, assign_version,
+                         "Sub-resource version overwrite failed (expected %d, "
+                         "got %d)" % (assign_version, resource.demo1.version))
+
+        self.client.release_resources(resources, dirty=True)
+
+    def test_complex_resource_child_overwrite_with_request(self):
+        """Lock complex resource and overwrite a field using the declaration.
+
+        * Overwrite sub-resource's field in the resource request.
+        * Validate that the field was overwritten in the sub-resource.
+        """
+        assign_version = 15
+
+        class AlterDemoComplexResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoComplexResourceData
+            demo1 = DemoResource.request(data=DemoComplexResourceData.demo1)
+            demo2 = DemoResource.request(data=DemoComplexResourceData.demo2)
+
+        request = ResourceRequest('res1', AlterDemoComplexResource,
+                                  name=self.COMPLEX_NAME,
+                                  demo1__version=assign_version)
+
+        resources = self.client.request_resources(requests=[request])
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources.values()
+
+        self.assertEqual(resource.demo1.version, assign_version,
+                         "Sub-resource version overwrite failed (expected %d, "
+                         "got %d)" % (assign_version, resource.demo1.version))
+
+        self.client.release_resources(resources, dirty=True)
+
+    def test_complex_resource_grandchild_field_overwrite(self):
+        """Lock complex resource and overwrite a field using the declaration.
+
+        * Overwrite a child's sub-resource's field in the declaration.
+        * Validate that the field was overwritten in the sub-resource.
+        """
+        assign_name = "random_name"
+
+        class DemoComplexSubResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoResourceData
+            sub_service = DemoService.request(name=DemoResourceData.name)
+
+        class AlterDemoComplexResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoComplexResourceData
+            demo1 = DemoComplexSubResource.request(
+                                    data=DemoComplexResourceData.demo1,
+                                    sub_service__name=assign_name)
+            demo2 = DemoComplexSubResource.request(
+                                    data=DemoComplexResourceData.demo2)
+
+        request = ResourceRequest('res1', AlterDemoComplexResource,
+                                  name=self.COMPLEX_NAME)
+
+        resources = self.client.request_resources(requests=[request])
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources.values()
+
+        self.assertEqual(resource.demo2.sub_service.name, resource.demo2.name,
+                         "Sub-resource request sanity failed (expected %s, "
+                         "got %s)" % (resource.demo2.name,
+                                      resource.demo2.sub_service.name))
+
+        self.assertEqual(resource.demo1.sub_service.name, assign_name,
+                         "Sub-resource name overwrite failed (expected %s, "
+                         "got %s)" % (assign_name,
+                                      resource.demo1.sub_service.name))
+
+        self.client.release_resources(resources, dirty=True)
+
+    def test_complex_resource_grandchild_overwrite_with_request(self):
+        """Lock complex resource and overwrite a field using the declaration.
+
+        * Overwrite child's sub-resource's field in the resource request.
+        * Validate that the field was overwritten in the sub-resource.
+        """
+        assign_name = "random_name"
+
+        class DemoComplexSubResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoResourceData
+            sub_service = DemoService.request(name=DemoResourceData.name)
+
+        class AlterDemoComplexResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoComplexResourceData
+            demo1 = DemoComplexSubResource.request(
+                                    data=DemoComplexResourceData.demo1)
+            demo2 = DemoComplexSubResource.request(
+                                    data=DemoComplexResourceData.demo2)
+
+        request = ResourceRequest('res1', AlterDemoComplexResource,
+                                  name=self.COMPLEX_NAME,
+                                  demo1__sub_service__name=assign_name)
+
+        resources = self.client.request_resources(requests=[request])
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources.values()
+
+        self.assertEqual(resource.demo2.sub_service.name, resource.demo2.name,
+                         "Sub-resource request sanity failed (expected %s, "
+                         "got %s)" % (resource.demo2.name,
+                                      resource.demo2.sub_service.name))
+
+        self.assertEqual(resource.demo1.sub_service.name, assign_name,
+                         "Sub-resource name overwrite failed (expected %s, "
+                         "got %s)" % (assign_name,
+                                      resource.demo1.sub_service.name))
+
+        self.client.release_resources(resources, dirty=True)

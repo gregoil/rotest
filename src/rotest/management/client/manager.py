@@ -233,7 +233,8 @@ class ClientResourceManager(AbstractClient):
 
             resources.extend(descriptor.type(data=resource_data,
                                              config=config,
-                                             base_work_dir=base_work_dir)
+                                             base_work_dir=base_work_dir,
+                                             **descriptor.properties)
                              for (descriptor, resource_data) in
                              zip(server_requests, response_resources))
 

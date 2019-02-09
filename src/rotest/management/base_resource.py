@@ -9,6 +9,7 @@ from __future__ import absolute_import
 
 import sys
 from bdb import BdbQuit
+from collections import defaultdict
 from threading import Thread
 
 import six
@@ -25,8 +26,15 @@ from rotest.common.utils import get_work_dir, get_class_fields
 from rotest.management.models.resource_data import ResourceData, DataPointer
 
 
+# Syntax symbol used to access the fields of Django models in querying
+SUBFIELD_ACCESSOR = '__'
+
+
 class ResourceRequest(object):
     """Holds the data for a resource request.
+
+    You can use the sub-field accessor ('__', like in Django syntax)
+    to propagate kwargs to sub-resources.
 
     Attributes:
         resource_name (str): attribute name to be assigned.
@@ -40,7 +48,6 @@ class ResourceRequest(object):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
-
         self.kwargs = kwargs
 
     def __eq__(self, oth):
@@ -116,8 +123,10 @@ class BaseResource(object):
             self.data = AttrDict(**kwargs)
             if 'name' not in self.data:
                 self.data.name = "%s-%d" % (self.__class__.__name__, id(self))
+                self.name = self.data.name
 
-            for field_name, field_value in iteritems(self.data):
+        for field_name, field_value in iteritems(kwargs):
+            if SUBFIELD_ACCESSOR not in field_name:
                 setattr(self, field_name, field_value)
 
         self.config = config
@@ -129,14 +138,14 @@ class BaseResource(object):
         self.logger.debug("Resource %r work dir was created under %r",
                           self.name, base_work_dir)
 
-        self.set_sub_resources()
+        self.set_sub_resources(**kwargs)
 
     @classmethod
     def request(cls, **kwargs):
         """Create a resource request for an instance of this class."""
         return ResourceRequest(None, cls, **kwargs)
 
-    def create_sub_resources(self):
+    def create_sub_resources(self, **kwargs):
         """Create and return the sub resources if needed.
 
         By default, this method searches for sub-resources declared as
@@ -150,6 +159,15 @@ class BaseResource(object):
             iterable. sub-resources created.
         """
         sub_resources = []
+
+        sub_resources_kwargs = defaultdict(dict)
+        for field_name, field_value in iteritems(kwargs):
+            if SUBFIELD_ACCESSOR in field_name:
+                resource_name, field_name = \
+                    field_name.split(SUBFIELD_ACCESSOR, 1)
+
+                sub_resources_kwargs[resource_name][field_name] = field_value
+
         for sub_name, sub_request in get_class_fields(self.__class__,
                                                       ResourceRequest):
             sub_class = sub_request.type
@@ -163,6 +181,7 @@ class BaseResource(object):
                 elif isinstance(value, DataPointer):
                     actual_kwargs[key] = getattr(self.data, value.field_name)
 
+            actual_kwargs.update(sub_resources_kwargs[sub_name])
             sub_resource = sub_class(**actual_kwargs)
 
             setattr(self, sub_name, sub_resource)
@@ -230,9 +249,9 @@ class BaseResource(object):
         """Return an iterable to the resource's sub-resources."""
         return (sub_resource for sub_resource in self._sub_resources)
 
-    def set_sub_resources(self):
+    def set_sub_resources(self, **kwargs):
         """Create and set the sub resources if needed."""
-        self._sub_resources = tuple(self.create_sub_resources())
+        self._sub_resources = tuple(self.create_sub_resources(**kwargs))
         for resource in self.get_sub_resources():
             resource.parent = self
             resource.set_sub_resources()
