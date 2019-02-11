@@ -25,6 +25,9 @@ class ResourceDescriptor(object):
         """
         self.type = resource_type
         self.filters = filters
+        if properties is None:
+            properties = {}
+
         self.properties = properties
 
     def __repr__(self):
