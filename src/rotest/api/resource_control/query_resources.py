@@ -48,7 +48,7 @@ class QueryResources(DjangoRequestView):
             raise BadRequest(str(e))
 
         # query for resources that are usable and match the descriptors
-        query = (Q(is_usable=True, **descriptor.properties))
+        query = (Q(is_usable=True, **descriptor.filters))
         query_result = []
         with transaction.atomic():
             matches = descriptor.type.objects.select_for_update().filter(query)

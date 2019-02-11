@@ -27,13 +27,13 @@ class ResourceDescriptorModel(AbstractAPIModel):
 
     Args:
         type (str): the type of the resource.
-        properties (dict): django filter properties of the model.
+        filters (dict): django filter options of the model.
     """
     TITLE = "Resource Descriptor"
     PROPERTIES = [
         StringField(name="type", required=True,
                     example="resources.models.CalculatorData"),
-        ModelField(name="properties", model=GenericModel, required=True)
+        ModelField(name="filters", model=GenericModel, required=True)
     ]
 
 

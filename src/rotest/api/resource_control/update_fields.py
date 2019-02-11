@@ -39,7 +39,7 @@ class UpdateFields(DjangoRequestView):
                 apply on the filtered instances.
         """
         model = extract_type(request.model.resource_descriptor.type)
-        filter_dict = request.model.resource_descriptor.properties
+        filter_dict = request.model.resource_descriptor.filters
         kwargs_vars = request.model.changes
         with transaction.atomic():
             objects = model.objects.select_for_update()

@@ -43,7 +43,7 @@ class TestLockResources(TransactionTestCase):
                     {
                         "type": "rotest.management.models.ut_models."
                                 "DemoResourceData",
-                        "properties": {}
+                        "filters": {}
                     }
                 ],
                 "timeout": 0,
@@ -60,7 +60,7 @@ class TestLockResources(TransactionTestCase):
                     {
                         "type": "rotest.management.models.ut_models."
                                 "DemoResourceData",
-                        "properties": {
+                        "filters": {
                             "invalid_field": "field1"
                         }
                     }
@@ -86,7 +86,7 @@ class TestLockResources(TransactionTestCase):
                     {
                         "type": "rotest.management.models.ut_models."
                                 "DemoComplexResourceData",
-                        "properties": {}
+                        "filters": {}
                     }
                 ],
                 "timeout": 0,
@@ -119,7 +119,7 @@ class TestLockResources(TransactionTestCase):
                     {
                         "type": "rotest.management.models.ut_models."
                                 "DemoComplexResourceData",
-                        "properties": {}
+                        "filters": {}
                     }
                 ],
                 "timeout": 0,
@@ -191,7 +191,7 @@ class TestLockResourcesInvalid(TransactionTestCase):
                 "descriptors": [
                     {
                         "type": "invalidmodule.invalidtype",
-                        "properties": {}
+                        "filters": {}
                     }
                 ],
                 "timeout": 0,
@@ -210,7 +210,7 @@ class TestLockResourcesInvalid(TransactionTestCase):
                     {
                         "type": "rotest.management.models.ut_models."
                                 "DemoResourceData",
-                        "properties": {}
+                        "filters": {}
                     }
                 ],
                 "timeout": 0,

@@ -89,7 +89,7 @@ class TestControl(TransactionTestCase):
                 "descriptors": [{
                     "type": "rotest.management.models.ut_models."
                             "DemoResourceData",
-                    "properties": {
+                    "filters": {
                         "name": "available_resource1"
                     }
                 }]

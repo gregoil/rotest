@@ -21,7 +21,7 @@ class TestQueryResourcesInvalid(TransactionTestCase):
     def test_query_invalid_resource(self):
         response, _ = self.requester(json_data={
             "type": "invalidmodule.invalidtype",
-            "properties": {}
+            "filters": {}
         })
         self.assertEqual(response.status_code, http_client.BAD_REQUEST)
 
@@ -29,7 +29,7 @@ class TestQueryResourcesInvalid(TransactionTestCase):
         response, content = self.requester(json_data={
             "type": "rotest.management.models.ut_models."
                     "DemoResourceData",
-            "properties": {}
+            "filters": {}
         })
         self.assertEqual(response.status_code, http_client.BAD_REQUEST)
         self.assertTrue(content.details.startswith(
@@ -51,7 +51,7 @@ class TestQueryResources(TransactionTestCase):
         response, content = self.requester(json_data={
             "type": "rotest.management.models.ut_models."
                     "DemoResourceData",
-            "properties": {}
+            "filters": {}
         })
         self.assertEqual(response.status_code, http_client.OK)
         self.assertEqual(len(content.resource_descriptors), count)
@@ -61,7 +61,7 @@ class TestQueryResources(TransactionTestCase):
         response, content = self.requester(json_data={
             "type": "rotest.management.models.ut_models."
                     "DemoResourceData",
-            "properties": {
+            "filters": {
                 "owner": ""
             }
         })

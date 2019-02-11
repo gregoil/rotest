@@ -7,47 +7,37 @@ import six
 from future.builtins import object
 
 from rotest.management import ResourceData
-from rotest.management.common.errors import ResourceBuildError
 from rotest.management.common.utils import (TYPE_NAME,
-                                            PROPERTIES,
+                                            FILTERS,
                                             extract_type,
                                             extract_type_path)
 
 
 class ResourceDescriptor(object):
     """Holds the data for a resource request."""
-    def __init__(self, resource_type, **properties):
+    def __init__(self, resource_type, properties, **filters):
         """Initialize the required parameters of resource request.
 
         Args:
             resource_type (type): resource type.
-            properties (kwargs): properties of the resource.
+            filters (dict): filters to apply when requesting the resource.
+            properties (dict): initialization parameters for the resource.
         """
         self.type = resource_type
+        self.filters = filters
         self.properties = properties
 
     def __repr__(self):
         """Returns the descriptor's repr string."""
         type_name = self.type.__name__
-        keywords = ', '.join(['%s=%r' % (key, val)
-                              for key, val in six.iteritems(self.properties)])
-        return "%s(%s)" % (type_name, keywords)
+        filters = ', '.join(['%s=%r' % (key, val)
+                            for key, val in six.iteritems(self.filters)])
 
-    def build_resource(self):
-        """Build a resource.
+        properties = ', '.join(['%s=%r' % (key, val)
+                               for key, val in six.iteritems(self.properties)])
 
-        Returns:
-            rotest.common.models.base_resource.BaseResource. a resource.
-
-        Raises:
-            ResourceBuildError: Failed to build the resource with given params.
-        """
-        try:
-            return self.type(**self.properties)
-
-        except TypeError as ex:
-            raise ResourceBuildError('Failed to build resource. Original error'
-                                     'was: "%s"' % ex)
+        return "%s(filters=%s)(properties=%s)" % (type_name, filters,
+                                                  properties)
 
     def encode(self):
         """Build a dictionary that represent the ResourceDescriptor.
@@ -61,7 +51,7 @@ class ResourceDescriptor(object):
         else:
             name = extract_type_path(self.type.DATA_CLASS)
 
-        return {TYPE_NAME: name, PROPERTIES: self.properties}
+        return {TYPE_NAME: name, FILTERS: self.filters}
 
     @staticmethod
     def decode(descriptor):
@@ -69,7 +59,7 @@ class ResourceDescriptor(object):
 
         Args:
             descriptor (dict): a dictionary that represent a descriptor.
-                For instance: {'type': 'my_res', 'properties': {'key1': 1}}.
+                For instance: {'type': 'my_res', 'filters': {'key1': 1}}.
 
         Returns:
             ResourceDescriptor. the corresponding ResourceDescriptor.
@@ -77,7 +67,7 @@ class ResourceDescriptor(object):
         Raises:
             ValueError: given dictionary missing a relevant key.
         """
-        for key in (TYPE_NAME, PROPERTIES):
+        for key in (TYPE_NAME, FILTERS):
             if key not in descriptor:
                 raise ValueError("'descriptor' %r missing key %r" %
                                  (descriptor, key))
@@ -85,6 +75,6 @@ class ResourceDescriptor(object):
         type_name = descriptor[TYPE_NAME]
         resource_type = extract_type(type_name)
 
-        properties = descriptor[PROPERTIES]
+        filters = descriptor[FILTERS]
 
-        return ResourceDescriptor(resource_type, **properties)
+        return ResourceDescriptor(resource_type, **filters)

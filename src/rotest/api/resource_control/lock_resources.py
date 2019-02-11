@@ -83,7 +83,7 @@ class LockResources(DjangoRequestView):
         # query for resources that are usable and match the user's
         # preference, which are either belong groups he's in or
         # don't belong to any group.
-        query = (Q(is_usable=True, **descriptor.properties) &
+        query = (Q(is_usable=True, **descriptor.filters) &
                  (Q(group__isnull=True) | Q(group__in=groups)))
         try:
             matches = descriptor.type.objects.select_for_update() \
@@ -107,7 +107,7 @@ class LockResources(DjangoRequestView):
                 Example:
                     {
                         "type": "resourceData",
-                        "properties": {}
+                        "filters": {}
                     }
             username (str): the user who wants to lock the resource.
             groups (list): list of the resource groups that the resource

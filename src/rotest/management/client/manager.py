@@ -293,7 +293,7 @@ class ClientResourceManager(AbstractClient):
             matching_resources = [resource for resource in resources
                                   if isinstance(resource, descriptor.type)]
 
-            for field_name, value in list(descriptor.properties.items()):
+            for field_name, value in list(descriptor.filters.items()):
                 for resource in matching_resources[:]:
                     if getattr(resource, field_name, None) != value:
                         matching_resources.remove(resource)
@@ -389,7 +389,9 @@ class ClientResourceManager(AbstractClient):
             ServerError. resource manager failed to lock resources.
         """
         requests = list(requests)
-        descriptors = [ResourceDescriptor(request.type, **request.kwargs)
+        descriptors = [ResourceDescriptor(request.type,
+                                          properties=request.properties,
+                                          **request.filters)
                        for request in requests]
 
         initialized_resources = AttrDict()

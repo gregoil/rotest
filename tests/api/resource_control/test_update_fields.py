@@ -28,7 +28,7 @@ class TestUpdateFields(TransactionTestCase):
             "resource_descriptor": {
                 "type": "rotest.management.models.ut_models."
                         "DemoResourceData",
-                "properties": {}
+                "filters": {}
             },
             "changes": {
                 "reserved": "A_User"
@@ -45,7 +45,7 @@ class TestUpdateFields(TransactionTestCase):
             "resource_descriptor": {
                 "type": "rotest.management.models.ut_models."
                         "DemoResourceData",
-                "properties": {
+                "filters": {
                     "name": "available_resource1"
                 }
             },

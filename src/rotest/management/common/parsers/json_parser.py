@@ -17,7 +17,7 @@ from django.db.models import ForeignKey
 from rotest.management.common import messages
 from rotest.management.base_resource import BaseResource
 from rotest.management.common.parsers.abstract_parser import ParsingError
-from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, PROPERTIES,
+from rotest.management.common.utils import (TYPE_NAME, DATA_NAME, FILTERS,
                                             extract_type, extract_type_path)
 from .abstract_parser import AbstractParser
 
@@ -162,7 +162,7 @@ class JSONParser(AbstractParser):
         return {
             self._RESOURCE_DATA_TYPE: {
                 TYPE_NAME: self.recursive_encode(type_name),
-                PROPERTIES: self.recursive_encode(resource_data.get_fields())
+                FILTERS: self.recursive_encode(resource_data.get_fields())
             }
         }
 
@@ -265,7 +265,7 @@ class JSONParser(AbstractParser):
         type_name = self.recursive_decode(type_element)
         resource_type = extract_type(type_name)
 
-        properties_element = resource_element[PROPERTIES]
+        properties_element = resource_element[FILTERS]
         resource_properties = self.recursive_decode(properties_element)
 
         # Get the related fields.

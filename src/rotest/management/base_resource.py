@@ -41,14 +41,16 @@ class ResourceRequest(object):
         resource_class (type): resource type.
         force_initialize (bool): a flag to determine if the resources will be
             initialized even if their validation succeeds.
-        kwargs (dict): requested resource arguments.
+        filters (dict): requested resource filters.
+        properties (dict): requested resource initialization parameters.
     """
 
-    def __init__(self, resource_name, resource_class, **kwargs):
+    def __init__(self, resource_name, resource_class, properties, **filters):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
-        self.kwargs = kwargs
+        self.filters = filters
+        self.properties = properties
 
     def __eq__(self, oth):
         """Compare with another request."""
@@ -56,12 +58,19 @@ class ResourceRequest(object):
 
     def __repr__(self):
         """Return a string representing the request."""
-        return "Request %r of type %r (kwargs=%r)" % (self.name, self.type,
-                                                      self.kwargs)
+        return "Request %r of type %r (filters=%r, properties=)" % \
+               (self.name, self.type, self.filters, self.properties)
+
+    def override(self, **kwargs):
+        """Return a new request with the given initialization parameters."""
+        new_request = self.clone()
+        new_request.properties.update(kwargs)
+        return new_request
 
     def clone(self):
         """Create a copy of the request."""
-        return ResourceRequest(self.name, self.type, **self.kwargs)
+        return ResourceRequest(self.name, self.type, self.properties,
+                               **self.filters)
 
 
 class ExceptionCatchingThread(Thread):
@@ -171,10 +180,10 @@ class BaseResource(object):
         for sub_name, sub_request in get_class_fields(self.__class__,
                                                       ResourceRequest):
             sub_class = sub_request.type
-            actual_kwargs = sub_request.kwargs.copy()
+            actual_kwargs = sub_request.properties.copy()
             actual_kwargs['config'] = self.config
             actual_kwargs['base_work_dir'] = self.work_dir
-            for key, value in six.iteritems(sub_request.kwargs):
+            for key, value in six.iteritems(sub_request.properties):
                 if isinstance(value, ReverseSingleRelatedObjectDescriptor):
                     actual_kwargs[key] = getattr(self.data, value.field.name)
 

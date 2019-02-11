@@ -17,7 +17,7 @@ TEST_SUBTESTS_KEY = 'subtests'
 
 TYPE_NAME = "type"
 DATA_NAME = "data"
-PROPERTIES = "properties"
+FILTERS = "filters"
 
 LOCAL_IP = "127.0.0.1"
 LOCALHOST = "localhost"

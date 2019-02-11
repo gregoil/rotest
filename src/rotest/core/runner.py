@@ -205,7 +205,7 @@ def _update_test_resources(test_element, identifiers_dict):
 
     for resource_request in test_element.resources:
         if resource_request.name in identifiers_dict:
-            resource_request.kwargs.update(
+            resource_request.filters.update(
                 identifiers_dict[resource_request.name])
             requests_found.add(resource_request.name)
 
@@ -213,7 +213,7 @@ def _update_test_resources(test_element, identifiers_dict):
                                                 ResourceRequest):
 
         if field_name in identifiers_dict:
-            field.kwargs.update(identifiers_dict[field_name])
+            field.filters.update(identifiers_dict[field_name])
             requests_found.add(field_name)
 
     return requests_found

@@ -52,7 +52,7 @@ class UpdateResources(DjangoRequestView):
         for resource_descriptor in request.model.descriptors:
             resource_dict = ResourceDescriptor.decode(resource_descriptor)
             test_data.resources.add(resource_dict.type.objects.get(
-                **resource_dict.properties))
+                **resource_dict.filters))
 
         test_data.save()
 

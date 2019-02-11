@@ -220,7 +220,7 @@ class MockResourceClient(ClientResourceManager):
             if data_type is None:
                 resource = descriptor.type(config=config,
                                            base_work_dir=base_work_dir,
-                                           **descriptor.properties)
+                                           **descriptor.filters)
 
             else:
                 if not self.is_connected():
@@ -228,7 +228,7 @@ class MockResourceClient(ClientResourceManager):
 
                 try:
                     available_resources = data_type.objects.filter(
-                        is_usable=True, **descriptor.properties)
+                        is_usable=True, **descriptor.filters)
 
                     prev_locks = [prev.name for prev in resources]
                     available_resources = [resource
@@ -270,7 +270,7 @@ class MockResourceClient(ClientResourceManager):
                 (containing model class and query filter kwargs).
         """
         return descriptor.type.DATA_CLASS.objects.filter(
-            is_usable=True, **descriptor.properties)
+            is_usable=True, **descriptor.filters)
 
 
 def override_client_creator():

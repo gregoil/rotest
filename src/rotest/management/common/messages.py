@@ -102,7 +102,7 @@ class QueryResources(AbstractMessage):
 
     Attributes:
         descriptors (dict): descriptors of to query in the format
-            {'type': resource_type_name, 'properties': {'key': value}}
+            {'type': resource_type_name, 'filters': {'key': value}}
         timeout (number): seconds to wait for resources if they're unavailable.
     """
     pass
@@ -114,7 +114,7 @@ class LockResources(AbstractMessage):
 
     Attributes:
         descriptors (list): descriptors of resources. list of dictionaries of
-            {'type': resource_type_name, 'properties': {'key': value}}
+            {'type': resource_type_name, 'filters': {'key': value}}
         timeout (number): seconds to wait for resources if they're unavailable.
     """
     pass

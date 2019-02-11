@@ -225,7 +225,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resources in it but found %d" % resources_num)
 
         for resource, descriptor in zip(resources, descriptors):
-            expected_name = descriptor.properties['name']
+            expected_name = descriptor.filters['name']
             self.assertEqual(expected_name, resource.name,
                              "Expected resource with name %r but got %r"
                              % (expected_name, resource.name))
@@ -313,7 +313,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.get_resource(self.FREE1_NAME)
 
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
-        descriptor.properties[self.NON_EXISTING_FIELD] = 0
+        descriptor.filters[self.NON_EXISTING_FIELD] = 0
 
         self.assertRaises(ResourceUnavailableError,
                           self.client._lock_resources,
@@ -1323,8 +1323,10 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoResource.request(data=DemoComplexResourceData.demo1)
-            demo2 = DemoResource.request(data=DemoComplexResourceData.demo2)
+            demo1 = DemoResource.request().override(
+                                            data=DemoComplexResourceData.demo1)
+            demo2 = DemoResource.request().override(
+                                            data=DemoComplexResourceData.demo2)
 
             def initialize(self):
                 """Turns on the initialization flag."""
@@ -1417,7 +1419,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoResourceData
-            demo1 = DemoService.request(name=DemoResourceData.name)
+            demo1 = DemoService.request().override(name=DemoResourceData.name)
 
             def initialize(self):
                 """Turns on the initialization flag."""
@@ -1505,7 +1507,7 @@ class TestResourceManagement(BaseResourceManagementTest):
             """Fake complex service class, used in resource manager tests."""
             DATA_CLASS = None
             demo1 = DemoService.request()
-            demo2 = DemoService.request(name=DataPointer('name'))
+            demo2 = DemoService.request().override(name=DataPointer('name'))
 
             initialized = False
 
@@ -1568,9 +1570,11 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoResource.request(data=DemoComplexResourceData.demo1,
-                                         version=assign_version)
-            demo2 = DemoResource.request(data=DemoComplexResourceData.demo2)
+            demo1 = DemoResource.request().override(
+                                            data=DemoComplexResourceData.demo1,
+                                            version=assign_version)
+            demo2 = DemoResource.request().override(
+                                            data=DemoComplexResourceData.demo2)
 
         request = ResourceRequest('res1', AlterDemoComplexResource,
                                   name=self.COMPLEX_NAME)
@@ -1600,12 +1604,14 @@ class TestResourceManagement(BaseResourceManagementTest):
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoResource.request(data=DemoComplexResourceData.demo1)
-            demo2 = DemoResource.request(data=DemoComplexResourceData.demo2)
+            demo1 = DemoResource.request().override(
+                                            data=DemoComplexResourceData.demo1)
+            demo2 = DemoResource.request().override(
+                                            data=DemoComplexResourceData.demo2)
 
         request = ResourceRequest('res1', AlterDemoComplexResource,
-                                  name=self.COMPLEX_NAME,
-                                  demo1__version=assign_version)
+                                  name=self.COMPLEX_NAME).override(
+                                                demo1__version=assign_version)
 
         resources = self.client.request_resources(requests=[request])
 
@@ -1632,15 +1638,16 @@ class TestResourceManagement(BaseResourceManagementTest):
         class DemoComplexSubResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoResourceData
-            sub_service = DemoService.request(name=DemoResourceData.name)
+            sub_service = DemoService.request().override(
+                                                    name=DemoResourceData.name)
 
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoComplexSubResource.request(
+            demo1 = DemoComplexSubResource.request().override(
                                     data=DemoComplexResourceData.demo1,
                                     sub_service__name=assign_name)
-            demo2 = DemoComplexSubResource.request(
+            demo2 = DemoComplexSubResource.request().override(
                                     data=DemoComplexResourceData.demo2)
 
         request = ResourceRequest('res1', AlterDemoComplexResource,
@@ -1677,19 +1684,20 @@ class TestResourceManagement(BaseResourceManagementTest):
         class DemoComplexSubResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoResourceData
-            sub_service = DemoService.request(name=DemoResourceData.name)
+            sub_service = DemoService.request().override(
+                                                    name=DemoResourceData.name)
 
         class AlterDemoComplexResource(BaseResource):
             """Fake complex resource class, used in resource manager tests."""
             DATA_CLASS = DemoComplexResourceData
-            demo1 = DemoComplexSubResource.request(
+            demo1 = DemoComplexSubResource.request().override(
                                     data=DemoComplexResourceData.demo1)
-            demo2 = DemoComplexSubResource.request(
+            demo2 = DemoComplexSubResource.request().override(
                                     data=DemoComplexResourceData.demo2)
 
         request = ResourceRequest('res1', AlterDemoComplexResource,
-                                  name=self.COMPLEX_NAME,
-                                  demo1__sub_service__name=assign_name)
+                                  name=self.COMPLEX_NAME).override(
+                                        demo1__sub_service__name=assign_name)
 
         resources = self.client.request_resources(requests=[request])
 

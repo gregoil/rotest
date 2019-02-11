@@ -36,7 +36,7 @@ class DataBase(ModelBase):
     e.g:
         class AlterDemoComplexResource(BaseResource):
             DATA_CLASS = DemoResourceData
-            demo1 = DemoService.request(name=DemoResourceData.name).
+            demo1 = DemoService.request().override(name=DemoResourceData.name)
     """
     def __getattr__(cls, key):
         if '_meta' in vars(cls) and \
