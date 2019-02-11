@@ -76,7 +76,7 @@ class TestTestSuite(BasicRotestUnitTest):
 
         for resource_request in SuccessCase.resources:
             test_resource = DemoResourceData.objects.get(
-                             ip_address=resource_request.kwargs['ip_address'])
+                             ip_address=resource_request.filters['ip_address'])
             self.assertFalse(test_resource.initialization_flag,
                              "Resource %r was initialized" % test_resource)
 
