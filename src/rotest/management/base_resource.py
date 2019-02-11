@@ -45,7 +45,8 @@ class ResourceRequest(object):
         properties (dict): requested resource initialization parameters.
     """
 
-    def __init__(self, resource_name, resource_class, properties, **filters):
+    def __init__(self, resource_name, resource_class, properties={},
+                 **filters):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class

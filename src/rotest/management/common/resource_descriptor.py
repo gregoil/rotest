@@ -15,7 +15,7 @@ from rotest.management.common.utils import (TYPE_NAME,
 
 class ResourceDescriptor(object):
     """Holds the data for a resource request."""
-    def __init__(self, resource_type, properties, **filters):
+    def __init__(self, resource_type, properties={}, **filters):
         """Initialize the required parameters of resource request.
 
         Args:
