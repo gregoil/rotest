@@ -62,7 +62,7 @@ class ResourceRequest(object):
 
     def __repr__(self):
         """Return a string representing the request."""
-        return "Request %r of type %r (filters=%r, properties=)" % \
+        return "Request %r of type %r (filters=%r, properties=%r)" % \
                (self.name, self.type, self.filters, self.properties)
 
     def override(self, **kwargs):
