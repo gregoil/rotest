@@ -4,7 +4,7 @@ Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-locals
 from __future__ import absolute_import
 
 import sys
