@@ -254,7 +254,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Try to lock the same one again.
         * Make sure the lock succeeded and that we get different resources.
         """
-        descriptor = Descriptor(DemoService, name=self.FREE1_NAME)
+        descriptor = Descriptor(DemoService)
 
         previous_resources = []
 
@@ -267,10 +267,6 @@ class TestResourceManagement(BaseResourceManagementTest):
                              "resource in it but found %d" % resources_num)
 
             resource, = resources
-            self.assertEqual(resource.name, self.FREE1_NAME,
-                             "Expected resource with name %r but got %r"
-                             % (self.FREE1_NAME, resource.name))
-
             self.assertIsInstance(resource, descriptor.type,
                                   "Expected resource of type %r, but got %r"
                                   % (descriptor.type.__name__,
@@ -1235,9 +1231,8 @@ class TestResourceManagement(BaseResourceManagementTest):
         * Checks that the client releases them when they're not needed anymore.
         """
         self.client.keep_resources = True
-        resource_name1 = self.FREE1_NAME
 
-        requests = [ResourceRequest('res1', DemoService, name=resource_name1)]
+        requests = [ResourceRequest('res1', DemoService)]
 
         # Make sure the client has no locked resources
         self.assertEqual(len(self.client.locked_resources), 0)
@@ -1249,7 +1244,6 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.client.release_resources(resources)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
-        self.assertEqual(resource1.name, resource_name1)
 
         # Make a similar request
         resources = self.client.request_resources(requests, use_previous=True)
@@ -1516,8 +1510,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                 super(AlterDemoComplexService, self).initialize()
                 self.initialized = True
 
-        request = ResourceRequest('res1', AlterDemoComplexService,
-                                  name=self.COMPLEX_NAME)
+        request = ResourceRequest('res1', AlterDemoComplexService).override(
+                                                        name=self.COMPLEX_NAME)
 
         resources = self.client.request_resources(requests=[request])
 
