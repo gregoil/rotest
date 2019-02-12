@@ -173,13 +173,15 @@ class BaseResource(object):
         """
         sub_resources = []
 
+        # Parse kwargs referring to sub-resources using '__'
         sub_resources_kwargs = defaultdict(dict)
         for field_name, field_value in iteritems(kwargs):
             if SUBFIELD_ACCESSOR in field_name:
-                resource_name, field_name = \
+                resource_name, resource_field = \
                     field_name.split(SUBFIELD_ACCESSOR, 1)
 
-                sub_resources_kwargs[resource_name][field_name] = field_value
+                sub_resources_kwargs[resource_name][resource_field] = \
+                    field_value
 
         for sub_name, sub_request in get_class_fields(self.__class__,
                                                       ResourceRequest):
@@ -267,7 +269,6 @@ class BaseResource(object):
         self._sub_resources = tuple(self.create_sub_resources(**kwargs))
         for resource in self.get_sub_resources():
             resource.parent = self
-            resource.set_sub_resources()
 
     def _safe_execute(self, callbacks, *args, **kwargs):
         """Executes all the callbacks, even if one or more fails.
