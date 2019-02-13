@@ -3,9 +3,8 @@ from __future__ import absolute_import
 
 from datetime import datetime
 
-from six.moves import http_client
 from future.builtins import next
-from django.db import transaction
+from six.moves import http_client
 from django.db.models.query_utils import Q
 from django.core.exceptions import FieldError
 from django.contrib.auth import models as auth_models
@@ -60,7 +59,6 @@ class LockResources(DjangoRequestView):
 
         resource.owner = user_name
         resource.owner_time = datetime.now()
-        resource.save()
 
     def _get_available_resources(self, descriptor, username, groups):
         """Get the potential resources to be locked that fits the descriptor.
@@ -159,12 +157,12 @@ class LockResources(DjangoRequestView):
         locked_resources = []
         user = auth_models.User.objects.get(username=username)
         groups = list(user.groups.all())
-        with transaction.atomic():
-            for descriptor_dict in descriptors:
-                locked_resources.append(self._try_to_lock_available_resource(
-                    username, groups, descriptor_dict))
+        for descriptor_dict in descriptors:
+            locked_resources.append(self._try_to_lock_available_resource(
+                username, groups, descriptor_dict))
 
         for resource in locked_resources:
+            resource.save()
             session.resources.append(resource)
 
         encoder = JSONParser()
