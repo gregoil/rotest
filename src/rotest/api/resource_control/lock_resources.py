@@ -162,7 +162,7 @@ class LockResources(DjangoRequestView):
                 username, groups, descriptor_dict))
 
         for resource in locked_resources:
-            resource.save()
+            resource.propagate_save()
             session.resources.append(resource)
 
         encoder = JSONParser()

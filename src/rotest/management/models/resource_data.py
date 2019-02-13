@@ -272,6 +272,12 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
             sub_resource.reserved = reserved_text
             sub_resource.save()
 
+    def propagate_save(self):
+        """Save the resource and its sub-resources."""
+        self.save()
+        for sub_resource in self.get_sub_resources():
+            sub_resource.propagate_save()
+
     def save(self, *args, **kwargs):
         """Propagate reservation change to sub-resources of the resource."""
         if self._was_reserved_changed():
