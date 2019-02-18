@@ -255,7 +255,7 @@ class TestResultManagement(BaseResourceManagementTest):
 
         # Simulate ending the test.
         self.client.stop_test(test_case)
-        ERROR_STRING = 'test error'
+        ERROR_STRING = 'ERROR: test error'
         self.client.add_result(test_case, TestOutcome.ERROR,
                                ERROR_STRING)
         self.client.stop_composite(main_test)

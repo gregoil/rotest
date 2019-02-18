@@ -97,11 +97,12 @@ class AbstractResultHandler(with_metaclass(ABCMeta, object)):
         """Called once after all tests are executed."""
         pass
 
-    def add_success(self, test):
+    def add_success(self, test, msg):
         """Called when a test has completed successfully.
 
         Args:
             test (rotest.core.abstract_test.AbstractTest): test item instance.
+            msg (str): success message.
         """
         pass
 

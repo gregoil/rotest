@@ -200,8 +200,6 @@ class Result(TestResult):
             msg (str): success message.
         """
         test.end(test_outcome=TestOutcome.SUCCESS, details=msg)
-        if test.data.exception_type is not None:
-            return
 
         if test.is_main:
             super(Result, self).addSuccess(test)
@@ -209,7 +207,7 @@ class Result(TestResult):
         test.logger.info("Test %r ended successfully: %r", test.data, msg)
 
         for result_handler in self.result_handlers:
-            result_handler.add_success(test)
+            result_handler.add_success(test, msg)
 
     def addSkip(self, test, reason):
         """Called when a test is skipped.
