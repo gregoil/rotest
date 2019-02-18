@@ -40,7 +40,7 @@ class BaseResultHandlerTest(with_metaclass(ABCMeta, TransactionTestCase)):
 
     fixtures = ['resource_ut.json']
 
-    RESULT_MESSAGES = {TestOutcome.SUCCESS: [],
+    RESULT_MESSAGES = {TestOutcome.SUCCESS: [None],
                        TestOutcome.FAILED: ['Fail'],
                        TestOutcome.ERROR: ['Error'],
                        TestOutcome.SKIPPED: ['Skip'],
