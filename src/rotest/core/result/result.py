@@ -192,20 +192,21 @@ class Result(TestResult):
         for result_handler in self.result_handlers:
             result_handler.stop_test_run()
 
-    def addSuccess(self, test):
+    def addSuccess(self, test, msg=None):
         """Called when a test has completed successfully.
 
         Args:
             test (object): test item instance.
+            msg (str): success message.
         """
+        test.end(test_outcome=TestOutcome.SUCCESS, details=msg)
         if test.data.exception_type is not None:
             return
 
         if test.is_main:
             super(Result, self).addSuccess(test)
 
-        test.logger.info("Test %r ended successfully", test.data)
-        test.end(test_outcome=TestOutcome.SUCCESS)
+        test.logger.info("Test %r ended successfully: %r", test.data, msg)
 
         for result_handler in self.result_handlers:
             result_handler.add_success(test)
