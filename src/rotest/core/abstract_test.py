@@ -417,8 +417,8 @@ def create_expect_method(method_name):
 
 
 # Create an 'expect' method for every 'assert' method in unittest.TestCase
-for field_name in unittest.TestCase.__dict__:
-    if field_name.startswith("assert") and \
-            "Raises" not in field_name and "_" not in field_name:
+for attr_name in unittest.TestCase.__dict__:
+    if attr_name.startswith("assert") and \
+            "Raises" not in attr_name and "_" not in attr_name:
 
-        create_expect_method(field_name)
+        create_expect_method(attr_name)
