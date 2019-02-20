@@ -399,7 +399,7 @@ class AbstractTest(unittest.TestCase):
         self._wrap_assert(self.assertRaisesRegexp, expected_exception,
                           expected_regexp, callable_obj, *args, **kwargs)
 
-    def success(self, msg):
+    def addSuccess(self, msg):
         """Register a success message to the test result.
 
         Args:
@@ -407,13 +407,31 @@ class AbstractTest(unittest.TestCase):
         """
         self.result.addSuccess(self, msg)
 
+    # Shortcuts
+    success = addSuccess
+    skip = unittest.TestCase.skipTest
+
 
 def create_expect_method(method_name):
-    def wrapped_func(self, *args, **kwargs):
+    original_assert = getattr(unittest.TestCase, method_name)
+    @wraps(original_assert)
+    def extended_assert(self, *args, **kwargs):
+        success_msg = kwargs.pop("success_msg", None)
+        retval = original_assert(self, *args, **kwargs)
+        if success_msg is not None:
+            self.success(success_msg)
+        return retval
+
+    setattr(AbstractTest, method_name, extended_assert)
+
+    def expect_func(self, *args, **kwargs):
         return self._wrap_assert(getattr(self, method_name), *args, **kwargs)
 
+    expect_func.__doc__ = """Like {} but doesn't break workflow.""".format(
+                                                                method_name)
+
     setattr(AbstractTest, method_name.replace("assert", "expect"),
-            wrapped_func)
+            expect_func)
 
 
 # Create an 'expect' method for every 'assert' method in unittest.TestCase
