@@ -140,11 +140,12 @@ class DBHandler(AbstractResultHandler):
         """
         test.data.save()
 
-    def add_success(self, test):
+    def add_success(self, test, msg):
         """Save the test data result as success.
 
         Args:
             test (object): test item instance.
+            msg (str): success message.
         """
         test.data.save()
 

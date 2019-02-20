@@ -235,7 +235,6 @@ class BaseResource(object):
         self._sub_resources = tuple(self.create_sub_resources())
         for resource in self.get_sub_resources():
             resource.parent = self
-            resource.set_sub_resources()
 
     def _safe_execute(self, callbacks, *args, **kwargs):
         """Executes all the callbacks, even if one or more fails.

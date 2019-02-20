@@ -140,12 +140,12 @@ class WorkerHandler(AbstractResultHandler):
         self.send_message(StopComposite(msg_id=self.worker_pid,
                                         test_id=test.identifier))
 
-    def add_success(self, test):
+    def add_success(self, test, msg):
         """Notify the manager about a success via queue."""
         self.send_message(AddResult(msg_id=self.worker_pid,
                                     test_id=test.identifier,
                                     code=TestOutcome.SUCCESS,
-                                    info=None))
+                                    info=msg))
 
     def add_error(self, test, exception_string):
         """Notify the manager about an error via queue.

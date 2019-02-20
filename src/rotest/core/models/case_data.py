@@ -47,7 +47,7 @@ class CaseData(GeneralData):
     TB_SEPARATOR = 80 * '-' + '\n'
     _RUNTIME_ORDER = '-start_time'
 
-    RESULT_CHOICES = {TestOutcome.SUCCESS: 'OK',
+    RESULT_CHOICES = {TestOutcome.SUCCESS: 'Success',
                       TestOutcome.ERROR: 'Error',
                       TestOutcome.FAILED: 'Failed',
                       TestOutcome.SKIPPED: 'Skipped',
@@ -131,8 +131,9 @@ class CaseData(GeneralData):
 
             self.exception_type = result_type
 
-        if result_type not in (TestOutcome.SUCCESS,
-                               TestOutcome.UNEXPECTED_SUCCESS):
+        if details is not None:
+            details = "{}: {}".format(self.RESULT_CHOICES[result_type].upper(),
+                                      details)
 
             if len(self.traceback) > 0:
                 details = self.TB_SEPARATOR.join([self.traceback, details])

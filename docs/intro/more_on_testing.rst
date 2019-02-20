@@ -148,34 +148,70 @@ Now, let's run the test:
     OK
 
 
-Assert vs Expect
-================
+Test event methods
+==================
 
-In the test method you can use the assert<X> methods to perform the testing,
-but for cases where you don't want the action to stop the test, you can use ``expect``.
+Test result events you can use in Rotest:
 
-``expect`` only registers failures but stays in the same scope,
-allowing for more testing actions in the same single test. E.g.
+* `self.fail(<message>)`, `self.skip(<message>)` as in ``unittest``.
 
-.. code-block:: python
+* All failure events using `assert<X>`, as in ``unittest``.
 
-    from rotest.core import TestCase
+* `expect<X>` methods (a new concept) - for cases where you want to fail the
+  test but don't want the action to break the test flow.
 
-    from resources.calculator import Calculator
+  ``expect`` only registers the failures (if there are any) but stays in the same
+  scope, allowing for more testing actions in the same single test. E.g.
 
+  .. code-block:: python
 
-    class AddTest(TestCase):
-        calc = Calculator()
+      from rotest.core import TestCase
 
-        def test_add(self):
-            self.expectEqual(self.calc.calculate("1 + 1"), 2)
-            self.expectEqual(self.calc.calculate("1 + 2"), 2)
-            self.expectEqual(self.calc.calculate("1 + 3"), 2)
+      from resources.calculator import Calculator
 
 
-In the above example the ``AddTest`` will have 2 failures to the same run (3!=2 and 4!=2).
+      class AddTest(TestCase):
+            calc = Calculator()
 
-It is recommended to use ``expect`` to test different side-effects of the same scenario,
-like different side effects of the same action, but you can use it any way you please.
+          def test_add(self):
+              self.expectEqual(self.calc.calculate("1 + 1"), 2)
+              self.expectEqual(self.calc.calculate("1 + 2"), 2)
+              self.expectEqual(self.calc.calculate("1 + 3"), 2)
 
-There is an ``expect`` method equivalent for every ``assert`` method, e.g. ``expectEqual`` and ``expectIsNone``.
+  In the above example ``AddTest`` will have 2 failures to the same run (3!=2 and 4!=2).
+
+  It is recommended to use ``expect`` to test different side-effects of the same scenario,
+  like different side effects of the same action, but you can use it any way you please.
+
+  There is an ``expect`` method equivalent for every ``assert`` method, e.g. ``expectEqual`` and ``expectIsNone``.
+
+* Success events (a new concept) - When you want to register information about the
+  test, like numeric results of actions or time measurement of actions.
+
+  The success information will be registered into the test's metadata, like any
+  other failure, error, or skip message, and will be visible in the DB, excel, etc.
+
+  .. code-block:: python
+
+      from rotest.core import TestCase
+
+      from resources.calculator import Calculator
+
+
+      class AddTest(TestCase):
+            calc = Calculator()
+
+          def test_add(self):
+
+              self.success("One way to register success")
+              # Or
+              self.addSuccess("Another way to register success")
+
+              value = self.calc.calculate("1 + 1")
+              self.expectEqual(value, 3,
+                               msg="Expected value 3, got %r" % value,
+                               success_msg="Value is %r, as expected" % value)
+              # Or
+              self.assertEqual(value, 3,
+                               msg="Expected value 3, got %r" % value,
+                               success_msg="Value is %r, as expected" % value)

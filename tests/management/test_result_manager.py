@@ -256,11 +256,12 @@ class TestResultManagement(BaseResourceManagementTest):
         # Simulate ending the test.
         self.client.stop_test(test_case)
         ERROR_STRING = 'test error'
+        EXPECTED_STRING = 'ERROR: ' + ERROR_STRING
         self.client.add_result(test_case, TestOutcome.ERROR,
                                ERROR_STRING)
         self.client.stop_composite(main_test)
 
         # Check that the results are updated.
         self._validate_test_result(test_case, success=False,
-                               error_tuple=(TestOutcome.ERROR, ERROR_STRING))
+                            error_tuple=(TestOutcome.ERROR, EXPECTED_STRING))
         self._validate_test_result(main_test, success=False)

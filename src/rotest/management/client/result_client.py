@@ -121,6 +121,9 @@ class ClientResultManager(AbstractClient):
             result_code (number): the code of the result (TestOutcome code).
             info (str): additional data about the test outcome.
         """
+        if info is None:
+            info = ""
+
         request_data = AddTestResultParamsModel({
             "test_details": {
                 "test_id": test_item.identifier,

@@ -207,11 +207,12 @@ class ExcelHandler(AbstractResultHandler):
         self._write_to_cell(self.test_to_row[test.identifier], self.RESOURCES,
                             self.DEFAULT_CELL_STYLE, resources)
 
-    def add_success(self, test):
+    def add_success(self, test, msg):
         """Update the test Excel entry's result to success.
 
         Args:
             test (object): test item instance.
+            msg (str): success message.
         """
         self._write_test_result(test)
         self.workbook.save(self.output_file_path)

@@ -54,13 +54,16 @@ class EventStreamHandler(BaseStreamHandler):
         """Write the test run end to the stream."""
         self.stream.writeln('Tests Run Finished', None, BOLD)
 
-    def add_success(self, test):
+    def add_success(self, test, msg):
         """Write the test success to the stream.
 
         Args:
             test (TestCase): test item instance.
+            msg (str): success message.
         """
         self.stream.writeln('Success: %s' % test, GREEN)
+        if msg is not None:
+            self.write_details(msg, color=GREEN)
 
     def add_skip(self, test, reason):
         """Write the test skip to the stream.

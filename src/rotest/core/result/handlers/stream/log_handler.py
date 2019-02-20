@@ -61,7 +61,7 @@ class PrettyHandler(LogStreamHandler):
     def start_test(self, test):
         self.stream.writeln(str(Pretty(test, TestResult.started)))
 
-    def add_success(self, test):
+    def add_success(self, test, msg):
         self.stream.writeln(str(Pretty(test, TestResult.success)))
 
     def add_skip(self, test, reason):
