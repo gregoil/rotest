@@ -157,7 +157,7 @@ Test result events you can use in Rotest:
 
 * All failure events using `assert<X>`, as in ``unittest``.
 
-* `expect<X>` methods (a new concept) - For cases where you want to fail the
+* `expect<X>` methods (a new concept) - for cases where you want to fail the
   test but don't want the action to break the test flow.
 
   ``expect`` only registers the failures (if there are any) but stays in the same
@@ -178,7 +178,7 @@ Test result events you can use in Rotest:
               self.expectEqual(self.calc.calculate("1 + 2"), 2)
               self.expectEqual(self.calc.calculate("1 + 3"), 2)
 
-  In the above example the ``AddTest`` will have 2 failures to the same run (3!=2 and 4!=2).
+  In the above example ``AddTest`` will have 2 failures to the same run (3!=2 and 4!=2).
 
   It is recommended to use ``expect`` to test different side-effects of the same scenario,
   like different side effects of the same action, but you can use it any way you please.
