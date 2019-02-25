@@ -36,7 +36,6 @@ setup(
     install_requires=[
         'django>=1.8,<1.9',
         'py',
-        'isort',
         'ipdbugger>=2',
         'xlwt',
         'attrdict',
