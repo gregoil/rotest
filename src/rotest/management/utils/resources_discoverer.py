@@ -1,16 +1,16 @@
 """Auxiliary module for discovering Rotest resources within an app."""
 from __future__ import absolute_import
-import os
-from fnmatch import fnmatch
 
-import py
+from importlib import import_module
+
 import six
-import django
-from rotest.common.config import DISCOVERER_BLACKLIST
+from django.conf import settings
+from django.utils.module_loading import module_has_submodule
+
 from rotest.management.base_resource import BaseResource
 
 
-FILES_PATTERN = "*.py"
+RESOURCES_MODULE_NAME = "resources"
 
 
 def _is_resource_class(item):
@@ -35,40 +35,27 @@ def _import_resources_from_module(module_path):
     Returns:
         dict. all resource classes found in the module {name: class}.
     """
-    if not fnmatch(module_path, FILES_PATTERN):
-        return
-
-    module = py.path.local(module_path).pyimport()
+    module = import_module(module_path)
 
     return {item.__name__: item for item in six.itervalues(module.__dict__)
             if _is_resource_class(item)}
 
 
-def get_resources(app_name, blacklist=DISCOVERER_BLACKLIST):
-    """Get all the resource classes under a Django app.
-
-    Args:
-        app_name (str): application to search for resources inside.
-        blacklist (tuple): module patterns to ignore.
+def get_resources():
+    """Get all the resource classes from apps declared in settings.py.
 
     Returns:
         dict. all resource classes found in the application {name: class}.
     """
-    app_configs = django.apps.apps.app_configs
-    if app_name not in app_configs:
-        raise RuntimeError("Application %r was not found" % app_name)
-
-    app_path = app_configs[app_name].path
+    declared_apps = settings.INSTALLED_APPS
     resources = {}
 
-    for sub_dir, _, modules in os.walk(app_path):
-        for module_name in modules:
-            module_path = os.path.join(sub_dir, module_name)
-            if any(fnmatch(module_path, pattern) for pattern in blacklist):
-                continue
+    for app_name in declared_apps:
+        app_module = import_module(app_name)
 
-            module_resources = _import_resources_from_module(module_path)
-            if module_resources is not None:
-                resources.update(module_resources)
+        if module_has_submodule(app_module, RESOURCES_MODULE_NAME):
+            resources_module = '%s.%s' % (app_name, RESOURCES_MODULE_NAME)
+            app_resources = _import_resources_from_module(resources_module)
+            resources.update(app_resources)
 
     return resources

@@ -9,9 +9,9 @@ import IPython
 from attrdict import AttrDict
 from future.builtins import object
 from rotest.core.result.result import Result
+from rotest.common.config import SHELL_STARTUP_COMMANDS
 from rotest.management.base_resource import BaseResource
 from rotest.management.client.manager import ClientResourceManager
-from rotest.common.config import SHELL_APPS, SHELL_STARTUP_COMMANDS
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
 from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 
@@ -107,10 +107,7 @@ def main():
     """)
 
     startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
-    for app_name in SHELL_APPS:
-        startup_commands.append("globals().update(get_resources(%r))" %
-                                app_name)
-
+    startup_commands.append("globals().update(get_resources())")
     startup_commands.extend(SHELL_STARTUP_COMMANDS)
     try:
         IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])

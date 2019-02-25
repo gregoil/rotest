@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 
-__version__ = "6.2.0"
+__version__ = "7.0.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -36,7 +36,6 @@ setup(
     install_requires=[
         'django>=1.8,<1.9',
         'py',
-        'isort',
         'ipdbugger>=2',
         'xlwt',
         'attrdict',
@@ -47,6 +46,7 @@ setup(
         'jsonschema',
         'basicstruct',
         'future',
+        'orderedset',
         'swaggapi>=0.6.5',
     ],
     extras_require={

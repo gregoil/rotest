@@ -189,22 +189,6 @@ in the following ways:
 
 * Use the default, which is ``~/.rotest/artifacts``.
 
-Shell Apps
-----------
-
-``rotest shell`` automatically attempts to load resources classes into
-the environment to save the user the need to do so.
-Define the default rotest applications to be loaded in the following ways:
-
-* Define ``shell_apps`` in the configuration file:
-
-  .. code-block:: yaml
-
-      rotest:
-          shell_apps: ["resources", "tools"]
-
-* Use the default, which is ``[]``.
-
 Shell Startup Commands
 ----------------------
 
