@@ -1,10 +1,12 @@
 """Auxiliary module for discovering Rotest resources within an app."""
 from __future__ import absolute_import
 
+from importlib import import_module
+
+from rotest.management.base_resource import BaseResource
+
 import six
 from django.conf import settings
-from importlib import import_module
-from rotest.management.base_resource import BaseResource
 from django.utils.module_loading import module_has_submodule
 
 
