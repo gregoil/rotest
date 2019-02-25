@@ -3,11 +3,11 @@ from __future__ import absolute_import
 
 from importlib import import_module
 
-from rotest.management.base_resource import BaseResource
-
 import six
 from django.conf import settings
 from django.utils.module_loading import module_has_submodule
+
+from rotest.management.base_resource import BaseResource
 
 
 RESOURCES_MODULE_NAME = "resources"
