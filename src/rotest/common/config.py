@@ -228,9 +228,6 @@ CONFIGURATION_SCHEMA = {
     "discoverer_blacklist": Option(
         config_file_options=["discoverer_blacklist"],
         default_value=[".tox", ".git", ".idea", "setup.py"]),
-    "shell_apps": Option(
-        config_file_options=["shell_apps"],
-        default_value=[]),
     "shell_startup_commands": Option(
         config_file_options=["shell_startup_commands"],
         default_value=[]),
@@ -274,7 +271,6 @@ RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
 DISCOVERER_BLACKLIST = CONFIGURATION.discoverer_blacklist
-SHELL_APPS = CONFIGURATION.shell_apps
 SHELL_STARTUP_COMMANDS = CONFIGURATION.shell_startup_commands
 
 if DJANGO_SETTINGS_MODULE is None:
