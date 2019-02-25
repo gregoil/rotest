@@ -47,6 +47,7 @@ setup(
         'jsonschema',
         'basicstruct',
         'future',
+        'orderedset',
         'swaggapi>=0.6.5',
     ],
     extras_require={

@@ -5,7 +5,7 @@ import unittest
 from fnmatch import fnmatch
 
 import py
-from isort.pie_slice import OrderedSet
+from orderedset import OrderedSet
 
 from rotest.common import core_log
 from rotest.core import TestCase, TestFlow
