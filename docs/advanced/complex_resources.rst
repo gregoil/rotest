@@ -68,7 +68,7 @@ sub-resources.
 For now, let's assume we already wrote the sub-resource under
 :file:`resources/sub_process.py`.
 
-Now, edit the file :file:`resources/calculator.py`:
+Now, edit the file :file:`resources/resources.py`:
 
 .. code-block:: python
 

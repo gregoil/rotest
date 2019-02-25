@@ -89,7 +89,7 @@ content of the :file:`resources/admin.py` file:
     register_resource_to_admin(models.CalculatorData, attr_list=['ip_address'])
 
 Let's continue to write the Calculator resource, which exposes a simple
-calculation action. Edit the file :file:`resources/calculator.py`:
+calculation action. Edit the file :file:`resources/resources.py`:
 
 .. code-block:: python
 
@@ -119,7 +119,12 @@ calculation action. Edit the file :file:`resources/calculator.py`:
 
 Note the following:
 
-* There is a use in the ``RPyC`` module, which can be installed using:
+* `Rotest` expects a ``resources.py`` or ``resources/__init__.py`` file to be
+  present in your resources application, in which all your `BaseResource` classes
+  would be written or imported, much like how `Django` expects a ``models.py``
+  in for the models.
+
+* This example uses the ``RPyC`` module, which can be installed using:
 
   .. code-block:: console
 
