@@ -107,10 +107,7 @@ def main():
     """)
 
     startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
-    for app_name in SHELL_APPS:
-        startup_commands.append("globals().update(get_resources(%r))" %
-                                app_name)
-
+    startup_commands.append("globals().update(get_resources())")
     startup_commands.extend(SHELL_STARTUP_COMMANDS)
     try:
         IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])
