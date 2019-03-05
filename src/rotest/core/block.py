@@ -164,8 +164,9 @@ class TestBlock(AbstractFlowComponent):
                            for (name, value) in iteritems(self.get_inputs())
                            if not value.is_optional()]
 
-        for pipe in itervalues(self._pipes):
-            required_inputs.append(pipe.parameter_name)
+        for pipe_name, pipe in iteritems(self._pipes):
+            if pipe_name in self.get_inputs():
+                required_inputs.append(pipe.parameter_name)
 
         missing_inputs = [input_name for input_name in required_inputs
                           if (input_name not in self.__dict__ and
