@@ -82,7 +82,7 @@ def test_discovering_tests(loader_mock):
     loader_mock.return_value.loadTestsFromModule.return_value = [Case]
 
     with mock.patch("{}.__import__".format(six.moves.builtins.__name__)):
-        assert discover_tests_under_paths(["some_test.py"]) == {Case}
+        assert discover_tests_under_paths(["some_test.py"]) == [Case]
 
 
 def test_importing_bad_file():

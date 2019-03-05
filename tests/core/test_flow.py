@@ -385,14 +385,14 @@ class TestTestFlow(BasicRotestUnitTest):
 
         MockFlow.blocks = (PretendToShareDataBlock,
                            create_reader_block(inject_name='pretend_output').
-                           params(mode=MODE_FINALLY))
+                                params(mode=MODE_FINALLY))
         test_flow = MockFlow()
 
         self.run_test(test_flow)
         self.assertFalse(self.result.wasSuccessful(),
                          'Flow succeeded when it should have failed')
 
-        self.validate_blocks(test_flow, successes=1, failures=1)
+        self.validate_blocks(test_flow, successes=1, errors=1)
 
     def test_inputs_static_check_with_pipe_from(self):
         """Test static check of inputs validation of blocks when using pipes.
