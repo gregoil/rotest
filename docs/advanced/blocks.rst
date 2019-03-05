@@ -332,3 +332,125 @@ The functions gets the following arguments:
                               blocks=[DoSomethingBlock,
                                       DoSomethingBlock.params(optional3=5)]),
                   DemoBlock1.params(mode=MODE_FINALLY))
+
+Pipes
+-----
+
+Since blocks are meant to be generic, sometimes the naming of their outputs and
+inputs won't align with other (more proprietary) blocks.
+
+``Pipe`` is the solution to this problem. With it, you can:
+
+  * Redirect values into blocks' inputs.
+
+  * Rename blocks' outputs.
+
+  * Adjust or transform values.
+
+Consider the following code:
+
+.. code-block:: python
+
+    from rotest.core import TestBlock, TestFlow, BlockInput, BlockOutput
+
+
+    class DoSomethingBlock(TestBlock):
+        """A block that does something."""
+        output1 = BlockOutput()
+
+        def test_method(self):
+            """Do something."""
+            self.output1 = 5
+
+    class ValidateSomethingBlock(TestBlock):
+        """A block that validates something."""
+        input1 = BlockInput()
+
+        def test_method(self):
+            """Validate something."""
+            self.assertEqual(self.input1, 6)
+
+
+    class DemoFlow(TestFlow):
+        """Demo test-flow."""
+
+        blocks = (DoSomethingBlock,
+                  ValidateSomethingBlock)
+
+
+The flow above can't run, since the blocks under `DemoFlow` don't connect
+properly - `ValidateSomethingBlock` doesn't get its required input.
+
+But we can redirect `input1` to `output1` using ``Pipe`` in one of the following ways:
+
+.. code-block:: python
+
+    from rotest.core import TestFlow, Pipe
+
+
+    class DemoFlow(TestFlow):
+        """Demo test-flow."""
+
+        blocks = (DoSomethingBlock.params(output1=Pipe('input1')),
+                  ValidateSomethingBlock)
+
+
+.. code-block:: python
+
+    from rotest.core import TestFlow, Pipe
+
+
+    class DemoFlow(TestFlow):
+        """Demo test-flow."""
+
+        blocks = (DoSomethingBlock,
+                  ValidateSomethingBlock.params(input1=Pipe('output1')))
+
+
+.. code-block:: python
+
+    from rotest.core import TestFlow, Pipe
+
+
+    class DemoFlow(TestFlow):
+        """Demo test-flow."""
+        common = {'input1': Pipe('output1')}
+
+        blocks = (DoSomethingBlock,
+                  ValidateSomethingBlock)
+
+
+.. code-block:: python
+
+    from rotest.core import TestFlow, Pipe
+
+
+    class DemoFlow(TestFlow):
+        """Demo test-flow."""
+        common = {'output1': Pipe('input1')}
+
+        blocks = (DoSomethingBlock,
+                  ValidateSomethingBlock)
+
+
+Note that the use of ``common`` applies the pipe to all the blocks under the flow,
+and it overrides both `BlockInput` and `BlockOutput` instances with the given name.
+
+Furthermore, we can manipulate values using ``Pipe``
+(this can be done both to inputs and outputs):
+
+.. code-block:: python
+
+    from rotest.core import TestFlow, Pipe
+
+
+    class DemoFlow(TestFlow):
+        """Demo test-flow."""
+
+        blocks = (DoSomethingBlock.params(output1=Pipe('input1', formula=lambda x: x+1)),
+                  ValidateSomethingBlock)
+
+
+In the example above, at the end of `DoSomethingBlock` two things would happen:
+* `output1` 's value will be transformed using the formula - from 5 to 6.
+* `output1` will change its name to `input1` before being shared.
