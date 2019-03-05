@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 from itertools import count
 
-from future.utils import iteritems, itervalues
+from future.utils import iteritems
 
 from rotest.common.utils import get_class_fields
 from rotest.common.config import ROTEST_WORK_DIR
