@@ -3,9 +3,9 @@ from __future__ import absolute_import
 import os
 import unittest
 from fnmatch import fnmatch
+from collections import OrderedDict
 
 import py
-from collections import OrderedDict
 
 from rotest.common import core_log
 from rotest.core import TestCase, TestFlow
