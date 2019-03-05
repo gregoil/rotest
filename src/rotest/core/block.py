@@ -135,7 +135,15 @@ class TestBlock(AbstractFlowComponent):
                 self.logger.warning("Block %r didn't create output %r",
                                     self.data.name, output_name)
 
-            outputs_dict[output_name] = getattr(self, output_name)
+                continue
+
+            if output_name in self._pipes:
+                pipe = self._pipes[output_name]
+                setattr(self, pipe.parameter_name, getattr(self, output_name))
+                outputs_dict[pipe.parameter_name] = pipe.get_value(self)
+
+            else:
+                outputs_dict[output_name] = getattr(self, output_name)
 
         self.share_data(**outputs_dict)
 
