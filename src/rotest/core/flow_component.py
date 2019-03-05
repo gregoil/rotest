@@ -284,7 +284,8 @@ class AbstractFlowComponent(AbstractTest):
                                             if value.is_optional()})
 
                     for pipe_name, pipe in iteritems(self._pipes):
-                        setattr(self, pipe_name, pipe.get_value(self))
+                        if pipe_name in self.get_inputs():
+                            setattr(self, pipe_name, pipe.get_value(self))
 
                 if not self.is_main:
                     # Validate all required inputs were passed

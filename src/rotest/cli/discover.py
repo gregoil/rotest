@@ -5,7 +5,7 @@ import unittest
 from fnmatch import fnmatch
 
 import py
-from orderedset import OrderedSet
+from collections import OrderedDict
 
 from rotest.common import core_log
 from rotest.core import TestCase, TestFlow
@@ -73,19 +73,19 @@ def discover_tests_under_paths(paths):
     loader.suiteClass = list
     loader.loadTestsFromTestCase = lambda test: test
 
-    tests = OrderedSet()
+    tests = OrderedDict()
 
     for path in get_test_files(paths):
         core_log.debug("Discovering tests in %s", path)
 
         module = py.path.local(path).pyimport()
         tests_discovered = loader.loadTestsFromModule(module)
-        tests_discovered = [test
+        tests_discovered = {test: test
                             for test in tests_discovered
-                            if is_test_class(test)]
+                            if is_test_class(test)}
 
         core_log.debug("Discovered %d tests in %s",
                        len(tests_discovered), path)
         tests.update(tests_discovered)
 
-    return tests
+    return list(tests.values())
