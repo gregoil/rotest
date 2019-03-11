@@ -233,7 +233,6 @@ Example
         output1 = BlockOutput()
 
         def test_method(self):
-            """Do something."""
             self.logger.info("Doing something")
             value = self.resource1.do_something(self.input2, self.optional3)
             self.output1 = value * 5  # This will be shared with siblings
@@ -241,7 +240,6 @@ Example
     ...
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
         resource1 = SomeResourceClass(some_limitation=LIMITATION)
 
         common = {'input2': INPUT_VALUE}
@@ -291,6 +289,39 @@ But the scenario can be coded in the following manner:
         |___BlockC (mode critical)
         |___BlockD (mode critical)
 
+Common *mistakes* when writing sub-flows:
+
+* Flows can't declare inputs and outputs, only blocks can.
+  They can, however, declare `mode` and `common` and be parametrized.
+
+* Declared or imported sub-flows will be caught by the Rotest tests discoverer,
+  than means that it will also try to run then separately. To avoid that,
+  can either use --filter to run only specific flows or declare the sub-flows
+  abstract using `__test__ = False`:
+
+
+.. code-block:: python
+
+    from rotest.core import TestFlow, create_flow, MODE_CRITICAL, MODE_OPTIONAL
+
+    class DemoSubFlow(TestFlow):
+        __test__ = False
+
+        mode = MODE_OPTIONAL
+
+        blocks = (DemoBlock1,
+                  DemoBlock2,
+                  DemoBlock1)
+
+
+    class DemoFlow(TestFlow):
+        resource1 = SomeResourceClass(some_limitation=LIMITATION)
+
+        blocks = (DemoSubFlow,
+                  DemoSubFlow.params(input1=3),
+                  DemoSubFlow.params(mode=MODE_OPTIONAL))
+
+
 Anonymous test-flows
 --------------------
 
@@ -315,7 +346,6 @@ The functions gets the following arguments:
     from rotest.core.flow import TestFlow, create_flow
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
         resource1 = SomeResourceClass(some_limitation=LIMITATION)
 
         blocks = (DemoBlock1,
@@ -326,7 +356,7 @@ The functions gets the following arguments:
                               mode=MODE_OPTIONAL,
                               blocks=[DoSomethingBlock,
                                       DoSomethingBlock.params(optional3=5)]),
-                  create_flow(name="TestSomethingFlow",
+                  create_flow(name="TestAnotherThingFlow",
                               common={"input2": "value2"}
                               mode=MODE_OPTIONAL,
                               blocks=[DoSomethingBlock,
@@ -355,25 +385,19 @@ Consider the following code:
 
 
     class DoSomethingBlock(TestBlock):
-        """A block that does something."""
         output1 = BlockOutput()
 
         def test_method(self):
-            """Do something."""
             self.output1 = 5
 
     class ValidateSomethingBlock(TestBlock):
-        """A block that validates something."""
         input1 = BlockInput()
 
         def test_method(self):
-            """Validate something."""
             self.assertEqual(self.input1, 6)
 
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
-
         blocks = (DoSomethingBlock,
                   ValidateSomethingBlock)
 
@@ -389,8 +413,6 @@ But we can redirect `input1` to `output1` using ``Pipe`` in one of the following
 
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
-
         blocks = (DoSomethingBlock.params(output1=Pipe('input1')),
                   ValidateSomethingBlock)
 
@@ -401,8 +423,6 @@ But we can redirect `input1` to `output1` using ``Pipe`` in one of the following
 
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
-
         blocks = (DoSomethingBlock,
                   ValidateSomethingBlock.params(input1=Pipe('output1')))
 
@@ -413,7 +433,6 @@ But we can redirect `input1` to `output1` using ``Pipe`` in one of the following
 
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
         common = {'input1': Pipe('output1')}
 
         blocks = (DoSomethingBlock,
@@ -426,7 +445,6 @@ But we can redirect `input1` to `output1` using ``Pipe`` in one of the following
 
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
         common = {'output1': Pipe('input1')}
 
         blocks = (DoSomethingBlock,
@@ -445,8 +463,6 @@ Furthermore, we can manipulate values using ``Pipe``
 
 
     class DemoFlow(TestFlow):
-        """Demo test-flow."""
-
         blocks = (DoSomethingBlock.params(output1=Pipe('input1', formula=lambda x: x+1)),
                   ValidateSomethingBlock)
 
