@@ -6,9 +6,10 @@ from functools import partial
 from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
-from tests.api.utils import request
 from rotest.api.test_control.middleware import SESSIONS
 from rotest.management.models import DemoComplexResourceData
+
+from tests.api.utils import request
 
 
 class TestCleanupUser(TransactionTestCase):

@@ -7,7 +7,7 @@ from future.builtins import object
 
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome
-from rotest.core.flow_component import PipeTo, BlockInput, BlockOutput
+from rotest.core.flow_component import Pipe, BlockInput, BlockOutput
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
@@ -385,30 +385,89 @@ class TestTestFlow(BasicRotestUnitTest):
 
         MockFlow.blocks = (PretendToShareDataBlock,
                            create_reader_block(inject_name='pretend_output').
-                           params(mode=MODE_FINALLY))
+                                params(mode=MODE_FINALLY),
+                           create_reader_block(inject_name='pretend_output'))
+
         test_flow = MockFlow()
 
         self.run_test(test_flow)
         self.assertFalse(self.result.wasSuccessful(),
                          'Flow succeeded when it should have failed')
 
-        self.validate_blocks(test_flow, successes=1, failures=1)
+        self.validate_blocks(test_flow, successes=1, errors=1, skips=1)
 
-    def test_inputs_static_check_with_pipe(self):
+    def test_inputs_static_check_with_pipe_from(self):
         """Test static check of inputs validation of blocks when using pipes.
 
-        Run a flow with a block that expects an piped input it doesn't get,
-        then expect it to have an error.
+        * Run a flow with a block with a piped input it doesn't get,
+            then expect it to have an error.
+        * Run it again after supplying the missing piped input.
         """
-
         class BlockWithInputs(SuccessBlock):
             noinput = BlockInput()
 
-        MockFlow.blocks = (BlockWithInputs.params(
-            noinput=PipeTo('pipe_target')),)
+        MockFlow.blocks = (
+            create_writer_block('noinput', 'some_value'),
+            BlockWithInputs.params(noinput=Pipe('pipe_target')))
 
         with self.assertRaises(AttributeError):
             MockFlow()
+
+        MockFlow.blocks = (
+            create_writer_block('pipe_target', 'some_value'),
+            BlockWithInputs.params(noinput=Pipe('pipe_target')))
+
+        MockFlow()
+
+    def test_pipe_in_output(self):
+        """Test behaviour with pipes for outputs.
+
+        * Run a flow with a block with a piped output and a block that reads
+          the original output, then expect it to have an error.
+        * Run it again when it expects the piped output and expect success.
+        """
+        MockFlow.blocks = (
+            create_writer_block('pipe_source', 'some_value').params(
+                pipe_source=Pipe('pipe_target')),
+            create_reader_block('pipe_source', 'some_value'))
+
+        with self.assertRaises(AttributeError):
+            MockFlow()
+
+        MockFlow.blocks = (
+            create_writer_block('pipe_source', 'some_value').params(
+                pipe_source=Pipe('pipe_target')),
+            create_reader_block('pipe_target', 'some_value'))
+
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
+    def test_pipe_to_with_formula(self):
+        """Validate parametrize behavior when using formulas."""
+        writer_block = create_writer_block(inject_name='some_name',
+                                           inject_value=5)
+
+        reader_block = create_reader_block(inject_name='pipe_target',
+                                           inject_value=6)
+
+        MockFlow.blocks = (
+            writer_block.params(some_name=Pipe(
+                'pipe_target',
+                formula=lambda value: value + 1)),
+            reader_block)
+
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
 
     def test_parametrize(self):
         """Validate parametrize behavior.
@@ -433,12 +492,12 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=1)
 
-    def test_pipes_happy_flow(self):
+    def test_pipe_from_happy_flow(self):
         """Validate parametrize behavior when using pipes."""
         MockFlow.blocks = (
             create_writer_block(inject_name='some_name'),
             create_reader_block(inject_name='pipe_target').params(
-                pipe_target=PipeTo('some_name')))
+                pipe_target=Pipe('some_name')))
 
         test_flow = MockFlow()
         self.run_test(test_flow)
@@ -448,7 +507,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=2)
 
-    def test_pipes_with_formula(self):
+    def test_pipe_from_with_formula(self):
         """Validate parametrize behavior when using formulas."""
         writer_block = create_writer_block(inject_name='some_name',
                                            inject_value=5)
@@ -458,7 +517,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
         MockFlow.blocks = (
             writer_block,
-            reader_block.params(pipe_target=PipeTo(
+            reader_block.params(pipe_target=Pipe(
                 'some_name',
                 formula=lambda value: value + 1)))
 
@@ -479,7 +538,7 @@ class TestTestFlow(BasicRotestUnitTest):
                                            inject_value=5).params(some_name=3)
 
         class FlowWithCommon(MockFlow):
-            common = {'pipe_target': PipeTo('some_name')}
+            common = {'pipe_target': Pipe('some_name')}
 
             blocks = (WritingBlock,
                       ReadingBlock)
@@ -500,7 +559,7 @@ class TestTestFlow(BasicRotestUnitTest):
 
             blocks = (create_writer_block(inject_name='some_name'),
                       create_reader_block(inject_name='pipe_target').params(
-                          pipe_target=PipeTo('some_name')))
+                          pipe_target=Pipe('some_name')))
 
         test_flow = FlowWithCommon()
         self.run_test(test_flow)
@@ -514,7 +573,7 @@ class TestTestFlow(BasicRotestUnitTest):
         """Validate pipes priority in common is lower than params values."""
 
         class FlowWithCommon(MockFlow):
-            common = {'pipe_target': PipeTo('wrong_field')}
+            common = {'pipe_target': Pipe('wrong_field')}
 
             blocks = (create_writer_block(inject_name='wrong_field',
                                           inject_value='wrong_value').params(

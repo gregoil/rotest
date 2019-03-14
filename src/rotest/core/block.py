@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 from itertools import count
 
-from future.utils import iteritems, itervalues
+from future.utils import iteritems
 
 from rotest.common.utils import get_class_fields
 from rotest.common.config import ROTEST_WORK_DIR
@@ -135,7 +135,15 @@ class TestBlock(AbstractFlowComponent):
                 self.logger.warning("Block %r didn't create output %r",
                                     self.data.name, output_name)
 
-            outputs_dict[output_name] = getattr(self, output_name)
+                continue
+
+            if output_name in self._pipes:
+                pipe = self._pipes[output_name]
+                setattr(self, pipe.parameter_name, getattr(self, output_name))
+                outputs_dict[pipe.parameter_name] = pipe.get_value(self)
+
+            else:
+                outputs_dict[output_name] = getattr(self, output_name)
 
         self.share_data(**outputs_dict)
 
@@ -156,8 +164,9 @@ class TestBlock(AbstractFlowComponent):
                            for (name, value) in iteritems(self.get_inputs())
                            if not value.is_optional()]
 
-        for pipe in itervalues(self._pipes):
-            required_inputs.append(pipe.parameter_name)
+        for pipe_name, pipe in iteritems(self._pipes):
+            if pipe_name in self.get_inputs():
+                required_inputs.append(pipe.parameter_name)
 
         missing_inputs = [input_name for input_name in required_inputs
                           if (input_name not in self.__dict__ and

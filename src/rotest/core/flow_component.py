@@ -28,7 +28,7 @@ from rotest.core.models.case_data import TestOutcome, CaseData
 MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL = range(1, 4)
 
 
-class PipeTo(object):
+class Pipe(object):
     """Used as reference to another parameter when using blocks and flows."""
     def __init__(self, parameter_name, formula=None):
         self.parameter_name = parameter_name
@@ -284,7 +284,8 @@ class AbstractFlowComponent(AbstractTest):
                                             if value.is_optional()})
 
                     for pipe_name, pipe in iteritems(self._pipes):
-                        setattr(self, pipe_name, pipe.get_value(self))
+                        if pipe_name in self.get_inputs():
+                            setattr(self, pipe_name, pipe.get_value(self))
 
                 if not self.is_main:
                     # Validate all required inputs were passed
@@ -408,7 +409,7 @@ class AbstractFlowComponent(AbstractTest):
                 the parameters if they were already injected or not.
         """
         for name, value in iteritems(parameters):
-            if isinstance(value, PipeTo):
+            if isinstance(value, Pipe):
                 if override_previous or (name not in self.__dict__ and
                                          name not in self._pipes):
 
