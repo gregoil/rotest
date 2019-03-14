@@ -7,8 +7,9 @@ from six.moves import http_client
 from django.db.models.query_utils import Q
 from django.test import Client, TransactionTestCase
 
-from tests.api.utils import request
 from rotest.management.models import DemoResourceData
+
+from tests.api.utils import request
 
 
 class TestUpdateFields(TransactionTestCase):

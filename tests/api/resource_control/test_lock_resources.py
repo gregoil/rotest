@@ -7,8 +7,9 @@ from six.moves import http_client
 from django.contrib.auth.models import User
 from django.test import Client, TransactionTestCase
 
-from tests.api.utils import request
 from rotest.management.models import DemoComplexResourceData
+
+from tests.api.utils import request
 
 
 class TestLockResources(TransactionTestCase):

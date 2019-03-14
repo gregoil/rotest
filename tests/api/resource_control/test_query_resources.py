@@ -6,8 +6,9 @@ from functools import partial
 from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
-from tests.api.utils import request
 from rotest.management.models import DemoResourceData
+
+from tests.api.utils import request
 
 
 class TestQueryResourcesInvalid(TransactionTestCase):
