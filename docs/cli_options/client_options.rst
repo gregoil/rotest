@@ -311,9 +311,9 @@ Once in the debugging session, you can do any of the following:
   take care of it soon.
 * ``raise`` the exception, and failing the test.
 
-Furthermore, running tests with ``--debug`` also overrides the break\quit signals
-to enable you enter debug mode whenever you like. Just press Ctrl-\ on Linux or
-Ctrl-Pause on Windows (f*** you, Mac users) during a test to emulate an exception.
+Furthermore, running tests with ``--debug`` also overrides the break\\quit signals
+to enable you enter debug mode whenever you like. Just press `Ctrl-\\` on Linux machines or
+`Ctrl-Pause` on Windows (f*** you, Mac users) during a test to emulate an exception.
 
 Retrying Tests
 ==============
