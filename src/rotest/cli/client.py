@@ -30,7 +30,9 @@ Options:
     -F, --failfast
             Stop the run on first failure.
     -D, --debug
-            Enter ipdb debug mode upon any test exception.
+            Enter ipdb debug mode upon any test exception, and enable entering
+            debug mode on Ctrl-Pause (Windows) or Ctrl-Quit (Linux).
+
     -S, --skip-init
             Skip initialization and validation of resources.
     -r <query>, --resources <query>
@@ -175,7 +177,9 @@ def create_client_options_parser():
                         dest="fail_fast",
                         help="Stop the run on first failure")
     parser.add_argument("--debug", "-D", action="store_true",
-                        help="Enter ipdb debug mode upon any test exception")
+                        help="Enter ipdb debug mode upon any test exception, "
+                             "and enable entering debug mode on Ctrl-Pause "
+                             "(Windows) or Ctrl-Quit (Linux).")
     parser.add_argument("--skip-init", "-S", action="store_true",
                         help="Skip initialization and validation of resources")
     parser.add_argument("--resources", "-r", metavar="query",
