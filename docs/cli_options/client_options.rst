@@ -86,7 +86,8 @@ If you're not sure what you can do, the help options :option:`-h` and
         -F, --failfast
                 Stop the run on first failure.
         -D, --debug
-                Enter ipdb debug mode upon any test exception.
+                Enter ipdb debug mode upon any test exception, and enable
+                entering debug mode on Ctrl-Pause (Windows) or Ctrl-Quit (Linux).
         -S, --skip-init
                 Skip initialization and validation of resources.
         -r <query>, --resources <query>
@@ -263,10 +264,11 @@ Debug Mode
 
 .. option:: -D, --debug
 
-    Enter ipdb debug mode upon any test exception.
+    Enter ipdb debug mode upon any test exception, and enable entering
+    debug mode on Ctrl-Pause (Windows) or Ctrl-Quit (Linux).
 
 The :option:`-D` or :option:`--debug` options can enter debug mode when
-exceptions are raised at the top level of the code:
+exceptions are raised at the top level of the test code:
 
 .. code-block:: console
 
@@ -308,6 +310,10 @@ Once in the debugging session, you can do any of the following:
 * ``retry`` the action, if it's a known flaky action and someone's going to
   take care of it soon.
 * ``raise`` the exception, and failing the test.
+
+Furthermore, running tests with ``--debug`` also overrides the break\\quit signals
+to enable you enter debug mode whenever you like. Just press `Ctrl-\\` on Linux machines or
+`Ctrl-Pause` on Windows (f*** you, Mac users) during a test to emulate an exception.
 
 Retrying Tests
 ==============
