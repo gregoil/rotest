@@ -63,6 +63,7 @@ class Result(TestResult):
         if test.is_main:
             super(Result, self).startTest(test)
 
+        core_log.info("Test %r has started running", test.data)
         test.start()
 
         for result_handler in self.result_handlers:

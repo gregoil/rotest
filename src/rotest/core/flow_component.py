@@ -59,10 +59,17 @@ class BlockInput(object):
         """Return whether this input is optional or mandatory."""
         return self.default is not NotImplemented
 
+    def __repr__(self):
+        if self.is_optional():
+            return "BlockInput(default={})".format(self.default)
+
+        return "BlockInput()"
+
 
 class BlockOutput(object):
     """Used as declaration for an output for a block."""
-    pass
+    def __repr__(self):
+        return "BlockOutput()"
 
 
 class JumpException(KeyboardInterrupt):
