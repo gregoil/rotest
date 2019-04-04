@@ -49,7 +49,7 @@ class Result(TestResult):
         """Called once before any tests are executed."""
         super(Result, self).startTestRun()
 
-        core_log.info("Test run has started")
+        core_log.debug("Test run has started")
 
         for result_handler in self.result_handlers:
             result_handler.start_test_run()
@@ -63,6 +63,7 @@ class Result(TestResult):
         if test.is_main:
             super(Result, self).startTest(test)
 
+        core_log.debug("Test %r has started running", test.data)
         test.start()
 
         for result_handler in self.result_handlers:
@@ -74,7 +75,7 @@ class Result(TestResult):
         Args:
             test (object): test item instance.
         """
-        test.logger.info("Test %r finished setup", test.data)
+        test.logger.debug("Test %r finished setup", test.data)
         for result_handler in self.result_handlers:
             result_handler.setup_finished(test)
 
@@ -84,7 +85,7 @@ class Result(TestResult):
         Args:
             test (object): test item instance.
         """
-        test.logger.info("Test %r started teardown", test.data)
+        test.logger.debug("Test %r started teardown", test.data)
         for result_handler in self.result_handlers:
             result_handler.start_teardown(test)
 
@@ -155,7 +156,7 @@ class Result(TestResult):
         Args:
             test (rotest.core.suite.TestSuite): test item instance.
         """
-        core_log.info("Test %r has started running", test.data)
+        core_log.debug("Test %r has started running", test.data)
         test.start()
 
         for result_handler in self.result_handlers:
@@ -204,7 +205,7 @@ class Result(TestResult):
         if test.is_main:
             super(Result, self).addSuccess(test)
 
-        test.logger.info("Test %r ended successfully: %r", test.data, msg)
+        test.logger.debug("Test %r ended successfully: %r", test.data, msg)
 
         for result_handler in self.result_handlers:
             result_handler.add_success(test, msg)
@@ -273,7 +274,7 @@ class Result(TestResult):
 
         exception_string = self._exc_info_to_string(err, test)
 
-        test.logger.info("Test %r ended in an expected failure: %s",
+        test.logger.debug("Test %r ended in an expected failure: %s",
                          test.data, exception_string)
         test.end(test_outcome=TestOutcome.EXPECTED_FAILURE,
                  details=exception_string)

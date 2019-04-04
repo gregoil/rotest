@@ -254,7 +254,6 @@ class AbstractTest(unittest.TestCase):
         """Create logger instance for the test."""
         if self.logger is None:
             self.logger = get_test_logger(get_tree_path(self), self.work_dir)
-            self.logger.info("Test %r has started running", self.data)
 
     def start(self):
         """Update the data that the test started."""
