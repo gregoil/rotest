@@ -61,15 +61,16 @@ class BlockInput(object):
 
     def __repr__(self):
         if self.is_optional():
-            return "BlockInput(default={})".format(self.default)
+            return "{}(default={})".format(self.__class__.__name__,
+                                           self.default)
 
-        return "BlockInput()"
+        return "{}()".format(self.__class__.__name__)
 
 
 class BlockOutput(object):
     """Used as declaration for an output for a block."""
     def __repr__(self):
-        return "BlockOutput()"
+        return "{}()".format(self.__class__.__name__)
 
 
 class JumpException(KeyboardInterrupt):
