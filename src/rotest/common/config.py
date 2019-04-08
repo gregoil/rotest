@@ -135,7 +135,7 @@ def get_file_configuration(configuration_schema, config_content):
     Returns:
         dict: a match between each target option to the given value.
     """
-    yaml_configuration = yaml.load(config_content)
+    yaml_configuration = yaml.safe_load(config_content)
     if "rotest" not in yaml_configuration:
         return {}
 

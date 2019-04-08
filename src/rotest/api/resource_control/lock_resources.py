@@ -38,8 +38,8 @@ class LockResources(DjangoRequestView):
     URI = "resources/lock_resources"
     DEFAULT_MODEL = LockResourcesParamsModel
     DEFAULT_RESPONSES = {
-        http_client.OK: InfluencedResourcesResponseModel,
-        http_client.BAD_REQUEST: FailureResponseModel
+        int(http_client.OK): InfluencedResourcesResponseModel,
+        int(http_client.BAD_REQUEST): FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -172,4 +172,4 @@ class LockResources(DjangoRequestView):
                     for _resource in locked_resources]
         return Response({
             "resource_descriptors": response
-        }, status=http_client.OK)
+        }, status=int(http_client.OK))

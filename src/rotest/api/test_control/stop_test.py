@@ -21,8 +21,8 @@ class StopTest(DjangoRequestView):
     URI = "tests/stop_test"
     DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
-        http_client.NO_CONTENT: SuccessResponse,
-        http_client.BAD_REQUEST: FailureResponseModel
+        int(http_client.NO_CONTENT): SuccessResponse,
+        int(http_client.BAD_REQUEST): FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -46,4 +46,4 @@ class StopTest(DjangoRequestView):
         test_data.end()
         test_data.save()
 
-        return Response({}, status=http_client.NO_CONTENT)
+        return Response({}, status=int(http_client.NO_CONTENT))

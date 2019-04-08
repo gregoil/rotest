@@ -22,7 +22,7 @@ class GetOrCreate(DjangoRequestView):
     URI = "signatures/get_or_create"
     DEFAULT_MODEL = SignatureControlParamsModel
     DEFAULT_RESPONSES = {
-        http_client.OK: SignatureResponse,
+        int(http_client.OK): SignatureResponse,
     }
     TAGS = {
         "post": ["Signatures"]
@@ -65,4 +65,4 @@ class GetOrCreate(DjangoRequestView):
             "is_new": is_new,
             "id": match.id,
             "link": match.link
-        }, status=http_client.OK)
+        }, status=int(http_client.OK))

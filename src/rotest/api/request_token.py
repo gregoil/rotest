@@ -24,8 +24,8 @@ class RequestToken(DjangoRequestView):
     URI = "tests/get_token"
     DEFAULT_MODEL = GenericModel
     DEFAULT_RESPONSES = {
-        http_client.OK: TokenResponseModel,
-        http_client.BAD_REQUEST: FailureResponseModel
+        int(http_client.OK): TokenResponseModel,
+        int(http_client.BAD_REQUEST): FailureResponseModel
     }
     TAGS = {
         "get": ["Token"]
@@ -44,4 +44,4 @@ class RequestToken(DjangoRequestView):
         response = {
             "token": session_token
         }
-        return Response(response, status=http_client.OK)
+        return Response(response, status=int(http_client.OK))
