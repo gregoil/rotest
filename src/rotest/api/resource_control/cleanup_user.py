@@ -17,7 +17,7 @@ class CleanupUser(DjangoRequestView):
     URI = "resources/cleanup_user"
     DEFAULT_MODEL = TokenModel
     DEFAULT_RESPONSES = {
-        int(http_client.NO_CONTENT): SuccessResponse,
+        http_client.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "post": ["Resources"]
@@ -40,4 +40,4 @@ class CleanupUser(DjangoRequestView):
 
         return Response({
             "details": "User {} was successfully cleaned".format(username)
-        }, status=int(http_client.NO_CONTENT))
+        }, status=http_client.NO_CONTENT)

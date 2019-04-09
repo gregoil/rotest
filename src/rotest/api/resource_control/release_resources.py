@@ -36,8 +36,8 @@ class ReleaseResources(DjangoRequestView):
     URI = "resources/release_resources"
     DEFAULT_MODEL = ReleaseResourcesParamsModel
     DEFAULT_RESPONSES = {
-        int(http_client.NO_CONTENT): SuccessResponse,
-        int(http_client.BAD_REQUEST): FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -120,6 +120,6 @@ class ReleaseResources(DjangoRequestView):
             return Response({
                 "errors": errors,
                 "details": "errors occurred while releasing resource"
-            }, status=int(http_client.BAD_REQUEST))
+            }, status=http_client.BAD_REQUEST)
 
-        return Response({}, status=int(http_client.NO_CONTENT))
+        return Response({}, status=http_client.NO_CONTENT)

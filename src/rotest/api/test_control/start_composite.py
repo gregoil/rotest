@@ -21,8 +21,8 @@ class StartComposite(DjangoRequestView):
     URI = "tests/start_composite"
     DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
-        int(http_client.NO_CONTENT): SuccessResponse,
-        int(http_client.BAD_REQUEST): FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -46,4 +46,4 @@ class StartComposite(DjangoRequestView):
         test_data.start()
         test_data.save()
 
-        return Response({}, status=int(http_client.NO_CONTENT))
+        return Response({}, status=http_client.NO_CONTENT)

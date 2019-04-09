@@ -23,7 +23,7 @@ class UpdateFields(DjangoRequestView):
     URI = "resources/update_fields"
     DEFAULT_MODEL = UpdateFieldsParamsModel
     DEFAULT_RESPONSES = {
-        int(http_client.NO_CONTENT): SuccessResponse,
+        http_client.NO_CONTENT: SuccessResponse,
     }
     TAGS = {
         "put": ["Resources"]
@@ -49,4 +49,4 @@ class UpdateFields(DjangoRequestView):
             else:
                 objects.all().update(**kwargs_vars)
 
-        return Response({}, status=int(http_client.NO_CONTENT))
+        return Response({}, status=http_client.NO_CONTENT)

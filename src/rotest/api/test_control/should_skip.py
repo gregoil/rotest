@@ -25,8 +25,8 @@ class ShouldSkip(DjangoRequestView):
     URI = "tests/should_skip"
     DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
-        int(http_client.OK): ShouldSkipResponse,
-        int(http_client.BAD_REQUEST): FailureResponseModel
+        http_client.OK: ShouldSkipResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "get": ["Tests"]
@@ -58,4 +58,4 @@ class ShouldSkip(DjangoRequestView):
         return Response({
             "should_skip": test_should_skip,
             "reason": reason
-        }, status=int(http_client.OK))
+        }, status=http_client.OK)

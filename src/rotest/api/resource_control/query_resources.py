@@ -25,8 +25,8 @@ class QueryResources(DjangoRequestView):
     URI = "resources/query_resources"
     DEFAULT_MODEL = ResourceDescriptorModel
     DEFAULT_RESPONSES = {
-        int(http_client.OK): InfluencedResourcesResponseModel,
-        int(http_client.BAD_REQUEST): FailureResponseModel
+        http_client.OK: InfluencedResourcesResponseModel,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Resources"]
@@ -63,4 +63,4 @@ class QueryResources(DjangoRequestView):
 
         return Response({
             "resource_descriptors": query_result
-        }, status=int(http_client.OK))
+        }, status=http_client.OK)

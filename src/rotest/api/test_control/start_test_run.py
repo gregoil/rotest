@@ -30,8 +30,8 @@ class StartTestRun(DjangoRequestView):
     URI = "tests/start_test_run"
     DEFAULT_MODEL = StartTestRunParamsModel
     DEFAULT_RESPONSES = {
-        int(http_client.NO_CONTENT): SuccessResponse,
-        int(http_client.BAD_REQUEST): FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -99,4 +99,4 @@ class StartTestRun(DjangoRequestView):
         session.run_data = run_data
         session.main_test = main_test
 
-        return Response({}, status=int(http_client.NO_CONTENT))
+        return Response({}, status=http_client.NO_CONTENT)

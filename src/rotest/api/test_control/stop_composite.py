@@ -21,8 +21,8 @@ class StopComposite(DjangoRequestView):
     URI = "tests/stop_composite"
     DEFAULT_MODEL = TestControlOperationParamsModel
     DEFAULT_RESPONSES = {
-        int(http_client.NO_CONTENT): SuccessResponse,
-        int(http_client.BAD_REQUEST): FailureResponseModel
+        http_client.NO_CONTENT: SuccessResponse,
+        http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
         "post": ["Tests"]
@@ -48,4 +48,4 @@ class StopComposite(DjangoRequestView):
         test_data.end()
         test_data.save()
 
-        return Response({}, status=int(http_client.NO_CONTENT))
+        return Response({}, status=http_client.NO_CONTENT)
