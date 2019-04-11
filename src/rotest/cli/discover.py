@@ -43,7 +43,7 @@ def get_test_files(paths):
         path = os.path.abspath(path)
         filename = os.path.basename(path)
 
-        if any(fnmatch(filename, pattern) for pattern in DISCOVERER_BLACKLIST):
+        if any(fnmatch(path, pattern) for pattern in DISCOVERER_BLACKLIST):
             continue
 
         if os.path.isfile(path):
