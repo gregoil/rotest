@@ -264,7 +264,7 @@ CONFIGURATION = get_configuration(
     config_content=configuration_content)
 
 
-DEFAULT_DISCOVERY_BLACKLIST = [".tox", ".git", ".idea", "setup.py"]
+DEFAULT_DISCOVERY_BLACKLIST = ["*/.tox", "*/.git", "*/.idea", "*/setup.py"]
 
 
 ROTEST_WORK_DIR = os.path.expanduser(CONFIGURATION.workdir)
