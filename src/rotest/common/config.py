@@ -227,7 +227,7 @@ CONFIGURATION_SCHEMA = {
         default_value="rotest/api/"),
     "discoverer_blacklist": Option(
         config_file_options=["discoverer_blacklist"],
-        default_value=[".tox", ".git", ".idea", "setup.py"]),
+        default_value=[]),
     "shell_startup_commands": Option(
         config_file_options=["shell_startup_commands"],
         default_value=[]),
@@ -263,6 +263,10 @@ CONFIGURATION = get_configuration(
     environment_variables=os.environ,
     config_content=configuration_content)
 
+
+DEFAULT_DISCOVERY_BLACKLIST = [".tox", ".git", ".idea", "setup.py"]
+
+
 ROTEST_WORK_DIR = os.path.expanduser(CONFIGURATION.workdir)
 RESOURCE_MANAGER_HOST = CONFIGURATION.host
 DJANGO_MANAGER_PORT = int(CONFIGURATION.port)
@@ -270,8 +274,9 @@ API_BASE_URL = CONFIGURATION.api_base_url
 RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
-DISCOVERER_BLACKLIST = CONFIGURATION.discoverer_blacklist
 SHELL_STARTUP_COMMANDS = CONFIGURATION.shell_startup_commands
+DISCOVERER_BLACKLIST = list(CONFIGURATION.discoverer_blacklist) + \
+                       DEFAULT_DISCOVERY_BLACKLIST
 
 if DJANGO_SETTINGS_MODULE is None:
     raise ValueError("No Django settings module was supplied")
