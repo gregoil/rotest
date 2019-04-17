@@ -275,7 +275,7 @@ RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
 SHELL_STARTUP_COMMANDS = CONFIGURATION.shell_startup_commands
-DISCOVERER_BLACKLIST = CONFIGURATION.discoverer_blacklist + \
+DISCOVERER_BLACKLIST = list(CONFIGURATION.discoverer_blacklist) + \
                        DEFAULT_DISCOVERY_BLACKLIST
 
 if DJANGO_SETTINGS_MODULE is None:
