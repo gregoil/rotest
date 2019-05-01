@@ -185,7 +185,15 @@ To activate it, simply write in the class scope of your complex resource:
 
 .. code-block:: python
 
-    PARALLEL_INITIALIZATION = True
+    class Calculator(BaseResource):
+        DATA_CLASS = CalculatorData
 
-Or you can point it to a variable which you can set/unset using an entry point.
-See :ref:`custom_entry_points` to learn how to add CLI entry points.
+        PARALLEL_INITIALIZATION = True
+
+        sub_resource1 = SubResource.request()
+        sub_resource2 = SubResource.request()
+        sub_resource3 = SubResource.request()
+
+
+Or you can point it to a variable which you can set/unset using an entry point
+(see :ref:`custom_entry_points` to learn how to add CLI entry points).
