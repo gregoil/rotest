@@ -169,3 +169,23 @@ When writing sub-resources and services, remember two things:
    but only after the ``connect()`` method (since firstly the sub-resource connects,
    and only afterwards the containing resource connects). The same applies for the
    other basic methods (first the sub-resources initialize, then the containing).
+
+
+Parallel initialization
+=======================
+
+Usually, the initialization process of resources takes a long time.
+In order to speed things up, each resource has a ``PARALLEL_INITIALIZATION`` flag.
+
+This flag defaults to `False`, but when it is set to `True` each
+sub-resource would be initialized in its own thread, before joining back
+to the containing resource for the parent custom initialization code.
+
+To activate it, simply write in the class scope of your complex resource:
+
+.. code-block:: python
+
+PARALLEL_INITIALIZATION = True
+
+Or you can point it to a variable which you can set/unset using an entry point.
+See :ref:`custom_entry_points` to learn how to add CLI options.

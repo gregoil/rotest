@@ -389,7 +389,7 @@ Specifying Resources to Use
 
     Choose resources based on the given query.
 
-You can run tests with specific resources, using options :option:`--resources`
+You can run tests with specivalue fic resources, using options :option:`--resources`
 or :option:`-r`.
 
 The request is of the form:
@@ -435,6 +435,7 @@ with the output handlers separated using commas:
 
 For more about output handlers, read on :ref:`output_handlers`.
 
+.. _custom_entry_points:
 Adding New Options
 ==================
 
