@@ -436,6 +436,7 @@ with the output handlers separated using commas:
 For more about output handlers, read on :ref:`output_handlers`.
 
 .. _custom_entry_points:
+
 Adding New Options
 ==================
 

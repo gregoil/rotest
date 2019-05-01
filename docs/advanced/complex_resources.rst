@@ -185,7 +185,7 @@ To activate it, simply write in the class scope of your complex resource:
 
 .. code-block:: python
 
-PARALLEL_INITIALIZATION = True
+    PARALLEL_INITIALIZATION = True
 
 Or you can point it to a variable which you can set/unset using an entry point.
-See :ref:`custom_entry_points` to learn how to add CLI options.
+See :ref:`custom_entry_points` to learn how to add CLI entry points.
