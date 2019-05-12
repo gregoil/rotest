@@ -179,8 +179,6 @@ class RunnerMessageHandler(object):
             message (StartTest): worker message object.
         """
         # Since the logger is only created in the worker, we create it here
-        test.create_logger()
-
         self.result.startTest(test)
         if test.is_main:
             self.runner.update_worker(worker_pid=message.msg_id, test=test)
