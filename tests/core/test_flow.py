@@ -125,6 +125,29 @@ class TestTestFlow(BasicRotestUnitTest):
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
                          'Flow data status should have been success')
 
+    def test_giant_flow(self):
+        """See that a flow with a large amount of blocks and doesn't crash."""
+        blocks_num = 1500
+        MockFlow.blocks = [SuccessBlock] * blocks_num
+
+        test_flow = MockFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.assertEqual(self.result.testsRun, 1,
+                         "Flow didn't run the correct number of blocks")
+
+        self.validate_blocks(test_flow, successes=blocks_num)
+
+        # === Validate data object ===
+        self.assertTrue(test_flow.data.success,
+                        'Flow data result should have been True')
+
+        self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
+                         'Flow data status should have been success')
+
     def test_skip_alone(self):
         """Create test flow with only skipped blocks and test its behavior."""
         MockFlow.blocks = (SkipBlock, SkipBlock)

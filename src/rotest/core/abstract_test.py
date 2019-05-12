@@ -16,6 +16,7 @@ from itertools import count
 
 from ipdbugger import debug
 from attrdict import AttrDict
+from cached_property import cached_property
 from future.builtins import next, str, object
 from future.utils import iteritems, itervalues
 
@@ -250,10 +251,10 @@ class AbstractTest(unittest.TestCase):
 
         return self.parent.parents_count + 1
 
-    def create_logger(self):
+    @cached_property
+    def logger(self):
         """Create logger instance for the test."""
-        if self.logger is None:
-            self.logger = get_test_logger(get_tree_path(self), self.work_dir)
+        return get_test_logger(get_tree_path(self), self.work_dir)
 
     def start(self):
         """Update the data that the test started."""

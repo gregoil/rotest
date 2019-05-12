@@ -328,7 +328,6 @@ class AbstractFlowComponent(AbstractTest):
             result (rotest.core.result.result.Result): test result information.
         """
         self.result = result
-        self.create_logger()
 
         # === Decorate the setUp and tearDown methods ===
         setup_method = getattr(self, self.SETUP_METHOD_NAME)

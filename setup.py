@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 
-__version__ = "7.2.0"
+__version__ = "7.2.1"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -47,6 +47,7 @@ setup(
         'basicstruct',
         'future',
         'swaggapi>=0.6.5',
+        'cached_property',
     ],
     extras_require={
         "dev": [
