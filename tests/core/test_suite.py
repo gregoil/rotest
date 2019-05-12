@@ -54,6 +54,28 @@ class TestTestSuite(BasicRotestUnitTest):
                           len(MockTestSuite.components),
                           'Data members number differs form number of tests')
 
+    def test_giant_suite(self):
+        """See that a test suite with a large amount of tests doesn't crash."""
+        tests_amount = 1500
+        MockTestSuite.components = [SuccessCase] * tests_amount
+
+        test_suite = MockTestSuite()
+        self.run_test(test_suite)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Suite failed when it should have succeeded')
+
+        self.assertEqual(self.result.testsRun, tests_amount,
+                         "Suite didn't run the correct number of tests")
+
+        # === Validate data object ===
+        self.assertTrue(test_suite.data.success,
+                        'Suite data result should have been True')
+
+        self.assertEqual(len(list(test_suite)),
+                         len(MockTestSuite.components),
+                         'Data members number differs form number of tests')
+
     def test_skip_init(self):
         """Create a suite that should skip initialization and validate it."""
         MockSuite1.components = (SuccessCase, SuccessCase)

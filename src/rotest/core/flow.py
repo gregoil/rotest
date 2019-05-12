@@ -136,12 +136,6 @@ class TestFlow(AbstractFlowComponent):
     def addTest(self, test_item):
         self._tests.append(test_item)
 
-    def create_logger(self):
-        """Create logger instances for the test and its components."""
-        super(TestFlow, self).create_logger()
-        for block in self._tests:
-            block.create_logger()
-
     def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the blocks were passed.
 
