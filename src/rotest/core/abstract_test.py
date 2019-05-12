@@ -82,7 +82,6 @@ class AbstractTest(unittest.TestCase):
         super(AbstractTest, self).__init__(methodName)
 
         self.result = None
-        self.logger = None
         self.is_main = True
         self.config = config
         self.parent = parent
