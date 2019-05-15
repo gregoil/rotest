@@ -404,7 +404,7 @@ class AbstractTest(unittest.TestCase):
         Args:
             msg (str): success message to add to the result.
         """
-        self.result.addSuccess(self, msg)
+        self.result.addInfo(self, msg)
 
     # Shortcuts
     success = addSuccess
