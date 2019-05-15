@@ -247,6 +247,11 @@ def update_requests(test_element, identifiers_dict):
         requests_found.update(
             _update_test_resources(test_element, identifiers_dict))
 
+    if issubclass(test_element, TestFlow):
+        for block_class in test_element.blocks:
+            requests_found.update(
+                _update_test_resources(block_class, identifiers_dict))
+
     return requests_found
 
 
