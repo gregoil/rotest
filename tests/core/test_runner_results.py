@@ -94,9 +94,11 @@ class AbstractTestRunnerResult(with_metaclass(ABCMeta, BasicRotestUnitTest)):
 
         self.validate_all_finished(test)
         self.validate_result(result, True, successes=1)
-        self.assertEqual(list(test)[0].data.traceback,
-                         SuccessMessageCase.MESSAGE,
-                         "Success message wasn't registered")
+        test_data = list(test)[0].data
+        self.assertEqual(test_data.traceback,
+                         "SUCCESS: " + SuccessMessageCase.MESSAGE,
+                         "Success message wasn't registered properly: %r" %
+                         test_data.traceback)
 
     def test_standalone_case(self):
         """Validate that a TestCase can run on its own."""
