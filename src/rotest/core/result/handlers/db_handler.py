@@ -140,11 +140,19 @@ class DBHandler(AbstractResultHandler):
         """
         test.data.save()
 
-    def add_success(self, test, msg):
+    def add_success(self, test):
         """Save the test data result as success.
 
         Args:
             test (object): test item instance.
+        """
+        test.data.save()
+
+    def add_info(self, test, msg):
+        """Called when a test registers a success message.
+
+        Args:
+            test (rotest.core.abstract_test.AbstractTest): test item instance.
             msg (str): success message.
         """
         test.data.save()

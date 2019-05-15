@@ -23,9 +23,10 @@ from tests.core.multiprocess.utils import (TimeoutCase, SuicideCase,
                                            SetupTimeoutFlow, SetupCrashFlow)
 from tests.core.utils import (FailureCase, SuccessCase, ErrorCase, SkipCase,
                               UnexpectedSuccessCase, ExpectedFailureCase,
-                              MockSuite1, MockSuite2, MockTestSuite,
-                              StoreMultipleFailuresCase, StoreFailureErrorCase,
-                              TwoTestsCase, BasicRotestUnitTest)
+                              SuccessMessageCase, MockSuite1, MockSuite2,
+                              MockTestSuite, StoreMultipleFailuresCase,
+                              StoreFailureErrorCase, TwoTestsCase,
+                              BasicRotestUnitTest)
 
 standard_library.install_aliases()
 
@@ -82,6 +83,20 @@ class AbstractTestRunnerResult(with_metaclass(ABCMeta, BasicRotestUnitTest)):
 
         self.validate_all_finished(test)
         self.validate_result(result, True, successes=3)
+
+    def test_info(self):
+        """Validate behavior of success messages."""
+        MockTestSuite.components = (SuccessMessageCase,)
+
+        self.runner.run(MockTestSuite)
+        test = self.runner.test_item
+        result = self.runner.result
+
+        self.validate_all_finished(test)
+        self.validate_result(result, True, successes=1)
+        self.assertEqual(list(test)[0].data.traceback,
+                         SuccessMessageCase.MESSAGE,
+                         "Success message wasn't registered")
 
     def test_standalone_case(self):
         """Validate that a TestCase can run on its own."""

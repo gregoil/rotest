@@ -394,6 +394,17 @@ class SuccessCase(MockCase):
         pass
 
 
+class SuccessMessageCase(MockCase):
+    """Mock case, given the required resources always succeed."""
+    __test__ = False
+
+    MESSAGE = "It's all good"
+
+    def test_success(self):
+        """Mock test function - always succeed."""
+        self.addSuccess(self.MESSAGE)
+
+
 class DynamicResourceLockingCase(MockCase):
     """Mock case, requests a resource and validates the attributes."""
     __test__ = False

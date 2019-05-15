@@ -193,8 +193,28 @@ class Result(TestResult):
         for result_handler in self.result_handlers:
             result_handler.stop_test_run()
 
-    def addSuccess(self, test, msg=None):
+    def addSuccess(self, test):
         """Called when a test has completed successfully.
+
+        Args:
+            test (object): test item instance.
+        """
+        test.end(test_outcome=TestOutcome.SUCCESS)
+
+        if test.data.exception_type is not TestOutcome.SUCCESS:
+            # There was a stored failure in the test
+            return
+
+        if test.is_main:
+            super(Result, self).addSuccess(test)
+
+        test.logger.debug("Test %r ended successfully", test.data)
+
+        for result_handler in self.result_handlers:
+            result_handler.add_success(test)
+
+    def addInfo(self, test, msg=None):
+        """Called when a test registers a success message.
 
         Args:
             test (object): test item instance.
@@ -202,13 +222,10 @@ class Result(TestResult):
         """
         test.end(test_outcome=TestOutcome.SUCCESS, details=msg)
 
-        if test.is_main:
-            super(Result, self).addSuccess(test)
-
-        test.logger.debug("Test %r ended successfully: %r", test.data, msg)
+        test.logger.debug("Test %r registered success: %r", test.data, msg)
 
         for result_handler in self.result_handlers:
-            result_handler.add_success(test, msg)
+            result_handler.add_info(test, msg)
 
     def addSkip(self, test, reason):
         """Called when a test is skipped.

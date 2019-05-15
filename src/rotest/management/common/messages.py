@@ -261,3 +261,13 @@ class AddResult(AbstractTestEventMessage):
         info (str): additional data about the result (traceback, reason, etc.).
     """
     pass
+
+
+@slots_extender(('info',))
+class AddInfo(AbstractTestEventMessage):
+    """Register a success message.
+
+    Attributes:
+        info (str): success message.
+    """
+    pass
