@@ -9,7 +9,8 @@ from future.utils import iteritems
 from rotest.core.models.case_data import TestOutcome
 from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
-from rotest.management.common.messages import (StopTest,
+from rotest.management.common.messages import (AddInfo,
+                                               StopTest,
                                                AddResult,
                                                StartTest,
                                                ShouldSkip,
@@ -140,12 +141,22 @@ class WorkerHandler(AbstractResultHandler):
         self.send_message(StopComposite(msg_id=self.worker_pid,
                                         test_id=test.identifier))
 
-    def add_success(self, test, msg):
+    def add_success(self, test):
         """Notify the manager about a success via queue."""
         self.send_message(AddResult(msg_id=self.worker_pid,
                                     test_id=test.identifier,
-                                    code=TestOutcome.SUCCESS,
-                                    info=msg))
+                                    code=TestOutcome.SUCCESS))
+
+    def add_info(self, test, msg):
+        """Called when a test registers a success message.
+
+        Args:
+            test (rotest.core.abstract_test.AbstractTest): test item instance.
+            msg (str): success message.
+        """
+        self.send_message(AddInfo(msg_id=self.worker_pid,
+                                  test_id=test.identifier,
+                                  info=msg))
 
     def add_error(self, test, exception_string):
         """Notify the manager about an error via queue.

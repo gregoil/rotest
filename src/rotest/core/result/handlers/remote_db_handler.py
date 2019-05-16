@@ -95,11 +95,19 @@ class RemoteDBHandler(AbstractResultHandler):
         """
         self.client.stop_composite(test)
 
-    def add_success(self, test, msg):
+    def add_success(self, test):
         """Save the remote test data result as success.
 
         Args:
             test (object): test item instance.
+        """
+        self.client.add_result(test, TestOutcome.SUCCESS)
+
+    def add_info(self, test, msg):
+        """Called when a test registers a success message.
+
+        Args:
+            test (rotest.core.abstract_test.AbstractTest): test item instance.
             msg (str): success message.
         """
         self.client.add_result(test, TestOutcome.SUCCESS, msg)

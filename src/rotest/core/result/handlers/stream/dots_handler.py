@@ -35,12 +35,11 @@ class DotsHandler(BaseStreamHandler):
     NAME = 'dots'
 
     @ignore_subtests
-    def add_success(self, test, msg):
+    def add_success(self, test):
         """Write the test success to the stream.
 
         Args:
             test (rotest.core.case.TestCase): test item instance.
-            msg (str): success message.
         """
         self.stream.write('.', GREEN)
 

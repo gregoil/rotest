@@ -11,7 +11,8 @@ from rotest.core.models.general_data import GeneralData
 from rotest.management.common.parsers import DEFAULT_PARSER
 from rotest.core.runners.multiprocess.common import (WrappedException,
                                                      get_item_by_id)
-from rotest.management.common.messages import (StopTest,
+from rotest.management.common.messages import (AddInfo,
+                                               StopTest,
                                                StartTest,
                                                AddResult,
                                                ShouldSkip,
@@ -58,6 +59,7 @@ class RunnerMessageHandler(object):
             TestOutcome.UNEXPECTED_SUCCESS: self.result.addUnexpectedSuccess}
 
         self.message_handlers = {
+            AddInfo: self._handle_info_message,
             AddResult: self._handle_end_message,
             StopTest: self._handle_stop_message,
             StartTest: self._handle_start_message,
@@ -193,6 +195,15 @@ class RunnerMessageHandler(object):
             message (StartTest): worker message object.
         """
         self.result.setupFinished(test)
+
+    def _handle_info_message(self, test, message):
+        """Handle SetupFinished of a worker.
+
+        Args:
+            test (object): test item to update.
+            message (StartTest): worker message object.
+        """
+        self.result.addInfo(test, message.info)
 
     def _handle_start_teardown_message(self, test, message):
         """Handle StartTeardown of a worker.

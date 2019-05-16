@@ -54,16 +54,23 @@ class EventStreamHandler(BaseStreamHandler):
         """Write the test run end to the stream."""
         self.stream.writeln('Tests Run Finished', None, BOLD)
 
-    def add_success(self, test, msg):
+    def add_success(self, test):
         """Write the test success to the stream.
 
         Args:
             test (TestCase): test item instance.
-            msg (str): success message.
         """
         self.stream.writeln('Success: %s' % test, GREEN)
-        if msg is not None:
-            self.write_details(msg, color=GREEN)
+
+    def add_info(self, test, msg):
+        """Called when a test registers a success message.
+
+        Args:
+            test (rotest.core.abstract_test.AbstractTest): test item instance.
+            msg (str): success message.
+        """
+        self.stream.writeln('Success msg: %s' % test, GREEN)
+        self.write_details(msg, color=GREEN)
 
     def add_skip(self, test, reason):
         """Write the test skip to the stream.

@@ -46,12 +46,11 @@ class TreeHandler(BaseStreamHandler):
         """
         self.start_test(test)
 
-    def add_success(self, test, msg):
+    def add_success(self, test):
         """Write the test success to the stream.
 
         Args:
             test (TestCase): test item instance.
-            msg (str): success message.
         """
         if test.IS_COMPLEX:
             indentation = test.parents_count * self.INDENTATION
