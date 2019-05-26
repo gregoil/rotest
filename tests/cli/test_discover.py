@@ -7,7 +7,9 @@ import mock
 import pytest
 from pyfakefs.fake_filesystem_unittest import Patcher
 
-from rotest.core import TestSuite, TestCase, TestBlock
+from rotest.core.case import TestCase
+from rotest.core.block import TestBlock
+from rotest.core.suite import TestSuite
 from rotest.cli.discover import (is_test_class,
                                  get_test_files, discover_tests_under_paths)
 

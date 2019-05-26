@@ -1,7 +1,6 @@
 """URLs of all the django views."""
 # pylint: disable=unused-argument, no-self-use
 from __future__ import absolute_import
-from django.conf.urls import patterns
 
 from swaggapi.build import Swagger
 from swaggapi.api.openapi.models import Info, License, Tag
@@ -63,4 +62,4 @@ tags = [Tag(name="Tests",
 swagger = Swagger(info, mount_url="api", requests=requests, tags=tags)
 
 
-urlpatterns = patterns("", *swagger.get_django_urls())
+urlpatterns = swagger.get_django_urls()

@@ -16,8 +16,8 @@ from ipdbugger import debug
 from attrdict import AttrDict
 from future.utils import iteritems
 from future.builtins import zip, object
-from django.db.models.fields.related import \
-                                        ReverseSingleRelatedObjectDescriptor
+from django.db.models.fields.related_descriptors import \
+                                        ForwardManyToOneDescriptor
 
 from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
@@ -157,7 +157,7 @@ class BaseResource(object):
             actual_kwargs['config'] = self.config
             actual_kwargs['base_work_dir'] = self.work_dir
             for key, value in six.iteritems(sub_request.kwargs):
-                if isinstance(value, ReverseSingleRelatedObjectDescriptor):
+                if isinstance(value, ForwardManyToOneDescriptor):
                     actual_kwargs[key] = getattr(self.data, value.field.name)
 
                 elif isinstance(value, DataPointer):

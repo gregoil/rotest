@@ -6,7 +6,7 @@ from inspect import isclass
 import six
 from future.builtins import object
 
-from rotest.management import ResourceData
+from rotest.management.models import ResourceData
 from rotest.management.common.errors import ResourceBuildError
 from rotest.management.common.utils import (TYPE_NAME,
                                             PROPERTIES,

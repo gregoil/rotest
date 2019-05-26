@@ -8,7 +8,8 @@ from collections import OrderedDict
 import py
 
 from rotest.common import core_log
-from rotest.core import TestCase, TestFlow
+from rotest.core.case import TestCase
+from rotest.core.flow import TestFlow
 from rotest.common.config import DISCOVERER_BLACKLIST
 
 

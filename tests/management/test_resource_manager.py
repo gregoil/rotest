@@ -17,9 +17,9 @@ from django.contrib.auth.models import User
 from swaggapi.api.builder.client import requester
 
 from rotest.management.common.utils import LOCALHOST
-from rotest.management import BaseResource, ResourceRequest
 from rotest.management.models.resource_data import DataPointer
 from rotest.management.client.manager import ClientResourceManager
+from rotest.management.base_resource import BaseResource, ResourceRequest
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
 from rotest.management.models.ut_models import (DemoResourceData,

@@ -8,12 +8,15 @@ from collections import defaultdict
 
 from future.builtins import range
 
+from .case import TestCase
+from .flow import TestFlow
+from .block import TestBlock
+from .suite import TestSuite
 from rotest.common import core_log
 from rotest.core.utils.common import parse_json
 from rotest.common.utils import get_class_fields
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.management.base_resource import ResourceRequest
-from rotest.core import TestCase, TestFlow, TestBlock, TestSuite
 from rotest.core.runners.multiprocess.manager.runner import MultiprocessRunner
 
 LAST_RUN_INDEX = -1

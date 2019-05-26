@@ -2,6 +2,9 @@
 from __future__ import absolute_import
 import sys
 
+import django
+django.setup()
+
 from rotest.cli.client import main as run
 from rotest.cli.server import start_server
 from rotest.management.utils.shell import main as shell
