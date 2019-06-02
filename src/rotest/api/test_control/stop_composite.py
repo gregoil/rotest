@@ -41,7 +41,8 @@ class StopComposite(DjangoRequestView):
             test_data = session_data.all_tests[request.model.test_id]
 
         except KeyError:
-            raise BadRequest("Invalid token/test_id provided (Test timed out?)")
+            raise BadRequest("Invalid token/test_id provided "
+                             "(Test timed out?)")
 
         has_succeeded = all(sub_test.success for sub_test in test_data)
         test_data.success = has_succeeded
