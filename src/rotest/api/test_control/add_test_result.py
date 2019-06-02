@@ -45,7 +45,8 @@ class AddTestResult(DjangoRequestView):
                 session_data.all_tests[request.model.test_details.test_id]
 
         except KeyError:
-            raise BadRequest("Invalid token/test_id provided!")
+            raise BadRequest("Invalid token/test_id provided "
+                             "(Test timed out?)")
 
         test_data.update_result(request.model.result.result_code,
                                 request.model.result.info)
