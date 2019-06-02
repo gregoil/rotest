@@ -148,7 +148,7 @@ class LockResources(DjangoRequestView):
             session = sessions[request.model.token]
 
         except KeyError:
-            raise BadRequest("Invalid token/test_id provided!")
+            raise BadRequest("Invalid token provided!")
 
         username = get_username(request)
         descriptors = request.model.descriptors

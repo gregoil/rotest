@@ -8,21 +8,23 @@ import django
 import IPython
 from attrdict import AttrDict
 from future.builtins import object
+from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.common.config import SHELL_STARTUP_COMMANDS
 from rotest.management.base_resource import BaseResource
+from rotest.core.flow_component import AbstractFlowComponent
 from rotest.management.client.manager import ClientResourceManager
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
 from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 
 
 # Mock tests result object for running blocks
-blocks_result = Result(stream=None, descriptions=None,
+result_object = Result(stream=None, descriptions=None,
                        outputs=[], main_test=None)
 
 
 # Mock tests configuration for running blocks
-blocks_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))
+default_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))
 
 
 # Container for data shared between blocks
@@ -31,7 +33,7 @@ shared_data = {}
 
 ENABLE_DEBUG = False
 IMPORT_BLOCK_UTILS = \
-    "from rotest.management.utils.shell import shared_data, run_block"
+    "from rotest.management.utils.shell import shared_data, run_test"
 IMPORT_RESOURCE_LOADER = \
     "from rotest.management.utils.resources_discoverer import get_resources"
 
@@ -65,11 +67,12 @@ class ShellMockFlow(object):
                                     for name in request_names})
 
 
-def run_block(block_class, **kwargs):
+def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
     """Run a block of the given class, passing extra parameters as arguments.
 
     Args:
         block_class (type): class inheriting from AbstractFlowComponent.
+        debug (bool): whether to run the test in debug mode or not.
         kwargs (dict): additional arguments that will be passed as parameters
             to the block (overriding shared data).
     """
@@ -79,15 +82,40 @@ def run_block(block_class, **kwargs):
     parent = ShellMockFlow()
     block_class = block_class.params(**shared_kwargs)
 
-    block = block_class(config=blocks_config,
+    block = block_class(config=default_config,
                         parent=parent,
-                        enable_debug=ENABLE_DEBUG,
+                        enable_debug=debug,
                         resource_manager=BaseResource._SHELL_CLIENT,
                         is_main=False)
 
     parent.work_dir = block.work_dir
     block.validate_inputs()
-    block.run(blocks_result)
+    block.run(result_object)
+
+
+def run_test(test_class, debug=ENABLE_DEBUG, **kwargs):
+    """Run a test of the given class, passing extra parameters as arguments.
+
+    Args:
+        test_class (type): class inheriting from AbstractTest.
+        debug (bool): whether to run the test in debug mode or not.
+        kwargs (dict): additional arguments that will be passed as parameters
+            if the test is a block or flow (overriding shared data).
+    """
+    if issubclass(test_class, AbstractFlowComponent):
+        return _run_block(test_class, debug=debug, **kwargs)
+
+    if not test_class.IS_COMPLEX:
+        class AlmightySuite(TestSuite):
+            components = [test_class]
+
+        test_class = AlmightySuite
+
+    test = test_class(config=default_config,
+                      enable_debug=debug,
+                      resource_manager=BaseResource._SHELL_CLIENT)
+
+    test.run(result_object)
 
 
 def main():
@@ -95,19 +123,22 @@ def main():
 
     print("Creating client")
     BaseResource._SHELL_CLIENT = ClientResourceManager()
-    BaseResource._SHELL_CLIENT.connect()
     LogDebugHandler(None, sys.stdout, None)  # Activate log to screen
 
     print("""Done! You can now lock resources and run tests, e.g.
     resource1 = ResourceClass.lock(skip_init=True, name='resource_name')
     resource2 = ResourceClass.lock(name='resource_name', config='config.json')
     shared_data['resource'] = resource1
-    run_block(ResourceBlock, parameter=5)
-    run_block(ResourceBlock.params(parameter=6), resource=resource2)
+    run_test(ResourceBlock, parameter=5)
+    run_test(ResourceBlock.params(parameter=6), resource=resource2)
+    run_test(SomeTestCase, debug=True)
     """)
 
     startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
-    startup_commands.append("globals().update(get_resources())")
+    startup_commands.append("imported_resources = get_resources();"
+                            "print('\\nImporting resources:'); "
+                            "print(', '.join(imported_resources.keys()));"
+                            "globals().update(imported_resources)")
     startup_commands.extend(SHELL_STARTUP_COMMANDS)
     try:
         IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])

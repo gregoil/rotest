@@ -21,8 +21,9 @@ Using the shell:
         resource1 = ResourceClass.lock(skip_init=True, name='resource_name')
         resource2 = ResourceClass.lock(name='resource_name', config='config.json')
         shared_data['resource'] = resource1
-        run_block(ResourceBlock, parameter=5)
-        run_block(ResourceBlock.params(parameter=6), resource=resource2)
+        run_test(ResourceBlock, parameter=5)
+        run_test(ResourceBlock.params(parameter=6), resource=resource2)
+        run_test(SomeTestCase, debug=True)
 
     Python 2.7.15 (default, Jun 27 2018, 13:05:28)
     Type "copyright", "credits" or "license" for more information.
@@ -32,6 +33,9 @@ Using the shell:
     %quickref -> Quick reference.
     help      -> Python's own help system.
     object?   -> Details about 'object', use 'object??' for extra details.
+
+    Importing resources:
+    Calculator
 
     In [1]: calc = Calculator.lock()
     06:08:34 : Requesting resources from resource manager

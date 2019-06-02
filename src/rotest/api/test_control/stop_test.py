@@ -41,7 +41,7 @@ class StopTest(DjangoRequestView):
             test_data = session_data.all_tests[request.model.test_id]
 
         except KeyError:
-            raise BadRequest("Invalid token/test_id provided!")
+            raise BadRequest("Invalid token/test_id provided (Test timed out?)")
 
         test_data.end()
         test_data.save()
