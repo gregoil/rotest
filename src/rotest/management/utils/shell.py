@@ -136,12 +136,13 @@ def main():
 
     startup_commands = [IMPORT_BLOCK_UTILS, IMPORT_RESOURCE_LOADER]
     startup_commands.append("imported_resources = get_resources();"
-                            "print('\\nImporting resources:'); "
+                            "print('Importing resources:'); "
                             "print(', '.join(imported_resources.keys()));"
                             "globals().update(imported_resources)")
     startup_commands.extend(SHELL_STARTUP_COMMANDS)
     try:
-        IPython.start_ipython(["-i", "-c", ";".join(startup_commands)])
+        IPython.start_ipython(["-i", "--no-banner",
+                               "-c", ";".join(startup_commands)])
 
     finally:
         print("Releasing locked resources...")
