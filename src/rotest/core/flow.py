@@ -60,8 +60,6 @@ class TestFlow(AbstractFlowComponent):
         logger (logging.Logger): test logger.
         enable_debug (bool): whether to enable entering ipdb debugging mode
             upon any exception in a test statement.
-        force_initialize (bool): a flag to determine if the resources will be
-            initialized even if their validation succeeds.
         resource_manager (ClientResourceManager): client resource manager.
         work_dir (str): test directory, contains test data and sub-tests.
         data (CaseData): Contain information about the test flow run.
@@ -85,9 +83,8 @@ class TestFlow(AbstractFlowComponent):
 
     def __init__(self, methodName='test_method', indexer=count(),
                  base_work_dir=ROTEST_WORK_DIR, save_state=True,
-                 force_initialize=False, config=None, parent=None,
-                 run_data=None, enable_debug=False, is_main=True,
-                 skip_init=False, resource_manager=None):
+                 config=None, parent=None, run_data=None, enable_debug=False,
+                 is_main=True, skip_init=False, resource_manager=None):
 
         self._tests = []
         self._run_index = 0  # Index of the next block to run
@@ -100,7 +97,6 @@ class TestFlow(AbstractFlowComponent):
                                        save_state=save_state,
                                        enable_debug=enable_debug,
                                        base_work_dir=base_work_dir,
-                                       force_initialize=force_initialize,
                                        resource_manager=resource_manager)
 
         if len(self.blocks) == 0:

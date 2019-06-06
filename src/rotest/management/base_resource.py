@@ -187,7 +187,7 @@ class BaseResource(object):
             self.logger.exception("Connecting to %r failed", self.name)
             raise
 
-        if skip_init:
+        if skip_init and not force_initialize:
             self.logger.debug("Skipping validation and initialization")
             return
 
