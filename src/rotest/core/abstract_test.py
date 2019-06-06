@@ -43,8 +43,6 @@ class AbstractTest(unittest.TestCase):
         logger (logging.Logger): test logger.
         save_state (bool): a flag to determine if storing the states of
             resources is required.
-        force_initialize (bool): a flag to determine if the resources will be
-            initialized even if their validation succeeds.
         config (AttrDict): dictionary of configurations.
         enable_debug (bool): whether to enable entering ipdb debugging mode
             upon any exception in a test statement.
@@ -67,8 +65,8 @@ class AbstractTest(unittest.TestCase):
     STATE_DIR_NAME = "state"
 
     def __init__(self, methodName='test_method', indexer=count(), parent=None,
-                 save_state=True, force_initialize=False, config=None,
-                 enable_debug=False, resource_manager=None, skip_init=False):
+                 save_state=True, config=None, enable_debug=False,
+                 resource_manager=None, skip_init=False):
 
         if enable_debug:
             for method_name in (methodName, self.SETUP_METHOD_NAME,
@@ -89,7 +87,6 @@ class AbstractTest(unittest.TestCase):
         self.save_state = save_state
         self.identifier = next(indexer)
         self.enable_debug = enable_debug
-        self.force_initialize = force_initialize
         self.parents_count = self._get_parents_count()
 
         self.all_resources = AttrDict()
@@ -172,7 +169,8 @@ class AbstractTest(unittest.TestCase):
         for name, resource in iteritems(resources):
             setattr(self, name, resource)
 
-    def request_resources(self, resources_to_request, use_previous=False):
+    def request_resources(self, resources_to_request, use_previous=False,
+                          force_initialize=False):
         """Lock the requested resources and prepare them for the test.
 
         Lock the required resources using the resource manager, then assign
@@ -184,6 +182,8 @@ class AbstractTest(unittest.TestCase):
             resources_to_request (list): list of resource requests to lock.
             use_previous (bool): whether to use previously locked resources and
                 release the unused ones.
+            force_initialize (bool): whether the resources will be initialized
+            even if the validation succeeds and skip_init is True.
         """
         if len(resources_to_request) == 0:
             # No resources to requested
@@ -196,7 +196,7 @@ class AbstractTest(unittest.TestCase):
                                         base_work_dir=self.work_dir,
                                         requests=resources_to_request,
                                         enable_debug=self.enable_debug,
-                                        force_initialize=self.force_initialize)
+                                        force_initialize=force_initialize)
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
@@ -236,7 +236,7 @@ class AbstractTest(unittest.TestCase):
                                                 force_release=force_release)
 
         # Remove the resources from the test's resource to avoid double release
-        for resource in itervalues(resources_dict):
+        for resource in resources_dict:
             self.locked_resources.pop(resource, None)
 
     def _get_parents_count(self):

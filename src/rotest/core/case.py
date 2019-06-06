@@ -40,8 +40,6 @@ class TestCase(AbstractTest):
         work_dir (str): test directory, contains test data and sub-tests.
         save_state (bool): a flag to determine if storing the states of
             resources is required.
-        force_initialize (bool): a flag to determine if the resources will be
-            initialized even if their validation succeeds.
         config (AttrDict): dictionary of configurations.
         enable_debug (bool): whether to enable entering ipdb debugging mode
             upon any exception in a test statement.
@@ -56,15 +54,14 @@ class TestCase(AbstractTest):
     test_methods_names = None
 
     def __init__(self, methodName='test_method', parent=None, indexer=count(),
-                 base_work_dir=ROTEST_WORK_DIR, save_state=True,
-                 force_initialize=False, config=None, run_data=None,
-                 enable_debug=False, resource_manager=None, skip_init=False):
+                 base_work_dir=ROTEST_WORK_DIR, save_state=True, config=None,
+                 run_data=None, enable_debug=False, resource_manager=None,
+                 skip_init=False):
 
         super(TestCase, self).__init__(methodName=methodName,
                                        parent=parent,
                                        indexer=indexer,
                                        save_state=save_state,
-                                       force_initialize=force_initialize,
                                        config=config,
                                        enable_debug=enable_debug,
                                        resource_manager=resource_manager,
