@@ -231,6 +231,13 @@ class AbstractTest(unittest.TestCase):
             if name in resources
         }
 
+        not_releasing = [name for name in resources
+                         if name not in resources_dict]
+
+        if not_releasing:
+            self.logger.warn("Not releasing (since they weren't locked by "
+                             "the component): %r", not_releasing)
+
         self.resource_manager.release_resources(resources_dict,
                                                 dirty=dirty,
                                                 force_release=force_release)

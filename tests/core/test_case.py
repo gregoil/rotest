@@ -126,6 +126,18 @@ class TempStoreMultipleFailuresCase(StoreMultipleFailuresCase):
     resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
 
 
+class ForceReleaseCase(SuccessCase):
+    """Inherit class and override force initialize flag."""
+    __test__ = False
+
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
+
+    def request_resources(self, resources_to_request, use_previous=False,
+                          force_initialize=False):
+        return super(ForceReleaseCase, self).request_resources(
+            resources_to_request, use_previous, True)
+
+
 class TestTestCase(BasicRotestUnitTest):
     """Test TestCase in different scenarios.
 
@@ -921,7 +933,7 @@ class TestTestCase(BasicRotestUnitTest):
                                           resource_class=DemoResource,
                                           name=RESOURCE_NAME),)
 
-        self._run_case(TempSuccessCase, force_initialize=True)
+        self._run_case(ForceReleaseCase)
 
         test_resource = DemoResourceData.objects.get(name=RESOURCE_NAME)
         test_resource.validation_result = False
