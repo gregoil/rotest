@@ -29,7 +29,7 @@ class GetTestStatistics(DjangoRequestView):
     def get(self, request, sessions, *args, **kwargs):
         """Initialize the tests run data."""
         parameters = {"test_name": request.model.test_name}
-        if request.model.max_sample_size:
+        if request.model.max_sample_size is not None:
             parameters["max_size"] = request.model.max_sample_size
 
         test_durations = collect_durations(**parameters)
@@ -37,11 +37,11 @@ class GetTestStatistics(DjangoRequestView):
             raise BadRequest("No test history found!")
 
         parameters = {"durations": test_durations}
-        if request.model.min_duration_cut:
+        if request.model.min_duration_cut is not None:
             parameters["min_duration_cut"] = request.model.min_duration_cut
-        if request.model.max_iterations:
+        if request.model.max_iterations is not None:
             parameters["max_iterations"] = request.model.max_iterations
-        if request.model.acceptable_ratio:
+        if request.model.acceptable_ratio is not None:
             parameters["acceptable_ratio"] = request.model.acceptable_ratio
 
         test_durations = clean_data(**parameters)

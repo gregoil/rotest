@@ -9,11 +9,11 @@ from rotest.common import core_log
 from rotest.api.request_token import RequestToken
 from rotest.api.resource_control import UpdateFields
 from rotest.api.common import UpdateFieldsParamsModel
+from rotest.api.test_control import GetTestStatistics
 from rotest.management.common.parsers import JSONParser
+from rotest.api.common.responses import FailureResponseModel
 from rotest.api.common.models import GenericModel, StatisticsRequestModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
-from rotest.api.common.responses import (FailureResponseModel,
-                                         TestStatisticsResponse)
 from rotest.common.config import (DJANGO_MANAGER_PORT,
                                   RESOURCE_REQUEST_TIMEOUT, API_BASE_URL)
 
@@ -118,19 +118,32 @@ class AbstractClient(object):
                        min_duration_cut=None,
                        max_iterations=None,
                        acceptable_ratio=None):
-        """Request test duration statistics."""
-        response = self.requester.request(
-                                    StatisticsRequestModel,
-                                    method="get",
-                                    data=GenericModel({
-                                        "test_name": test_name,
-                                        "max_sample_size": max_sample_size,
-                                        "min_duration_cut": min_duration_cut,
-                                        "max_iterations": max_iterations,
-                                        "acceptable_ratio": acceptable_ratio,
-                                    }))
+        """Request test duration statistics.
+
+        Args:
+            test_name (str): name of the test to search,
+                e.g. "MyTest.test_method".
+            max_sample_size (number): maximal number of tests to collect.
+            min_duration_cut (number): ignore tests under the given duration.
+            max_iterations (number): max anomalies removal iterations.
+            acceptable_ratio (number): acceptable ration between max and min
+                values, under which don't try to remove anomalies.
+
+        Returns:
+            dict. dictionary containing the min, max and avg test durations.
+        """
+        request_data = StatisticsRequestModel({
+            "test_name": test_name,
+            "max_sample_size": max_sample_size,
+            "min_duration_cut": min_duration_cut,
+            "max_iterations": max_iterations,
+            "acceptable_ratio": acceptable_ratio})
+
+        response = self.requester.request(GetTestStatistics,
+                                          data=request_data,
+                                          method="get")
 
         if isinstance(response, FailureResponseModel):
             raise RuntimeError(response.details)
 
-        return response
+        return response.body
