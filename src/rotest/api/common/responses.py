@@ -24,6 +24,15 @@ class TokenResponseModel(AbstractResponse):
     ]
 
 
+class TestStatisticsResponse(AbstractResponse):
+    """Returns statistics of a test."""
+    PROPERTIES = [
+        NumberField(name="min", required=True),
+        NumberField(name="avg", required=True),
+        NumberField(name="max", required=True)
+    ]
+
+
 class FailureResponseModel(AbstractResponse):
     """Returns when an invalid request is received."""
     PROPERTIES = [
