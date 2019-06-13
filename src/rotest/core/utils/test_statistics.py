@@ -41,7 +41,7 @@ def remove_anomalies(durations):
     Returns:
         list. list with less anomalies.
     """
-    avg = (mean(durations)+median(durations)) / 2
+    avg = (mean(durations) + median(durations)) / 2
     deviation = pstdev(durations)
     cut_off = deviation * CUT_OFF_FACTOR
     lower_limit = avg - cut_off
