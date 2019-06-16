@@ -2,6 +2,7 @@
 # pylint: disable=protected-access
 from __future__ import absolute_import
 
+from datetime import datetime
 from functools import partial
 
 from future.builtins import next
@@ -9,7 +10,7 @@ from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
 from rotest.core.models import RunData
-from rotest.core.models.case_data import TestOutcome
+from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.management.client.result_client import ClientResultManager
 
 from tests.api.utils import request
@@ -106,6 +107,53 @@ class TestControl(TransactionTestCase):
                                            }, method="get")
         self.assertEqual(response.status_code, http_client.OK)
         self.assertFalse(content.should_skip)
+
+    def test_get_statistics_cleaning(self):
+        """Check the functionality of the test statistics request."""
+        now = datetime.now()
+        durations = (4, 5, 6, 17)
+        test_name = "SomeTest"
+        for duration in durations:
+            CaseData.objects.create(
+                name=test_name,
+                success=True,
+                start_time=now,
+                end_time=now.replace(second=now.second+duration),
+                exception_type=0)
+
+        response, content = self.requester(path="tests/get_statistics",
+                                           params={
+                                               "test_name": test_name
+                                           }, method="get")
+
+        self.assertEqual(response.status_code, http_client.OK)
+        self.assertEqual(content.min, 4)
+        self.assertEqual(content.max, 6)
+        self.assertEqual(content.avg, 5)
+
+    def test_get_statistics_no_cleaning(self):
+        """Check the functionality of the test statistics request."""
+        now = datetime.now()
+        durations = (4, 5, 6, 17)
+        test_name = "SomeTest"
+        for duration in durations:
+            CaseData.objects.create(
+                name=test_name,
+                success=True,
+                start_time=now,
+                end_time=now.replace(second=now.second+duration),
+                exception_type=0)
+
+        response, content = self.requester(path="tests/get_statistics",
+                                           params={
+                                               "test_name": test_name,
+                                               "max_iterations": 0
+                                           }, method="get")
+
+        self.assertEqual(response.status_code, http_client.OK)
+        self.assertEqual(content.min, 4)
+        self.assertEqual(content.max, 15)
+        self.assertEqual(content.avg, 8)
 
     def test_add_test_result(self):
         """Assert that the request has the right server response."""
