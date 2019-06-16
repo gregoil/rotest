@@ -118,7 +118,7 @@ class TestControl(TransactionTestCase):
                 name=test_name,
                 success=True,
                 start_time=now,
-                end_time=now.replace(second=now.second+duration),
+                end_time=now.replace(second=now.second + duration),
                 exception_type=0)
 
         response, content = self.requester(path="tests/get_statistics",
@@ -141,7 +141,7 @@ class TestControl(TransactionTestCase):
                 name=test_name,
                 success=True,
                 start_time=now,
-                end_time=now.replace(second=now.second+duration),
+                end_time=now.replace(second=now.second + duration),
                 exception_type=0)
 
         response, content = self.requester(path="tests/get_statistics",
