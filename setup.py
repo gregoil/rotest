@@ -48,7 +48,7 @@ setup(
         'future',
         'swaggapi>=0.6.5',
         'cached_property',
-        'statistics ; python_version < "3"',
+        'statistics;python_version<"3.4"',
     ],
     extras_require={
         "dev": [
