@@ -2,8 +2,8 @@
 # pylint: disable=protected-access
 from __future__ import absolute_import
 
-from datetime import datetime
 from functools import partial
+from datetime import datetime, timedelta
 
 from future.builtins import next
 from six.moves import http_client
@@ -100,7 +100,7 @@ class TestControl(TransactionTestCase):
     def test_should_skip(self):
         """Assert that the request has the right server response."""
         response, content = self.requester(path="tests/should_skip",
-                                           params={
+                                           json_data={
                                                "token": self.token,
                                                "test_id":
                                                    self.test_case.identifier
@@ -118,12 +118,16 @@ class TestControl(TransactionTestCase):
                 name=test_name,
                 success=True,
                 start_time=now,
-                end_time=now.replace(second=now.second + duration),
+                end_time=now + timedelta(seconds=duration),
                 exception_type=0)
 
         response, content = self.requester(path="tests/get_statistics",
-                                           params={
-                                               "test_name": test_name
+                                           json_data={
+                                               "test_name": test_name,
+                                               "max_sample_size": None,
+                                               "min_duration_cut": None,
+                                               "max_iterations": None,
+                                               "acceptable_ratio": None
                                            }, method="get")
 
         self.assertEqual(response.status_code, http_client.OK)
@@ -141,18 +145,21 @@ class TestControl(TransactionTestCase):
                 name=test_name,
                 success=True,
                 start_time=now,
-                end_time=now.replace(second=now.second + duration),
+                end_time=now + timedelta(seconds=duration),
                 exception_type=0)
 
         response, content = self.requester(path="tests/get_statistics",
-                                           params={
+                                           json_data={
                                                "test_name": test_name,
-                                               "max_iterations": 0
+                                               "max_sample_size": None,
+                                               "min_duration_cut": None,
+                                               "max_iterations": 0,
+                                               "acceptable_ratio": None
                                            }, method="get")
 
         self.assertEqual(response.status_code, http_client.OK)
         self.assertEqual(content.min, 4)
-        self.assertEqual(content.max, 15)
+        self.assertEqual(content.max, 17)
         self.assertEqual(content.avg, 8)
 
     def test_add_test_result(self):

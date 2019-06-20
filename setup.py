@@ -48,9 +48,9 @@ setup(
         'future',
         'swaggapi>=0.6.5',
         'cached_property',
+        'statistics ; python_version < "3"',
     ],
     extras_require={
-        ':python_version=="2.7"': ['statistics'],
         "dev": [
             "pytest",
             "pytest-django",
