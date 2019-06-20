@@ -1,7 +1,5 @@
 """Setup file for handling packaging and distribution."""
 from __future__ import absolute_import
-
-import sys
 from setuptools import setup, find_packages
 
 
@@ -25,7 +23,17 @@ result_handlers = [
     "rotest.core.result.handlers.stream.stream_handler:EventStreamHandler",
 ]
 
-dependencies = [
+setup(
+    name='rotest',
+    version=__version__,
+    description="Resource oriented testing framework",
+    long_description=open("README.rst").read(),
+    license="MIT",
+    author="gregoil",
+    author_email="gregoil@walla.co.il",
+    url="https://github.com/gregoil/rotest",
+    keywords="testing system django unittest",
+    install_requires=[
         'django>=1.8,<1.9',
         'py',
         'ipdbugger>=2.5',
@@ -39,25 +47,10 @@ dependencies = [
         'basicstruct',
         'future',
         'swaggapi>=0.6.5',
-        'cached_property']
-
-
-if sys.version_info[0] == 2:
-    dependencies.append("statistics")
-
-
-setup(
-    name='rotest',
-    version=__version__,
-    description="Resource oriented testing framework",
-    long_description=open("README.rst").read(),
-    license="MIT",
-    author="gregoil",
-    author_email="gregoil@walla.co.il",
-    url="https://github.com/gregoil/rotest",
-    keywords="testing system django unittest",
-    install_requires=dependencies,
+        'cached_property',
+    ],
     extras_require={
+        ':python_version=="2.7"': ['statistics'],
         "dev": [
             "pytest",
             "pytest-django",
