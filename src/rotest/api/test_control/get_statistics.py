@@ -22,7 +22,7 @@ class GetTestStatistics(DjangoRequestView):
         http_client.BAD_REQUEST: FailureResponseModel
     }
     TAGS = {
-        "get": []
+        "get": ["Tests"]
     }
 
     @session_middleware
