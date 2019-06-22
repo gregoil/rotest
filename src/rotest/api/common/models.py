@@ -22,6 +22,17 @@ class TokenModel(AbstractAPIModel):
     ]
 
 
+class StatisticsRequestModel(AbstractAPIModel):
+    """Model that contains name of a test or component."""
+    PROPERTIES = [
+        StringField(name="test_name", required=True),
+        NumberField(name="max_sample_size", required=False),
+        NumberField(name="min_duration_cut", required=False),
+        NumberField(name="max_iterations", required=False),
+        NumberField(name="acceptable_ratio", required=False)
+    ]
+
+
 class ResourceDescriptorModel(AbstractAPIModel):
     """Descriptor of a resource.
 

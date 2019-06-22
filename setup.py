@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 
-__version__ = "7.4.1"
+__version__ = "7.5.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -50,6 +50,7 @@ setup(
         'cached_property',
     ],
     extras_require={
+        ':python_version=="2.7"': ['statistics'],
         "dev": [
             "pytest",
             "pytest-django",

@@ -15,12 +15,7 @@ from rotest.api.common.responses import (TokenResponseModel,
 
 
 class RequestToken(DjangoRequestView):
-    """Initialize the tests run data.
-
-    Args:
-        tests_tree (dict): contains the hierarchy of the tests in the run.
-        run_data (dict): contains additional data about the run.
-    """
+    """Create a session for the client and return its unique token."""
     URI = "tests/get_token"
     DEFAULT_MODEL = GenericModel
     DEFAULT_RESPONSES = {
@@ -33,12 +28,7 @@ class RequestToken(DjangoRequestView):
 
     @session_middleware
     def get(self, request, sessions, *args, **kwargs):
-        """Initialize the tests run data.
-
-        Args:
-            tests_tree (dict): contains the hierarchy of the tests in the run.
-            run_data (dict): contains additional data about the run.
-        """
+        """Create a session for the client and return its unique token."""
         session_token = str(uuid.uuid4())
         sessions[session_token] = SessionData()
         response = {

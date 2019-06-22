@@ -22,7 +22,8 @@ from rotest.api.test_control import (StartTestRun,
                                      StartComposite,
                                      ShouldSkip,
                                      AddTestResult,
-                                     UpdateResources)
+                                     UpdateResources,
+                                     GetTestStatistics)
 
 requests = [
     RequestToken,
@@ -45,6 +46,7 @@ requests = [
     ShouldSkip,
     AddTestResult,
     UpdateResources,
+    GetTestStatistics,
 
     # Signatures
     GetOrCreate
