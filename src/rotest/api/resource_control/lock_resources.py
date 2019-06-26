@@ -58,9 +58,10 @@ class LockResources(DjangoRequestView):
         for sub_resource in resource.get_sub_resources():
             self._lock_resource(sub_resource, user_name)
 
-        resource.owner = user_name
-        resource.owner_time = datetime.now()
-        resource.save()
+        if resource.OWNABLE:
+            resource.owner = user_name
+            resource.owner_time = datetime.now()
+            resource.save()
 
     def _get_available_resources(self, descriptor, username, groups):
         """Get the potential resources to be locked that fits the descriptor.

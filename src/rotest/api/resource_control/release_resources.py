@@ -67,19 +67,20 @@ class ReleaseResources(DjangoRequestView):
             except ServerError as ex:
                 errors[sub_resource.name] = (ex.ERROR_CODE, str(ex))
 
-        if username is not None and resource.is_available(username):
-            raise ResourceAlreadyAvailableError("Failed releasing resource "
-                                                "%r, it was not locked"
-                                                % resource.name)
+        if resource.OWNABLE:
+            if username is not None and resource.is_available(username):
+                raise ResourceAlreadyAvailableError("Failed releasing resource"
+                                                    " %r, it was not locked"
+                                                    % resource.name)
 
-        if username is not None and resource.owner != username:
-            raise ResourcePermissionError("Failed releasing resource %r, "
-                                          "it is locked by %r"
-                                          % (resource.name, resource.owner))
+            if username is not None and resource.owner != username:
+                raise ResourcePermissionError("Failed releasing resource %r, "
+                                              "it is locked by %r" %
+                                              (resource.name, resource.owner))
 
-        resource.owner = ""
-        resource.owner_time = None
-        resource.save()
+            resource.owner = ""
+            resource.owner_time = None
+            resource.save()
 
         if len(errors) != 0:
             raise ResourceReleaseError(errors)

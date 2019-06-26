@@ -59,6 +59,8 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
         ResourceData subclasses cannot contain any unique fields.
 
     Attributes:
+        OWNABLE (bool): class attribute. override to disable that requesting
+            the resource would lock it to other users.
         name (str): name of the test containing the data.
         group (auth_models.Group): group to associate the resource with.
         owner (str): name of the locking user.
@@ -69,6 +71,8 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
         owner_time (datetime): timestamp of the last ownership event.
         reserved_time (datetime): timestamp of the last reserve event.
     """
+    OWNABLE = True
+
     NAME_SEPERATOR = '_'
     MAX_COMMENT_LENGTH = 200
 
