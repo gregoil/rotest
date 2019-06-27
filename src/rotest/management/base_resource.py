@@ -28,7 +28,7 @@ try:
 
 except ImportError:
     from django.db.models.fields.related import \
-        ReverseSingleRelatedObjectsDescriptor as ForwardManyToOneDescriptor
+        ReverseSingleRelatedObjectDescriptor as ForwardManyToOneDescriptor
 
 
 class ResourceRequest(object):
