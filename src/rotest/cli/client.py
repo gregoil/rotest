@@ -53,6 +53,8 @@ import django
 import pkg_resources
 from attrdict import AttrDict
 
+django.setup()  # noqa
+
 from rotest.core.suite import TestSuite
 from rotest.common import core_log
 from rotest.core.filter import match_tags
@@ -201,8 +203,6 @@ def main(*tests):
     Args:
         *tests: either suites or tests to be run.
     """
-    django.setup()
-
     parser = create_client_options_parser()
     arguments = parser.parse_args()
 
