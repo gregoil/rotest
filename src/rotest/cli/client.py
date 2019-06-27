@@ -39,7 +39,7 @@ Options:
             Specify resources to request by attributes,
             e.g. '-r res1.group=QA,res2.comment=CI'.
 """
-# pylint: disable=unused-argument,cell-var-from-loop
+# pylint: disable=unused-argument,cell-var-from-loop,wrong-import-position
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
 from __future__ import print_function
 from __future__ import absolute_import

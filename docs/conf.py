@@ -32,7 +32,10 @@
 # ones.
 from __future__ import absolute_import
 
+import os
 import django
+
+os.environ['DJANGO_SETTINGS_MODULE'] = "rotest.common.django_utils.settings"
 django.setup()
 
 extensions = ['sphinx.ext.autodoc',
