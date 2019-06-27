@@ -5,9 +5,9 @@ import sys
 import django
 django.setup()
 
-from rotest.cli.client import main as run
-from rotest.cli.server import start_server
-from rotest.management.utils.shell import main as shell
+from rotest.cli.client import main as run  # noqa
+from rotest.cli.server import start_server  # noqa
+from rotest.management.utils.shell import main as shell  # noqa
 
 
 def main():

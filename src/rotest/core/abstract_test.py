@@ -420,6 +420,7 @@ class AbstractTest(unittest.TestCase):
 
 def create_expect_method(method_name):
     original_assert = getattr(unittest.TestCase, method_name)
+
     @wraps(original_assert)
     def extended_assert(self, *args, **kwargs):
         success_msg = kwargs.pop("success_msg", None)
