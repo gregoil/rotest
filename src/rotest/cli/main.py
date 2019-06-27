@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=wrong-import-position
 from __future__ import absolute_import
 import sys
 

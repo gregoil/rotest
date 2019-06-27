@@ -1,3 +1,4 @@
+# pylint: disable=too-many-locals
 from django.apps import AppConfig
 
 
@@ -17,26 +18,26 @@ class CoreConfig(AppConfig):
                                              require_attr, skip_if_case,
                                              skip_if_flow,
                                              skip_if_block, skip_if_not_main)
-        from rotest import core
-        core.TestCase = TestCase
-        core.TestFlow = TestFlow
-        core.create_flow = create_flow
-        core.TestBlock = TestBlock
-        core.TestSuite = TestSuite
-        core.request = request
-        core.MODE_CRITICAL = MODE_CRITICAL
-        core.MODE_FINALLY = MODE_FINALLY
-        core.MODE_OPTIONAL = MODE_OPTIONAL
-        core.Pipe = Pipe
-        core.BlockInput = BlockInput
-        core.BlockOutput = BlockOutput
-        core.AbstractMonitor = AbstractMonitor
-        core.AbstractResourceMonitor = AbstractResourceMonitor
-        core.require_attr = require_attr
-        core.skip_if_case = skip_if_case
-        core.skip_if_flow = skip_if_flow
-        core.skip_if_block = skip_if_block
-        core.skip_if_not_main = skip_if_not_main
+        import rotest
+        rotest.core.TestCase = TestCase
+        rotest.core.TestFlow = TestFlow
+        rotest.core.create_flow = create_flow
+        rotest.core.TestBlock = TestBlock
+        rotest.core.TestSuite = TestSuite
+        rotest.core.request = request
+        rotest.core.MODE_CRITICAL = MODE_CRITICAL
+        rotest.core.MODE_FINALLY = MODE_FINALLY
+        rotest.core.MODE_OPTIONAL = MODE_OPTIONAL
+        rotest.core.Pipe = Pipe
+        rotest.core.BlockInput = BlockInput
+        rotest.core.BlockOutput = BlockOutput
+        rotest.core.AbstractMonitor = AbstractMonitor
+        rotest.core.AbstractResourceMonitor = AbstractResourceMonitor
+        rotest.core.require_attr = require_attr
+        rotest.core.skip_if_case = skip_if_case
+        rotest.core.skip_if_flow = skip_if_flow
+        rotest.core.skip_if_block = skip_if_block
+        rotest.core.skip_if_not_main = skip_if_not_main
 
 
 default_app_config = "rotest.core.CoreConfig"

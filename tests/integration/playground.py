@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function
 
-from rotest import main
+from rotest.cli.client import main
 from rotest.core import TestBlock, TestFlow
 
 

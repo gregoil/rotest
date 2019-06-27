@@ -9,11 +9,11 @@ class ManagementConfig(AppConfig):
         from .client.manager import ClientResourceManager
         from .base_resource import BaseResource, ResourceRequest
 
-        from rotest import management
-        management.ResourceData = ResourceData
-        management.ClientResourceManager = ClientResourceManager
-        management.BaseResource = BaseResource
-        management.ResourceRequest = ResourceRequest
+        import rotest
+        rotest.management.ResourceData = ResourceData
+        rotest.management.ClientResourceManager = ClientResourceManager
+        rotest.management.BaseResource = BaseResource
+        rotest.management.ResourceRequest = ResourceRequest
 
 
 default_app_config = "rotest.management.ManagementConfig"
