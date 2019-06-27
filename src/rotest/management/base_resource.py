@@ -16,13 +16,19 @@ from ipdbugger import debug
 from attrdict import AttrDict
 from future.utils import iteritems
 from future.builtins import zip, object
-from django.db.models.fields.related_descriptors import \
-                                        ForwardManyToOneDescriptor
 
 from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.utils import get_work_dir, get_class_fields
 from rotest.management.models.resource_data import ResourceData, DataPointer
+
+try:
+    from django.db.models.fields.related_descriptors import \
+        ForwardManyToOneDescriptor
+
+except ImportError:
+    from django.db.models.fields.related import \
+        ReverseSingleRelatedObjectsDescriptor as ForwardManyToOneDescriptor
 
 
 class ResourceRequest(object):
