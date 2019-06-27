@@ -28,7 +28,7 @@ DATABASES = {
         'PORT': '',
         'TEST_NAME': 'test_rotest_db',
         'TEST': {
-            'NAME': 'rotest_test_db'
+            'NAME': 'test_rotest_db'
         }
     },
 
