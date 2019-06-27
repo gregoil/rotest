@@ -1,9 +1,9 @@
 environment:
   matrix:
-  - TOXENV: "py27-django111"
-  - TOXENV: "py35-django111"
-  - TOXENV: "py36-django111"
-  - TOXENV: "py37-django111"
+  - TOXENV: "py27-django1.11"
+  - TOXENV: "py35-django1.11"
+  - TOXENV: "py36-django1.11"
+  - TOXENV: "py37-django1.11"
 
 build: off
 
