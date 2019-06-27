@@ -13,5 +13,5 @@ install:
 test_script:
 - C:\Python36\python -m tox
 
-on_failure:
+after_build:
 - appveyor PushArtifact "%userprofile%\\.rotest\\core_logger\\core_logger.log"
