@@ -1556,3 +1556,478 @@ class TestResourceManagement(BaseResourceManagementTest):
                                      sub_resource.__class__.__name__))
 
         self.client.release_resources(resources, dirty=True)
+
+
+class TestResourceManagementNotOwnable(BaseResourceManagementTest):
+    """Resource requesting tests with not-ownable resources."""
+    fixtures = ['resource_ut.json']
+
+    NON_EXISTING_NAME1 = 'kuki1'
+    NON_EXISTING_NAME2 = 'kuki2'
+    LOCKED1_NAME = 'locked_resource1'
+    LOCKED2_NAME = 'locked_resource2'
+    FREE1_NAME = 'available_resource1'
+    FREE2_NAME = 'available_resource2'
+    COMPLEX_NAME = 'complex_resource1'
+    NON_EXISTING_FIELD = 'illegal_field'
+    NO_GROUP_RESOURCE = 'resource_with_no_group'
+    OTHER_GROUP_RESOURCE = 'other_group_resource'
+
+    LOCK_TIMEOUT = 4
+    CLEANUP_TIME = 1.5
+
+    @mock.patch("rotest.management.client.client.Requester",
+                new=requester.TestRequester, create=True)
+    def setUp(self):
+        """Initialize and connect a client to the resource manager."""
+        super(TestResourceManagementNotOwnable, self).setUp()
+
+        self.client = ClientResourceManager(LOCALHOST)
+        self.client.connect()
+        DemoResourceData.OWNABLE = False
+        DemoComplexResourceData.OWNABLE = False
+
+    def tearDown(self):
+        """Disconnect the client from the resource manager."""
+        self.client.disconnect()
+
+        DemoResourceData.OWNABLE = True
+        DemoComplexResourceData.OWNABLE = True
+
+        super(TestResourceManagementNotOwnable, self).tearDown()
+
+    def get_resource(self, name, **kwargs):
+        """Get a resource by conditions, and assert existence of exactly one.
+
+        Args:
+            name (str): the name field of the DemoResource.
+            **kwargs (dict): additional filtering values.
+
+        Returns:
+            QuerySet. filtered resources that match the conditions.
+
+        Raises:
+            AssertionError. if the DB doesn't have exactly one resource that
+                match the conditions.
+        """
+        resources = DemoResourceData.objects.filter(name=name, **kwargs)
+        resources_num = resources.count()
+
+        self.assertEqual(resources_num, 1, "Expected 1 available "
+                         "resource with name %r in DB, found %d"
+                         % (name, resources_num))
+
+        return resources
+
+    def test_lock_reserved_resource(self):
+        """Lock a reserved resource.
+
+        * Validates the DB initial state.
+        * Update the reserved flag and save the resource.
+        * Locks an existing resource, using resource client.
+        * Validates that 1 resource returned.
+        * Validates the name of the returned resource.
+        * Validates the type of the returned resource.
+        * Validates that the resource is not locked in the DB.
+        """
+        resources = self.get_resource(self.FREE1_NAME, owner="")
+
+        host = LOCALHOST
+        resources.update(reserved=host)
+
+        descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
+        resources = self.client._lock_resources(descriptors=[descriptor],
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        locked_resource, = resources
+        self.assertEqual(locked_resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, locked_resource.name))
+
+        self.assertIsInstance(locked_resource, descriptor.type,
+                              "Expected resource of type %r, but got %r"
+                              % (descriptor.type.__name__,
+                                 locked_resource.__class__.__name__))
+
+        self.get_resource(self.FREE1_NAME, owner="")
+
+    def test_lock_reserved_for_other_resource(self):
+        """Try to lock a resource that reserved for other.
+
+        * Validates the DB initial state.
+        * Update the reserved flag and save the resource.
+        * Tries to Lock the resource, using resource client.
+        * Validates that a ResourceUnavailableError is raised.
+        """
+        resources = self.get_resource(self.FREE1_NAME, owner="")
+        resources.update(reserved='other')
+
+        descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
+        self.assertRaises(ResourceUnavailableError,
+                          self.client._lock_resources,
+                          descriptors=[descriptor],
+                          timeout=self.LOCK_TIMEOUT)
+
+    def test_lock_release_available_resource(self):
+        """Lock existing resource, release it & validate the success.
+
+        * Validates the DB initial state.
+        * Locks an existing resource, using resource client.
+        * Validates that 1 resource returned.
+        * Validates the name of the returned resource.
+        * Validates the type of the returned resource.
+        * Validates that the resource is still available in the DB.
+        * Releases a locked resource, using resource client.
+        * Validates that the above resource is now available.
+        """
+        self.get_resource(self.FREE1_NAME, owner="")
+
+        descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
+        resources = self.client._lock_resources(descriptors=[descriptor],
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
+
+        self.assertIsInstance(resource, descriptor.type,
+                              "Expected resource of type %r, but got %r"
+                              % (descriptor.type.__name__,
+                                 resource.__class__.__name__))
+
+        resources_num = \
+            descriptor.type.DATA_CLASS.objects.filter(~Q(owner=""),
+                                           name=self.FREE1_NAME).count()
+
+        self.assertEqual(resources_num, 0, "Expected 0 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
+
+        self.client._release_resources(resources=[resource])
+
+        self.get_resource(self.FREE1_NAME, owner="")
+
+    def test_lock_multiple_available_resources_and_release_them(self):
+        """Lock 2 available resources, release them & validate the success.
+
+        * Validates the DB initial state.
+        * Locks 2 available resources, using resource client.
+        * Validates 2 resources returned.
+        * Validates the name of the returned resources.
+        * Validates the type of the returned resources.
+        * Validates that the above resources are still available.
+        * Releases the above 2 locked resources, using resource client.
+        * Validates that the above resources are now available.
+        """
+        self.get_resource(self.FREE1_NAME, owner="")
+        self.get_resource(self.FREE2_NAME, owner="")
+
+        descriptors = [Descriptor(DemoResource, name=self.FREE1_NAME),
+                       Descriptor(DemoResource, name=self.FREE2_NAME)]
+        resources = self.client._lock_resources(descriptors=descriptors,
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 2, "Expected list with 2 "
+                         "resources in it but found %d" % resources_num)
+
+        for resource, descriptor in zip(resources, descriptors):
+            expected_name = descriptor.properties['name']
+            self.assertEqual(expected_name, resource.name,
+                             "Expected resource with name %r but got %r"
+                             % (expected_name, resource.name))
+
+            self.assertIsInstance(resource, descriptor.type,
+                                  "Expected resource of type %r, but got %r"
+                                  % (descriptor.type.__name__,
+                                     resource.__class__.__name__))
+
+            self.get_resource(expected_name, owner="")
+
+        self.client._release_resources(resources=resources)
+
+        for locked_name in (self.FREE1_NAME, self.FREE2_NAME):
+            self.get_resource(locked_name, owner="")
+
+    def test_lock_non_existing_name_resource(self):
+        """Try to Lock a resource that dosen't exist & validate failure.
+
+        * Validates the DB initial state.
+        * Tries to Lock a resource that dosen't exist, using resource client.
+        * Validates that a ResourceDoesNotExistError is raised.
+        """
+        resources_num = DemoResourceData.objects.filter(
+                                        name=self.NON_EXISTING_NAME1).count()
+
+        self.assertEqual(resources_num, 0,
+                         "Expected 0 resource with name %r in DB, found %d"
+                         % (self.NON_EXISTING_NAME1, resources_num))
+
+        descriptor = Descriptor(DemoResource, name=self.NON_EXISTING_NAME1)
+        self.assertRaises(ResourceUnavailableError,
+                          self.client._lock_resources,
+                          descriptors=[descriptor],
+                          timeout=self.LOCK_TIMEOUT)
+
+    def test_lock_non_existing_field_resource(self):
+        """Try to Lock using a field that dosen't exist & validate failure.
+
+        * Validates the DB initial state.
+        * Tries to Lock a resource using a property that dosen't exist.
+        * Validates that a ResourceDoesNotExistError is raised.
+        """
+        self.get_resource(self.FREE1_NAME)
+
+        descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
+        descriptor.properties[self.NON_EXISTING_FIELD] = 0
+
+        self.assertRaises(ResourceUnavailableError,
+                          self.client._lock_resources,
+                          descriptors=[descriptor],
+                          timeout=self.LOCK_TIMEOUT)
+
+    def test_lock_already_locked_resource(self):
+        """Lock an already locked resource & validate failure.
+
+        * Validates the DB initial state.
+        * Locks an already locked resource, using resource client.
+        * Validates a ResourceUnavailableError is raised.
+        """
+        resources_num = DemoResourceData.objects.filter(~Q(owner=""),
+                                  name=self.LOCKED1_NAME).count()
+
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB found %d"
+                         % (self.LOCKED1_NAME, resources_num))
+
+        descriptor = Descriptor(DemoResource, name=self.LOCKED1_NAME)
+        self.assertRaises(ResourceUnavailableError,
+                          self.client._lock_resources,
+                          descriptors=[descriptor],
+                          timeout=self.LOCK_TIMEOUT)
+
+    def test_lock_unavailable_resource_timeout(self):
+        """Lock an already locked resource & validate failure after timeout.
+
+        * Validates the DB initial state.
+        * Locks an already locked resource, using resource client.
+        * Validates a ResourceUnavailableError is raised.
+        * Validates 'lock_resources' duration is greater then the timeout.
+        """
+        resources_num = DemoResourceData.objects.filter(~Q(owner=""),
+                                  name=self.LOCKED1_NAME).count()
+
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB found %d"
+                         % (self.LOCKED1_NAME, resources_num))
+
+        descriptor = Descriptor(DemoResource, name=self.LOCKED1_NAME)
+
+        start_time = time.time()
+        self.assertRaises(ResourceUnavailableError,
+                          self.client._lock_resources,
+                          descriptors=[descriptor],
+                          timeout=self.LOCK_TIMEOUT)
+
+        duration = time.time() - start_time
+        self.assertGreaterEqual(duration, self.LOCK_TIMEOUT, "Waiting for "
+                                "resources took %.2f seconds, but should take "
+                                "at least %d" % (duration, self.LOCK_TIMEOUT))
+
+    def test_lock_multiple_matches(self):
+        """Lock a resource, parameters matching more then one result.
+
+        * Validates the DB initial state.
+        * Locks a resource using parameters that match more than one resource,
+          using resource client.
+        * Validates only one resource returned.
+        * Validates there is still 2 available resource with same parameters.
+        """
+        common_parameters = {'ip_address': "1.1.1.1"}
+        resources_num = DemoResourceData.objects.filter(owner="",
+                                                **common_parameters).count()
+
+        self.assertEqual(resources_num, 2, "Expected 2 available "
+                         "resources with parameters %r in DB found %d"
+                         % (common_parameters, resources_num))
+
+        descriptor = Descriptor(DemoResource, **common_parameters)
+        resources = self.client._lock_resources(descriptors=[descriptor],
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        locked_resource_name = resources[0].name
+
+        resources_num = descriptor.type.DATA_CLASS.objects.filter(~Q(owner=""),
+                                                  **common_parameters).count()
+
+        self.assertEqual(resources_num, 2, "Expected 2 unlocked "
+                         "resource with name %r in DB, found %d"
+                         % (locked_resource_name, resources_num))
+
+    def test_lock_release_complex_resource(self):
+        """Lock existing complex resource, release it & validate the success.
+
+        * Validates the DB initial state.
+        * Locks an existing complex resource, using resource client.
+        * Validates that 1 resource returned.
+        * Validates the name of the returned resource.
+        * Validates the type of the returned resource.
+        * Validates the above resource and it sub-resources are not locked.
+        * Releases a locked resource, using resource client.
+        * Validates the above resource and it sub-resources are now available.
+        """
+        resources = DemoComplexResourceData.objects.filter(
+                                                       name=self.COMPLEX_NAME,
+                                                       owner="")
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected 1 complex "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
+
+        resource, = resources
+        self.assertTrue(resource.is_available(), "Expected available "
+                        "complex resource with name %r in DB, found %d"
+                        % (self.COMPLEX_NAME, resources_num))
+
+        descriptor = Descriptor(DemoComplexResource, name=self.COMPLEX_NAME)
+        resources = self.client._lock_resources(descriptors=[descriptor],
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources
+        self.assertEqual(resource.name, self.COMPLEX_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.COMPLEX_NAME, resource.name))
+
+        self.assertIsInstance(resource, descriptor.type,
+                              "Expected resource of type %r, but got %r"
+                              % (descriptor.type.__name__,
+                                 resource.__class__.__name__))
+
+        resources_num = DemoComplexResourceData.objects.filter(
+                                                       name=self.COMPLEX_NAME,
+                                                       owner="").count()
+
+        self.assertEqual(resources_num, 1, "Expected 1 unlocked complex "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
+
+        resource, = resources
+        for sub_resource in resource.get_sub_resources():
+            self.get_resource(sub_resource.name, owner="")
+
+        self.client._release_resources(resources=[resource])
+
+        resources = DemoComplexResourceData.objects.filter(
+                                                       name=self.COMPLEX_NAME)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected 1 complex "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
+
+        resource, = resources
+        self.assertTrue(resource.is_available(), "Expected available "
+                        "complex resource with name %r in DB, found %d"
+                        % (self.COMPLEX_NAME, resources_num))
+
+    def test_encounter_unknown_user(self):
+        """Lock resource by a non identified user & validate failure.
+
+        * Validates the DB initial state.
+        * Locks an existing resource, by client which doesn't exist in the DB.
+        * Validates that an error is raised.
+        """
+        User.objects.all().delete()
+        self.get_resource(self.FREE1_NAME)
+
+        descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
+
+        with self.assertRaises(UnknownUserError):
+            self.client._lock_resources(descriptors=[descriptor],
+                                        timeout=self.LOCK_TIMEOUT)
+
+    def test_locking_resource_with_a_matching_group(self):
+        """Lock resource with a valid group & validate success.
+
+        * Validates the DB initial state.
+        * Locks resource with no group, which means that the resource is
+          available to everyone.
+        * Validates that the resource was locked successfully.
+        """
+        self.get_resource(self.FREE1_NAME)
+
+        descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
+
+        resources = self.client._lock_resources(descriptors=[descriptor],
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources
+        self.assertEqual(resource.name, self.FREE1_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.FREE1_NAME, resource.name))
+
+        self.get_resource(self.FREE1_NAME, owner="")
+
+    def test_locking_other_group_resource(self):
+        """Lock another group resource & validate failure.
+
+        * Validates the DB initial state.
+        * Locks an existing resource, by a client that is in a different group
+          than the resource's group.
+        * Validates that an error is raised.
+        """
+        self.get_resource(self.OTHER_GROUP_RESOURCE)
+
+        descriptor = Descriptor(DemoResource, name=self.OTHER_GROUP_RESOURCE)
+
+        with self.assertRaises(ResourceUnavailableError):
+            self.client._lock_resources(descriptors=[descriptor],
+                                        timeout=self.LOCK_TIMEOUT)
+
+    def test_locking_resource_with_group_none(self):
+        """Lock resource with no group & validate success.
+
+        * Validates the DB initial state.
+        * Locks resource with no group, which means that the resource is
+          available to everyone.
+        * Validates that the resource was locked successfully.
+        """
+        self.get_resource(self.NO_GROUP_RESOURCE)
+
+        descriptor = Descriptor(DemoResource, name=self.NO_GROUP_RESOURCE)
+
+        resources = self.client._lock_resources(descriptors=[descriptor],
+                                                timeout=self.LOCK_TIMEOUT)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources
+        self.assertEqual(resource.name, self.NO_GROUP_RESOURCE,
+                         "Expected resource with name %r but got %r"
+                         % (self.NO_GROUP_RESOURCE, resource.name))
+
+        self.get_resource(self.NO_GROUP_RESOURCE, owner="")

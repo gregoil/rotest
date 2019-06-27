@@ -3,13 +3,14 @@
 from __future__ import absolute_import
 
 from functools import partial
+from datetime import datetime, timedelta
 
 from future.builtins import next
 from six.moves import http_client
 from django.test import Client, TransactionTestCase
 
 from rotest.core.models import RunData
-from rotest.core.models.case_data import TestOutcome
+from rotest.core.models.case_data import CaseData, TestOutcome
 from rotest.management.client.result_client import ClientResultManager
 
 from tests.api.utils import request
@@ -99,13 +100,67 @@ class TestControl(TransactionTestCase):
     def test_should_skip(self):
         """Assert that the request has the right server response."""
         response, content = self.requester(path="tests/should_skip",
-                                           params={
+                                           json_data={
                                                "token": self.token,
                                                "test_id":
                                                    self.test_case.identifier
                                            }, method="get")
         self.assertEqual(response.status_code, http_client.OK)
         self.assertFalse(content.should_skip)
+
+    def test_get_statistics_cleaning(self):
+        """Check the functionality of the test statistics request."""
+        now = datetime.now()
+        durations = (4, 5, 6, 17)
+        test_name = "SomeTest"
+        for duration in durations:
+            CaseData.objects.create(
+                name=test_name,
+                success=True,
+                start_time=now,
+                end_time=now + timedelta(seconds=duration),
+                exception_type=0)
+
+        response, content = self.requester(path="tests/get_statistics",
+                                           json_data={
+                                               "test_name": test_name,
+                                               "max_sample_size": None,
+                                               "min_duration_cut": None,
+                                               "max_iterations": None,
+                                               "acceptable_ratio": None
+                                           }, method="get")
+
+        self.assertEqual(response.status_code, http_client.OK)
+        self.assertEqual(content.min, 4)
+        self.assertEqual(content.max, 6)
+        self.assertEqual(content.avg, 5)
+
+    def test_get_statistics_no_cleaning(self):
+        """Check the functionality of the test statistics request."""
+        now = datetime.now()
+        durations = (4, 5, 6, 17)
+        test_name = "SomeTest"
+        for duration in durations:
+            CaseData.objects.create(
+                name=test_name,
+                success=True,
+                start_time=now,
+                end_time=now + timedelta(seconds=duration),
+                exception_type=0)
+
+        response, content = self.requester(path="tests/get_statistics",
+                                           json_data={
+                                               "test_name": test_name,
+                                               "max_sample_size": None,
+                                               "min_duration_cut": None,
+                                               "max_iterations": 0,
+                                               "acceptable_ratio": None
+                                           }, method="get")
+
+        self.assertEqual(response.status_code, http_client.OK)
+        self.assertEqual(content.min, 4)
+        self.assertEqual(content.max, 17)
+        self.assertEqual(content.avg, 8)
 
     def test_add_test_result(self):
         """Assert that the request has the right server response."""

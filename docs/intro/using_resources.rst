@@ -70,6 +70,7 @@ We're going to write a simple resource of a calculator. Edit the
 
 
     class CalculatorData(ResourceData):
+        OWNABLE = True
         class Meta:
             app_label = "resources"
 
@@ -77,7 +78,9 @@ We're going to write a simple resource of a calculator. Edit the
 
 The :class:`CalculatorData` class is the database definition of the Calculator
 resource. It defines any characteristics it has, as oppose to behaviour it may
-have. It's also recommended adding it to the Django admin panel. Edit the
+have. The 'OWNABLE' field (defaults to True) defines whether users who request
+resource of this class would also 'own' it, making it unavailable to others.
+It's also recommended adding it to the Django admin panel. Edit the
 content of the :file:`resources/admin.py` file:
 
 .. code-block:: python

@@ -7,4 +7,5 @@ from .set_timeout import SetSessionTimeout
 from .add_test_result import AddTestResult
 from .update_run_data import UpdateRunData
 from .start_composite import StartComposite
+from .get_statistics import GetTestStatistics
 from .update_resources import UpdateResources

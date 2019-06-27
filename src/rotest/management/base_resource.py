@@ -187,7 +187,7 @@ class BaseResource(object):
             self.logger.exception("Connecting to %r failed", self.name)
             raise
 
-        if skip_init:
+        if skip_init and not force_initialize:
             self.logger.debug("Skipping validation and initialization")
             return
 
@@ -426,7 +426,11 @@ class BaseResource(object):
 
         config_dict = None
         if config is not None:
-            config_dict = parse_config_file(config)
+            if isinstance(config, dict):
+                config_dict = config
+
+            else:
+                config_dict = parse_config_file(config)
 
         result = BaseResource._SHELL_CLIENT.request_resources(
                                                         [resource_request],

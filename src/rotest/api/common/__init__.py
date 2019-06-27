@@ -3,4 +3,5 @@ from .models import (TestModel,
                      ReleaseResourcesParamsModel,
                      ResourceDescriptorModel,
                      UpdateFieldsParamsModel,
-                     LockResourcesParamsModel)
+                     LockResourcesParamsModel,
+                     StatisticsRequestModel)

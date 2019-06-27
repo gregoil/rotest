@@ -45,7 +45,8 @@ class UpdateResources(DjangoRequestView):
                 session_data.all_tests[request.model.test_details.test_id]
 
         except KeyError:
-            raise BadRequest("Invalid token/test_id provided!")
+            raise BadRequest("Invalid token/test_id provided "
+                             "(Test timed out?)")
 
         test_data.resources.clear()
 
