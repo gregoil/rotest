@@ -104,7 +104,6 @@ ENV/
 test_rotest_db-journal
 rotest_db
 rotest_test
-rotest_test_db
 rotest_test-journal
 test_rotest_db
 rotest_ut_test-journal
