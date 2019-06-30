@@ -7,6 +7,7 @@ import os
 INSTALLED_APPS = (
     'rotest.core',
     'rotest.management',
+    'channels',
 
     # Administrator Related Applications
     'django.contrib.auth',
@@ -42,6 +43,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware')
 
+# Set channel layers
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgiref.inmemory.ChannelLayer',
+        'ROUTING': 'rotest.common.django_utils.routing.channel_routing',
+    }
+}
+ASGI_APPLICATION = "rotest.core"
 
 # Set the time zone
 TIME_ZONE = 'America/Chicago'
