@@ -1,7 +1,7 @@
 """Known issues result handler."""
 from __future__ import absolute_import
 
-from rotest.core import skip_if_not_main
+from rotest.core.result.monitor.monitor import skip_if_not_main
 from rotest.core.result.handlers.stream.base_handler import BaseStreamHandler
 from rotest.management.client.signatures_client import ClientSignatureManager
 

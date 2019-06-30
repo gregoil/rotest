@@ -39,7 +39,7 @@ Options:
             Specify resources to request by attributes,
             e.g. '-r res1.group=QA,res2.comment=CI'.
 """
-# pylint: disable=unused-argument,cell-var-from-loop
+# pylint: disable=unused-argument,cell-var-from-loop,wrong-import-position
 # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
 from __future__ import print_function
 from __future__ import absolute_import
@@ -53,7 +53,9 @@ import django
 import pkg_resources
 from attrdict import AttrDict
 
-from rotest.core import TestSuite
+django.setup()  # noqa
+
+from rotest.core.suite import TestSuite
 from rotest.common import core_log
 from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
@@ -201,8 +203,6 @@ def main(*tests):
     Args:
         *tests: either suites or tests to be run.
     """
-    django.setup()
-
     parser = create_client_options_parser()
     arguments = parser.parse_args()
 

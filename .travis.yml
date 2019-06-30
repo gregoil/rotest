@@ -7,11 +7,15 @@ stages:
     if: tag IS present
 python:
 - '2.7'
-- '3.5'
 - '3.6'
 - '3.7'
+env:
+- DJANGO=1.8
+- DJANGO=1.9
+- DJANGO=1.10
+- DJANGO=1.11
 install: pip install tox coveralls
-script: tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d .)
+script: tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d .)-django$DJANGO
 after_success: coveralls
 jobs:
   include:

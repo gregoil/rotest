@@ -9,7 +9,7 @@ from swaggapi.api.builder.server.response import Response
 from swaggapi.api.builder.server.exceptions import BadRequest
 from swaggapi.api.builder.server.request import DjangoRequestView
 
-from rotest.management import ResourceData
+from rotest.management.models import ResourceData
 from rotest.management.common.utils import get_username
 from rotest.common.django_utils.common import get_sub_model
 from rotest.api.common.models import ReleaseResourcesParamsModel
