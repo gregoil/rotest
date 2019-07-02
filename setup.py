@@ -48,6 +48,9 @@ setup(
         'future',
         'swaggapi>=0.6.7',
         'cached_property',
+        'channels>=1,<2',
+        'websocket>=0.2',
+        'websocket-client>=0.56'
     ],
     extras_require={
         ':python_version=="2.7"': ['statistics'],
