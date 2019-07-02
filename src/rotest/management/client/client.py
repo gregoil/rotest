@@ -12,6 +12,7 @@ from rotest.api.common import UpdateFieldsParamsModel
 from rotest.api.test_control import GetTestStatistics
 from rotest.management.common.parsers import JSONParser
 from rotest.api.common.responses import FailureResponseModel
+from rotest.common.django_utils.websocket_client import PingingWebsocket
 from rotest.api.common.models import GenericModel, StatisticsRequestModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.common.config import (DJANGO_MANAGER_PORT,
@@ -32,6 +33,8 @@ class AbstractClient(object):
     REPLY_OVERHEAD_TIME = 2
     _DEFAULT_REPLY_TIMEOUT = 18
 
+    WEBSOCKET_TARGET = "ws://{host}:{port}/"
+
     parser = JSONParser()
 
     def __init__(self, host, port=DJANGO_MANAGER_PORT,
@@ -51,6 +54,7 @@ class AbstractClient(object):
         self.logger = logger
         self.lock_timeout = lock_timeout
         self.token = None
+        self.websocket = PingingWebsocket()
         self.requester = Requester(host=self._host,
                                    port=self._port,
                                    base_url=self.base_uri,
@@ -66,6 +70,11 @@ class AbstractClient(object):
             raise RuntimeError(response.details)
 
         self.token = response.token
+        self.websocket.connect(self.WEBSOCKET_TARGET.format(host=self._host,
+                                                            port=self._port))
+
+        import json
+        self.websocket.send(json.dumps({"token": self.token}))
 
     def is_connected(self):
         """Check if the socket is connected or not.
@@ -78,6 +87,7 @@ class AbstractClient(object):
     def disconnect(self):
         """Cleanup the client."""
         self.token = None
+        self.websocket.close()
 
     def __enter__(self):
         """Connect to manager server."""
