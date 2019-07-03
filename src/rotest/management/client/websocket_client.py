@@ -38,5 +38,5 @@ class PingingWebsocket(websocket.WebSocket):
             try:
                 self.send("ping")
 
-            except:
+            except:  # noqa
                 break
