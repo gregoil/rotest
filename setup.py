@@ -34,7 +34,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=[
-        'django>=1.8,<2.0,!=1.11.22',
+        'django>=1.8,<2.0',
         'py',
         'ipdbugger>=2.5',
         'xlwt',
@@ -56,8 +56,8 @@ setup(
     extras_require={
         ':python_version=="2.7"': ['statistics'],
         "dev": [
-            "pytest",
-            "pytest-django",
+            "pytest!=4.6.4",
+            "pytest-django!=3.5.1",
             "pytest-cov",
             "mock",
             "pyfakefs",
