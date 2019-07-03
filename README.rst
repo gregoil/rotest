@@ -54,7 +54,7 @@ For our example, let's look at an example for a ``Calculator`` resource:
     import rpyc
     from django.db import models
     from rotest.management.models import resource_data
-    from rotest.management.base_resource import base_resource
+    from rotest.management import base_resource
 
 
     class CalculatorData(resource_data.ResourceData):
