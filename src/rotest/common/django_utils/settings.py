@@ -7,6 +7,7 @@ import os
 INSTALLED_APPS = (
     'rotest.core',
     'rotest.management',
+    'channels',
 
     # Administrator Related Applications
     'django.contrib.auth',
