@@ -50,7 +50,7 @@ CHANNEL_LAYERS = {
         'ROUTING': 'rotest.common.django_utils.routing.channel_routing',
     }
 }
-ASGI_APPLICATION = "rotest.core"
+ASGI_APPLICATION = "rotest.management"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

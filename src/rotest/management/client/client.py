@@ -14,7 +14,7 @@ from rotest.api.common import UpdateFieldsParamsModel
 from rotest.api.test_control import GetTestStatistics
 from rotest.management.common.parsers import JSONParser
 from rotest.api.common.responses import FailureResponseModel
-from rotest.common.django_utils.websocket_client import PingingWebsocket
+from rotest.management.client.websocket_client import PingingWebsocket
 from rotest.api.common.models import GenericModel, StatisticsRequestModel
 from rotest.management.common.resource_descriptor import ResourceDescriptor
 from rotest.common.config import (DJANGO_MANAGER_PORT,
