@@ -56,8 +56,8 @@ setup(
     extras_require={
         ':python_version=="2.7"': ['statistics'],
         "dev": [
-            "pytest!=4.6.4",
-            "pytest-django!=3.5.1",
+            "pytest",
+            "pytest-django",
             "pytest-cov",
             "mock",
             "pyfakefs",
