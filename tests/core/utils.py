@@ -185,6 +185,7 @@ class MockResourceClient(ClientResourceManager):
     def __init__(self, *args, **kwargs):
         super(MockResourceClient, self).__init__(*args, **kwargs)
         self.websocket = mock.MagicMock()
+        self.websocket.__reduce__ = lambda _: (mock.MagicMock, ())
 
     def disconnect(self, *args, **kwargs):
         """Suppressed disconnect method."""
