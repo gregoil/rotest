@@ -2,6 +2,8 @@
 # pylint: disable=too-many-arguments,too-many-instance-attributes
 from __future__ import absolute_import
 
+import json
+
 from future.builtins import object
 from swaggapi.api.builder.client.requester import Requester
 
@@ -73,7 +75,6 @@ class AbstractClient(object):
         self.websocket.connect(self.WEBSOCKET_TARGET.format(host=self._host,
                                                             port=self._port))
 
-        import json
         self.websocket.send(json.dumps({"token": self.token}))
 
     def is_connected(self):

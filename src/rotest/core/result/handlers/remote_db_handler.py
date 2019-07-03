@@ -16,8 +16,6 @@ class RemoteDBHandler(AbstractResultHandler):
     NAME = 'remote'
     SKIP_DELTA_MESSAGE = "Previous run passed according to remote DB"
 
-    SESSION_EXTRA_TIME = 3  # Seconds
-
     def __init__(self, *args, **kwargs):
         """Initialize the result handler and connect to the result server."""
         super(RemoteDBHandler, self).__init__(*args, **kwargs)
@@ -40,9 +38,6 @@ class RemoteDBHandler(AbstractResultHandler):
             test (object): test item instance.
         """
         self.client.start_test(test)
-        if isinstance(test, TestCase) or test.is_main:
-            self.client.set_session_timeout(test.TIMEOUT +
-                                            self.SESSION_EXTRA_TIME)
 
     def should_skip(self, test):
         """Check if the test passed in the last run according to the remote DB.
