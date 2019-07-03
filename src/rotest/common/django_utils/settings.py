@@ -7,7 +7,6 @@ import os
 INSTALLED_APPS = (
     'rotest.core',
     'rotest.management',
-    'channels',
 
     # Administrator Related Applications
     'django.contrib.auth',
@@ -51,6 +50,20 @@ CHANNEL_LAYERS = {
     }
 }
 ASGI_APPLICATION = "rotest.core"
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 # Set the time zone
 TIME_ZONE = 'America/Chicago'
