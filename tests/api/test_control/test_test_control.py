@@ -214,13 +214,3 @@ class TestControl(TransactionTestCase):
                                              self.test_case.identifier
                                      })
         self.assertEqual(response.status_code, http_client.NO_CONTENT)
-
-    def test_set_session_timeout(self):
-        """Assert that the request has the right server response."""
-        response, _ = self.requester(path="tests/set_timeout",
-                                     params={
-                                         "token": self.token,
-                                         "timeout": 50
-                                     })
-
-        self.assertEqual(response.status_code, http_client.NO_CONTENT)

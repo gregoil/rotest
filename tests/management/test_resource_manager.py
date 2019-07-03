@@ -57,6 +57,8 @@ class TestResourceManagement(BaseResourceManagementTest):
     LOCK_TIMEOUT = 4
     CLEANUP_TIME = 1.5
 
+    @mock.patch("rotest.management.client.client.PingingWebsocket",
+                new=mock.MagicMock, create=True)
     @mock.patch("rotest.management.client.client.Requester",
                 new=requester.TestRequester, create=True)
     def setUp(self):
