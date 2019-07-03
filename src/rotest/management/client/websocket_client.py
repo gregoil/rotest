@@ -1,4 +1,5 @@
 """Websocket client that sends pings periodically."""
+# pylint: disable=broad-except,bare-except
 import threading
 
 import websocket
@@ -37,6 +38,5 @@ class PingingWebsocket(websocket.WebSocket):
             try:
                 self.send("ping")
 
-            except Exception as e:
-                print(e)
+            except:
                 break
