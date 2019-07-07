@@ -7,8 +7,9 @@ import sys
 import django
 import IPython
 from attrdict import AttrDict
-from rotest.core.suite import TestSuite
 from future.builtins import object, next
+
+from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.common.config import SHELL_STARTUP_COMMANDS
 from rotest.management.base_resource import BaseResource
