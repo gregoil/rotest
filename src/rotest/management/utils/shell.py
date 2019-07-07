@@ -93,7 +93,8 @@ def _run_block(block_class, config=default_config,
     return block
 
 
-def _run_suite(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
+def _run_suite(test_class, config=default_config, debug=ENABLE_DEBUG,
+               **kwargs):
     """Run a test of the given class, passing extra parameters as arguments.
 
     Args:
