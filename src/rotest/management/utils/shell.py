@@ -67,11 +67,13 @@ class ShellMockFlow(object):
                                     for name in request_names})
 
 
-def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
+def _run_block(block_class, config=default_config,
+               debug=ENABLE_DEBUG, **kwargs):
     """Run a block of the given class, passing extra parameters as arguments.
 
     Args:
         block_class (type): class inheriting from AbstractFlowComponent.
+        config (dict): run configuration dict.
         debug (bool): whether to run the test in debug mode or not.
         kwargs (dict): additional arguments that will be passed as parameters
             to the block (overriding shared data).
@@ -82,7 +84,7 @@ def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
     parent = ShellMockFlow()
     block_class = block_class.params(**shared_kwargs)
 
-    block = block_class(config=default_config,
+    block = block_class(config=config,
                         parent=parent,
                         enable_debug=debug,
                         resource_manager=BaseResource._SHELL_CLIENT,
@@ -93,17 +95,19 @@ def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
     block.run(result_object)
 
 
-def run_test(test_class, debug=ENABLE_DEBUG, **kwargs):
+def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
     """Run a test of the given class, passing extra parameters as arguments.
 
     Args:
         test_class (type): class inheriting from AbstractTest.
+        config (dict): run configuration dict.
         debug (bool): whether to run the test in debug mode or not.
         kwargs (dict): additional arguments that will be passed as parameters
-            if the test is a block or flow (overriding shared data).
+            if the test is a block or flow (overriding shared data),
+            or resources to use for the test.
     """
     if issubclass(test_class, AbstractFlowComponent):
-        return _run_block(test_class, debug=debug, **kwargs)
+        return _run_block(test_class, config=config, debug=debug, **kwargs)
 
     if not test_class.IS_COMPLEX:
         class AlmightySuite(TestSuite):
@@ -111,9 +115,11 @@ def run_test(test_class, debug=ENABLE_DEBUG, **kwargs):
 
         test_class = AlmightySuite
 
-    test = test_class(config=default_config,
+    test = test_class(config=config,
                       enable_debug=debug,
                       resource_manager=BaseResource._SHELL_CLIENT)
+
+    test.add_resources(kwargs)
 
     test.run(result_object)
 

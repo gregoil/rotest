@@ -185,7 +185,15 @@ class AbstractTest(unittest.TestCase):
             force_initialize (bool): whether the resources will be initialized
             even if the validation succeeds and skip_init is True.
         """
-        if len(resources_to_request) == 0:
+        new_requests = [resource_request
+                        for resource_request in resources_to_request
+                        if resource_request.name not in self.all_resources]
+
+        for request_name in set(resources_to_request) - set(new_requests):
+            self.logger.debug("Already has a resource named %r, "
+                              "skipping request", request_name)
+
+        if len(new_requests) == 0:
             # No resources to requested
             return
 
@@ -194,7 +202,7 @@ class AbstractTest(unittest.TestCase):
                                         skip_init=self.skip_init,
                                         use_previous=use_previous,
                                         base_work_dir=self.work_dir,
-                                        requests=resources_to_request,
+                                        requests=new_requests,
                                         enable_debug=self.enable_debug,
                                         force_initialize=force_initialize)
 
