@@ -93,6 +93,41 @@ def _run_block(block_class, config=default_config,
     return block
 
 
+def _run_suite(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
+    """Run a test of the given class, passing extra parameters as arguments.
+
+    Args:
+        test_class (type): class inheriting from AbstractTest.
+        config (dict): run configuration dict.
+        debug (bool): whether to run the test in debug mode or not.
+        kwargs (dict): resources to use for the test.
+    """
+    test = test_class(config=config,
+                     enable_debug=debug,
+                     resource_manager=BaseResource._SHELL_CLIENT)
+
+    test.add_resources(kwargs)
+    test.run(result_object)
+    return test
+
+
+def _run_case(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
+    """Run a test of the given class, passing extra parameters as arguments.
+
+    Args:
+        test_class (type): class inheriting from AbstractTest.
+        config (dict): run configuration dict.
+        debug (bool): whether to run the test in debug mode or not.
+        kwargs (dict): resources to use for the test.
+    """
+    class AlmightySuite(TestSuite):
+        components = [test_class]
+
+    suite_instance = _run_suite(AlmightySuite, config, debug, **kwargs)
+
+    return next(iter(suite_instance))
+
+
 def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
     """Run a test of the given class, passing extra parameters as arguments.
 
@@ -105,27 +140,12 @@ def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
             or resources to use for the test.
     """
     if issubclass(test_class, AbstractFlowComponent):
-        return _run_block(test_class, config=config, debug=debug, **kwargs)
+        return _run_block(test_class, config, debug, **kwargs)
 
-    run_class = test_class
-    if not test_class.IS_COMPLEX:
-        class AlmightySuite(TestSuite):
-            components = [test_class]
+    if test_class.IS_COMPLEX:
+        return _run_suite(test_class, config, debug, **kwargs)
 
-        run_class = AlmightySuite
-
-    test = run_class(config=config,
-                     enable_debug=debug,
-                     resource_manager=BaseResource._SHELL_CLIENT)
-
-    test.add_resources(kwargs)
-
-    test.run(result_object)
-
-    if not test_class.IS_COMPLEX:
-        return next(iter(test))
-
-    return test
+    return _run_case(test_class, config, debug, **kwargs)
 
 
 def main():
