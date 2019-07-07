@@ -189,9 +189,10 @@ class AbstractTest(unittest.TestCase):
                         for resource_request in resources_to_request
                         if resource_request.name not in self.all_resources]
 
-        for request_name in set(resources_to_request) - set(new_requests):
-            self.logger.debug("Already has a resource named %r, "
-                              "skipping request", request_name)
+        for resource_request in resources_to_request:
+            if resource_request not in new_requests:
+                self.logger.debug("Already has a resource named %r, "
+                                  "skipping request", resource_request)
 
         if len(new_requests) == 0:
             # No resources to requested

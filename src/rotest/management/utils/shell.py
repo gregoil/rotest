@@ -7,8 +7,8 @@ import sys
 import django
 import IPython
 from attrdict import AttrDict
-from future.builtins import object
 from rotest.core.suite import TestSuite
+from future.builtins import object, next
 from rotest.core.result.result import Result
 from rotest.common.config import SHELL_STARTUP_COMMANDS
 from rotest.management.base_resource import BaseResource
@@ -17,19 +17,15 @@ from rotest.management.client.manager import ClientResourceManager
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
 from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 
-
 # Mock tests result object for running blocks
 result_object = Result(stream=None, descriptions=None,
                        outputs=[], main_test=None)
 
-
 # Mock tests configuration for running blocks
 default_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))
 
-
 # Container for data shared between blocks
 shared_data = {}
-
 
 ENABLE_DEBUG = False
 IMPORT_BLOCK_UTILS = \
@@ -93,6 +89,7 @@ def _run_block(block_class, config=default_config,
     parent.work_dir = block.work_dir
     block.validate_inputs()
     block.run(result_object)
+    return block
 
 
 def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
@@ -109,19 +106,25 @@ def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
     if issubclass(test_class, AbstractFlowComponent):
         return _run_block(test_class, config=config, debug=debug, **kwargs)
 
+    run_class = test_class
     if not test_class.IS_COMPLEX:
         class AlmightySuite(TestSuite):
             components = [test_class]
 
-        test_class = AlmightySuite
+        run_class = AlmightySuite
 
-    test = test_class(config=config,
-                      enable_debug=debug,
-                      resource_manager=BaseResource._SHELL_CLIENT)
+    test = run_class(config=config,
+                     enable_debug=debug,
+                     resource_manager=BaseResource._SHELL_CLIENT)
 
     test.add_resources(kwargs)
 
     test.run(result_object)
+
+    if not test_class.IS_COMPLEX:
+        return next(iter(test))
+
+    return test
 
 
 def main():
