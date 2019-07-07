@@ -3,15 +3,13 @@
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
 from __future__ import absolute_import
 
-from future.utils import iteritems
-
+from rotest.core import request
 from rotest.management.utils.shell import run_test
 from rotest.management.models.ut_resources import DemoResource
 from rotest.management.models.ut_models import DemoResourceData
-from rotest.core import request, TestSuite
 
-from tests.core.utils import BasicRotestUnitTest, MockCase, MockBlock, MockFlow, \
-    MockTestSuite
+from tests.core.utils import (BasicRotestUnitTest, MockCase, MockBlock,
+                              MockFlow, MockTestSuite)
 
 RESOURCE_NAME = 'available_resource1'
 
