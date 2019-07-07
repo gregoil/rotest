@@ -31,5 +31,4 @@ class SessionData(object):
         self.all_tests = {}
         self.run_data = None
         self.main_test = None
-        self.timeout = None
         self.resources = []
