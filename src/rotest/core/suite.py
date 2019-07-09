@@ -143,6 +143,16 @@ class TestSuite(unittest.TestSuite):
 
         core_log.debug("Initialized %r test-suite successfully", self.data)
 
+    def add_resources(self, resources):
+        """Add the resources to the child tests.
+
+        Args:
+            resources (dict): dictionary of attributes name to resources
+                instance.
+        """
+        for test in self:
+            test.add_resources(resources)
+
     @classmethod
     def get_name(cls):
         """Return test name as used in Django DB.

@@ -7,7 +7,8 @@ import sys
 import django
 import IPython
 from attrdict import AttrDict
-from future.builtins import object
+from future.builtins import object, next
+
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
 from rotest.common.config import SHELL_STARTUP_COMMANDS
@@ -17,19 +18,15 @@ from rotest.management.client.manager import ClientResourceManager
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
 from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 
-
 # Mock tests result object for running blocks
 result_object = Result(stream=None, descriptions=None,
                        outputs=[], main_test=None)
 
-
 # Mock tests configuration for running blocks
 default_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))
 
-
 # Container for data shared between blocks
 shared_data = {}
-
 
 ENABLE_DEBUG = False
 IMPORT_BLOCK_UTILS = \
@@ -67,11 +64,13 @@ class ShellMockFlow(object):
                                     for name in request_names})
 
 
-def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
+def _run_block(block_class, config=default_config,
+               debug=ENABLE_DEBUG, **kwargs):
     """Run a block of the given class, passing extra parameters as arguments.
 
     Args:
         block_class (type): class inheriting from AbstractFlowComponent.
+        config (dict): run configuration dict.
         debug (bool): whether to run the test in debug mode or not.
         kwargs (dict): additional arguments that will be passed as parameters
             to the block (overriding shared data).
@@ -82,7 +81,7 @@ def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
     parent = ShellMockFlow()
     block_class = block_class.params(**shared_kwargs)
 
-    block = block_class(config=default_config,
+    block = block_class(config=config,
                         parent=parent,
                         enable_debug=debug,
                         resource_manager=BaseResource._SHELL_CLIENT,
@@ -91,31 +90,63 @@ def _run_block(block_class, debug=ENABLE_DEBUG, **kwargs):
     parent.work_dir = block.work_dir
     block.validate_inputs()
     block.run(result_object)
+    return block
 
 
-def run_test(test_class, debug=ENABLE_DEBUG, **kwargs):
+def _run_suite(test_class, config=default_config, debug=ENABLE_DEBUG,
+               **kwargs):
     """Run a test of the given class, passing extra parameters as arguments.
 
     Args:
         test_class (type): class inheriting from AbstractTest.
+        config (dict): run configuration dict.
+        debug (bool): whether to run the test in debug mode or not.
+        kwargs (dict): resources to use for the test.
+    """
+    test = test_class(config=config,
+                     enable_debug=debug,
+                     resource_manager=BaseResource._SHELL_CLIENT)
+
+    test.add_resources(kwargs)
+    test.run(result_object)
+    return test
+
+
+def _run_case(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
+    """Run a test of the given class, passing extra parameters as arguments.
+
+    Args:
+        test_class (type): class inheriting from AbstractTest.
+        config (dict): run configuration dict.
+        debug (bool): whether to run the test in debug mode or not.
+        kwargs (dict): resources to use for the test.
+    """
+    class AlmightySuite(TestSuite):
+        components = [test_class]
+
+    suite_instance = _run_suite(AlmightySuite, config, debug, **kwargs)
+
+    return next(iter(suite_instance))
+
+
+def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
+    """Run a test of the given class, passing extra parameters as arguments.
+
+    Args:
+        test_class (type): class inheriting from AbstractTest.
+        config (dict): run configuration dict.
         debug (bool): whether to run the test in debug mode or not.
         kwargs (dict): additional arguments that will be passed as parameters
-            if the test is a block or flow (overriding shared data).
+            if the test is a block or flow (overriding shared data),
+            or resources to use for the test.
     """
     if issubclass(test_class, AbstractFlowComponent):
-        return _run_block(test_class, debug=debug, **kwargs)
+        return _run_block(test_class, config, debug, **kwargs)
 
-    if not test_class.IS_COMPLEX:
-        class AlmightySuite(TestSuite):
-            components = [test_class]
+    if test_class.IS_COMPLEX:
+        return _run_suite(test_class, config, debug, **kwargs)
 
-        test_class = AlmightySuite
-
-    test = test_class(config=default_config,
-                      enable_debug=debug,
-                      resource_manager=BaseResource._SHELL_CLIENT)
-
-    test.run(result_object)
+    return _run_case(test_class, config, debug, **kwargs)
 
 
 def main():
