@@ -19,6 +19,7 @@ from rotest.core.result.result import Result
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.core.abstract_test import AbstractTest
 from rotest.management.common.errors import ServerError
+from rotest.management.base_resource import BaseResource
 from rotest.core.models.case_data import TestOutcome, CaseData
 
 
@@ -423,7 +424,11 @@ class AbstractFlowComponent(AbstractTest):
                 if override_previous or (name not in self.__dict__ and
                                          name not in self._pipes):
 
-                    setattr(self, name, value)
+                    if isinstance(value, BaseResource):
+                        self.add_resources({name: value})
+
+                    else:
+                        setattr(self, name, value)
 
     def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.
