@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import os
 
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'rotest.core',
     'rotest.management',
     'channels',
@@ -17,7 +17,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin'
-)
+]
 
 DATABASES = {
     'default': {
@@ -36,12 +36,12 @@ DATABASES = {
 }
 
 # Defining middleware classes
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware')
+    'django.contrib.auth.middleware.AuthenticationMiddleware']
 
 # Set channel layers
 CHANNEL_LAYERS = {

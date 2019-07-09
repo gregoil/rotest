@@ -47,13 +47,13 @@ You'll see a new directory named :file:`resources_app`, in the following structu
     └── test_math.py
 
 Don't forget to add the new application as well as ``rotest`` to the
-``INSTALLED_APPS`` configuration in the :file:`rotest_demo/settings.py` file
+``INSTALLED_APPS`` configuration in the :file:`rotest_demo/settings.py` file:
 
 .. code-block:: python
 
     from rotest.settings import *
 
-    INSTALLED_APPS += ['rotest_demo']  # Adding your apps to the settings
+    INSTALLED_APPS += ['resources_app']  # Adding your apps to the settings
 
     # You can override other definitions as well (optional),
     # like DATABASES, MIDDLEWARE_CLASSES, etc.
