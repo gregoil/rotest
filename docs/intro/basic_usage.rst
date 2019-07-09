@@ -117,6 +117,10 @@ Pay attention to the following:
   that defines all relevant Django configuration (DB configuration, installed
   Django applications, and so on).
 
+Note that in the next section (:ref:`adding_resources`) you'll change the
+`settings.py` file to enable using Rotest infrastructure over Django.
+
+
 Adding Tests
 ============
 

@@ -3,7 +3,6 @@ from .start_test import StartTest
 from .should_skip import ShouldSkip
 from .start_test_run import StartTestRun
 from .stop_composite import StopComposite
-from .set_timeout import SetSessionTimeout
 from .add_test_result import AddTestResult
 from .update_run_data import UpdateRunData
 from .start_composite import StartComposite

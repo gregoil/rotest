@@ -25,14 +25,14 @@ from the containing resource's data)
 
     class SubCalculatorData(ResourceData):
         class Meta:
-            app_label = "resources"
+            app_label = "resources_app"
 
         process_id = models.IntegerField()
 
 
     class CalculatorData(ResourceData):
         class Meta:
-            app_label = "resources"
+            app_label = "resources_app"
 
         ip_address = models.IPAddressField()
         sub_process = models.ForeignKey(SubCalculatorData)
@@ -66,9 +66,9 @@ Let's continue to modify the Calculator resource, where we want to add
 sub-resources.
 
 For now, let's assume we already wrote the sub-resource under
-:file:`resources/sub_process.py`.
+:file:`resources_app/sub_process.py`.
 
-Now, edit the file :file:`resources/resources.py`:
+Now, edit the file :file:`resources_app/resources.py`:
 
 .. code-block:: python
 
@@ -135,7 +135,7 @@ Note the following:
   the declaration line name it `sub_process`).
 
 
-Lastly, let's show the sub-resource under :file:`resources/sub_process.py`:
+Lastly, let's show the sub-resource under :file:`resources_app/sub_process.py`:
 
 .. code-block:: python
 

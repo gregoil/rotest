@@ -4,9 +4,10 @@ from __future__ import absolute_import
 import os
 
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'rotest.core',
     'rotest.management',
+    'channels',
 
     # Administrator Related Applications
     'django.contrib.auth',
@@ -16,7 +17,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin'
-)
+]
 
 DATABASES = {
     'default': {
@@ -35,13 +36,35 @@ DATABASES = {
 }
 
 # Defining middleware classes
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware')
+    'django.contrib.auth.middleware.AuthenticationMiddleware']
 
+# Set channel layers
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgiref.inmemory.ChannelLayer',
+        'ROUTING': 'rotest.common.django_utils.routing.channel_routing',
+    }
+}
+ASGI_APPLICATION = "rotest.management"
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 # Set the time zone
 TIME_ZONE = 'America/Chicago'

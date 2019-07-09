@@ -25,6 +25,8 @@ class TestResultManagement(BaseResourceManagementTest):
     """Result management tests."""
     fixtures = ['resource_ut.json']
 
+    @mock.patch("rotest.management.client.client.PingingWebsocket",
+                new=mock.MagicMock, create=True)
     @mock.patch("rotest.management.client.client.Requester",
                 new=requester.TestRequester, create=True)
     def setUp(self):

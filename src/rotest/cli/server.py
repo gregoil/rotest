@@ -6,7 +6,6 @@ from django.core.management import call_command
 
 from rotest.common import core_log
 from rotest.common.config import DJANGO_MANAGER_PORT
-from rotest.api.test_control.session_cleaner import run_session_cleaner
 
 
 def start_server():
@@ -19,5 +18,4 @@ def start_server():
         extension_action = entry_point.load()
         extension_action()
 
-    run_session_cleaner()
     call_command("runserver", "0.0.0.0:{}".format(DJANGO_MANAGER_PORT))

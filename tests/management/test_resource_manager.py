@@ -57,6 +57,8 @@ class TestResourceManagement(BaseResourceManagementTest):
     LOCK_TIMEOUT = 4
     CLEANUP_TIME = 1.5
 
+    @mock.patch("rotest.management.client.client.PingingWebsocket",
+                new=mock.MagicMock, create=True)
     @mock.patch("rotest.management.client.client.Requester",
                 new=requester.TestRequester, create=True)
     def setUp(self):
@@ -368,6 +370,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                                 "resources took %.2f seconds, but should take "
                                 "at least %d" % (duration, self.LOCK_TIMEOUT))
 
+    @mock.patch("rotest.management.client.client.PingingWebsocket",
+                new=mock.MagicMock, create=True)
     @mock.patch("rotest.management.client.client.Requester",
                 new=requester.TestRequester, create=True)
     def _test_wait_for_unavailable_resource(self, timeout, release_time):
@@ -1574,8 +1578,9 @@ class TestResourceManagementNotOwnable(BaseResourceManagementTest):
     OTHER_GROUP_RESOURCE = 'other_group_resource'
 
     LOCK_TIMEOUT = 4
-    CLEANUP_TIME = 1.5
 
+    @mock.patch("rotest.management.client.client.PingingWebsocket",
+                new=mock.MagicMock, create=True)
     @mock.patch("rotest.management.client.client.Requester",
                 new=requester.TestRequester, create=True)
     def setUp(self):

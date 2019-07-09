@@ -82,7 +82,7 @@ following content:
 
     from rotest.core import TestCase
 
-    from resources.resources import Calculator
+    from resources_app.resources import Calculator
 
 
     class AddTest(TestCase):
@@ -171,7 +171,7 @@ Test result events you can use in Rotest:
 
       from rotest.core import TestCase
 
-      from resources.resources import Calculator
+      from resources_app.resources import Calculator
 
 
       class AddTest(TestCase):
@@ -199,7 +199,7 @@ Test result events you can use in Rotest:
 
       from rotest.core import TestCase
 
-      from resources.resources import Calculator
+      from resources_app.resources import Calculator
 
 
       class AddTest(TestCase):

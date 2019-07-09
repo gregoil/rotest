@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 import unittest
 
+import mock
 import django
 from django.db import connections
 from django.core.exceptions import ObjectDoesNotExist
@@ -181,6 +182,11 @@ class BasicRotestUnitTest(TransactionTestCase):
 
 class MockResourceClient(ClientResourceManager):
     """Mock resource client."""
+    def __init__(self, *args, **kwargs):
+        super(MockResourceClient, self).__init__(*args, **kwargs)
+        self.websocket = mock.MagicMock()
+        self.websocket.__reduce__ = lambda _: (mock.MagicMock, ())
+
     def disconnect(self, *args, **kwargs):
         """Suppressed disconnect method."""
         self._release_locked_resources()

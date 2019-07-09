@@ -19,8 +19,7 @@ from rotest.management.common.utils import (TEST_ID_KEY,
                                             TEST_NAME_KEY,
                                             TEST_SUBTESTS_KEY,
                                             TEST_CLASS_CODE_KEY)
-from rotest.api.common.models import (SetSessionTimeoutModel,
-                                      StartTestRunParamsModel,
+from rotest.api.common.models import (StartTestRunParamsModel,
                                       UpdateRunDataParamsModel,
                                       AddTestResultParamsModel,
                                       TestControlOperationParamsModel,
@@ -29,7 +28,6 @@ from rotest.api.test_control import (StartTestRun,
                                      UpdateRunData,
                                      AddTestResult,
                                      StartTest,
-                                     SetSessionTimeout,
                                      ShouldSkip,
                                      StopTest,
                                      UpdateResources,
@@ -152,23 +150,6 @@ class ClientResultManager(AbstractClient):
             "token": self.token
         })
         response = self.requester.request(StartTest,
-                                          data=request_data,
-                                          method="post")
-
-        if isinstance(response, FailureResponseModel):
-            raise RuntimeError(response.details)
-
-    def set_session_timeout(self, timeout):
-        """Set a timeout to the session in the server.
-
-        Args:
-            timeout (number): timeout value to set.
-        """
-        request_data = SetSessionTimeoutModel({
-            "timeout": timeout,
-            "token": self.token
-        })
-        response = self.requester.request(SetSessionTimeout,
                                           data=request_data,
                                           method="post")
 

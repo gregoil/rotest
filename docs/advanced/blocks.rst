@@ -136,8 +136,7 @@ Common features (for both flows and blocks)
 
    .. code-block:: python
 
-       release_resources(
-           <dict of the dynamically locked resources, name: instance>)
+       release_resources(<list of the dynamically locked resource names>)
 
    Resources can be locked locally and globally in regarding to the containing
    flow, i.e. by locking the resources using the parent's method:

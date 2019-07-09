@@ -28,8 +28,7 @@ class SessionData(object):
         resources (list): resources locked in the session.
     """
     def __init__(self):
-        self.all_tests = None
+        self.all_tests = {}
         self.run_data = None
         self.main_test = None
-        self.timeout = None
         self.resources = []

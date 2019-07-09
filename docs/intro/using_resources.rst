@@ -1,3 +1,5 @@
+.. _adding_resources:
+
 ================
 Adding Resources
 ================
@@ -18,15 +20,15 @@ In the root of your project, create a new Django application:
 
 .. code-block:: console
 
-    $ django-admin startapp resources
+    $ django-admin startapp resources_app
 
-You'll see a new directory named :file:`resources`, in the following structure:
+You'll see a new directory named :file:`resources_app`, in the following structure:
 
 .. code-block:: console
 
     .
     ├── manage.py
-    ├── resources
+    ├── resources_app
     │   ├── admin.py
     │   ├── __init__.py
     │   ├── migrations
@@ -49,19 +51,15 @@ Don't forget to add the new application as well as ``rotest`` to the
 
 .. code-block:: python
 
-    ...
+    from rotest.settings import *
 
-    INSTALLED_APPS = (
-        'rotest.core',
-        'rotest.management',
-        'resources',
-        'django.contrib.admin',
-        'django.contrib.auth',
-        ...
-    )
+    INSTALLED_APPS += ['resources_app']  # Adding your apps to the settings
+
+    # You can override other definitions as well (optional),
+    # like DATABASES, MIDDLEWARE_CLASSES, etc.
 
 We're going to write a simple resource of a calculator. Edit the
-:file:`resources/models.py` file to have the following content:
+:file:`resources_app/models.py` file to have the following content:
 
 .. code-block:: python
 
@@ -72,7 +70,7 @@ We're going to write a simple resource of a calculator. Edit the
     class CalculatorData(ResourceData):
         OWNABLE = True
         class Meta:
-            app_label = "resources"
+            app_label = "resources_app"
 
         ip_address = models.IPAddressField()
 
@@ -81,7 +79,7 @@ resource. It defines any characteristics it has, as oppose to behaviour it may
 have. The 'OWNABLE' field (defaults to True) defines whether users who request
 resource of this class would also 'own' it, making it unavailable to others.
 It's also recommended adding it to the Django admin panel. Edit the
-content of the :file:`resources/admin.py` file:
+content of the :file:`resources_app/admin.py` file:
 
 .. code-block:: python
 
@@ -92,7 +90,7 @@ content of the :file:`resources/admin.py` file:
     register_resource_to_admin(models.CalculatorData, attr_list=['ip_address'])
 
 Let's continue to write the Calculator resource, which exposes a simple
-calculation action. Edit the file :file:`resources/resources.py`:
+calculation action. Edit the file :file:`resources_app/resources.py`:
 
 .. code-block:: python
 
@@ -180,12 +178,12 @@ First, let's initialize the database with the following Django commands:
 .. code-block:: console
 
     $ python manage.py makemigrations
-    Migrations for 'resources':
+    Migrations for 'resources_app':
       0001_initial.py:
         - Create model CalculatorData
     $ python manage.py migrate
     Operations to perform:
-      Apply all migrations: core, management, sessions, admin, auth, contenttypes, resources
+      Apply all migrations: core, management, sessions, admin, auth, contenttypes, resources_app
     Running migrations:
       Applying contenttypes.0001_initial... OK
       Applying auth.0001_initial... OK
@@ -205,7 +203,7 @@ First, let's initialize the database with the following Django commands:
       Applying core.0001_initial... OK
       Applying core.0002_auto_20170308_1248... OK
       Applying management.0013_auto_20170308_1248... OK
-      Applying resources.0001_initial... OK
+      Applying resources_app.0001_initial... OK
       Applying sessions.0001_initial... OK
 
 The first command creates a migrations file, that orders changing the database
