@@ -4,8 +4,7 @@ from __future__ import absolute_import
 import sys
 
 import django
-if not hasattr(django, 'apps'):  # noqa
-    django.setup()
+django.setup()  # noqa
 
 from rotest.cli.client import main as run
 from rotest.cli.server import start_server
