@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 
-__version__ = "7.8.0"
+__version__ = "7.8.1"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -49,7 +49,6 @@ setup(
         'swaggapi>=0.6.7',
         'cached_property',
         'channels>=1,<2',
-        'websocket>=0.2',
         'websocket-client>=0.56',
         'pywin32<224; sys.platform == "win32"'
     ],
