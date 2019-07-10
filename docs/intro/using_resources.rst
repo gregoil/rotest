@@ -51,12 +51,33 @@ Don't forget to add the new application as well as ``rotest`` to the
 
 .. code-block:: python
 
-    from rotest.settings import *
+    DEBUG = True
+    INSTALLED_APPS += [
+        # Rotest related applications
+        'rotest.core',
+        'rotest.management',
+        'channels',
 
-    INSTALLED_APPS += ['resources_app']  # Adding your apps to the settings
+        # Administrator related applications
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.sites',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'django.contrib.admin',
 
-    # You can override other definitions as well (optional),
-    # like DATABASES, MIDDLEWARE_CLASSES, etc.
+        # My applications
+        'resources_app']
+
+    # You can override other definitions (DATABASES, MIDDLEWARE_CLASSES, etc.)
+    # or just import them from rotest to use the default.
+    from rotest.common.django_utils.settings import (DATABASES,
+                                                     MIDDLEWARE_CLASSES,
+                                                     CHANNEL_LAYERS,
+                                                     ASGI_APPLICATION,
+                                                     TEMPLATES,
+                                                     STATIC_URL)
 
 We're going to write a simple resource of a calculator. Edit the
 :file:`resources_app/models.py` file to have the following content:
