@@ -57,6 +57,7 @@ if not hasattr(django, 'apps'):  # noqa
     django.setup()
 
 from rotest.common import core_log
+from rotest.core.suite import TestSuite
 from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.result.result import get_result_handlers
@@ -240,7 +241,6 @@ def main(*tests):
         print("No test was found")
         sys.exit(1)
 
-    from rotest.core.suite import TestSuite
     class AlmightySuite(TestSuite):
         components = tests
 

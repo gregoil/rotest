@@ -7,7 +7,6 @@ import colorama
 
 from .common import config
 from .cli.client import main
-from .common.django_utils import settings
 
 
 # Enable color printing on screen.
