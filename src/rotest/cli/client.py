@@ -53,7 +53,8 @@ import django
 import pkg_resources
 from attrdict import AttrDict
 
-django.setup()  # noqa
+if not hasattr(django, 'apps'):  # noqa
+    django.setup()
 
 from rotest.core.suite import TestSuite
 from rotest.common import core_log

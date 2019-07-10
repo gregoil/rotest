@@ -8,7 +8,8 @@ import django
 import psutil
 from six.moves import queue
 
-django.setup()  # noqa
+if not hasattr(django, 'apps'):  # noqa
+    django.setup()
 
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.worker.runner import WorkerRunner
