@@ -302,7 +302,7 @@ class AbstractFlowComponent(AbstractTest):
                     self.result.setupFinished(self)
 
             except Exception:
-                self.release_resources(self.locked_resources, dirty=True)
+                self.release_resources(dirty=True)
                 raise
 
         return setup_method_wrapper

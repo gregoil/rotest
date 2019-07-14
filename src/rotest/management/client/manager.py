@@ -12,7 +12,6 @@ import time
 
 import re
 from attrdict import AttrDict
-from future.utils import iteritems
 from future.builtins import zip, str
 
 from rotest.common import core_log
@@ -69,8 +68,7 @@ class ClientResourceManager(AbstractClient):
             self.logger.debug("Releasing locked resources %r",
                               self.locked_resources)
 
-            self.release_resources({res.name: res for
-                                    res in self.locked_resources},
+            self.release_resources(self.locked_resources,
                                    force_release=True)
 
     def disconnect(self):
@@ -352,8 +350,7 @@ class ClientResourceManager(AbstractClient):
             self.logger.debug("Releasing unused locked resources %r",
                               self.unused_resources)
 
-            self.release_resources({res.name: res for
-                                    res in self.unused_resources},
+            self.release_resources(self.unused_resources,
                                    force_release=True)
 
         return retrieved_resources
@@ -450,7 +447,7 @@ class ClientResourceManager(AbstractClient):
             self._cleanup_resources(resources)
 
         finally:
-            self._release_resources(resources=resources)
+            self._release_resources(resources)
 
     def query_resources(self, descriptor):
         """Query the content of the server's DB.
