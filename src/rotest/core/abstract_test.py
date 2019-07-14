@@ -248,7 +248,7 @@ class AbstractTest(unittest.TestCase):
             self.logger.warn("Not releasing (since they weren't locked by "
                              "the component): %r", not_releasing)
 
-        self.resource_manager.release_resources(resources_dict,
+        self.resource_manager.release_resources(list(resources_dict.values()),
                                                 dirty=dirty,
                                                 force_release=force_release)
 
