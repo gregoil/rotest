@@ -1059,7 +1059,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource1 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
         db_res = self.get_resource(self.FREE1_NAME)[0]
@@ -1076,7 +1076,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource2 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource2])
         # Check that it's the same resource that was saved before
@@ -1094,7 +1094,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource3 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the new resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource3])
         # Check that it's not the same resource from before
@@ -1184,7 +1184,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources = self.client.request_resources(requests, use_previous=True)
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
-        self.client.release_resources(resources, dirty=True)
+        self.client.release_resources(list(resources.values()), dirty=True)
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [])
         db_res = self.get_resource(self.FREE1_NAME)[0]
@@ -1210,7 +1210,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource1 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
         db_res = self.get_resource(self.FREE1_NAME)[0]
@@ -1225,7 +1225,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource2 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the resource isn't saved in the client
         self.assertEqual(self.client.locked_resources, [])
         # Check that it's not the same resource that was saved before
@@ -1250,7 +1250,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource1 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the resource is saved in the client
         self.assertEqual(self.client.locked_resources, [resource1])
         self.assertEqual(resource1.name, resource_name1)
@@ -1260,7 +1260,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource2 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource2])
         # Check that it's the same resource that was saved before
@@ -1274,7 +1274,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         # Check that it locked 1 resource
         self.assertEqual(len(resources), 1)
         resource3 = list(resources.values())[0]
-        self.client.release_resources(resources)
+        self.client.release_resources(list(resources.values()))
         # Check that the new resource is the only saved resource in the client
         self.assertEqual(self.client.locked_resources, [resource3])
         # Check that it's not the same resource from before
@@ -1403,7 +1403,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.COMPLEX_NAME, resources_num))
 
-        self.client.release_resources(resources, dirty=True)
+        self.client.release_resources(list(resources.values()), dirty=True)
 
     def test_lock_alternative_complex_resource_with_service(self):
         """Lock complex resource with the default 'create_sub_resources'.
@@ -1490,7 +1490,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          "resource with name %r in DB, found %d"
                          % (self.FREE1_NAME, resources_num))
 
-        self.client.release_resources(resources, dirty=True)
+        self.client.release_resources(list(resources.values()), dirty=True)
 
     def test_lock_alternative_complex_service(self):
         """Lock complex service with the default 'create_sub_resources'.
@@ -1559,7 +1559,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                                   % (DemoResource.__name__,
                                      sub_resource.__class__.__name__))
 
-        self.client.release_resources(resources, dirty=True)
+        self.client.release_resources(list(resources.values()), dirty=True)
 
 
 class TestResourceManagementNotOwnable(BaseResourceManagementTest):

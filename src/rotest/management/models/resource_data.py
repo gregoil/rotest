@@ -143,7 +143,10 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
         return leaf_available and self._is_sub_resources_available(user_name)
 
     def __unicode__(self):
-        """Django version of __str__"""
+        """Django's version of __str__ in python2."""
+        return self.name
+
+    def __str__(self):
         return self.name
 
     @property

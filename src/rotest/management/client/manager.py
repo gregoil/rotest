@@ -12,7 +12,6 @@ import time
 
 import re
 from attrdict import AttrDict
-from future.utils import iteritems
 from future.builtins import zip, str
 
 from rotest.common import core_log
@@ -69,8 +68,7 @@ class ClientResourceManager(AbstractClient):
             self.logger.debug("Releasing locked resources %r",
                               self.locked_resources)
 
-            self.release_resources({res.name: res for
-                                    res in self.locked_resources},
+            self.release_resources(self.locked_resources,
                                    force_release=True)
 
     def disconnect(self):
@@ -128,7 +126,7 @@ class ClientResourceManager(AbstractClient):
         resource then releases them.
 
         Args:
-            resources (AttrDict): dictionary of resources {name: BaseResource}.
+            resources (list): resources to cleanup.
 
         Raises:
             RuntimeError. releasing resources failed.
@@ -137,17 +135,18 @@ class ClientResourceManager(AbstractClient):
 
         self.logger.debug("Cleaning up the locked resources")
 
-        for name, resource in iteritems(resources):
+        for resource in resources:
             try:
-                resource.logger.debug("Finalizing resource %r", name)
+                resource.logger.debug("Finalizing resource %r", resource.name)
                 resource.finalize()
-                resource.logger.debug("Resource %r Finalized", name)
+                resource.logger.debug("Resource %r Finalized", resource.name)
 
             except Exception as err:
                 # A finalize failure should not stop other resources from
                 # finalizing and from the release process to complete
-                exceptions.append("%s: %s" % (str(err), name))
-                self.logger.exception("Resource %r failed to finalize", name)
+                exceptions.append("%s: %s" % (str(err), resource.name))
+                self.logger.exception("Resource %r failed to finalize",
+                                      resource.name)
 
         if len(exceptions) > 0:
             raise RuntimeError("Releasing resources has failed. "
@@ -351,8 +350,7 @@ class ClientResourceManager(AbstractClient):
             self.logger.debug("Releasing unused locked resources %r",
                               self.unused_resources)
 
-            self.release_resources({res.name: res for
-                                    res in self.unused_resources},
+            self.release_resources(self.unused_resources,
                                    force_release=True)
 
         return retrieved_resources
@@ -421,7 +419,7 @@ class ClientResourceManager(AbstractClient):
             return initialized_resources
 
         except Exception:
-            self._cleanup_resources(initialized_resources)
+            self._cleanup_resources(initialized_resources.values())
             self._release_resources(locked_resources)
             raise
 
@@ -432,7 +430,7 @@ class ClientResourceManager(AbstractClient):
         resource then releases them.
 
         Args:
-            resources (AttrDict): resources AttrDict {name: BaseResource}.
+            resources (list): resources to release.
             dirty (bool): the resources requested dirty state.
             force_release (bool): release even if the client is supposed
                 to keep the resources.
@@ -442,14 +440,14 @@ class ClientResourceManager(AbstractClient):
         """
         if self.keep_resources and not force_release and not dirty:
             self.logger.debug("Refraining from releasing the resources yet")
-            self.unused_resources.extend(list(resources.values()))
+            self.unused_resources.extend(resources)
             return
 
         try:
             self._cleanup_resources(resources)
 
         finally:
-            self._release_resources(resources=list(resources.values()))
+            self._release_resources(resources)
 
     def query_resources(self, descriptor):
         """Query the content of the server's DB.

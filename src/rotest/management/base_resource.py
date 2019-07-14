@@ -449,6 +449,5 @@ class BaseResource(object):
     def release(self):
         """Release the resource, assuming it was locked with a shell client."""
         if BaseResource._SHELL_CLIENT is not None:
-            BaseResource._SHELL_CLIENT.release_resources(
-                {BaseResource._SHELL_REQUEST_NAME: self},
-                force_release=True)
+            BaseResource._SHELL_CLIENT.release_resources([self],
+                                                         force_release=True)
