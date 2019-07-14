@@ -419,7 +419,7 @@ class ClientResourceManager(AbstractClient):
             return initialized_resources
 
         except Exception:
-            self._cleanup_resources(initialized_resources)
+            self._cleanup_resources(initialized_resources.values())
             self._release_resources(locked_resources)
             raise
 
