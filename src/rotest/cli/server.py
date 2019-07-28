@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
-import pkg_resources
+import sys
+
 import django
+import pkg_resources
 from django.core.management import call_command
 
 from rotest.common import core_log
@@ -18,4 +20,8 @@ def start_server():
         extension_action = entry_point.load()
         extension_action()
 
-    call_command("runserver", "0.0.0.0:{}".format(DJANGO_MANAGER_PORT))
+    server_args = "0.0.0.0:{}".format(DJANGO_MANAGER_PORT)
+    if sys.platform == "win32":
+        sys.argv = ["-m", "django", "runserver", server_args]
+
+    call_command("runserver", server_args)
