@@ -1,5 +1,5 @@
 """Rotest shell module, which enables using resources and running blocks."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,global-statement
 from __future__ import print_function, absolute_import
 
 import sys
