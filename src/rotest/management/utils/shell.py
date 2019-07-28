@@ -147,13 +147,17 @@ def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
     return _run_case(test_class, config, debug, **kwargs)
 
 
-def main():
-    django.setup()
-
+def create_result():
+    """Create the result object for running tests in the shell."""
     print("Creating output handlers:", SHELL_OUTPUT_HANDLERS)
     global result_object
     result_object = Result(stream=sys.stdout, descriptions=None,
                            outputs=SHELL_OUTPUT_HANDLERS, main_test=None)
+
+
+def main():
+    django.setup()
+    create_result()
 
     print("Creating client")
     BaseResource._SHELL_CLIENT = ClientResourceManager()
