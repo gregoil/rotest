@@ -15,7 +15,6 @@ from rotest.management.base_resource import BaseResource
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.management.client.manager import ClientResourceManager
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
-from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
 from rotest.common.config import SHELL_STARTUP_COMMANDS, SHELL_OUTPUT_HANDLERS
 
 # Mock tests result object for running blocks
