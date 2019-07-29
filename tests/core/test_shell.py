@@ -4,9 +4,9 @@
 from __future__ import absolute_import
 
 from rotest.core import request
-from rotest.management.utils.shell import run_test
 from rotest.management.models.ut_resources import DemoResource
 from rotest.management.models.ut_models import DemoResourceData
+from rotest.management.utils.shell import run_test, create_result
 
 from tests.core.utils import (BasicRotestUnitTest, MockCase, MockBlock,
                               MockFlow, MockTestSuite)
@@ -53,6 +53,9 @@ class TestShell(BasicRotestUnitTest):
     fixtures = ['resource_ut.json']
 
     DEMO_RESOURCE_NAME = 'test_resource'
+
+    def setUp(self):
+        create_result()
 
     def test_case_supplying_config(self):
         config = {'some': 'value'}

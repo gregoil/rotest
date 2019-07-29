@@ -1,5 +1,5 @@
 """Rotest shell module, which enables using resources and running blocks."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,global-statement
 from __future__ import print_function, absolute_import
 
 import sys
@@ -11,16 +11,14 @@ from future.builtins import object, next
 
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
-from rotest.common.config import SHELL_STARTUP_COMMANDS
 from rotest.management.base_resource import BaseResource
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.management.client.manager import ClientResourceManager
 from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
-from rotest.core.result.handlers.stream.log_handler import LogDebugHandler
+from rotest.common.config import SHELL_STARTUP_COMMANDS, SHELL_OUTPUT_HANDLERS
 
 # Mock tests result object for running blocks
-result_object = Result(stream=None, descriptions=None,
-                       outputs=[], main_test=None)
+result_object = None
 
 # Mock tests configuration for running blocks
 default_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))
@@ -149,12 +147,20 @@ def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
     return _run_case(test_class, config, debug, **kwargs)
 
 
+def create_result():
+    """Create the result object for running tests in the shell."""
+    print("Creating output handlers:", SHELL_OUTPUT_HANDLERS)
+    global result_object
+    result_object = Result(stream=sys.stdout, descriptions=None,
+                           outputs=SHELL_OUTPUT_HANDLERS, main_test=None)
+
+
 def main():
     django.setup()
+    create_result()
 
     print("Creating client")
     BaseResource._SHELL_CLIENT = ClientResourceManager()
-    LogDebugHandler(None, sys.stdout, None)  # Activate log to screen
 
     print("""Done! You can now lock resources and run tests, e.g.
     resource1 = ResourceClass.lock(skip_init=True, name='resource_name')

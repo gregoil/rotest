@@ -231,6 +231,9 @@ CONFIGURATION_SCHEMA = {
     "shell_startup_commands": Option(
         config_file_options=["shell_startup_commands"],
         default_value=[]),
+    "shell_output_handlers": Option(
+        config_file_options=["shell_output_handlers"],
+        default_value=["logdebug"]),
     "resource_request_timeout": Option(
         command_line_options=["--resource-request-timeout"],
         environment_variables=["ROTEST_RESOURCE_REQUEST_TIMEOUT",
@@ -275,6 +278,7 @@ RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
 DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
 SHELL_STARTUP_COMMANDS = CONFIGURATION.shell_startup_commands
+SHELL_OUTPUT_HANDLERS = CONFIGURATION.shell_output_handlers
 DISCOVERER_BLACKLIST = list(CONFIGURATION.discoverer_blacklist) + \
                        DEFAULT_DISCOVERY_BLACKLIST
 

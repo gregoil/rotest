@@ -3,13 +3,14 @@
 # pylint: disable=too-many-arguments,super-init-not-called
 from __future__ import absolute_import
 
+import os
 from termcolor import colored
 from future.builtins import object
 
 from rotest.common.constants import BOLD, RED, BLUE, CYAN, YELLOW
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 
-NEW_LINE = '\n'
+NEW_LINE = os.linesep
 
 
 class ColorStream(object):
