@@ -37,7 +37,7 @@ class ClientResourceManager(AbstractClient):
     Responsible for locking resources and preparing them for work,
     also for the resources cleanup procedure and release.
 
-    Preparation includes validating, reseting and initializing resources.
+    Preparation includes validating, resetting and initializing resources.
 
     Attributes:
         locked_resources (list): resources locked and initialized by the client
@@ -77,8 +77,8 @@ class ClientResourceManager(AbstractClient):
         Raises:
             RuntimeError: wasn't connected in the first place.
         """
+        self._release_locked_resources()
         if self.is_connected():
-            self._release_locked_resources()
             self.requester.request(CleanupUser, method="post",
                                    data=TokenModel({"token": self.token}))
             super(ClientResourceManager, self).disconnect()
@@ -137,9 +137,7 @@ class ClientResourceManager(AbstractClient):
 
         for resource in resources:
             try:
-                resource.logger.debug("Finalizing resource %r", resource.name)
                 resource.finalize()
-                resource.logger.debug("Resource %r Finalized", resource.name)
 
             except Exception as err:
                 # A finalize failure should not stop other resources from
@@ -257,6 +255,13 @@ class ClientResourceManager(AbstractClient):
         release_requests = [res.name
                             for res in resources if res.DATA_CLASS is not None]
 
+        for resource in resources[:]:
+            if resource in self.locked_resources:
+                self.locked_resources.remove(resource)
+
+            if resource in self.unused_resources:
+                self.unused_resources.remove(resource)
+
         if len(release_requests) > 0:
             request_data = ReleaseResourcesParamsModel({
                 "resources": release_requests,
@@ -268,13 +273,6 @@ class ClientResourceManager(AbstractClient):
 
             if isinstance(response, FailureResponseModel):
                 raise ResourceReleaseError(response.errors)
-
-        for resource in resources:
-            if resource in self.locked_resources:
-                self.locked_resources.remove(resource)
-
-            if resource in self.unused_resources:
-                self.unused_resources.remove(resource)
 
     def _find_matching_resources(self, descriptor, resources):
         """Get all similar resources that match the resource descriptor.

@@ -205,6 +205,12 @@ Define it in the following ways:
 
 * Use the default, which is ``[]``.
 
+Shell Output Handlers
+----------------------
+
+``rotest shell`` enables defining output handlers for components run in it,
+(see :ref:`output_handlers`). The default value is ``["logdebug"]``.
+
 Discoverer Blacklist
 --------------------
 

@@ -10,6 +10,14 @@ Third Party Output Handlers
   - Plugin to the amazing `Report Portal <http://reportportal.io/>`_ system,
     that enables viewing test results and investigating them.
 
+* `rotest-progress <https://github.com/gregoil/rotest-progress>`_
+
+  - Uses `tqdm` to give you two user-friendly output handlers (tested on Linuex only):
+    `full_progress` which shows the general progress of the run,
+    and `progress` which shows the progress of the current component and can
+    be used with other handlers that write to the screen, e.g. `logdebug`.
+
+
 How to Make Your Own Output Handler
 ===================================
 
