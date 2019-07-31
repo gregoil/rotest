@@ -255,6 +255,13 @@ class ClientResourceManager(AbstractClient):
         release_requests = [res.name
                             for res in resources if res.DATA_CLASS is not None]
 
+        for resource in resources[:]:
+            if resource in self.locked_resources:
+                self.locked_resources.remove(resource)
+
+            if resource in self.unused_resources:
+                self.unused_resources.remove(resource)
+
         if len(release_requests) > 0:
             request_data = ReleaseResourcesParamsModel({
                 "resources": release_requests,
@@ -266,13 +273,6 @@ class ClientResourceManager(AbstractClient):
 
             if isinstance(response, FailureResponseModel):
                 raise ResourceReleaseError(response.errors)
-
-        for resource in resources:
-            if resource in self.locked_resources:
-                self.locked_resources.remove(resource)
-
-            if resource in self.unused_resources:
-                self.unused_resources.remove(resource)
 
     def _find_matching_resources(self, descriptor, resources):
         """Get all similar resources that match the resource descriptor.
