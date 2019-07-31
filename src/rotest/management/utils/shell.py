@@ -148,11 +148,13 @@ def run_test(test_class, config=default_config, debug=ENABLE_DEBUG, **kwargs):
 
 
 def create_result():
-    """Create the result object for running tests in the shell."""
-    print("Creating output handlers:", SHELL_OUTPUT_HANDLERS)
+    """Initialize the global result object for running tests in the shell."""
+    print("Creating result object with handlers:", SHELL_OUTPUT_HANDLERS)
     global result_object
     result_object = Result(stream=sys.stdout, descriptions=None,
                            outputs=SHELL_OUTPUT_HANDLERS, main_test=None)
+
+    result_object.startTestRun()
 
 
 def main():

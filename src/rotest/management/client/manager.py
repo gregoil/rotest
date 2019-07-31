@@ -37,7 +37,7 @@ class ClientResourceManager(AbstractClient):
     Responsible for locking resources and preparing them for work,
     also for the resources cleanup procedure and release.
 
-    Preparation includes validating, reseting and initializing resources.
+    Preparation includes validating, resetting and initializing resources.
 
     Attributes:
         locked_resources (list): resources locked and initialized by the client
@@ -77,8 +77,8 @@ class ClientResourceManager(AbstractClient):
         Raises:
             RuntimeError: wasn't connected in the first place.
         """
+        self._release_locked_resources()
         if self.is_connected():
-            self._release_locked_resources()
             self.requester.request(CleanupUser, method="post",
                                    data=TokenModel({"token": self.token}))
             super(ClientResourceManager, self).disconnect()
@@ -137,9 +137,7 @@ class ClientResourceManager(AbstractClient):
 
         for resource in resources:
             try:
-                resource.logger.debug("Finalizing resource %r", resource.name)
                 resource.finalize()
-                resource.logger.debug("Resource %r Finalized", resource.name)
 
             except Exception as err:
                 # A finalize failure should not stop other resources from
