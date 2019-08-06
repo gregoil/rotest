@@ -1,5 +1,5 @@
 """Websocket client that sends pings periodically."""
-# pylint: disable=broad-except,bare-except
+# pylint: disable=broad-except,bare-except,no-self-use
 import threading
 
 import websocket
@@ -32,6 +32,11 @@ class PingingWebsocket(websocket.WebSocket):
             self.pinging_event.set()
             self.pinging_thread.join()
 
+    def handle_disconnection(self):
+        """Called on server disconnection."""
+        from rotest.common import core_log
+        core_log.warn("Server disconnetion detected!")
+
     def ping_loop(self):
         """Ping periodically until the finish event."""
         while not self.pinging_event.wait(self.ping_interval):
@@ -39,4 +44,5 @@ class PingingWebsocket(websocket.WebSocket):
                 self.send("ping")
 
             except:  # noqa
+                self.handle_disconnection()
                 break
