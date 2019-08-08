@@ -11,7 +11,7 @@ class PingingWebsocket(websocket.WebSocket):
     Attributes:
         ping_interval (number): interval between pings in seconds, default 15.
     """
-    def __init__(self, ping_interval=15, *args, **kwargs):
+    def __init__(self, ping_interval=10, *args, **kwargs):
         super(PingingWebsocket, self).__init__(*args, **kwargs)
         self.ping_interval = ping_interval
         self.pinging_thread = None
