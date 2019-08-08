@@ -35,7 +35,7 @@ class PingingWebsocket(websocket.WebSocket):
     def handle_disconnection(self):
         """Called on server disconnection."""
         from rotest.common import core_log
-        core_log.warn("Server disconnetion detected!")
+        core_log.warning("Server disconnetion detected!")
 
     def ping_loop(self):
         """Ping periodically until the finish event."""
