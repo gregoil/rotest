@@ -51,7 +51,10 @@ setup(
         'channels>=1,<2',
         'websocket-client>=0.56',
         'jsonschema<3.0.2',
-        'pywin32<224; sys.platform == "win32"'
+        'autobahn<=19.7.2',
+        'pytz<=2019.1',
+        'twisted<=19.2.1',
+        'pywin32<224; sys.platform == "win32"',
     ],
     extras_require={
         ':python_version=="2.7"': ['statistics'],
