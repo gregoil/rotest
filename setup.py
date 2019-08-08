@@ -34,7 +34,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=[
-        'django>=1.8,<1.11.23',
+        'django>=1.8,<2.0',
         'py',
         'ipdbugger>=2.5',
         'xlwt',
@@ -50,7 +50,8 @@ setup(
         'cached_property',
         'channels>=1,<2',
         'websocket-client>=0.56',
-        'pywin32<224; sys.platform == "win32"'
+        'autobahn<19.8.0',
+        'pywin32<224; sys.platform == "win32"',
     ],
     extras_require={
         ':python_version=="2.7"': ['statistics'],
