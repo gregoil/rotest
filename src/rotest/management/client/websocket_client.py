@@ -4,6 +4,8 @@ import threading
 
 import websocket
 
+from rotest.common import core_log
+
 
 class PingingWebsocket(websocket.WebSocket):
     """Websocket client that sends pings periodically.
@@ -34,7 +36,6 @@ class PingingWebsocket(websocket.WebSocket):
 
     def handle_disconnection(self):
         """Called on server disconnection."""
-        from rotest.common import core_log
         core_log.warning("Server disconnetion detected!")
 
     def ping_loop(self):

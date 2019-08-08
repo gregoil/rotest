@@ -12,6 +12,7 @@ from threading import Thread
 from unittest import TestCase
 
 import mock
+from waiting import wait
 from future.builtins import zip, range
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
@@ -2056,8 +2057,12 @@ class ClientWebsocketTests(TestCase):
         mock_socket = mock.MagicMock()
         mock_connect.return_value = mock_socket, self.TEST_ADDRESS
         client.connect(self.TEST_ADDRESS)
-        time.sleep(0.6)
+        wait(lambda: mock_socket.send.call_count > 1,
+             timeout_seconds=2, sleep_seconds=0.1,
+             waiting_for='Waiting for 2 pings')
+
         mock_callback.assert_not_called()
         mock_socket.send.side_effect = RuntimeError
-        time.sleep(0.6)
-        mock_callback.assert_called_once()
+        wait(lambda: mock_callback.call_count > 0,
+             timeout_seconds=2, sleep_seconds=0.1,
+             waiting_for='Waiting for disconnection')
