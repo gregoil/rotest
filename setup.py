@@ -50,7 +50,6 @@ setup(
         'cached_property',
         'channels>=1,<2',
         'websocket-client>=0.56',
-        'jsonschema<3.0.2',
         'autobahn<=19.7.2',
         'pytz<=2019.1',
         'twisted<=19.2.1',
@@ -69,6 +68,7 @@ setup(
             "flake8",
             "pylint",
             "waiting",
+            "jsonschema<=3.0.1",
         ]
     },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*",
