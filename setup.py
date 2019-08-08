@@ -50,7 +50,8 @@ setup(
         'cached_property',
         'channels>=1,<2',
         'websocket-client>=0.56',
-        'autobahn<19.8.0',
+        'twisted<19.3.0',
+        'jsonschema<3.0.2',
         'pywin32<224; sys.platform == "win32"',
     ],
     extras_require={
