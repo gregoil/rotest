@@ -9,8 +9,10 @@ from __future__ import absolute_import
 import time
 
 from threading import Thread
+from unittest import TestCase
 
 import mock
+from waiting import wait
 from future.builtins import zip, range
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
@@ -20,10 +22,12 @@ from rotest.management.common.utils import LOCALHOST
 from rotest.management import BaseResource, ResourceRequest
 from rotest.management.models.resource_data import DataPointer
 from rotest.management.client.manager import ClientResourceManager
+from rotest.management.client.websocket_client import PingingWebsocket
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
 from rotest.management.models.ut_models import (DemoResourceData,
                                                 DemoComplexResourceData)
+
 from rotest.management.models.ut_resources import (DemoService,
                                                    DemoResource,
                                                    DemoComplexResource)
@@ -2036,3 +2040,29 @@ class TestResourceManagementNotOwnable(BaseResourceManagementTest):
                          % (self.NO_GROUP_RESOURCE, resource.name))
 
         self.get_resource(self.NO_GROUP_RESOURCE, owner="")
+
+
+class ClientWebsocketTests(TestCase):
+    """Tests for client behavior."""
+
+    TEST_ADDRESS = 'localhost'
+
+    @mock.patch('websocket._core.handshake')
+    @mock.patch('websocket._core.connect')
+    @mock.patch('rotest.management.client.websocket_client.'
+                'PingingWebsocket.handle_disconnection')
+    def test_server_disconnection(self, mock_callback, mock_connect, _):
+        """Check that 'close_session' is called at disconnect."""
+        client = PingingWebsocket(ping_interval=0.2)
+        mock_socket = mock.MagicMock()
+        mock_connect.return_value = mock_socket, self.TEST_ADDRESS
+        client.connect(self.TEST_ADDRESS)
+        wait(lambda: mock_socket.send.call_count > 1,
+             timeout_seconds=2, sleep_seconds=0.1,
+             waiting_for='Waiting for 2 pings')
+
+        mock_callback.assert_not_called()
+        mock_socket.send.side_effect = RuntimeError
+        wait(lambda: mock_callback.call_count > 0,
+             timeout_seconds=2, sleep_seconds=0.1,
+             waiting_for='Waiting for disconnection')

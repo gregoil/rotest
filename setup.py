@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 
-__version__ = "7.9.1"
+__version__ = "7.9.2"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -34,7 +34,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=[
-        'django>=1.8,<2.0',
+        'django>=1.8,<2',
         'py',
         'ipdbugger>=2.5',
         'xlwt',
@@ -50,7 +50,7 @@ setup(
         'cached_property',
         'channels>=1,<2',
         'websocket-client>=0.56',
-        'pywin32<224; sys.platform == "win32"'
+        'pywin32<224; sys.platform == "win32"',
     ],
     extras_require={
         ':python_version=="2.7"': ['statistics'],
@@ -64,6 +64,7 @@ setup(
             "pathlib2",
             "flake8",
             "pylint",
+            "waiting",
         ]
     },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*",
