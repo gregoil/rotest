@@ -50,7 +50,6 @@ setup(
         'cached_property',
         'channels>=1,<2',
         'websocket-client>=0.56',
-        'pysqlite3<0.2.2',
         'pywin32<224; sys.platform == "win32"',
     ],
     extras_require={
