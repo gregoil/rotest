@@ -34,7 +34,7 @@ setup(
     url="https://github.com/gregoil/rotest",
     keywords="testing system django unittest",
     install_requires=[
-        'django>=1.8,<1.11.23',
+        'django>=1.8,<2',
         'py',
         'ipdbugger>=2.5',
         'xlwt',
@@ -50,9 +50,7 @@ setup(
         'cached_property',
         'channels>=1,<2',
         'websocket-client>=0.56',
-        'autobahn<=19.7.2',
-        'pytz<=2019.1',
-        'twisted<=19.2.1',
+        'pysqlite3<0.2.2',
         'pywin32<224; sys.platform == "win32"',
     ],
     extras_require={
@@ -68,7 +66,6 @@ setup(
             "flake8",
             "pylint",
             "waiting",
-            "jsonschema<=3.0.1",
         ]
     },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*",
