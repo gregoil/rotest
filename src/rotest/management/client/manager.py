@@ -384,7 +384,8 @@ class ClientResourceManager(AbstractClient):
             ServerError. resource manager failed to lock resources.
         """
         requests = list(requests)
-        descriptors = [ResourceDescriptor(request.type, **request.kwargs)
+        descriptors = [ResourceDescriptor(request.get_type(config),
+                                          **request.kwargs)
                        for request in requests]
 
         initialized_resources = AttrDict()

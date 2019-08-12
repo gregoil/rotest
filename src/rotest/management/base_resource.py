@@ -55,12 +55,44 @@ class ResourceRequest(object):
 
     def __repr__(self):
         """Return a string representing the request."""
-        return "Request %r of type %r (kwargs=%r)" % (self.name, self.type,
-                                                      self.kwargs)
+        return "%s %r of type %r (kwargs=%r)" % (self.__class__.__name__,
+                                                 self.name,
+                                                 self.type,
+                                                 self.kwargs)
 
-    def clone(self):
-        """Create a copy of the request."""
-        return ResourceRequest(self.name, self.type, **self.kwargs)
+    def get_type(self, config):
+        """Get the requested resource class.
+
+        Args:
+            config (dict): the configuration file being used.
+        """
+        return self.type
+
+
+class ResourceAdapter(ResourceRequest):
+
+    """Holds the data for a resource request.
+
+    Attributes:
+        resource_name (str): attribute name to be assigned.
+        resource_class (type): resource type.
+        force_initialize (bool): a flag to determine if the resources will be
+            initialized even if their validation succeeds.
+        kwargs (dict): requested resource arguments.
+    """
+
+    def __init__(self, config_key, resource_classes, **kwargs):
+        """Initialize the required parameters of resource request."""
+        super(ResourceAdapter, self).__init__(None, resource_classes, **kwargs)
+        self.config_key = config_key
+
+    def get_type(self, config):
+        """Get the requested resource class.
+
+        Args:
+            config (dict): the configuration file being used.
+        """
+        return self.type[config.get(self.config_key)]
 
 
 class ExceptionCatchingThread(Thread):
@@ -158,7 +190,7 @@ class BaseResource(object):
         sub_resources = []
         for sub_name, sub_request in get_class_fields(self.__class__,
                                                       ResourceRequest):
-            sub_class = sub_request.type
+            sub_class = sub_request.get_type(self.config)
             actual_kwargs = sub_request.kwargs.copy()
             actual_kwargs['config'] = self.config
             actual_kwargs['base_work_dir'] = self.work_dir
