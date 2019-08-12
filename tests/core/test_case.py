@@ -1,6 +1,7 @@
 """Test Rotest's TestCase class behavior."""
 # pylint: disable=missing-docstring,unused-argument,protected-access
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
+# pylint: disable=too-many-lines
 from __future__ import absolute_import
 
 import os
@@ -11,8 +12,8 @@ from future.builtins import next
 from future.utils import iteritems
 
 from rotest.core.case import request
-from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.base_resource import ResourceAdapter
+from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
                                                    NonExistingResource,
