@@ -7,12 +7,15 @@ class ManagementConfig(AppConfig):
     def ready(self):
         from .models import ResourceData
         from .client.manager import ClientResourceManager
-        from .base_resource import BaseResource, ResourceRequest
+        from .base_resource import (BaseResource,
+                                    ResourceAdapter,
+                                    ResourceRequest)
 
         import rotest
         rotest.management.ResourceData = ResourceData
         rotest.management.ClientResourceManager = ClientResourceManager
         rotest.management.BaseResource = BaseResource
+        rotest.management.ResourceAdapter = ResourceAdapter
         rotest.management.ResourceRequest = ResourceRequest
 
 

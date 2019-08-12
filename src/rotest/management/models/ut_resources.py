@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import os
 import shutil
 
-from rotest.management.base_resource import BaseResource
+from rotest.management.base_resource import BaseResource, ResourceAdapter
 from .ut_models import ResourceData, DemoResourceData, DemoComplexResourceData
 
 
@@ -158,3 +158,23 @@ class InitializeErrorResource(DemoResource):
 class DemoService(BaseResource):
     """Fake service class, used in resource manager tests."""
     DATA_CLASS = None
+
+
+class DemoResource2(DemoResource):
+    """A demo resource class similar to DemoResource."""
+
+
+class DemoAdaptiveComplexResource(BaseResource):
+    """Fake complex resource class, used in resource manager tests.
+
+    Attributes:
+        sub_res1 (DemoResource): sub resource pointer.
+        sub_res2 (DemoResource / DemoResource2): sub resource pointer.
+    """
+    DATA_CLASS = DemoComplexResourceData
+
+    sub_res1 = DemoResource2.request(data=DATA_CLASS.demo1)
+    sub_res2 = ResourceAdapter(config_key='field1',
+                               resource_classes={True: DemoResource,
+                                                 False: DemoResource2},
+                               data=DATA_CLASS.demo2)
