@@ -197,3 +197,50 @@ To activate it, simply write in the class scope of your complex resource:
 
 Or you can point it to a variable which you can set/unset using an entry point
 (see :ref:`custom_entry_points` to learn how to add CLI entry points).
+
+
+Resource adapter
+================
+
+Sometimes, you'd want the resource class (in tests or sub-resources) to vary.
+For example, if you have a resource that changes behavior according to the
+current project or context, but still want the two behaviors to be inter-changable.
+
+This is where the resource adapter can help you.
+
+.. code-block:: python
+
+    from rotest.management import ResourceAdapter
+
+    class AdaptiveTest(TestCase):
+
+        res = ResourceAdapter(config_key='project',
+                              resource_classes={'A': ResourceA,
+                                                'B': ResourceB})
+
+This will give the test a resource named 'res' that would be either an instance
+of `ResourceA` or of `ResourceB` depending on the value of the field 'project'
+in the run config json file.
+
+You can also pass kwargs to the adapter the same way you would to BaseResource.request().
+
+Similarly, you can also declare adaptive sub-resources:
+
+.. code-block:: python
+
+    from rotest.management import ResourceAdapter
+
+    class AdaptiveResource(BaseResource):
+        DATA_CLASS = CalculatorData
+
+        PARALLEL_INITIALIZATION = True
+
+        sub_resource = ResourceAdapter(config_key='project',
+                                       resource_classes={'A': SubResourceA,
+                                                         'B': SubResourceB},
+                                       data=CalculatorData.sub_process)
+
+Generally, you can derive from the class ``rotest.management.ResourceRequest``
+and implement yourself the `get_type` and `__init__` methods in accordance with
+you specific needs (which is exactly what the `ResourceAdapter` class does),
+but in most cases the environmental context you need exists in the run config file.
