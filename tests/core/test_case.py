@@ -56,7 +56,8 @@ class TempAdaptiveRequestPositiveCase(SuccessCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    res = ResourceAdapter(config_key='skip_init',
+    resources = ()
+    res = ResourceAdapter(config_key='field1',
                           resource_classes={False: DemoResource,
                                             True: DemoComplexResource},
                           name='available_resource1')
@@ -66,7 +67,8 @@ class TempAdaptiveRequestNegativeCase(SuccessCase):
     """Inherit class and override resources requests."""
     __test__ = False
 
-    res = ResourceAdapter(config_key='skip_init',
+    resources = ()
+    res = ResourceAdapter(config_key='field1',
                           resource_classes={True: DemoResource,
                                             False: DemoComplexResource},
                           name='available_resource1')
@@ -312,7 +314,8 @@ class TestTestCase(BasicRotestUnitTest):
 
         * Using the kwargs, ask for an existing resource.
         """
-        case = self._run_case(TempAdaptiveRequestPositiveCase)
+        case = self._run_case(TempAdaptiveRequestPositiveCase,
+                              config={'field1': False})
 
         self.assertTrue(self.result.wasSuccessful(),
                         'Case failed when it should have succeeded')
@@ -351,7 +354,8 @@ class TestTestCase(BasicRotestUnitTest):
 
         * Using the kwargs, ask for a non existing resource.
         """
-        case = self._run_case(TempAdaptiveRequestNegativeCase)
+        case = self._run_case(TempAdaptiveRequestNegativeCase,
+                              config={'field1': False})
 
         self.assertFalse(self.result.wasSuccessful(),
                          'Case failed when it should have succeeded')
