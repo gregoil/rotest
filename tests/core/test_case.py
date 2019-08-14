@@ -1,6 +1,7 @@
 """Test Rotest's TestCase class behavior."""
 # pylint: disable=missing-docstring,unused-argument,protected-access
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
+# pylint: disable=too-many-lines
 from __future__ import absolute_import
 
 import os
@@ -14,7 +15,11 @@ from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
-                                                   NonExistingResource)
+                                                   DemoResource2,
+                                                   ResourceAdapter,
+                                                   NonExistingResource,
+                                                   DemoComplexResource,
+                                                   DemoAdaptiveComplexResource)
 
 from tests.core.utils import (ErrorInSetupCase, SuccessCase, FailureCase,
                               ErrorCase, StoreMultipleFailuresCase,
@@ -47,6 +52,35 @@ class TempComplexRequestCase(SuccessCase):
 
     resources = (request('res1', DemoResource, name='available_resource1'),)
     res2 = DemoResource.request(name='available_resource2')
+
+
+class TempComplexAdaptiveResourceCase(SuccessCase):
+    """Inherit class and override resources requests."""
+    __test__ = False
+
+    resources = (request('res1', DemoAdaptiveComplexResource),)
+
+
+class TempAdaptiveRequestPositiveCase(SuccessCase):
+    """Inherit class and override resources requests."""
+    __test__ = False
+
+    resources = ()
+    res = ResourceAdapter(config_key='field1',
+                          resource_classes={False: DemoResource,
+                                            True: DemoComplexResource},
+                          name='available_resource1')
+
+
+class TempAdaptiveRequestNegativeCase(SuccessCase):
+    """Inherit class and override resources requests."""
+    __test__ = False
+
+    resources = ()
+    res = ResourceAdapter(config_key='field1',
+                          resource_classes={True: DemoResource,
+                                            False: DemoComplexResource},
+                          name='available_resource1')
 
 
 class TempInheritRequestCase(TempComplexRequestCase):
@@ -261,6 +295,29 @@ class TestTestCase(BasicRotestUnitTest):
         self.assertIn('available_resource2', locked_names,
                       "Resource request using class field ignored kwargs")
 
+    def test_complex_adaptive_resource_request(self):
+        """Test a TestCase that requests a complex adaptive resources."""
+        case = self._run_case(TempComplexAdaptiveResourceCase,
+                              config={'field1': False})
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        # === Validate case data object ===
+        self.assertTrue(case.data.success)
+
+        test_resources = case.all_resources
+
+        self.assertEqual(len(test_resources), 1,
+                         "Unexpected number of resources, expected %r got %r" %
+                         (1, len(test_resources)))
+
+        resource, = list(test_resources.values())
+        self.assertTrue(isinstance(resource.sub_res1, DemoResource2),
+                        "Got wrong resource %r for sub_res1" % resource)
+        self.assertTrue(isinstance(resource.sub_res2, DemoResource2),
+                        "Got wrong resource %r for sub_res2" % resource)
+
     def test_inherit_resource_request(self):
         """Test a TestCase that inherits its resource request."""
         case = self._run_case(TempInheritRequestCase)
@@ -283,6 +340,65 @@ class TestTestCase(BasicRotestUnitTest):
         self.assertTrue(request_name in case.__dict__,
                         "Test doesn't contain field named %s" %
                         request_name)
+
+    def test_adaptive_request_positive(self):
+        """Test a positive TestCase with a resource adapter.
+
+        * Using the kwargs, ask for an existing resource.
+        """
+        case = self._run_case(TempAdaptiveRequestPositiveCase,
+                              config={'field1': False})
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        # === Validate case data object ===
+        self.assertTrue(case.data.success)
+
+        test_resources = case.all_resources
+        locked_names = []
+        for resource in six.itervalues(test_resources):
+            self.assertTrue(isinstance(resource, DemoResource),
+                            "Got wrong resource %r for the request" % resource)
+
+            test_resource = DemoResourceData.objects.get(name=resource.name)
+            self.validate_resource(test_resource)
+            locked_names.append(resource.name)
+
+        self.assertEqual(len(test_resources), 1,
+                         "Unexpected number of resources, expected %r got %r" %
+                         (1, len(test_resources)))
+
+        request_name = 'res'
+        self.assertTrue(request_name in test_resources,
+                        "Test didn't request a resource for %s" %
+                        request_name)
+
+        self.assertTrue(request_name in case.__dict__,
+                        "Test doesn't contain field named %s" %
+                        request_name)
+
+        self.assertIn('available_resource1', locked_names,
+                      "Resource request using 'resources' ignored kwargs")
+
+    def test_adaptive_request_negative(self):
+        """Test a negative TestCase with a resource adapter.
+
+        * Using the kwargs, ask for a non existing resource.
+        """
+        case = self._run_case(TempAdaptiveRequestNegativeCase,
+                              config={'field1': False})
+
+        self.assertFalse(self.result.wasSuccessful(),
+                         'Case failed when it should have succeeded')
+
+        # === Validate case data object ===
+        self.assertFalse(case.data.success)
+
+        test_resources = case.all_resources
+        self.assertEqual(len(test_resources), 0,
+                         "Unexpected number of resources, expected %r got %r" %
+                         (0, len(test_resources)))
 
     def test_dynamic_resources_locking(self):
         """Test that cases can dynamically lock resources.
