@@ -12,11 +12,11 @@ from future.builtins import next
 from future.utils import iteritems
 
 from rotest.core.case import request
-from rotest.management.base_resource import ResourceAdapter
 from rotest.core.models.case_data import TestOutcome, CaseData
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
                                                    DemoResource2,
+                                                   ResourceAdapter,
                                                    NonExistingResource,
                                                    DemoComplexResource,
                                                    DemoAdaptiveComplexResource)

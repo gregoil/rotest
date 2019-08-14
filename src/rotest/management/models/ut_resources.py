@@ -5,8 +5,24 @@ from __future__ import absolute_import
 import os
 import shutil
 
-from rotest.management.base_resource import BaseResource, ResourceAdapter
+from rotest.management.base_resource import BaseResource, ResourceRequest
 from .ut_models import ResourceData, DemoResourceData, DemoComplexResourceData
+
+
+class ResourceAdapter(ResourceRequest):
+    """Holds the data for a resource request."""
+    def __init__(self, config_key, resource_classes, **kwargs):
+        """Initialize the required parameters of resource request."""
+        super(ResourceAdapter, self).__init__(None, resource_classes, **kwargs)
+        self.config_key = config_key
+
+    def get_type(self, config):
+        """Get the requested resource class.
+
+        Args:
+            config (dict): the configuration file being used.
+        """
+        return self.type[config.get(self.config_key)]
 
 
 class DemoResource(BaseResource):

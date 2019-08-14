@@ -206,17 +206,39 @@ Sometimes, you'd want the resource class (in tests or sub-resources) to vary.
 For example, if you have a resource that changes behavior according to the
 current project or context, but still want the two behaviors to be inter-changable.
 
-This is where the resource adapter can help you.
+This is where the option to create a resource adapter helps you.
+
+Generally, you can derive from the class ``rotest.management.ResourceRequest``
+and implement yourself the `get_type` and `__init__` methods in accordance with
+you specific needs. In most cases the environmental context you need exists
+in the run config file, which is the argument to the `get_type` method.
+
+Example for a resource adapter:
 
 .. code-block:: python
 
-    from rotest.management import ResourceAdapter
+    from rotest.management.base_resource import ResourceRequest
+
+
+    class ResourceAdapter(ResourceRequest):
+        """Holds the data for a resource request."""
+        def get_type(self, config):
+            """Get the requested resource class.
+
+            Args:
+                config (dict): the configuration file being used.
+            """
+            if config.get('project') == 'A':
+                return ResourceA
+
+            else:
+                return ResourceB
+
 
     class AdaptiveTest(TestCase):
 
-        res = ResourceAdapter(config_key='project',
-                              resource_classes={'A': ResourceA,
-                                                'B': ResourceB})
+        res = ResourceAdapter()
+
 
 This will give the test a resource named 'res' that would be either an instance
 of `ResourceA` or of `ResourceB` depending on the value of the field 'project'
@@ -235,12 +257,5 @@ Similarly, you can also declare adaptive sub-resources:
 
         PARALLEL_INITIALIZATION = True
 
-        sub_resource = ResourceAdapter(config_key='project',
-                                       resource_classes={'A': SubResourceA,
-                                                         'B': SubResourceB},
-                                       data=CalculatorData.sub_process)
+        sub_resource = ResourceAdapter(data=CalculatorData.sub_process)
 
-Generally, you can derive from the class ``rotest.management.ResourceRequest``
-and implement yourself the `get_type` and `__init__` methods in accordance with
-you specific needs (which is exactly what the `ResourceAdapter` class does),
-but in most cases the environmental context you need exists in the run config file.

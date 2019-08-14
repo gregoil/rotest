@@ -42,11 +42,10 @@ class ResourceRequest(object):
         kwargs (dict): requested resource arguments.
     """
 
-    def __init__(self, resource_name, resource_class, **kwargs):
+    def __init__(self, resource_name=None, resource_class=None, **kwargs):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
-
         self.kwargs = kwargs
 
     def __eq__(self, oth):
@@ -67,32 +66,6 @@ class ResourceRequest(object):
             config (dict): the configuration file being used.
         """
         return self.type
-
-
-class ResourceAdapter(ResourceRequest):
-
-    """Holds the data for a resource request.
-
-    Attributes:
-        resource_name (str): attribute name to be assigned.
-        resource_class (type): resource type.
-        force_initialize (bool): a flag to determine if the resources will be
-            initialized even if their validation succeeds.
-        kwargs (dict): requested resource arguments.
-    """
-
-    def __init__(self, config_key, resource_classes, **kwargs):
-        """Initialize the required parameters of resource request."""
-        super(ResourceAdapter, self).__init__(None, resource_classes, **kwargs)
-        self.config_key = config_key
-
-    def get_type(self, config):
-        """Get the requested resource class.
-
-        Args:
-            config (dict): the configuration file being used.
-        """
-        return self.type[config.get(self.config_key)]
 
 
 class ExceptionCatchingThread(Thread):
