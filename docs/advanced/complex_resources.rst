@@ -210,7 +210,7 @@ This is where the option to create a resource adapter helps you.
 
 Generally, you can derive from the class ``rotest.management.ResourceRequest``
 and implement yourself the `get_type` and `__init__` methods in accordance with
-you specific needs. In most cases the environmental context you need exists
+your specific needs. In most cases the environmental context you need exists
 in the run config file, which is the argument to the `get_type` method.
 
 Example for a resource adapter:
@@ -254,8 +254,6 @@ Similarly, you can also declare adaptive sub-resources:
 
     class AdaptiveResource(BaseResource):
         DATA_CLASS = CalculatorData
-
-        PARALLEL_INITIALIZATION = True
 
         sub_resource = ResourceAdapter(data=CalculatorData.sub_process)
 
