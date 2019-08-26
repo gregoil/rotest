@@ -1,6 +1,6 @@
 """Multiprocess worker process."""
-# pylint: disable=invalid-name,too-many-arguments,wrong-import-position
-# pylint: disable=too-many-locals,too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,invalid-name,too-many-arguments
+# pylint: disable=too-many-locals,wrong-import-order,wrong-import-position
 from __future__ import absolute_import
 import django
 if not hasattr(django, 'apps'):  # noqa
