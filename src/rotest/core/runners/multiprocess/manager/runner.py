@@ -133,6 +133,7 @@ class MultiprocessRunner(BaseTestRunner):
         worker.resource_manager = \
             super(MultiprocessRunner, self).create_resource_manager()
 
+        django.db.connections.close_all()
         worker.start()
 
         self.workers_pool[worker.pid] = worker
