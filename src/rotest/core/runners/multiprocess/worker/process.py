@@ -1,15 +1,16 @@
 """Multiprocess worker process."""
-# pylint: disable=too-many-instance-attributes,invalid-name,too-many-arguments
-# pylint: disable=too-many-locals,wrong-import-order,wrong-import-position
+# pylint: disable=invalid-name,too-many-arguments,wrong-import-position
+# pylint: disable=too-many-locals,too-many-instance-attributes
 from __future__ import absolute_import
-import django
-if not hasattr(django, 'apps'):  # noqa
-    django.setup()
 
 from multiprocessing import Process
 
+import django
 import psutil
 from six.moves import queue
+
+if not hasattr(django, 'apps'):  # noqa
+    django.setup()
 
 from rotest.common import core_log
 from rotest.core.runners.multiprocess.worker.runner import WorkerRunner
