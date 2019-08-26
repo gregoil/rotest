@@ -10,7 +10,6 @@ from multiprocessing import Queue
 
 import six
 from six.moves import queue
-import django
 from future.builtins import range
 from future.utils import itervalues
 
@@ -134,7 +133,6 @@ class MultiprocessRunner(BaseTestRunner):
         worker.resource_manager = \
             super(MultiprocessRunner, self).create_resource_manager()
 
-        django.db.connections.close_all()
         worker.start()
 
         self.workers_pool[worker.pid] = worker
