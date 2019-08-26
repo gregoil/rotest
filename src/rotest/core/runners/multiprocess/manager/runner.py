@@ -10,6 +10,7 @@ from multiprocessing import Queue
 
 import six
 from six.moves import queue
+import django
 from future.builtins import range
 from future.utils import itervalues
 
