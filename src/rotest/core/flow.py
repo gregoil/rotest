@@ -121,7 +121,9 @@ class TestFlow(AbstractFlowComponent):
                        base_work_dir=self.work_dir,
                        resource_manager=self.resource_manager)
 
-        self._set_parameters(override_previous=False, **self.__class__.common)
+        self._set_parameters(override_previous=False,
+                             validate_unknown=self.is_main,
+                             **self.__class__.common)
 
         if self.is_main:
             self.validate_inputs()
@@ -169,21 +171,30 @@ class TestFlow(AbstractFlowComponent):
         """
         return cls.common.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
-    def _set_parameters(self, override_previous=True, **parameters):
+    def _set_parameters(self, override_previous=True, validate_unknown=False,
+                        **parameters):
         """Inject parameters into the component and sub components.
 
         Args:
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
+            validate_unknown (bool): check that all the parameters are legal.
         """
-        # The 'mode' parameter is only relevant to the current hierarchy
-        setattr(self, 'mode', parameters.pop('mode', self.mode))
-
         super(TestFlow, self)._set_parameters(override_previous,
+                                              validate_unknown,
                                               **parameters)
 
         for block in self:
-            block._set_parameters(override_previous, **parameters)
+            block._set_parameters(override_previous, validate_unknown=False,
+                                  **parameters)
+
+    def _is_valid_input(self, parameter_name):
+        """Check if the given parameter is a valid inputs for the component.
+
+        Args:
+            parameter_name (str): parameter name to compare with input names.
+        """
+        return any(block._is_valid_input(parameter_name) for block in self)
 
     def skip_sub_components(self, reason):
         """Skip the sub-components of the test.

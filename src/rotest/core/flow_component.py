@@ -163,7 +163,7 @@ class AbstractFlowComponent(AbstractTest):
         name = self.get_name()
         core_log.debug("Initializing %r flow-component", name)
 
-        core_log.debug("Creating database entry for %r test-block", name)
+        core_log.debug("Creating database entry for %r flow component", name)
         self.work_dir = get_work_dir(base_work_dir, name, self)
         self.data = CaseData(name=name, run_data=run_data)
 
@@ -406,14 +406,23 @@ class AbstractFlowComponent(AbstractTest):
         """
         pass
 
-    def _set_parameters(self, override_previous=True, **parameters):
+    def _set_parameters(self, override_previous=True, validate_unknown=False,
+                        **parameters):
         """Inject parameters into the component.
 
         Args:
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
+            validate_unknown (bool): check that all the parameters are legal.
         """
+        # The 'mode' parameter is only relevant to the current hierarchy
+        setattr(self, 'mode', parameters.pop('mode', self.mode))
+
         for name, value in iteritems(parameters):
+            if validate_unknown and not self._is_valid_input(name):
+                raise AttributeError("Unrecognized parameter %r passed to %r" %
+                                     (name, self.data.name))
+
             if isinstance(value, Pipe):
                 if override_previous or (name not in self.__dict__ and
                                          name not in self._pipes):
@@ -429,6 +438,14 @@ class AbstractFlowComponent(AbstractTest):
 
                     else:
                         setattr(self, name, value)
+
+    def _is_valid_input(self, parameter_name):
+        """Check if the given parameter is a valid inputs for the component.
+
+        Args:
+            parameter_name (str): parameter name to compare with input names.
+        """
+        pass
 
     def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.
