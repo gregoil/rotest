@@ -183,4 +183,6 @@ class TestBlock(AbstractFlowComponent):
         Args:
             parameter_name (str): parameter name to compare with input names.
         """
-        return parameter_name in self.get_inputs().keys()
+        return (parameter_name in self.get_inputs().keys() or
+                (parameter_name in self.get_outputs().keys() and
+                 parameter_name in self._pipes))

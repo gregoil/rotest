@@ -419,10 +419,6 @@ class AbstractFlowComponent(AbstractTest):
         setattr(self, 'mode', parameters.pop('mode', self.mode))
 
         for name, value in iteritems(parameters):
-            if validate_unknown and not self._is_valid_input(name):
-                raise AttributeError("Unrecognized parameter %r passed to %r" %
-                                     (name, self.data.name))
-
             if isinstance(value, Pipe):
                 if override_previous or (name not in self.__dict__ and
                                          name not in self._pipes):
@@ -438,6 +434,10 @@ class AbstractFlowComponent(AbstractTest):
 
                     else:
                         setattr(self, name, value)
+
+            if validate_unknown and not self._is_valid_input(name):
+                raise AttributeError("Unrecognized parameter %r passed to %r" %
+                                     (name, self.data.name))
 
     def _is_valid_input(self, parameter_name):
         """Check if the given parameter is a valid inputs for the component.
