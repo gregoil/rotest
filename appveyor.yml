@@ -19,6 +19,7 @@ build: off
 
 install:
 - C:\Python36\python -m pip install tox
+- SET PATH=%PYTHON%;%path%
 
 test_script:
 - C:\Python36\python -m tox
