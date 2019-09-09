@@ -186,5 +186,5 @@ class TestBlock(AbstractFlowComponent):
         return (parameter_name in self.get_inputs().keys() or
                 (parameter_name in self.get_outputs().keys() and
                  parameter_name in self._pipes) or
-                parameter_name in map(lambda request: request.name,
-                                      self.get_resource_requests()))
+                parameter_name in (request.name for request in
+                                   self.get_resource_requests()))
