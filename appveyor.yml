@@ -3,14 +3,17 @@ environment:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "32"
+      TOXENV: "py27-django1.11"
 
     - PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "32"
+      TOXENV: "py36-django1.11"
 
     - PYTHON: "C:\\Python37"
-      PYTHON_VERSION: "3.7.3" # since 3.7.4 doesn't go well with Django < 2
+      PYTHON_VERSION: "3.7.0" # since 3.7.4 doesn't go well with Django < 2
       PYTHON_ARCH: "32"
+      TOXENV: "py37-django1.11"
 
 build: off
 
