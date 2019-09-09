@@ -3,7 +3,7 @@
 # pylint: disable=no-member,no-self-use,too-many-public-methods,invalid-name
 from __future__ import absolute_import
 
-from rotest.core import request
+from rotest.core import request, BlockInput
 from rotest.management.models.ut_resources import DemoResource
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.utils.shell import run_test, create_result
@@ -34,6 +34,8 @@ class TempResourceSuite(MockTestSuite):
 class TempResourceBlock(MockBlock):
     """Inherit class and override resources requests."""
     __test__ = False
+
+    test_resource = BlockInput()
 
     def test_method(self):
         self.assertEqual(self.test_resource.name, RESOURCE_NAME)
