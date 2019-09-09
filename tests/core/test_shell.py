@@ -107,9 +107,8 @@ class TestShell(BasicRotestUnitTest):
                          "Test didn't get the supplied resource")
 
     def test_block_not_supplying_any_resource(self):
-        test = run_test(TempResourceBlock)
-        self.assertFalse(test.data.success,
-                         'Block passed even though no resource was supplied')
+        with self.assertRaises(AttributeError):
+            run_test(TempResourceBlock)
 
     def test_flow_supplying_config(self):
         config = {'some': 'value'}

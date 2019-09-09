@@ -616,9 +616,8 @@ class TestTestFlow(BasicRotestUnitTest):
         """Validate parametrize behavior when using pipes in common."""
         ReadingBlock = create_reader_block(inject_name='pipe_target',
                                            inject_value=5)
-        # The params is just so the input validation can find the piped field
         WritingBlock = create_writer_block(inject_name='some_name',
-                                           inject_value=5).params(some_name=3)
+                                           inject_value=5)
 
         class FlowWithCommon(MockFlow):
             common = {'pipe_target': Pipe('some_name')}
@@ -659,8 +658,7 @@ class TestTestFlow(BasicRotestUnitTest):
             common = {'pipe_target': Pipe('wrong_field')}
 
             blocks = (create_writer_block(inject_name='wrong_field',
-                                          inject_value='wrong_value').params(
-                wrong_field='wrong_value'),  # To pass input validation
+                                          inject_value='wrong_value'),
                       create_writer_block(inject_name='some_name',
                                           inject_value='some_value'),
                       create_reader_block(inject_name='pipe_target',

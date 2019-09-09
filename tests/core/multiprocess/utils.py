@@ -177,14 +177,10 @@ class BlockTimeoutFlow(MockFlow):
 
 
 class RegisterPidBlock(MockBlock):
-    """Test flow that has a too long setup time."""
-    inputs = ('pid_queue',)
-
-    pid_queue = None
-
+    """Test block that registers the pid."""
     def test_register(self):
         """Sleep longer than the timeout."""
-        self.pid_queue.put(os.getpid())
+        self.parent.pid_queue.put(os.getpid())
 
 
 class RegisterInSetupFlow(MockFlow):
