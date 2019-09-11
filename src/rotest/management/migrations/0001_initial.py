@@ -84,13 +84,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='democomplexresource',
             name='demo1',
-            field=models.ForeignKey(related_name='demo_resource1', to='management.DemoResource'),
+            field=models.ForeignKey(related_name='demo_resource1', on_delete=models.CASCADE, to='management.DemoResource'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='democomplexresource',
             name='demo2',
-            field=models.ForeignKey(related_name='demo_resource2', to='management.DemoResource'),
+            field=models.ForeignKey(related_name='demo_resource2', on_delete=models.CASCADE, to='management.DemoResource'),
             preserve_default=True,
         ),
     ]

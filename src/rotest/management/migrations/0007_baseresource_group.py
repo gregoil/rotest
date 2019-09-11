@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='baseresource',
             name='group',
-            field=models.ForeignKey(blank=True, to='auth.Group', null=True),
+            field=models.ForeignKey(blank=True, on_delete=models.CASCADE, to='auth.Group', null=True),
             preserve_default=True,
         ),
     ]

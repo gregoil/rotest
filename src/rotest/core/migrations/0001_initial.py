@@ -76,19 +76,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rundata',
             name='main_test',
-            field=models.ForeignKey(related_name='+', blank=True, to='core.GeneralData', null=True),
+            field=models.ForeignKey(related_name='+', blank=True, to='core.GeneralData', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='generaldata',
             name='parent',
-            field=models.ForeignKey(related_name='tests', blank=True, to='core.GeneralData', null=True),
+            field=models.ForeignKey(related_name='tests', blank=True, to='core.GeneralData', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='generaldata',
             name='run_data',
-            field=models.ForeignKey(related_name='tests', blank=True, to='core.RunData', null=True),
+            field=models.ForeignKey(related_name='tests', blank=True, to='core.RunData', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
     ]

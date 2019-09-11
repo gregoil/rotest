@@ -57,8 +57,8 @@ class Migration(migrations.Migration):
                 ('validate_flag', models.NullBooleanField(default=None)),
                 ('finalization_flag', models.BooleanField(default=False)),
                 ('initialization_flag', models.BooleanField(default=False)),
-                ('demo1', models.ForeignKey(related_name='demo_resource1', to='management.DemoResourceData')),
-                ('demo2', models.ForeignKey(related_name='demo_resource2', to='management.DemoResourceData')),
+                ('demo1', models.ForeignKey(related_name='demo_resource1', on_delete=models.CASCADE, to='management.DemoResourceData')),
+                ('demo2', models.ForeignKey(related_name='demo_resource2', on_delete=models.CASCADE, to='management.DemoResourceData')),
             ],
             options={
             },
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resourcedata',
             name='group',
-            field=models.ForeignKey(blank=True, to='auth.Group', null=True),
+            field=models.ForeignKey(blank=True, on_delete=models.CASCADE, to='auth.Group', null=True),
             preserve_default=True,
         ),
     ]
