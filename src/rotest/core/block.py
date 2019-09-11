@@ -90,7 +90,9 @@ class TestBlock(AbstractFlowComponent):
                                         resource_manager=resource_manager)
 
         self.addCleanup(self._share_outputs)
-        self._set_parameters(override_previous=False, **self.__class__.common)
+        self._set_parameters(override_previous=False,
+                             validate_legality=True,
+                             **self.__class__.common)
 
     @classmethod
     def get_name(cls):
@@ -174,3 +176,15 @@ class TestBlock(AbstractFlowComponent):
             raise AttributeError("Block %r under %r is missing mandatory "
                                  "inputs %s" %
                                  (self.data.name, self.parent, missing_inputs))
+
+    def _is_valid_input(self, parameter_name):
+        """Check if the given parameter is a valid input for the component.
+
+        Args:
+            parameter_name (str): parameter name to compare with input names.
+        """
+        return (parameter_name in self.get_inputs().keys() or
+                (parameter_name in self.get_outputs().keys() and
+                 parameter_name in self._pipes) or
+                parameter_name in (request.name for request in
+                                   self.get_resource_requests()))

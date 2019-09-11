@@ -367,6 +367,66 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=1)
 
+    def test_unknown_block_input_static_check(self):
+        """Test static check of unknown input to a block."""
+        MockFlow.blocks = (create_writer_block(inject_value='some_value'),
+                           create_reader_block(inject_value='some_value')
+                           .params(unknown=2))
+
+        with self.assertRaises(AttributeError):
+            MockFlow()
+
+    def test_unknown_flow_input_static_check(self):
+        """Test static check of unknown input to a flow."""
+        MockFlow.blocks = (create_writer_block(inject_value='some_value'),
+                           create_reader_block(inject_value='some_value'))
+
+        with self.assertRaises(AttributeError):
+            MockFlow.params(unknown=2)()
+
+    def test_positive_unknown_subflow_input_static_check(self):
+        """Test static check of unknown input to a subflow.
+
+        In this case, the input is valid in one of the sub-flow but not the
+        other, so an error shouldn't be raised.
+        """
+        class SubFlow1(MockFlow):
+            blocks = [SuccessBlock]
+
+        class SubFlow2(MockFlow):
+            blocks = [create_reader_block(inject_name='known',
+                                          inject_value='some_value')]
+
+        class MainFlow(MockFlow):
+            blocks = (SubFlow1,
+                      SubFlow2)
+
+        test_flow = MainFlow.params(known='some_value')()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=2)
+
+    def test_negative_unknown_subflow_input_static_check(self):
+        """Test static check of unknown input to a subflow.
+
+        In this case, the input is invalid in both of the sub-flows.
+        """
+        class SubFlow1(MockFlow):
+            blocks = [SuccessBlock]
+
+        class SubFlow2(MockFlow):
+            blocks = [SuccessBlock]
+
+        class MainFlow(MockFlow):
+            blocks = (SubFlow1,
+                      SubFlow2)
+
+        with self.assertRaises(AttributeError):
+            MainFlow.params(unknown=2)()
+
     def test_inputs_static_check(self):
         """Test static check of inputs validation of blocks.
 
@@ -556,9 +616,8 @@ class TestTestFlow(BasicRotestUnitTest):
         """Validate parametrize behavior when using pipes in common."""
         ReadingBlock = create_reader_block(inject_name='pipe_target',
                                            inject_value=5)
-        # The params is just so the input validation can find the piped field
         WritingBlock = create_writer_block(inject_name='some_name',
-                                           inject_value=5).params(some_name=3)
+                                           inject_value=5)
 
         class FlowWithCommon(MockFlow):
             common = {'pipe_target': Pipe('some_name')}
@@ -599,8 +658,7 @@ class TestTestFlow(BasicRotestUnitTest):
             common = {'pipe_target': Pipe('wrong_field')}
 
             blocks = (create_writer_block(inject_name='wrong_field',
-                                          inject_value='wrong_value').params(
-                wrong_field='wrong_value'),  # To pass input validation
+                                          inject_value='wrong_value'),
                       create_writer_block(inject_name='some_name',
                                           inject_value='some_value'),
                       create_reader_block(inject_name='pipe_target',

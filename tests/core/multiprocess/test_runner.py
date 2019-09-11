@@ -118,7 +118,7 @@ class TestMultiprocessRunner(AbstractMultiprocessRunnerTest):
         * Validates that the test-flow was run in a different process.
         """
         pid_queue = self.pid_queue
-        RegisterInSetupFlow.common = {"pid_queue": pid_queue}
+        RegisterInSetupFlow.pid_queue = pid_queue
         MockSuite1.components = (RegisterInSetupFlow,)
 
         self.runner.run(MockSuite1)
