@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FinalizeTimeoutResource',
             fields=[
-                ('baseresource_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
+                ('baseresource_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
             ],
             options={
             },

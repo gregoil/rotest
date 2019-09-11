@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DemoResourceData',
             fields=[
-                ('resourcedata_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.ResourceData')),
+                ('resourcedata_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.ResourceData')),
                 ('version', models.PositiveSmallIntegerField()),
                 ('ip_address', models.IPAddressField()),
                 ('mode', models.IntegerField(default=0, choices=[(0, b'Boot'), (1, b'Production')])),
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DemoComplexResourceData',
             fields=[
-                ('resourcedata_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.ResourceData')),
+                ('resourcedata_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.ResourceData')),
                 ('reset_flag', models.BooleanField(default=False)),
                 ('validate_flag', models.NullBooleanField(default=None)),
                 ('finalization_flag', models.BooleanField(default=False)),
