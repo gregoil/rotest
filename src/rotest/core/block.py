@@ -91,7 +91,7 @@ class TestBlock(AbstractFlowComponent):
 
         self.addCleanup(self._share_outputs)
         self._set_parameters(override_previous=False,
-                             validate_unknown=True,
+                             validate_legality=True,
                              **self.__class__.common)
 
     @classmethod
@@ -178,7 +178,7 @@ class TestBlock(AbstractFlowComponent):
                                  (self.data.name, self.parent, missing_inputs))
 
     def _is_valid_input(self, parameter_name):
-        """Check if the given parameter is a valid inputs for the component.
+        """Check if the given parameter is a valid input for the component.
 
         Args:
             parameter_name (str): parameter name to compare with input names.

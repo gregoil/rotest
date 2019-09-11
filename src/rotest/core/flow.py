@@ -122,7 +122,7 @@ class TestFlow(AbstractFlowComponent):
                        resource_manager=self.resource_manager)
 
         self._set_parameters(override_previous=False,
-                             validate_unknown=self.is_main,
+                             validate_legality=self.is_main,
                              **self.__class__.common)
 
         if self.is_main:
@@ -171,21 +171,21 @@ class TestFlow(AbstractFlowComponent):
         """
         return cls.common.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
-    def _set_parameters(self, override_previous=True, validate_unknown=False,
+    def _set_parameters(self, override_previous=True, validate_legality=False,
                         **parameters):
         """Inject parameters into the component and sub components.
 
         Args:
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
-            validate_unknown (bool): check that all the parameters are legal.
+            validate_legality (bool): check that all parameters are legal.
         """
         super(TestFlow, self)._set_parameters(override_previous,
-                                              validate_unknown,
+                                              validate_legality,
                                               **parameters)
 
         for block in self:
-            block._set_parameters(override_previous, validate_unknown=False,
+            block._set_parameters(override_previous, validate_legality=False,
                                   **parameters)
 
     def _is_valid_input(self, parameter_name):

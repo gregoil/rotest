@@ -406,17 +406,17 @@ class AbstractFlowComponent(AbstractTest):
         """
         pass
 
-    def _set_parameters(self, override_previous=True, validate_unknown=False,
+    def _set_parameters(self, override_previous=True, validate_legality=False,
                         **parameters):
         """Inject parameters into the component.
 
         Args:
             override_previous (bool): whether to override previous value of
                 the parameters if they were already injected or not.
-            validate_unknown (bool): check that all the parameters are legal.
+            validate_legality (bool): check that all parameters are legal.
         """
         # The 'mode' parameter is only relevant to the current hierarchy
-        setattr(self, 'mode', parameters.pop('mode', self.mode))
+        self.mode = parameters.pop('mode', self.mode)
 
         for name, value in iteritems(parameters):
             if isinstance(value, Pipe):
@@ -435,7 +435,7 @@ class AbstractFlowComponent(AbstractTest):
                     else:
                         setattr(self, name, value)
 
-            if validate_unknown and not self._is_valid_input(name):
+            if validate_legality and not self._is_valid_input(name):
                 raise AttributeError("Unrecognized parameter %r passed to %r" %
                                      (name, self.data.name))
 
@@ -445,7 +445,7 @@ class AbstractFlowComponent(AbstractTest):
         Args:
             parameter_name (str): parameter name to compare with input names.
         """
-        pass
+        raise NotImplementedError()
 
     def validate_inputs(self, extra_inputs=[]):
         """Validate that all the required inputs of the component were passed.
