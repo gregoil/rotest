@@ -30,7 +30,7 @@ class GeneralData(models.Model):
         run_data (RunData): run data of the test.
     """
     parent = models.ForeignKey('self', null=True, blank=True,
-                               related_name='tests')
+                               on_delete=models.CASCADE, related_name='tests')
 
     (INITIALIZED, IN_PROGRESS, FINISHED) = list(range(3))
 
@@ -44,8 +44,8 @@ class GeneralData(models.Model):
     end_time = models.DateTimeField(null=True)
     success = models.NullBooleanField(null=True)
 
-    run_data = models.ForeignKey('core.RunData', null=True, blank=True,
-                                 related_name='tests')
+    run_data = models.ForeignKey('core.RunData', on_delete=models.CASCADE,
+                                 null=True, blank=True, related_name='tests')
 
     class Meta(object):
         """Define the Django application for this model."""

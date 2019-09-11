@@ -64,8 +64,10 @@ class DemoComplexResourceData(ResourceData):
     finalization_flag = models.BooleanField(default=False)
     initialization_flag = models.BooleanField(default=False)
 
-    demo1 = models.ForeignKey(DemoResourceData, related_name="demo_resource1")
-    demo2 = models.ForeignKey(DemoResourceData, related_name="demo_resource2")
+    demo1 = models.ForeignKey(DemoResourceData, on_delete=models.PROTECT,
+                              related_name="demo_resource1")
+    demo2 = models.ForeignKey(DemoResourceData, on_delete=models.PROTECT,
+                              related_name="demo_resource2")
 
     class Meta(object):
         """Define the Django application for this model."""

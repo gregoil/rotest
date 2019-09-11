@@ -81,7 +81,8 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
 
     name = NameField(unique=True)
     is_usable = models.BooleanField(default=True)
-    group = models.ForeignKey(auth_models.Group, blank=True, null=True)
+    group = models.ForeignKey(auth_models.Group, on_delete=models.PROTECT,
+                              blank=True, null=True)
     comment = models.CharField(default='', blank=True,
                                max_length=MAX_COMMENT_LENGTH)
 
