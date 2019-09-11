@@ -20,7 +20,7 @@ script: tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d .)-django$DJANGO
 after_success: coveralls
 matrix:
   exclude:
-  - python: 2.7
+  - python: '2.7'
     env: DJANGO=2.0
   include:
   - name: docs
