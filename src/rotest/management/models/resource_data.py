@@ -34,7 +34,7 @@ class DataBase(ModelBase):
             DATA_CLASS = DemoResourceData
             demo1 = DemoService.request(name=DemoResourceData.name).
     """
-    if int(DJANGO_VERSION[1]) > 9:
+    if int(DJANGO_VERSION[0]) == 1 and int(DJANGO_VERSION[1]) < 10:
         def __getattr__(cls, key):
             if '_meta' in vars(cls) and \
                     key in (field.name for field in cls._meta.fields):
