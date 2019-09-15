@@ -16,7 +16,7 @@ env:
 - DJANGO=1.11
 - DJANGO=2.0
 install: pip install tox coveralls
-script: tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d .)-django$DJANGO
+script: tox -e py$TRAVIS_PYTHON_VERSION-django$DJANGO
 after_success: coveralls
 matrix:
   exclude:
