@@ -16,11 +16,11 @@ from waiting import wait
 from future.builtins import zip, range
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
+from django.db.models.query_utils import DeferredAttribute
 from swaggapi.api.builder.client import requester
 
 from rotest.management.common.utils import LOCALHOST
 from rotest.management import BaseResource, ResourceRequest
-from rotest.management.models.resource_data import DataPointer
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.client.websocket_client import PingingWebsocket
 from rotest.management.common.resource_descriptor import \
@@ -1513,7 +1513,7 @@ class TestResourceManagement(BaseResourceManagementTest):
             """Fake complex service class, used in resource manager tests."""
             DATA_CLASS = None
             demo1 = DemoService.request()
-            demo2 = DemoService.request(name=DataPointer('name'))
+            demo2 = DemoService.request(name=DeferredAttribute('name', None))
 
             initialized = False
 
