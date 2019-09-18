@@ -6,7 +6,8 @@ jobs:
   windows_build:
     runs-on: windows-latest
     strategy:
-      max-parallel: 8
+      fail-fast: false
+      max-parallel: 10
       matrix:
         python-version: [2.7, 3.6, 3.7]
         django-version: ["1.8", "1.9", "1.11", "2.0"]
@@ -29,7 +30,8 @@ jobs:
   linux_build:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 8
+      fail-fast: false
+      max-parallel: 10
       matrix:
         python-version: [2.7, 3.6, 3.7]
         django-version: ["1.8", "1.9", "1.11", "2.0"]
