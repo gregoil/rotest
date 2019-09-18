@@ -1,8 +1,7 @@
 environment:
   matrix:
+  - TOXENV: "py2.7-django1.8"
   - TOXENV: "py2.7-django1.11"
-  - TOXENV: "py3.6-django1.11"
-  - TOXENV: "py3.7-django2.0"
 
 build: off
 
