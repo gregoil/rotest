@@ -3,14 +3,14 @@ name: Python package
 on: [push]
 
 jobs:
-  windows_build:
+  windows_py36:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       max-parallel: 10
       matrix:
-        python-version: [2.7, 3.6]
-        django-version: ["1.8", "1.9", "1.11", "2.0"]
+        python-version: [3.6]
+        django-version: ["1.8", "1.9", "1.10", "1.11", "2.0"]
         exclude:
         - python-version: 2.7
           django-version: "2.0"
@@ -55,7 +55,7 @@ jobs:
       max-parallel: 10
       matrix:
         python-version: [2.7, 3.6, 3.7]
-        django-version: ["1.8", "1.9", "1.11", "2.0"]
+        django-version: ["1.8", "1.9", "1.10", "1.11", "2.0"]
         exclude:
         - python-version: 2.7
           django-version: "2.0"
