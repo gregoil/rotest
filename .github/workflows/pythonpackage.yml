@@ -11,12 +11,30 @@ jobs:
       matrix:
         python-version: [2.7, 3.6]
         django-version: ["1.8", "1.9", "1.11", "2.0"]
-        include:
-        - python-version: 3.7
-          django-version: "2.0"
         exclude:
         - python-version: 2.7
           django-version: "2.0"
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+    - name: Tox
+      run: |
+        tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
+
+  windows_py3.7:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        python-version: [3.7]
+        django-version: ["2.0"]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
