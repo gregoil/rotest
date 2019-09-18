@@ -27,7 +27,7 @@ jobs:
       run: |
         tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
 
-  windows_py3.7:
+  windows_py37:
     runs-on: windows-latest
     strategy:
       fail-fast: false
