@@ -1,3 +1,5 @@
+"""Rotest management application."""
+# pylint: disable=redefined-outer-name
 from django.apps import AppConfig
 
 
