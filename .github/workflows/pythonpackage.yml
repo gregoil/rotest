@@ -9,17 +9,11 @@ jobs:
       fail-fast: false
       max-parallel: 10
       matrix:
-        python-version: [2.7, 3.6, 3.7]
+        python-version: [2.7, 3.6]
         django-version: ["1.8", "1.9", "1.11", "2.0"]
-        exclude:
+        include:
         - python-version: 3.7
-          django-version: "1.8"
-        exclude:
-        - python-version: 3.7
-          django-version: "1.9"
-        exclude:
-        - python-version: 3.7
-          django-version: "1.11"
+          django-version: "2.0"
         exclude:
         - python-version: 2.7
           django-version: "2.0"
