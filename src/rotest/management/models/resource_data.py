@@ -15,18 +15,14 @@ from future.utils import itervalues
 from django.db import models
 from django.utils import six
 from django.db.models.base import ModelBase
+from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import models as auth_models
+from django.db.models.query_utils import DeferredAttribute
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from rotest.common.django_utils.fields import NameField
 from rotest.common.django_utils.common import get_fields
 from rotest.common.django_utils import get_sub_model, linked_unicode
-
-
-class DataPointer(object):
-    """Pointer to a field in the resource's data."""
-    def __init__(self, field_name):
-        self.field_name = field_name
 
 
 class DataBase(ModelBase):
@@ -38,13 +34,14 @@ class DataBase(ModelBase):
             DATA_CLASS = DemoResourceData
             demo1 = DemoService.request(name=DemoResourceData.name).
     """
-    def __getattr__(cls, key):
-        if '_meta' in vars(cls) and \
-                key in (field.name for field in cls._meta.fields):
+    if int(DJANGO_VERSION[0]) == 1 and int(DJANGO_VERSION[1]) < 10:
+        def __getattr__(cls, key):
+            if '_meta' in vars(cls) and \
+                    key in (field.name for field in cls._meta.fields):
 
-            return DataPointer(key)
+                return DeferredAttribute(key, None)
 
-        raise AttributeError(key)
+            raise AttributeError(key)
 
 
 class ResourceData(six.with_metaclass(DataBase, models.Model)):
@@ -81,7 +78,8 @@ class ResourceData(six.with_metaclass(DataBase, models.Model)):
 
     name = NameField(unique=True)
     is_usable = models.BooleanField(default=True)
-    group = models.ForeignKey(auth_models.Group, blank=True, null=True)
+    group = models.ForeignKey(auth_models.Group, on_delete=models.PROTECT,
+                              blank=True, null=True)
     comment = models.CharField(default='', blank=True,
                                max_length=MAX_COMMENT_LENGTH)
 

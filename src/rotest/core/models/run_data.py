@@ -31,7 +31,7 @@ class RunData(models.Model):
     artifact_path = PathField(null=True, blank=True)
     run_delta = models.NullBooleanField(default=False)
     main_test = models.ForeignKey(GeneralData, null=True, blank=True,
-                                  related_name='+')
+                                  on_delete=models.SET_NULL, related_name='+')
     user_name = NameField(null=True, blank=True)
     config = models.TextField(blank=True, null=True, default="{}")
 

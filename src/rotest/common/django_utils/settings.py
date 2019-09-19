@@ -42,6 +42,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware']
+MIDDLEWARE = MIDDLEWARE_CLASSES
 
 # Set channel layers
 CHANNEL_LAYERS = {

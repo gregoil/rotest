@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaseData',
             fields=[
-                ('generaldata_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='core.GeneralData')),
+                ('generaldata_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='core.GeneralData')),
                 ('traceback', models.TextField(max_length=1000, blank=True)),
                 ('exception_type', models.IntegerField(blank=True, null=True, choices=[(0, b'OK'), (1, b'Error'), (2, b'Failed'), (3, b'Skipped'), (4, b'Expected Failure'), (5, b'Unexpected Success')])),
                 ('resources', models.ManyToManyField(to='management.ResourceData')),
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SuiteData',
             fields=[
-                ('generaldata_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='core.GeneralData')),
+                ('generaldata_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='core.GeneralData')),
             ],
             options={
             },
@@ -76,19 +76,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rundata',
             name='main_test',
-            field=models.ForeignKey(related_name='+', blank=True, to='core.GeneralData', null=True),
+            field=models.ForeignKey(related_name='+', blank=True, to='core.GeneralData', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='generaldata',
             name='parent',
-            field=models.ForeignKey(related_name='tests', blank=True, to='core.GeneralData', null=True),
+            field=models.ForeignKey(related_name='tests', blank=True, to='core.GeneralData', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='generaldata',
             name='run_data',
-            field=models.ForeignKey(related_name='tests', blank=True, to='core.RunData', null=True),
+            field=models.ForeignKey(related_name='tests', blank=True, to='core.RunData', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
     ]

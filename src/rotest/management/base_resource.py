@@ -4,7 +4,7 @@ Defines the basic attributes & interface of any resource type class,
 responsible for the resource static & dynamic information.
 """
 # pylint: disable=too-many-instance-attributes,no-self-use,broad-except
-# pylint: disable=protected-access,unused-argument
+# pylint: disable=protected-access,unused-argument,ungrouped-imports
 from __future__ import absolute_import
 
 import sys
@@ -16,11 +16,12 @@ from ipdbugger import debug
 from attrdict import AttrDict
 from future.utils import iteritems
 from future.builtins import zip, object
+from django.db.models.query_utils import DeferredAttribute
 
 from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.utils import get_work_dir, get_class_fields
-from rotest.management.models.resource_data import ResourceData, DataPointer
+from rotest.management.models.resource_data import ResourceData
 
 try:
     from django.db.models.fields.related_descriptors import \
@@ -171,7 +172,7 @@ class BaseResource(object):
                 if isinstance(value, ForwardManyToOneDescriptor):
                     actual_kwargs[key] = getattr(self.data, value.field.name)
 
-                elif isinstance(value, DataPointer):
+                elif isinstance(value, DeferredAttribute):
                     actual_kwargs[key] = getattr(self.data, value.field_name)
 
             sub_resource = sub_class(**actual_kwargs)

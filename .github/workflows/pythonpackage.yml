@@ -1,0 +1,83 @@
+name: Python package
+
+on: [push]
+
+jobs:
+  deploy:
+    needs: [windows_py36, windows_py37, linux_build]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+    - name: Publish package
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_PASSWORD }}
+
+  windows_py36:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        python-version: [3.6]
+        django-version: ["1.8", "1.9", "1.10", "1.11", "2.0"]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+    - name: Tox
+      run: |
+        tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
+
+  windows_py37:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        python-version: [3.7]
+        django-version: ["2.0"]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+    - name: Tox
+      run: |
+        tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
+
+  linux_build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 14
+      matrix:
+        python-version: [2.7, 3.6, 3.7]
+        django-version: ["1.8", "1.9", "1.10", "1.11", "2.0"]
+        exclude:
+        - python-version: 2.7
+          django-version: "2.0"
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+    - name: Tox
+      run: |
+        tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}

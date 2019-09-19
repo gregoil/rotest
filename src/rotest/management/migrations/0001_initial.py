@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ComplexResource',
             fields=[
-                ('baseresource_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
+                ('baseresource_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
             ],
             options={
             },
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DemoComplexResource',
             fields=[
-                ('complexresource_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.ComplexResource')),
+                ('complexresource_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.ComplexResource')),
                 ('reset_flag', models.BooleanField(default=False)),
                 ('validate_flag', models.NullBooleanField(default=None)),
                 ('initialization_flag', models.BooleanField(default=False)),
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DemoResource',
             fields=[
-                ('baseresource_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
+                ('baseresource_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
                 ('version', models.PositiveSmallIntegerField()),
                 ('ip_address', models.IPAddressField()),
                 ('mode', models.IntegerField(default=0, choices=[(0, b'Boot'), (1, b'Production')])),
@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NonExistingResource',
             fields=[
-                ('baseresource_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
+                ('baseresource_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='management.BaseResource')),
             ],
             options={
             },
@@ -84,13 +84,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='democomplexresource',
             name='demo1',
-            field=models.ForeignKey(related_name='demo_resource1', to='management.DemoResource'),
+            field=models.ForeignKey(related_name='demo_resource1', on_delete=models.CASCADE, to='management.DemoResource'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='democomplexresource',
             name='demo2',
-            field=models.ForeignKey(related_name='demo_resource2', to='management.DemoResource'),
+            field=models.ForeignKey(related_name='demo_resource2', on_delete=models.CASCADE, to='management.DemoResource'),
             preserve_default=True,
         ),
     ]
