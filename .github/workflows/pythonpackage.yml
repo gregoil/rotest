@@ -9,6 +9,13 @@ jobs:
     strategy:
       fail-fast: true
     steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: actions/setup-python@v1
+      run: |
+        pip install wheel
+        python setup.py sdist bdist_wheel
     - name: Publish package
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
