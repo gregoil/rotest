@@ -228,6 +228,10 @@ CONFIGURATION_SCHEMA = {
     "discoverer_blacklist": Option(
         config_file_options=["discoverer_blacklist"],
         default_value=[]),
+    "smart_client": Option(
+        config_file_options=["smart_client"],
+        environment_variables=["ROTEST_SMART_CLIENT"],
+        default_value=True),
     "shell_startup_commands": Option(
         config_file_options=["shell_startup_commands"],
         default_value=[]),
@@ -271,6 +275,7 @@ DEFAULT_DISCOVERY_BLACKLIST = [".tox", ".git", ".idea", "setup.py"]
 
 
 ROTEST_WORK_DIR = os.path.expanduser(CONFIGURATION.workdir)
+SMART_CLIENT = CONFIGURATION.smart_client in (True, "True", "true")
 RESOURCE_MANAGER_HOST = CONFIGURATION.host
 DJANGO_MANAGER_PORT = int(CONFIGURATION.port)
 API_BASE_URL = CONFIGURATION.api_base_url
