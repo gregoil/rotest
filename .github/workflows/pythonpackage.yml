@@ -10,9 +10,11 @@ jobs:
       fail-fast: true
     steps:
     - uses: actions/checkout@v1
-    - name: Build
+    - name: Prepare environment
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: actions/setup-python@v1
+    - name: Build
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |
         pip install wheel
         python setup.py sdist bdist_wheel
