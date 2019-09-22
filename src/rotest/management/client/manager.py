@@ -18,8 +18,10 @@ from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
 from rotest.api.common.responses import FailureResponseModel
 from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
-from rotest.common.config import RESOURCE_MANAGER_HOST, ROTEST_WORK_DIR
 from rotest.management.common.resource_descriptor import ResourceDescriptor
+from rotest.common.config import (RESOURCE_MANAGER_HOST,
+                                  ROTEST_WORK_DIR,
+                                  SMART_CLIENT)
 from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourceUnavailableError,
                                              UnknownUserError)
@@ -48,10 +50,8 @@ class ClientResourceManager(AbstractClient):
         keep_resources (bool): whether to keep the resources locked until
             they are not needed.
     """
-    DEFAULT_KEEP_RESOURCES = True
-
     def __init__(self, host=None, logger=core_log,
-                 keep_resources=DEFAULT_KEEP_RESOURCES):
+                 keep_resources=SMART_CLIENT):
         """Initialize the resource client."""
         if host is None:
             host = RESOURCE_MANAGER_HOST
