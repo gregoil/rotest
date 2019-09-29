@@ -57,7 +57,18 @@ database of all the instances. Rotest uses the infrastructure of Django, to
 define this database, and to make use of the Django's admin frontend to enable
 changing it.
 
-First, create a Django project, using:
+The fastest way to create a Rotest project is to use the cookiecutter:
+
+.. code-block:: console
+
+    $ pip install cookiecutter
+    $ cookiecutter https://github.com/gregoil/cookiecutter-rotest
+
+For further reading on cookiecutters, see https://cookiecutter.readthedocs.io/
+
+Alternatively, you can create the project manually:
+
+First, create a Django project, using
 
 .. code-block:: console
 
