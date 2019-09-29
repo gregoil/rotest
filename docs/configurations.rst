@@ -167,6 +167,26 @@ in the following ways:
 
 * There is no default value.
 
+Smart client
+------------
+
+.. envvar:: ROTEST_SMART_CLIENT
+
+    Enable or disable the smart client, which keeps resources from one test to the next.
+
+To define smart client behavior, use the following methods:
+
+* Define :envvar:`ROTEST_SMART_CLIENT` with to be 'True' or 'False'.
+
+* Define ``smart_client`` in the configuration file:
+
+  .. code-block:: yaml
+
+      rotest:
+          smart_client: false
+
+* Use the default, which is ``True``.
+
 Artifacts Directory
 -------------------
 
