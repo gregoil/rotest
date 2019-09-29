@@ -63,7 +63,7 @@ setup(
             "xlrd",
             "pathlib2",
             "flake8",
-            "pylint",
+            "pylint<2.4",
             "waiting",
         ]
     },
