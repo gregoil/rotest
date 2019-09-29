@@ -16,7 +16,9 @@ In this tutorial, you'll learn:
 Creating a Resource Class
 =========================
 
-In the root of your project, create a new Django application:
+If you used ``rotest-cookiecutter`` to create the project earlier,
+you should already have a Django applications to put the resources in.
+Otherwise create one manually in the root of your project:
 
 .. code-block:: console
 
