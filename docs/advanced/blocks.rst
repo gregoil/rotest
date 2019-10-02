@@ -53,7 +53,7 @@ TestBlock
     to ask for values for the block (values are passed via ``common``,
     ``parametrize``, previous blocks passing them as ``outputs``, or as
     requested resources of the block or its containers).
-    You can define a default value to BlockInput to assign if non is supplied
+    You can define a default value to BlockInput to assign if none is supplied
     (making it an optional input). For example, defining in the block's scope
 
    .. code-block:: python
@@ -66,7 +66,9 @@ TestBlock
 
    will validate that the block instance will have a value for 'field_name'
    before running the parent flow (and unless another value is supplied,
-   set for the block's instance: self.other_field=1).
+   set for the block's instance: self.other_field=1). The static validation
+   would also make sure that the parameters passed to blocks (via ``parametrize``
+   or ``common``) exist as inputs, to help avoiding syntactic errors and stale code.
 
 #. ``outputs``: define class fields and assign them to instances of BlockOutput
     to share values from the instance (self) to the parent and siblings.
