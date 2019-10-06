@@ -208,6 +208,7 @@ def main(*tests):
     parser = create_client_options_parser()
     arguments = parser.parse_args()
 
+    core_log.debug('Using configuration file %r', arguments.config_path)
     config = AttrDict(chain(
         six.iteritems(default_config),
         six.iteritems(parse_config_file(arguments.config_path,

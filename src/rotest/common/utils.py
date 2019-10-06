@@ -12,8 +12,6 @@ from attrdict import AttrDict
 from jsonschema import validate
 from future.builtins import next
 
-from rotest.common import core_log
-
 RUNTIME_ORDER = '-start_time'
 DATE_TIME_FORMAT = '%y.%m.%d_%H_%M_%S'
 
@@ -149,7 +147,6 @@ def parse_config_file(json_path, schema_path):
     if not os.path.exists(json_path):
         raise ValueError("Illegal config-path: %r" % json_path)
 
-    core_log.debug('Parsing configuration file %r', json_path)
     config = parse_json(json_path=json_path,
                         schema_path=schema_path)
 
