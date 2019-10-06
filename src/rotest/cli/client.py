@@ -58,12 +58,14 @@ django.setup()  # noqa
 from rotest.common import core_log
 from rotest.core.suite import TestSuite
 from rotest.core.filter import match_tags
+from rotest.common.utils import parse_config_file
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.result.result import get_result_handlers
 from rotest.cli.discover import discover_tests_under_paths
-from rotest.core.runner import (DEFAULT_CONFIG_PATH, default_config,
-                                update_resource_requests, run as rotest_runner,
-                                parse_config_file, parse_resource_identifiers)
+from rotest.common.constants import (DEFAULT_CONFIG_PATH, DEFAULT_SCHEMA_PATH,
+                                     default_config)
+from rotest.core.runner import (update_resource_requests, run as rotest_runner,
+                                parse_resource_identifiers)
 
 
 def parse_outputs_option(outputs):
@@ -208,7 +210,8 @@ def main(*tests):
 
     config = AttrDict(chain(
         six.iteritems(default_config),
-        six.iteritems(parse_config_file(arguments.config_path)),
+        six.iteritems(parse_config_file(arguments.config_path,
+                                        DEFAULT_SCHEMA_PATH)),
         filter_valid_values(vars(arguments)),
     ))
 

@@ -10,7 +10,7 @@ from future.builtins import object, next
 
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
-from rotest.core.runner import default_config
+from rotest.common.constants import default_config
 from rotest.management.base_resource import BaseResource
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.management.client.manager import ClientResourceManager
