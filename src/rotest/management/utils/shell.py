@@ -69,17 +69,17 @@ def _run_block(block_class, config=default_config,
         kwargs (dict): additional arguments that will be passed as parameters
             to the block (overriding shared data).
     """
-    shared_kwargs = block_class.common.copy()
-    shared_kwargs.update(shared_data)
-    shared_kwargs.update(kwargs)
     parent = ShellMockFlow()
-    block_class = block_class.params(**shared_kwargs)
-
     block = block_class(config=config,
                         parent=parent,
                         enable_debug=debug,
                         resource_manager=BaseResource._SHELL_CLIENT,
                         is_main=False)
+
+    shared_kwargs = shared_data.copy()
+    shared_kwargs.update(kwargs)
+    block._set_parameters(override_previous=False,
+                          **shared_kwargs)
 
     parent.work_dir = block.work_dir
     block.validate_inputs()
