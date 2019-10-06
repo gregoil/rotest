@@ -19,7 +19,6 @@ from future.builtins import zip, object
 from django.db.models.query_utils import DeferredAttribute
 
 from rotest.common import core_log
-from rotest.core.runner import default_config
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.utils import get_work_dir, get_class_fields
 from rotest.management.models.resource_data import ResourceData
@@ -414,7 +413,7 @@ class BaseResource(object):
             resource.enable_debug()
 
     @classmethod
-    def lock(cls, config=default_config, skip_init=False, **kwargs):
+    def lock(cls, config=None, skip_init=False, **kwargs):
         """Lock an instance of this resource class.
 
         Args:
@@ -437,7 +436,8 @@ class BaseResource(object):
                                            cls,
                                            **kwargs)
 
-        config_dict = None
+        from rotest.core.runner import default_config
+        config_dict = default_config
         if config is not None:
             if isinstance(config, dict):
                 config_dict = config
