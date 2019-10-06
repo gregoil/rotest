@@ -55,7 +55,7 @@ class AbstractTest(unittest.TestCase):
     SETUP_METHOD_NAME = 'setUp'
     TEARDOWN_METHOD_NAME = 'tearDown'
 
-    TIMEOUT = 1800  # 30 minutes
+    TIMEOUT = 60 * 60  # 60 minutes
 
     resources = ()
 

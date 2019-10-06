@@ -369,7 +369,7 @@ To optimize the running time of tests, you can use options :option:`-p` or
 :option:`--processes` to run several work processes that can run tests
 separately.
 
-Any test have a ``TIMEOUT`` attribute (defaults to 30 minutes), and it will be
+Any test have a ``TIMEOUT`` attribute (defaults to 60 minutes), and it will be
 enforced only when spawning at least one worker process:
 
 .. code-block:: python
@@ -381,6 +381,16 @@ enforced only when spawning at least one worker process:
 
         def test(self):
             pass
+
+.. warning::
+
+    When running with multiprocess you can't use IPDBugger (--debug).
+
+.. warning::
+
+    It is **not** recommended using this option when you have a SQLite database,
+    since it doesn't allow parallel access (all the workers request resources in the same time).
+
 
 Specifying Resources to Use
 ============================

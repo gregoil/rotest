@@ -6,6 +6,7 @@ import os
 import sys
 from collections import defaultdict
 
+from attrdict import AttrDict
 from future.builtins import range
 
 from rotest.common import core_log
@@ -278,3 +279,6 @@ def update_resource_requests(test_class, resource_identifiers):
                                 specifics_fulfilled)
         raise ValueError("Tests do not contain requests of the names %s" %
                          unfound_requests)
+
+
+default_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))

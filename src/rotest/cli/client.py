@@ -55,13 +55,13 @@ from attrdict import AttrDict
 
 django.setup()  # noqa
 
-from rotest.core.suite import TestSuite
 from rotest.common import core_log
+from rotest.core.suite import TestSuite
 from rotest.core.filter import match_tags
 from rotest.core.utils.common import print_test_hierarchy
 from rotest.core.result.result import get_result_handlers
 from rotest.cli.discover import discover_tests_under_paths
-from rotest.core.runner import (DEFAULT_CONFIG_PATH, parse_config_file,
+from rotest.core.runner import (DEFAULT_CONFIG_PATH, default_config,
                                 update_resource_requests, run as rotest_runner,
                                 parse_resource_identifiers)
 
@@ -207,7 +207,7 @@ def main(*tests):
     arguments = parser.parse_args()
 
     config = AttrDict(chain(
-        six.iteritems(parse_config_file(DEFAULT_CONFIG_PATH)),
+        six.iteritems(default_config),
         six.iteritems(parse_config_file(arguments.config_path)),
         filter_valid_values(vars(arguments)),
     ))
