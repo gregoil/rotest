@@ -63,7 +63,7 @@ from rotest.core.result.result import get_result_handlers
 from rotest.cli.discover import discover_tests_under_paths
 from rotest.core.runner import (DEFAULT_CONFIG_PATH, default_config,
                                 update_resource_requests, run as rotest_runner,
-                                parse_resource_identifiers)
+                                parse_config_file, parse_resource_identifiers)
 
 
 def parse_outputs_option(outputs):
