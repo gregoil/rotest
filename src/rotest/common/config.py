@@ -6,6 +6,7 @@ import sys
 import itertools
 
 import yaml
+import django
 from attrdict import AttrDict
 from future.utils import iteritems
 from future.builtins import zip, object
@@ -77,25 +78,22 @@ def get_command_line_configuration(configuration_schema, command_line_options):
     return configuration
 
 
-def get_environment_variables_configuration(configuration_schema,
-                                            environment_variables):
-    """Get configuration, based on the environment variables.
+def get_configuration_from_object(configuration_schema, target_object):
+    """Get configuration, based on the values in a given object's fields.
 
     Args:
         configuration_schema (dict): a match between each target option to its
             sources.
-        environment_variables (dict): the environment variables, as given by
-            `os.environ`.
+        target_object (object): object to search target options in.
 
     Returns:
         dict: a match between each target option to the given value.
     """
     configuration = {}
     for target, option in six.iteritems(configuration_schema):
-        for environment_variable in option.environment_variables:
-            if environment_variable in environment_variables:
-                configuration[target] = \
-                    environment_variables[environment_variable]
+        for key in option.environment_variables:
+            if hasattr(target_object, key):
+                configuration[target] = getattr(target_object, key)
                 break
 
     return configuration
@@ -154,7 +152,8 @@ def get_file_configuration(configuration_schema, config_content):
 def get_configuration(configuration_schema,
                       command_line_options=None,
                       environment_variables=None,
-                      config_content=None):
+                      config_content=None,
+                      django_settings=None):
     """Get configuration from all sources.
 
     Notes:
@@ -170,6 +169,7 @@ def get_configuration(configuration_schema,
         environment_variables (dict): the environment variables, as given by
             `os.environ`.
         config_content (str): content of the configuration file in YAML format.
+        django_settings (dict): content of the Django settings file as dict.
     """
     default_configuration = {
         target: option.default_value
@@ -177,6 +177,7 @@ def get_configuration(configuration_schema,
 
     if command_line_options is None:
         cli_configuration = {}
+
     else:
         cli_configuration = get_command_line_configuration(
             configuration_schema=configuration_schema,
@@ -184,20 +185,31 @@ def get_configuration(configuration_schema,
 
     if environment_variables is None:
         env_var_configuration = {}
+
     else:
-        env_var_configuration = get_environment_variables_configuration(
+        env_var_configuration = get_configuration_from_object(
             configuration_schema=configuration_schema,
-            environment_variables=environment_variables)
+            target_object=AttrDict(environment_variables))
 
     if config_content is None:
         file_configuration = {}
+
     else:
         file_configuration = get_file_configuration(
             configuration_schema=configuration_schema,
             config_content=config_content)
 
+    if django_settings is None:
+        django_configuration = {}
+
+    else:
+        django_configuration = get_configuration_from_object(
+            configuration_schema=configuration_schema,
+            target_object=django_settings)
+
     return AttrDict(dict(itertools.chain(
         iteritems(default_configuration),
+        iteritems(django_configuration),
         iteritems(file_configuration),
         iteritems(env_var_configuration),
         iteritems(cli_configuration),
@@ -227,6 +239,7 @@ CONFIGURATION_SCHEMA = {
         default_value="rotest/api/"),
     "discoverer_blacklist": Option(
         config_file_options=["discoverer_blacklist"],
+        environment_variables=["DISCOVERER_BLACKLIST"],
         default_value=[]),
     "smart_client": Option(
         config_file_options=["smart_client"],
@@ -234,9 +247,11 @@ CONFIGURATION_SCHEMA = {
         default_value=True),
     "shell_startup_commands": Option(
         config_file_options=["shell_startup_commands"],
+        environment_variables=["SHELL_STARTUP_COMMANDS"],
         default_value=[]),
     "shell_output_handlers": Option(
         config_file_options=["shell_output_handlers"],
+        environment_variables=["SHELL_OUTPUT_HANDLERS"],
         default_value=["logdebug"]),
     "resource_request_timeout": Option(
         command_line_options=["--resource-request-timeout"],
@@ -244,12 +259,6 @@ CONFIGURATION_SCHEMA = {
                                "RESOURCE_WAITING_TIME"],
         config_file_options=["resource_request_timeout"],
         default_value=0),
-    "django_settings": Option(
-        command_line_options=["--django-settings"],
-        environment_variables=["DJANGO_SETTINGS_MODULE",
-                               "ROTEST_DJANGO_SETTINGS_MODULE"],
-        config_file_options=["django_settings"],
-        default_value=None),
     "artifacts_dir": Option(
         command_line_options=["--artifacts-dir"],
         environment_variables=["ARTIFACTS_DIR"],
@@ -260,15 +269,25 @@ CONFIGURATION_SCHEMA = {
 config_path = search_config_file()
 if config_path is None:
     configuration_content = None
+
 else:
     with open(config_path, "r") as config_file:
         configuration_content = config_file.read()
+
+
+if hasattr(django, "conf"):
+    django_settings_wrapper = django.conf.settings
+
+else:
+    django_settings_wrapper = None
+
 
 CONFIGURATION = get_configuration(
     configuration_schema=CONFIGURATION_SCHEMA,
     command_line_options=sys.argv,
     environment_variables=os.environ,
-    config_content=configuration_content)
+    config_content=configuration_content,
+    django_settings=django_settings_wrapper)
 
 
 DEFAULT_DISCOVERY_BLACKLIST = [".tox", ".git", ".idea", "setup.py"]
@@ -280,18 +299,11 @@ RESOURCE_MANAGER_HOST = CONFIGURATION.host
 DJANGO_MANAGER_PORT = int(CONFIGURATION.port)
 API_BASE_URL = CONFIGURATION.api_base_url
 RESOURCE_REQUEST_TIMEOUT = int(CONFIGURATION.resource_request_timeout)
-DJANGO_SETTINGS_MODULE = CONFIGURATION.django_settings
 ARTIFACTS_DIR = os.path.expanduser(CONFIGURATION.artifacts_dir)
 SHELL_STARTUP_COMMANDS = CONFIGURATION.shell_startup_commands
 SHELL_OUTPUT_HANDLERS = CONFIGURATION.shell_output_handlers
 DISCOVERER_BLACKLIST = list(CONFIGURATION.discoverer_blacklist) + \
                        DEFAULT_DISCOVERY_BLACKLIST
-
-if DJANGO_SETTINGS_MODULE is None:
-    raise ValueError("No Django settings module was supplied")
-
-# Inject Django's settings module
-os.environ["DJANGO_SETTINGS_MODULE"] = DJANGO_SETTINGS_MODULE
 
 if os.path.isfile(ROTEST_WORK_DIR):
     raise ValueError("Path {} for the working directory is a file, you should "

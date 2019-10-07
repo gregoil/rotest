@@ -6,6 +6,8 @@ Configurations
 
 Rotest behaviour can be configured in the following ways:
 
+* Defining variables in the Django settings module.
+
 * A configuration file called :file:`rotest.yml` in YAML format.
 
 * Environment variables.
@@ -24,6 +26,8 @@ session-based, and command line arguments are relevant for a specific run.
     * Command line arguments take precedence over environment variables.
 
     * Environment variables take precedence over the configuration file.
+
+    * Configuration file take precedence over the Django settings module.
 
     * Some configuration attributes have default values, in case there's no
       answer.
@@ -69,6 +73,8 @@ use the following methods:
 
 * Define :envvar:`ROTEST_WORK_DIR` to point to the path.
 
+* Define variable `ROTEST_WORK_DIR` in the Django settings module.
+
 * Define ``workdir`` in the configuration file:
 
   .. code-block:: yaml
@@ -91,6 +97,8 @@ that the client should contact with, use the following methods:
 
 * Define :envvar:`ROTEST_HOST` to point to the server DNS or IP address.
 
+* Define variable `ROTEST_HOST` in the Django settings module.
+
 * Define ``host`` in the configuration file:
 
   .. code-block:: yaml
@@ -111,6 +119,8 @@ To define the relevant server's port that will be opened, and the port clients
 will communicate with, use the following methods:
 
 * Define :envvar:`ROTEST_SERVER_PORT` with the desired port.
+
+* Define variable `ROTEST_SERVER_PORT` in the Django settings module.
 
 * Define ``port`` in the configuration file:
 
@@ -136,6 +146,8 @@ via the following methods:
 * Define :envvar:`ROTEST_RESOURCE_REQUEST_TIMEOUT` with the number of seconds
   to wait before giving up on waiting for resources.
 
+* Define variable `ROTEST_RESOURCE_REQUEST_TIMEOUT` in the Django settings module.
+
 * Define ``resource_request_timeout`` in the configuration file:
 
   .. code-block:: yaml
@@ -144,28 +156,6 @@ via the following methods:
           resource_request_timeout: 60
 
 * Use the default, which is ``0`` (not waiting at all).
-
-Django Settings Module
-----------------------
-
-.. envvar:: DJANGO_SETTINGS_MODULE
-
-    Django configuration path, in a module syntax.
-
-Rotest is a Django library, and as such needs its configuration module, in
-order to write and read data about the resources from the database. Define it
-in the following ways:
-
-* Define :envvar:`DJANGO_SETTINGS_MODULE`.
-
-* Define ``django_settings`` in the configuration file:
-
-  .. code-block:: yaml
-
-      rotest:
-          django_settings: package1.package2.settings
-
-* There is no default value.
 
 Smart client
 ------------
@@ -177,6 +167,8 @@ Smart client
 To define smart client behavior, use the following methods:
 
 * Define :envvar:`ROTEST_SMART_CLIENT` with to be 'True' or 'False'.
+
+* Define variable `ROTEST_SMART_CLIENT` in the Django settings module.
 
 * Define ``smart_client`` in the configuration file:
 
@@ -200,6 +192,8 @@ in the following ways:
 
 * Define :envvar:`ARTIFACTS_DIR`.
 
+* Define variable `ARTIFACTS_DIR` in the Django settings module.
+
 * Define ``artifact_dir`` in the configuration file:
 
   .. code-block:: yaml
@@ -216,6 +210,9 @@ Shell Startup Commands
 to write them every time. The commands must be simple one-liners.
 Define it in the following ways:
 
+* Define variable `SHELL_STARTUP_COMMANDS` in the Django settings module
+  that points to a list of strings to execute as commands.
+
 * Define ``shell_startup_commands`` in the configuration file:
 
   .. code-block:: yaml
@@ -229,18 +226,30 @@ Shell Output Handlers
 ----------------------
 
 ``rotest shell`` enables defining output handlers for components run in it,
-(see :ref:`output_handlers`). The default value is ``["logdebug"]``.
+(see :ref:`output_handlers`).
+
+* Define variable `SHELL_OUTPUT_HANDLERS` in the Django settings module
+  that points to a list of output handler names.
+
+* Define ``shell_output_handlers`` in the configuration file:
+
+  .. code-block:: yaml
+
+      rotest:
+          shell_output_handlers: ["loginfo"]
+
+* Use the default, which is ``["logdebug"]``.
 
 Discoverer Blacklist
 --------------------
 
-Rotest enables loading resources from an app, a thing that happens automatically
-when running ``rotest shell``, but some files can / must be skipped when searching
-for the resources.
-
-Also, tests discovering (via ``rotest <some_dir>``) takes this blacklist into consideration.
+Rotest enables discovering tests by running ``rotest <path to search>``,
+but sometimes some files can / must be skipped when searching for tests.
+The patterns are in fnmatch syntax.
 
 Define it in the following ways:
+
+* Define variable `DISCOVERER_BLACKLIST` in the Django settings module.
 
 * Define ``discoverer_blacklist`` in the configuration file:
 
