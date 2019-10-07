@@ -20,8 +20,10 @@ from django.db.models.query_utils import DeferredAttribute
 
 from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
+from rotest.common.utils import parse_config_file
 from rotest.common.utils import get_work_dir, get_class_fields
 from rotest.management.models.resource_data import ResourceData
+from rotest.common.constants import default_config, DEFAULT_SCHEMA_PATH
 
 try:
     from django.db.models.fields.related_descriptors import \
@@ -426,7 +428,6 @@ class BaseResource(object):
             BaseResource. locked and initialized resource, ready for work.
         """
         # These runtime imports are done to avoid cyclic imports.
-        from rotest.core.runner import parse_config_file
         from rotest.management.client.manager import ClientResourceManager
 
         if BaseResource._SHELL_CLIENT is None:
@@ -436,13 +437,13 @@ class BaseResource(object):
                                            cls,
                                            **kwargs)
 
-        config_dict = None
+        config_dict = default_config
         if config is not None:
             if isinstance(config, dict):
                 config_dict = config
 
             else:
-                config_dict = parse_config_file(config)
+                config_dict = parse_config_file(config, DEFAULT_SCHEMA_PATH)
 
         result = BaseResource._SHELL_CLIENT.request_resources(
                                                         [resource_request],

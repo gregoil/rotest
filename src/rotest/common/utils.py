@@ -3,10 +3,13 @@
 from __future__ import absolute_import
 
 import os
+import json
 from shutil import copy
 from itertools import count
 from datetime import datetime
 
+from attrdict import AttrDict
+from jsonschema import validate
 from future.builtins import next
 
 RUNTIME_ORDER = '-start_time'
@@ -103,3 +106,48 @@ def get_class_fields(cls, field_type):
             field = getattr(cls, field_name)
             if isinstance(field, field_type):
                 yield (field_name, field)
+
+
+def parse_json(json_path, schema_path=None):
+    """Parse the Json file into attribute dictionary.
+
+    Args:
+        json_path (str): path of the Json file.
+        schema_path (str): path of the schema file - optional.
+
+    Returns:
+        AttrDict. representing the Json file .
+
+    Raises:
+        jsonschema.ValidationError: Json file does not comply with the schema.
+    """
+    with open(json_path) as config_file:
+        json_content = json.load(config_file)
+
+    if schema_path is not None:
+        with open(schema_path) as schema:
+            schema_content = json.load(schema)
+
+        validate(json_content, schema_content)
+
+    return AttrDict(json_content)
+
+
+def parse_config_file(json_path, schema_path):
+    """Parse configuration file to create the config dictionary.
+
+    Args:
+        json_path (str): path to the json config file.
+        schema_path (str): path of the schema file - optional.
+
+    Returns:
+        AttrDict. configuration dict, containing default values for run
+            options and other parameters.
+    """
+    if not os.path.exists(json_path):
+        raise ValueError("Illegal config-path: %r" % json_path)
+
+    config = parse_json(json_path=json_path,
+                        schema_path=schema_path)
+
+    return config

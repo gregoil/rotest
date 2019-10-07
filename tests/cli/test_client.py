@@ -12,7 +12,7 @@ from rotest.cli.main import main
 from rotest.core import TestCase, TestSuite
 from rotest.cli.client import main as client_main
 from rotest.cli.client import parse_outputs_option
-from rotest.core.runner import DEFAULT_SCHEMA_PATH, DEFAULT_CONFIG_PATH
+from rotest.common.constants import DEFAULT_SCHEMA_PATH, DEFAULT_CONFIG_PATH
 
 
 class MockCase(TestCase):

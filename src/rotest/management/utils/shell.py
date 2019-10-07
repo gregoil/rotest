@@ -6,22 +6,18 @@ import sys
 
 import django
 import IPython
-from attrdict import AttrDict
 from future.builtins import object, next
 
 from rotest.core.suite import TestSuite
 from rotest.core.result.result import Result
+from rotest.common.constants import default_config
 from rotest.management.base_resource import BaseResource
 from rotest.core.flow_component import AbstractFlowComponent
 from rotest.management.client.manager import ClientResourceManager
-from rotest.core.runner import parse_config_file, DEFAULT_CONFIG_PATH
 from rotest.common.config import SHELL_STARTUP_COMMANDS, SHELL_OUTPUT_HANDLERS
 
 # Mock tests result object for running blocks
 result_object = None
-
-# Mock tests configuration for running blocks
-default_config = AttrDict(parse_config_file(DEFAULT_CONFIG_PATH))
 
 # Container for data shared between blocks
 shared_data = {}
@@ -73,17 +69,17 @@ def _run_block(block_class, config=default_config,
         kwargs (dict): additional arguments that will be passed as parameters
             to the block (overriding shared data).
     """
-    shared_kwargs = block_class.common.copy()
-    shared_kwargs.update(shared_data)
-    shared_kwargs.update(kwargs)
     parent = ShellMockFlow()
-    block_class = block_class.params(**shared_kwargs)
-
     block = block_class(config=config,
                         parent=parent,
                         enable_debug=debug,
                         resource_manager=BaseResource._SHELL_CLIENT,
                         is_main=False)
+
+    shared_kwargs = shared_data.copy()
+    shared_kwargs.update(kwargs)
+    block._set_parameters(override_previous=False,
+                          **shared_kwargs)
 
     parent.work_dir = block.work_dir
     block.validate_inputs()

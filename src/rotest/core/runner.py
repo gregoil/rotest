@@ -2,14 +2,11 @@
 # pylint: disable=too-many-arguments
 from __future__ import absolute_import
 
-import os
 import sys
 from collections import defaultdict
 
 from future.builtins import range
 
-from rotest.common import core_log
-from rotest.core.utils.common import parse_json
 from rotest.common.utils import get_class_fields
 from rotest.core.runners.base_runner import BaseTestRunner
 from rotest.management.base_resource import ResourceRequest
@@ -22,9 +19,6 @@ from .suite import TestSuite
 
 LAST_RUN_INDEX = -1
 MINIMUM_TIMES_TO_RUN = 1
-FILE_FOLDER = os.path.dirname(__file__)
-DEFAULT_SCHEMA_PATH = os.path.join(FILE_FOLDER, "schema.json")
-DEFAULT_CONFIG_PATH = os.path.join(FILE_FOLDER, "default_config.json")
 
 
 def get_runner(save_state=False, outputs=None, config=None,
@@ -127,27 +121,6 @@ def run(test_class, save_state=None, outputs=None, config=None,
         runs_data.append(test_runner.run(test_class))
 
     return runs_data
-
-
-def parse_config_file(json_path, schema_path=DEFAULT_SCHEMA_PATH):
-    """Parse configuration file to create the config dictionary.
-
-    Args:
-        json_path (str): path to the json config file.
-        schema_path (str): path of the schema file - optional.
-
-    Returns:
-        AttrDict. configuration dict, containing default values for run
-            options and other parameters.
-    """
-    if not os.path.exists(json_path):
-        raise ValueError("Illegal config-path: %r" % json_path)
-
-    core_log.debug('Parsing configuration file %r', json_path)
-    config = parse_json(json_path=json_path,
-                        schema_path=schema_path)
-
-    return config
 
 
 # Syntax symbol used to access the fields of Django models in querying
