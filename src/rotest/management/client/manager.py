@@ -196,14 +196,12 @@ class ClientResourceManager(AbstractClient):
                     if time.time() - start_time >= timeout:
                         raise ResourceUnavailableError(response.details)
 
-                    else:
-                        time.sleep(self.REQUEST_RETRY_INTERVAL)
-                        continue
+                    time.sleep(self.REQUEST_RETRY_INTERVAL)
+                    continue
 
                 raise ResourceDoesNotExistError(response.details)
 
-            else:
-                break
+            break
 
         return response
 

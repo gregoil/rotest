@@ -2,7 +2,7 @@
 
 Used in order to modify the appearance of tables in the admin site.
 """
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods,protected-access
 from __future__ import absolute_import
 from django.contrib import admin
 from django.db.models import ForeignKey
