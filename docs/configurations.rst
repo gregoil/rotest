@@ -8,7 +8,7 @@ Rotest behaviour can be configured in the following ways:
 
 * Defining variables in the Django settings module.
 
-* A configuration file called :file:`rotest.yml` in YAML format.
+* *DEPRECATED:* A configuration file called :file:`rotest.yml` in YAML format.
 
 * Environment variables.
 
@@ -59,7 +59,7 @@ and this way in Windows:
 .. code-block:: console
 
     $ set ENVIRONMENT_VARIABLE=value
-    $ setx ENVIRONMENT_VARIABLE=value  # Set it permanently (reopen the shell)
+    $ setx ENVIRONMENT_VARIABLE value  # Set it permanently (reopen the shell)
 
 Working Directory
 -----------------
