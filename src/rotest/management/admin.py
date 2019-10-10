@@ -5,6 +5,7 @@ Used in order to modify the appearance of tables in the admin site.
 # pylint: disable=too-many-public-methods
 from __future__ import absolute_import
 from django.contrib import admin
+from django.db.models import ForeignKey
 from django.utils.translation import ugettext_lazy as utext
 
 from rotest.management.models import ResourceData
@@ -99,7 +100,7 @@ class ResourceDataAdmin(admin.ModelAdmin):
 admin.site.register(ResourceData, ResourceDataAdmin)
 
 
-def register_resource_to_admin(resource_type, attr_list=(), link_list=()):
+def register_resource_to_admin(resource_type, attr_list=None, link_list=None):
     """Create a admin-view class using the given arguments.
 
     Args:
@@ -110,6 +111,23 @@ def register_resource_to_admin(resource_type, attr_list=(), link_list=()):
     Returns:
         ResourceAdmin. resource admin view class.
     """
+    if attr_list is None and link_list is None:
+        attr_list = []
+        link_list = []
+
+        for field in resource_type._meta.fields:
+            if field.model == ResourceData or '_ptr' in field.name:
+                continue
+
+            if isinstance(field, ForeignKey):
+                link_list.append(field.name)
+
+            else:
+                attr_list.append(field.name)
+
+    attr_list = [] if attr_list is None else attr_list
+    link_list = [] if link_list is None else link_list
+
     # Create link properties to be displayed for the relations.
     link_properties = []
     for field_name in link_list:
