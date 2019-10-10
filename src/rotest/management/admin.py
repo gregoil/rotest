@@ -5,8 +5,9 @@ Used in order to modify the appearance of tables in the admin site.
 # pylint: disable=too-many-public-methods,protected-access
 from __future__ import absolute_import
 from django.contrib import admin
-from django.db.models import ForeignKey
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as utext
+from django.db.models import ForeignKey, OneToOneField, ManyToManyField, Model
 
 from rotest.management.models import ResourceData
 from rotest.common.django_utils.common import linked_unicode
@@ -115,11 +116,12 @@ def register_resource_to_admin(resource_type, attr_list=None, link_list=None):
         attr_list = []
         link_list = []
 
-        for field in resource_type._meta.fields:
-            if field.model == ResourceData or '_ptr' in field.name:
-                continue
+        fields = [field for field in
+                  resource_type._meta.fields + resource_type._meta.many_to_many
+                  if field.model != ResourceData and '_ptr' not in field.name]
 
-            if isinstance(field, ForeignKey):
+        for field in fields:
+            if isinstance(field, (ForeignKey, OneToOneField, ManyToManyField)):
                 link_list.append(field.name)
 
             else:
@@ -137,6 +139,10 @@ def register_resource_to_admin(resource_type, attr_list=None, link_list=None):
             instance = getattr(self, field_to_convert)
             if instance is None:
                 return '(None)'
+
+            if not isinstance(instance, Model):
+                return mark_safe(', '.join(linked_unicode(value)
+                                           for value in instance.all()))
 
             return linked_unicode(instance)
 
