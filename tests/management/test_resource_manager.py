@@ -304,7 +304,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                          % (self.NON_EXISTING_NAME1, resources_num))
 
         descriptor = Descriptor(DemoResource, name=self.NON_EXISTING_NAME1)
-        self.assertRaises(ResourceUnavailableError,
+        self.assertRaises(ResourceDoesNotExistError,
                           self.client._lock_resources,
                           descriptors=[descriptor],
                           timeout=self.LOCK_TIMEOUT)
@@ -321,7 +321,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         descriptor = Descriptor(DemoResource, name=self.FREE1_NAME)
         descriptor.properties[self.NON_EXISTING_FIELD] = 0
 
-        self.assertRaises(ResourceUnavailableError,
+        self.assertRaises(ResourceDoesNotExistError,
                           self.client._lock_resources,
                           descriptors=[descriptor],
                           timeout=self.LOCK_TIMEOUT)
