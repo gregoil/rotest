@@ -2,10 +2,12 @@
 
 Used in order to modify the appearance of tables in the admin site.
 """
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods,protected-access
 from __future__ import absolute_import
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as utext
+from django.db.models import ForeignKey, OneToOneField, ManyToManyField, Model
 
 from rotest.management.models import ResourceData
 from rotest.common.django_utils.common import linked_unicode
@@ -99,7 +101,7 @@ class ResourceDataAdmin(admin.ModelAdmin):
 admin.site.register(ResourceData, ResourceDataAdmin)
 
 
-def register_resource_to_admin(resource_type, attr_list=(), link_list=()):
+def register_resource_to_admin(resource_type, attr_list=None, link_list=None):
     """Create a admin-view class using the given arguments.
 
     Args:
@@ -110,6 +112,24 @@ def register_resource_to_admin(resource_type, attr_list=(), link_list=()):
     Returns:
         ResourceAdmin. resource admin view class.
     """
+    if attr_list is None and link_list is None:
+        attr_list = []
+        link_list = []
+
+        fields = [field for field in
+                  resource_type._meta.fields + resource_type._meta.many_to_many
+                  if field.model != ResourceData and '_ptr' not in field.name]
+
+        for field in fields:
+            if isinstance(field, (ForeignKey, OneToOneField, ManyToManyField)):
+                link_list.append(field.name)
+
+            else:
+                attr_list.append(field.name)
+
+    attr_list = [] if attr_list is None else attr_list
+    link_list = [] if link_list is None else link_list
+
     # Create link properties to be displayed for the relations.
     link_properties = []
     for field_name in link_list:
@@ -119,6 +139,10 @@ def register_resource_to_admin(resource_type, attr_list=(), link_list=()):
             instance = getattr(self, field_to_convert)
             if instance is None:
                 return '(None)'
+
+            if not isinstance(instance, Model):
+                return mark_safe(', '.join(linked_unicode(value)
+                                           for value in instance.all()))
 
             return linked_unicode(instance)
 
