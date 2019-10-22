@@ -17,13 +17,15 @@ from future.builtins import zip, str
 from rotest.common import core_log
 from rotest.management.client.client import AbstractClient
 from rotest.api.common.responses import FailureResponseModel
-from rotest.api.resource_control.lock_resources import USER_NOT_EXIST
 from rotest.management.common.resource_descriptor import ResourceDescriptor
+from rotest.api.resource_control.lock_resources import (USER_NOT_EXIST,
+                                                        UNAVAILABLE_RESOURCES)
 from rotest.common.config import (RESOURCE_MANAGER_HOST,
                                   ROTEST_WORK_DIR,
                                   SMART_CLIENT)
 from rotest.management.common.errors import (ResourceReleaseError,
                                              ResourceUnavailableError,
+                                             ResourceDoesNotExistError,
                                              UnknownUserError)
 from rotest.api.resource_control import (LockResources,
                                          QueryResources,
@@ -50,6 +52,8 @@ class ClientResourceManager(AbstractClient):
         keep_resources (bool): whether to keep the resources locked until
             they are not needed.
     """
+    REQUEST_RETRY_INTERVAL = 0.5  # Seconds
+
     def __init__(self, host=None, logger=core_log,
                  keep_resources=SMART_CLIENT):
         """Initialize the resource client."""
@@ -186,11 +190,18 @@ class ClientResourceManager(AbstractClient):
                 if match:
                     raise UnknownUserError(response.details)
 
-                if time.time() - start_time > timeout:
-                    raise ResourceUnavailableError(response.details)
+                match = re.match(UNAVAILABLE_RESOURCES.format(".*"),
+                                 response.details)
+                if match:
+                    if time.time() - start_time >= timeout:
+                        raise ResourceUnavailableError(response.details)
 
-            else:
-                break
+                    time.sleep(self.REQUEST_RETRY_INTERVAL)
+                    continue
+
+                raise ResourceDoesNotExistError(response.details)
+
+            break
 
         return response
 

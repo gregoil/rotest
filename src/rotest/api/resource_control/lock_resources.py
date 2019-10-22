@@ -24,8 +24,8 @@ from rotest.api.common.responses import (InfluencedResourcesResponseModel,
 
 
 USER_NOT_EXIST = "User {} has no matching object in the DB"
-INVALID_RESOURCES = "No existing resource meets the requirements: {!r}"
-UNAVAILABLE_RESOURCES = "No available resource meets the requirements: {!r}"
+INVALID_RESOURCES = "No existing resource meets the requirements: {}"
+UNAVAILABLE_RESOURCES = "No available resource meets the requirements: {}"
 
 
 class LockResources(DjangoRequestView):
