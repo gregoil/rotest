@@ -342,15 +342,13 @@ class AbstractTest(unittest.TestCase):
                                           if exc_info is not None])
 
             if exceptions_that_occurred == 0:
-                self.logger.debug("State is not an errored state, "
-                                  "skipping saving state")
+                self.logger.debug("Test didn't fail, skipping saving state")
                 return
 
         elif platform.python_version().startswith("2"):
             status = self.data.exception_type
             if status is None or status in TestOutcome.POSITIVE_RESULTS:
-                self.logger.debug("State is not an errored state, "
-                                  "skipping saving state")
+                self.logger.debug("Test didn't fail, skipping saving state")
                 return
 
         store_dir = os.path.join(self.work_dir, self.STATE_DIR_NAME)

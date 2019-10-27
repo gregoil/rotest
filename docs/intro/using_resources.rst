@@ -193,6 +193,10 @@ The methods of BaseResource that can be overridden:
    Override this method to create a snapshot of the resource's state for
    debugging purposes, e.g. copying logs, etc.
 
+.. figure:: resource_lifecycle.png
+    :target: ../_images/resource_lifecycle.png
+
+
 Running the Resource Management Server
 ======================================
 

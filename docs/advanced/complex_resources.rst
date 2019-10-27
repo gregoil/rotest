@@ -75,8 +75,17 @@ Now, edit the file :file:`resources_app/resources.py`:
     import rpyc
     from rotest.management.base_resource import BaseResource
 
-    from .models import CalculatorData
-    from .sub_process import SubProcess
+    from .models import CalculatorData, SubCalculatorData
+
+
+    class SubProcess(BaseResource):
+        DATA_CLASS = SubCalculatorData
+
+        def container_calculate(self, expression):
+            return self.parent.calculate(expression)
+
+        def get_ip_address(self):
+            return self.parent.data.ip_address
 
 
     class Calculator(BaseResource):
@@ -135,30 +144,12 @@ Note the following:
   the declaration line name it `sub_process`).
 
 
-Lastly, let's show the sub-resource under :file:`resources_app/sub_process.py`:
-
-.. code-block:: python
-
-    from rotest.management.base_resource import BaseResource
-
-    from .models import SubCalculatorData
-
-
-    class SubProcess(BaseResource):
-        DATA_CLASS = SubCalculatorData
-
-        def container_calculate(self, expression):
-            return self.parent.calculate(expression)
-
-        def get_ip_address(self):
-            return self.parent.data.ip_address
-
 Note that we have access to the containing resource via `parent`.
 
 This also applies when we write sub-services, which can use the parent's methods,
 data, and even fields (e.g. `self.parent._rpyc`).
 
-When writing sub-resources and services, remember two things:
+When writing sub-resources and services, remember:
 
  * Always call `super` when overriding BaseResource's methods (connect, initialize,
    validate, finalize, store_state), since the basic method propagate the call to
@@ -170,6 +161,10 @@ When writing sub-resources and services, remember two things:
    and only afterwards the containing resource connects). The same applies for the
    other basic methods (first the sub-resources initialize, then the containing).
 
+ * Since python 3.7, the declaration order of sub-resources is the order in
+   which the basic methods are called (connect, finalize, etc.). You can use this
+   to break complex procedures into services that would do those actions.
+
 
 Parallel initialization
 =======================
@@ -177,9 +172,9 @@ Parallel initialization
 Usually, the initialization process of resources takes a long time.
 In order to speed things up, each resource has a ``PARALLEL_INITIALIZATION`` flag.
 
-This flag defaults to `False`, but when it is set to `True` each
-sub-resource would be initialized in its own thread, before joining back
-to the containing resource for the parent custom initialization code.
+This flag defaults to `False`, but when it is set to `True` each sub-resource
+would be validated and initialized in its own thread, before joining back to the
+containing resource for the parent's custom validate-initialization code.
 
 To activate it, simply write in the class scope of your complex resource:
 
