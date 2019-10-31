@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   deploy:
-    needs: [windows_py36, windows_py37, linux_build]
+    needs: [windows_py36, windows_py37, linux_build, docs_artifact]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -28,7 +28,7 @@ jobs:
   docs_artifact:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.7
