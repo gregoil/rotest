@@ -25,6 +25,21 @@ jobs:
         user: __token__
         password: ${{ secrets.PYPI_PASSWORD }}
 
+  docs_artifact:
+    needs: [windows_py36, windows_py37, linux_build]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v1
+      - run: make -C docs html
+      - run: cd docs/_build
+      - run: tar -cf docs.tar html
+      - uses: actions/upload-artifact@master
+        with:
+          name: my-artifact
+          path: docs.tar
+
   windows_py36:
     runs-on: windows-latest
     strategy:
