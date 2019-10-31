@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: docs
-        path: docs.tar
+        path: docs/_build/docs.tar
 
   windows_py36:
     runs-on: windows-latest
