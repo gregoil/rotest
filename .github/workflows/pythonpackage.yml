@@ -36,7 +36,7 @@ jobs:
       with:
         python-version: 3.7
     - name: Prepare environment
-      run: pip install sphinx==2.1.2
+      run: pip install sphinx==2.1.2 django==1.11
     - name: Build
       run: |
         make -C docs html
