@@ -31,6 +31,7 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v1
+      - run: pip install sphinx==2.1.2
       - run: make -C docs html
       - run: cd docs/_build
       - run: tar -cf docs.tar html
