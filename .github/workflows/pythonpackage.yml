@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   deploy:
-    needs: [windows_py36, windows_py37, linux_build]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
