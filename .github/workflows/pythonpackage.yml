@@ -30,15 +30,19 @@ jobs:
     strategy:
       fail-fast: true
     steps:
-      - uses: actions/checkout@v1
-      - run: pip install sphinx==2.1.2
-      - run: make -C docs html
-      - run: cd docs/_build
-      - run: tar -cf docs.tar html
-      - uses: actions/upload-artifact@master
-        with:
-          name: my-artifact
-          path: docs.tar
+    - uses: actions/checkout@v1
+    - name: Prepare environment
+      run: pip install sphinx==2.1.2
+    - name: Build
+      run: |
+        make -C docs html
+        cd docs/_build
+        tar -cf docs.tar html
+    - name: Upload
+      uses: actions/upload-artifact@master
+      with:
+        name: docs
+        path: docs.tar
 
   windows_py36:
     runs-on: windows-latest
