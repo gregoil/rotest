@@ -37,6 +37,7 @@ jobs:
         python-version: 3.7
     - name: Build
       run: |
+        pip install tox
         tox -e docs
         cd docs/_build
         tar -cf docs.tar html
