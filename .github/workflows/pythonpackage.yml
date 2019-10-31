@@ -4,12 +4,23 @@ on: [push]
 
 jobs:
   deploy:
-    needs: [windows_py36, windows_py37, linux_build, docs_artifact]
+    needs: [windows_py36, windows_py37, linux_build]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
     steps:
     - uses: actions/checkout@v1
+    - name: Build docs
+      run: |
+        pip install tox
+        tox -e docs
+        cd docs/_build
+        tar -cf docs.tar html
+    - name: Upload docs artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: docs
+        path: docs/_build/docs.tar
     - name: Prepare environment
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: actions/setup-python@v1
@@ -24,28 +35,6 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.PYPI_PASSWORD }}
-
-  docs_artifact:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Build
-      run: |
-        pip install tox
-        tox -e docs
-        cd docs/_build
-        tar -cf docs.tar html
-    - name: Upload
-      uses: actions/upload-artifact@master
-      with:
-        name: docs
-        path: docs/_build/docs.tar
 
   windows_py36:
     runs-on: windows-latest
