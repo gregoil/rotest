@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   deploy:
-    needs: [windows_py36, windows_py37, linux_build]
+    needs: [windows_py36, windows_py37, linux_build_py2, linux_build_py3]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -12,6 +12,17 @@ jobs:
     - uses: actions/checkout@v1
     - name: Prepare environment
       uses: actions/setup-python@v1
+    - name: Build docs
+      run: |
+        pip install tox
+        tox -e docs
+        cd docs/_build
+        tar -cf docs.tar html
+    - name: Upload docs artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: docs
+        path: docs/_build/docs.tar
     - name: Build
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |
@@ -66,17 +77,35 @@ jobs:
       run: |
         tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
 
-  linux_build:
+  linux_build_py2:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 14
       matrix:
-        python-version: [2.7, 3.6, 3.7]
+        python-version: [2.7]
+        django-version: ["1.8", "1.9", "1.10", "1.11"]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+    - name: Tox
+      run: |
+        tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
+
+  linux_build_py3:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 14
+      matrix:
+        python-version: [3.6, 3.7]
         django-version: ["1.8", "1.9", "1.10", "1.11", "2.0"]
-        exclude:
-        - python-version: 2.7
-          django-version: "2.0"
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
