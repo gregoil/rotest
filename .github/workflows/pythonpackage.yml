@@ -21,7 +21,7 @@ jobs:
       with:
         name: docs
         path: docs/_build/html
-    - name: Build
+    - name: Build package
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |
         pip install wheel
