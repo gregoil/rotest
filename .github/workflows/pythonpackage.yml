@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build docs
       run: |
-        pip install tox
+        pip install tox wheel
         tox -e docs
         cd docs/_build
         tar -cf docs.tar html
