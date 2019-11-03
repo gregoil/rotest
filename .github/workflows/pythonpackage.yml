@@ -10,9 +10,11 @@ jobs:
       fail-fast: true
     steps:
     - uses: actions/checkout@v1
+    - name: Prepare environment
+      uses: actions/setup-python@v1
     - name: Build docs
       run: |
-        pip install tox wheel
+        pip install tox
         tox -e docs
         cd docs/_build
         tar -cf docs.tar html
@@ -21,9 +23,6 @@ jobs:
       with:
         name: docs
         path: docs/_build/docs.tar
-    - name: Prepare environment
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: actions/setup-python@v1
     - name: Build
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |
