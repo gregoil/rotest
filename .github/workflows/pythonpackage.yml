@@ -11,8 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Prepare environment
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: actions/setup-python@v1
+    - name: Build docs
+      run: |
+        pip install tox
+        tox -e docs
+        cd docs/_build
+        tar -cf docs.tar html
+    - name: Upload docs artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: docs
+        path: docs/_build/docs.tar
     - name: Build
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |

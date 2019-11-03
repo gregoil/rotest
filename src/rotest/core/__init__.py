@@ -1,4 +1,4 @@
-# pylint: disable=too-many-locals
+# pylint: disable=too-many-locals,redefined-outer-name
 from django.apps import AppConfig
 
 
