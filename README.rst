@@ -9,8 +9,8 @@ Rotest
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/rotest/
 
-.. image:: https://travis-ci.org/gregoil/rotest.svg?branch=master
-    :target: https://travis-ci.org/gregoil/rotest
+.. image:: https://github.com/gregoil/rotest/workflows/Python%20package/badge.svg
+    :target: https://github.com/gregoil/rotest/actions
 
 .. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9/branch/master?svg=true
     :target: https://ci.appveyor.com/project/gregoil/rotest
