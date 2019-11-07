@@ -52,6 +52,7 @@ def ws_receive(message):
     content = message.content['text']
     if content != "ping":
         content = json.loads(content)
+        message.reply_channel.send({"text": "greg!"})
         token = content['token']
         setup_logger("server").info("Registering client with token %r", token)
         CHANNEL_TO_TOKEN[message.reply_channel.name] = token

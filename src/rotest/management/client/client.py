@@ -57,6 +57,7 @@ class AbstractClient(object):
         self.lock_timeout = lock_timeout
         self.token = None
         self.websocket = PingingWebsocket()
+        # set websocket timeout
         self.requester = Requester(host=self._host,
                                    port=self._port,
                                    base_url=self.base_uri,
@@ -76,6 +77,14 @@ class AbstractClient(object):
                                                             port=self._port))
 
         self.websocket.send(json.dumps({"token": self.token}))
+
+    def request(self, request_type, request_data=()):
+        """."""
+        self.websocket.send(json.dumps({request_type.__name__:
+                                        request_data}))
+
+        reply = self.websocket.recv()
+        return json.loads(reply)
 
     def is_connected(self):
         """Check if the socket is connected or not.
