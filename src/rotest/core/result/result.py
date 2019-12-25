@@ -41,7 +41,7 @@ class Result(TestResult):
             handler_stream = stream
             if '&' in handler_name:
                 handler_name, _, tty = handler_name.partition('&')
-                handler_stream = open('/dev/pts/'+tty, 'w')
+                handler_stream = open('/dev/pts/' + tty, 'w')
 
             self.result_handlers.append(
                 all_result_handlers[handler_name](
