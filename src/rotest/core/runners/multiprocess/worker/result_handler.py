@@ -44,7 +44,7 @@ class WorkerHandler(AbstractResultHandler):
             reply_queue (multiprocessing.Queue): queue object used to transfer
                 data from the main runner to this specific worker.
         """
-        super(WorkerHandler, self).__init__()
+        super(WorkerHandler, self).__init__(*args, **kwargs)
         self.parser = DEFAULT_PARSER()
         self.worker_pid = os.getpid()
         self.reply_queue = reply_queue

@@ -39,9 +39,9 @@ class Result(TestResult):
         self.result_handlers = []
         for handler_name in outputs:
             handler_stream = stream
-            if '&' in handler_name:
-                handler_name, _, tty = handler_name.partition('&')
-                handler_stream = open('/dev/pts/' + tty, 'w')
+            if '>' in handler_name:
+                handler_name, _, path = handler_name.partition('>')
+                handler_stream = open(path, 'w')
 
             self.result_handlers.append(
                 all_result_handlers[handler_name](
