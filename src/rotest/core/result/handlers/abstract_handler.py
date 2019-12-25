@@ -19,8 +19,9 @@ class AbstractResultHandler(with_metaclass(ABCMeta, object)):
     """
     NAME = NotImplemented
 
-    def __init__(self, main_test=None, *args, **kwargs):
+    def __init__(self, main_test=None, stream=None, **kwargs):
         self.main_test = main_test
+        self.stream = stream
 
     def start_test_run(self):
         """Called once before any tests are executed."""

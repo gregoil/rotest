@@ -81,10 +81,13 @@ def parse_outputs_option(outputs):
         return None
 
     requested_handlers = outputs.split(",")
+    handlers_names = [output if '&' not in output
+                      else output[:output.find('&')]
+                      for output in requested_handlers]
 
     available_handlers = get_result_handlers()
 
-    non_existing_handlers = set(requested_handlers) - set(available_handlers)
+    non_existing_handlers = set(handlers_names) - set(available_handlers)
 
     if non_existing_handlers:
         raise argparse.ArgumentTypeError(

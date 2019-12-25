@@ -27,7 +27,6 @@ class Result(TestResult):
             or TestFlow instance).
     """
     DEFAULT_OUTPUTS = ("tree", "excel")
-
     def __init__(self, stream=None, descriptions=None,
                  outputs=DEFAULT_OUTPUTS, main_test=None):
 
@@ -37,13 +36,18 @@ class Result(TestResult):
 
         all_result_handlers = get_result_handlers()
 
-        self.result_handlers = [
-            all_result_handlers[result_handler_name](
-                stream=stream,
-                main_test=main_test,
-                descriptions=descriptions)
-            for result_handler_name in outputs
-        ]
+        self.result_handlers = []
+        for handler_name in outputs:
+            handler_stream = stream
+            if '&' in handler_name:
+                handler_name, _, tty = handler_name.partition('&')
+                handler_stream = open('/dev/pts/'+tty, 'w')
+
+            self.result_handlers.append(
+                all_result_handlers[handler_name](
+                    stream=handler_stream,
+                    main_test=main_test,
+                    descriptions=descriptions))
 
     def startTestRun(self):
         """Called once before any tests are executed."""
