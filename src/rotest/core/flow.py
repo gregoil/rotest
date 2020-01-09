@@ -285,6 +285,7 @@ class TestFlow(AbstractFlowComponent):
             self._run_index += 1
             test(self.result)
 
+        self._run_index = 0
         all_issues = []
 
         for block in self:
