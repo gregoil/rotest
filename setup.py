@@ -56,7 +56,7 @@ setup(
         ':python_version=="2.7"': ['statistics'],
         "dev": [
             "pytest",
-            "pytest-django",
+            "pytest-django<=3.6",
             "pytest-cov",
             "mock",
             "pyfakefs",
