@@ -56,7 +56,7 @@ setup(
         ':python_version=="2.7"': ['statistics'],
         "dev": [
             "pytest",
-            "pytest-django<=3.6",
+            "pytest-django",
             "pytest-cov",
             "mock",
             "pyfakefs",
@@ -65,6 +65,7 @@ setup(
             "flake8",
             "pylint<2.4",
             "waiting",
+            "zope.interface<4.7.0"
         ]
     },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*",
