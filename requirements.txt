@@ -13,7 +13,7 @@ configparser==3.7.4
 contextlib2==0.5.5
 coverage==4.5.3
 decorator==4.4.0
-Django==1.11.21
+Django==1.11.23
 docutils==0.14
 entrypoints==0.3
 enum34==1.1.6
