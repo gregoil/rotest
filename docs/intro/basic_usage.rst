@@ -87,12 +87,13 @@ You'll end up with the following tree:
         ├── urls.py
         └── wsgi.py
 
-Don't forget to set the Django settings to point to your new project:
+Don't forget to set the PYTHONPATH and Django settings to point to your new project:
 (use ``setx`` instead of ``export`` on Windows machines)
 
 .. code-block:: console
 
     $ export DJANGO_SETTINGS_MODULE=rotest_demo.settings
+    $ export PYTHONPATH=<path to project dir>
 
 Now add an end-point for rotest urls in the :file:`urls.py` file:
 
@@ -140,7 +141,6 @@ Let's create a test that doesn't require any resource. Create a file named
 
 .. code-block:: python
 
-    from rotest import main
     from rotest.core import TestCase
 
 
@@ -148,9 +148,6 @@ Let's create a test that doesn't require any resource. Create a file named
         def test_add(self):
             self.assertEqual(1 + 1, 2)
 
-
-    if __name__ == "__main__":
-        main()
 
 That's a very simple test, that asserts integers addition operation in Python.
 To run it, just do the following:
