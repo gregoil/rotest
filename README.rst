@@ -12,9 +12,6 @@ Rotest
 .. image:: https://github.com/gregoil/rotest/workflows/Python%20package/badge.svg
     :target: https://github.com/gregoil/rotest/actions
 
-.. image:: https://ci.appveyor.com/api/projects/status/uy9grwc52wkpaaq9/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/gregoil/rotest
-
 .. image:: https://coveralls.io/repos/github/gregoil/rotest/badge.svg?branch=master
     :target: https://coveralls.io/github/gregoil/rotest
 
