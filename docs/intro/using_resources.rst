@@ -54,7 +54,7 @@ Don't forget to add the new application as well as ``rotest`` to the
 .. code-block:: python
 
     DEBUG = True
-    INSTALLED_APPS += [
+    INSTALLED_APPS = [
         # Rotest related applications
         'rotest.core',
         'rotest.management',
@@ -64,7 +64,6 @@ Don't forget to add the new application as well as ``rotest`` to the
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
-        'django.contrib.sites',
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'django.contrib.admin',
