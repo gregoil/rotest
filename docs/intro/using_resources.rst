@@ -173,7 +173,7 @@ The methods of BaseResource that can be overridden:
    (which is the default). This method should return `False` if further
    initialization is needed to set up the resource, or `True` if it is ready
    to work as it is. The default ``validate`` method always returns `False`,
-   prompting the resource's initialization process after ``connect``
+   prompting the resource's initialization process after ``connect`` returns
    (see next method).
 
  * **initialize()** - Called after ``connect`` if the ``skip_init`` flag was off
