@@ -97,9 +97,11 @@ jobs:
         pip install tox
     - name: Tox
       run: |
+        ls -la .
+        ls -la ~
         tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
     - name: Upload logs
       uses: actions/upload-artifact@master
       with:
         name: logs
-        path: ~/rotest/core_logger
+        path: .rotest/core_logger
