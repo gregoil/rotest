@@ -55,7 +55,7 @@ def match_tags(tags_list, tags_filter):
     lower_case_tags = [tag.lower() for tag in tags_list]
 
     # Replace the tags in the expression with True if they appear in the tags
-    # list, False otherwise.
+    # list, False otherwise
     for element in spaced_expression.split():
         if element != "":
             if element not in VALID_LITERALS:
@@ -66,7 +66,7 @@ def match_tags(tags_list, tags_filter):
 
     boolean_expression = " ".join(boolean_expression_list)
 
-    # Validate that the calculated expression is comprised of boolean literals.
+    # Validate that the calculated expression is comprised of boolean literals
     validate_boolean_expression(boolean_expression)
 
     try:
