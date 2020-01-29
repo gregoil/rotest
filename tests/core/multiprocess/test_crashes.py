@@ -102,7 +102,7 @@ class RunnerCrashTest(AbstractCrashTest):
 
         runner_process = psutil.Process(self.runner_process.pid)
         self.worker_processes = [psutil.Process(worker_pid)
-                                 for worker_pid in worker_pids]
+                                 for worker_pid in workers_pids]
 
         core_log.debug("Killing the runner process")
         self.runner_process.terminate()
