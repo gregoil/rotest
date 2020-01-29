@@ -88,8 +88,8 @@ class AbstractCrashTest(unittest.TestCase):
 class RunnerCrashTest(AbstractCrashTest):
     """Test workers behavior upon runner process death."""
     WORKERS_TIMEOUT = 2  # Seconds
-    WORKER_SUICIDE_TIMEOUT = 6  # Seconds
-    RUNNER_KILLING_TIMEOUT = 4  # Seconds
+    WORKER_SUICIDE_TIMEOUT = 5  # Seconds
+    RUNNER_KILLING_TIMEOUT = 5  # Seconds
 
     def test_runner_crash(self):
         """Test that workers kill themselves if their runner died."""
@@ -101,7 +101,8 @@ class RunnerCrashTest(AbstractCrashTest):
                         for _ in range(self.WORKERS_NUMBER)]
 
         runner_process = psutil.Process(self.runner_process.pid)
-        self.worker_processes = runner_process.children()
+        self.worker_processes = [psutil.Process(worker_pid)
+                                 for worker_pid in worker_pids]
 
         core_log.debug("Killing the runner process")
         self.runner_process.terminate()
