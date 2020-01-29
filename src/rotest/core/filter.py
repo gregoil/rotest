@@ -47,6 +47,7 @@ def match_tags(tags_list, tags_filter):
     Raises:
         ValueError. in case the given boolean expression is illegal.
     """
+    # Add spaces for easier literal validation
     spaced_expression = tags_filter.replace("(", " ( ").replace(")", " ) ")
 
     boolean_expression_list = []
