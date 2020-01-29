@@ -99,9 +99,8 @@ jobs:
       run: |
         export ROTEST_WORK_DIR=rotest_work_dir
         tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
-        ls -la .
-        ls -la ./rotest_work_dir
     - name: Upload logs
+      if: failure()
       uses: actions/upload-artifact@master
       with:
         name: logs
