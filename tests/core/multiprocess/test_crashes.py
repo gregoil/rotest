@@ -54,7 +54,7 @@ class AbstractCrashTest(unittest.TestCase):
         TimeoutCase.pid_queue = self.pid_queue
         TimeoutCase.post_timeout_event = self.post_timeout_event
 
-        # Creating more jobs then workers in order to validate recovery
+        # Creating more jobs than workers in order to validate recovery
         MockTestSuite.components = (TimeoutCase,) * self.WORKERS_NUMBER * 2
 
         runner = MultiprocessRunner(config=None,
