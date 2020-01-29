@@ -78,7 +78,7 @@ class AbstractClient(object):
         self.websocket.send(json.dumps({"token": self.token}))
 
     def is_connected(self):
-        """Check if the socket is connected or not.
+        """Check if the client is connected or not.
 
         Returns:
             bool. True if connection was already made, False otherwise.
