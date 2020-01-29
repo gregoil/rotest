@@ -88,7 +88,7 @@ class AbstractCrashTest(unittest.TestCase):
 class RunnerCrashTest(AbstractCrashTest):
     """Test workers behavior upon runner process death."""
     WORKERS_TIMEOUT = 2  # Seconds
-    WORKER_SUICIDE_TIMEOUT = 4  # Seconds
+    WORKER_SUICIDE_TIMEOUT = 6  # Seconds
     RUNNER_KILLING_TIMEOUT = 4  # Seconds
 
     def test_runner_crash(self):
