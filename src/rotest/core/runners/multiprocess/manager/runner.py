@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import os
 import time
 import datetime
-from multiprocessing import Queue
+from multiprocessing import Manager
 
 import six
 from six.moves import queue
@@ -118,7 +118,7 @@ class MultiprocessRunner(BaseTestRunner):
     def initialize_worker(self):
         """Create and start a new worker process and add it to the pool."""
         worker = WorkerProcess(config=self.config,
-                               reply_queue=Queue(),
+                               reply_queue=Manager().Queue(),
                                parent_id=os.getpid(),
                                failfast=self.failfast,
                                run_name=self.run_name,
@@ -225,8 +225,8 @@ class MultiprocessRunner(BaseTestRunner):
         """
         super(MultiprocessRunner, self).initialize(test_class)
 
-        self.results_queue = Queue()
-        self.requests_queue = Queue()
+        self.results_queue = Manager().Queue()
+        self.requests_queue = Manager().Queue()
 
     def finalize(self):
         """Finalize the test runner.

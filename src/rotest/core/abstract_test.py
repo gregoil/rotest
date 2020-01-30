@@ -183,7 +183,7 @@ class AbstractTest(unittest.TestCase):
             use_previous (bool): whether to use previously locked resources and
                 release the unused ones.
             force_initialize (bool): whether the resources will be initialized
-            even if the validation succeeds and skip_init is True.
+                even if the validation succeeds and skip_init is True.
         """
         new_requests = []
 

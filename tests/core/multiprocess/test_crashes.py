@@ -54,7 +54,7 @@ class AbstractCrashTest(unittest.TestCase):
         TimeoutCase.pid_queue = self.pid_queue
         TimeoutCase.post_timeout_event = self.post_timeout_event
 
-        # Creating more jobs then workers in order to validate recovery
+        # Creating more jobs than workers in order to validate recovery
         MockTestSuite.components = (TimeoutCase,) * self.WORKERS_NUMBER * 2
 
         runner = MultiprocessRunner(config=None,
@@ -88,8 +88,8 @@ class AbstractCrashTest(unittest.TestCase):
 class RunnerCrashTest(AbstractCrashTest):
     """Test workers behavior upon runner process death."""
     WORKERS_TIMEOUT = 2  # Seconds
-    WORKER_SUICIDE_TIMEOUT = 4  # Seconds
-    RUNNER_KILLING_TIMEOUT = 4  # Seconds
+    WORKER_SUICIDE_TIMEOUT = 5  # Seconds
+    RUNNER_KILLING_TIMEOUT = 5  # Seconds
 
     def test_runner_crash(self):
         """Test that workers kill themselves if their runner died."""
@@ -101,7 +101,8 @@ class RunnerCrashTest(AbstractCrashTest):
                         for _ in range(self.WORKERS_NUMBER)]
 
         runner_process = psutil.Process(self.runner_process.pid)
-        self.worker_processes = runner_process.children()
+        self.worker_processes = [psutil.Process(worker_pid)
+                                 for worker_pid in workers_pids]
 
         core_log.debug("Killing the runner process")
         self.runner_process.terminate()
