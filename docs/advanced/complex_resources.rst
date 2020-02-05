@@ -130,7 +130,32 @@ Note the following:
   .. code-block:: python
 
     sub_process = SubProcess.request(ip_address=CalculatorData.ip_address,
-                                     process_id=5)
+                                     process_id=CalculatorData.sub_process.process_id)
+
+  Alternatively, you can also use rotest.management.DataPointer to point to data
+  fields. This can be used to pass data from one service to its child:
+
+  .. code-block:: python
+
+    from rotest.management import BaseResource, DataPointer
+
+    class SubProcess(BaseResource):
+
+        DATA_CLASS = None
+
+        def __init__(self, process_id, *args, **kwargs):
+            super(SubProcess, self).__init__(*args, process_id=process_id, **kwargs)
+
+
+    class Calculator(BaseResource):
+
+        DATA_CLASS = None
+
+        sub_process = SubProcess.request(process_id=DataPointer("process_id"))
+
+        def __init__(self, process_id, *args, **kwargs):
+            super(Calculator, self).__init__(*args, process_id=process_id, **kwargs)
+
 
 * The usage of the sub-resource
 

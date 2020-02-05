@@ -1,4 +1,4 @@
-"""Define the Django administrator web interface for Rotest core.
+"""Define the Django administrator web interface for Rotest management.
 
 Used in order to modify the appearance of tables in the admin site.
 """

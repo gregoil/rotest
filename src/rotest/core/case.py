@@ -103,7 +103,7 @@ class TestCase(AbstractTest):
         return cls.test_methods_names
 
     def _decorate_setup(self, setup_method):
-        """Decorate setUp method to handle link skips, and resources requests.
+        """Decorate setUp method to do handler skips and resource requests.
 
         Args:
             setup_method (function): the original setUp method.
