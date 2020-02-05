@@ -8,6 +8,7 @@ class ManagementConfig(AppConfig):
 
     def ready(self):
         from .models import ResourceData
+        from .models.resource_data import DataPointer
         from .client.manager import ClientResourceManager
         from .base_resource import BaseResource, ResourceRequest
 
@@ -16,6 +17,7 @@ class ManagementConfig(AppConfig):
         rotest.management.ClientResourceManager = ClientResourceManager
         rotest.management.BaseResource = BaseResource
         rotest.management.ResourceRequest = ResourceRequest
+        rotest.management.DataPointer = DataPointer
 
 
 default_app_config = "rotest.management.ManagementConfig"

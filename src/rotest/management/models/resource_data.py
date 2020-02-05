@@ -33,11 +33,15 @@ from rotest.common.django_utils import get_sub_model, linked_unicode
 
 
 class DataPointer(object):
-    def __init__(self, field_pointer, parent_pointer=None):
-        self.field_pointer = field_pointer
+    def __init__(self, field_name=None, field_ref=None, parent_pointer=None):
+        self.field_name = field_name
+        self.field_pointer = field_ref
         self.parent_pointer = parent_pointer
 
     def __getattr__(self, key):
+        if self.field_name is not None:
+            return DataPointer(field_name=key, parent_pointer=self)
+
         try:
             return getattr(self.field_pointer, key)
 
@@ -56,6 +60,9 @@ class DataPointer(object):
     def unwrap_data_pointer(self, instance):
         if self.parent_pointer:
             instance = self.parent_pointer.unwrap_data_pointer(instance)
+
+        if self.field_name is not None:
+            return getattr(instance, self.field_name)
 
         if hasattr(self.field_pointer, "field"):
             return getattr(instance, self.field_pointer.field.name)
@@ -89,7 +96,7 @@ class DataBase(ModelBase):
                 isinstance(field_pointer, (DeferredAttribute,
                                            ForwardManyToOneDescriptor)):
 
-            return DataPointer(field_pointer)
+            return DataPointer(field_ref=field_pointer)
 
         return field_pointer
 

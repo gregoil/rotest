@@ -16,13 +16,12 @@ from waiting import wait
 from future.builtins import zip, range
 from django.db.models.query_utils import Q
 from django.contrib.auth.models import User
-from django.db.models.query_utils import DeferredAttribute
 from swaggapi.api.builder.client import requester
 
 from rotest.management.common.utils import LOCALHOST
-from rotest.management import BaseResource, ResourceRequest
 from rotest.management.client.manager import ClientResourceManager
 from rotest.management.client.websocket_client import PingingWebsocket
+from rotest.management import BaseResource, ResourceRequest, DataPointer
 from rotest.management.common.resource_descriptor import \
                                             ResourceDescriptor as Descriptor
 from rotest.management.models.ut_models import (DemoResourceData,
@@ -1526,15 +1525,15 @@ class TestResourceManagement(BaseResourceManagementTest):
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected 1 complex "
                          "resource with name %r in DB, found %d"
-                         % (self.FREE1_NAME, resources_num))
+                         % (self.COMPLEX_NAME, resources_num))
 
         resource, = resources
         self.assertTrue(resource.is_available(), "Expected available "
                         "complex resource with name %r in DB, found %d"
-                        % (self.FREE1_NAME, resources_num))
+                        % (self.COMPLEX_NAME, resources_num))
 
         request = ResourceRequest('res1', AlterDemoComplexResource,
-                                  name=self.FREE1_NAME)
+                                  name=self.COMPLEX_NAME)
 
         resources = self.client.request_resources(requests=[request])
 
@@ -1601,7 +1600,7 @@ class TestResourceManagement(BaseResourceManagementTest):
             """Fake complex service class, used in resource manager tests."""
             DATA_CLASS = None
             demo1 = DemoService.request()
-            demo2 = DemoService.request(name=DeferredAttribute('name', None))
+            demo2 = DemoService.request(name=DataPointer('name'))
 
             initialized = False
 
