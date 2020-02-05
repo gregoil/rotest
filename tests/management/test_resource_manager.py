@@ -1521,7 +1521,7 @@ class TestResourceManagement(BaseResourceManagementTest):
                 self.data.initialization_flag = True
                 self.data.save()
 
-        resources = DemoResourceData.objects.filter(name=self.FREE1_NAME)
+        resources = DemoResourceData.objects.filter(name=self.COMPLEX_NAME)
 
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected 1 complex "
