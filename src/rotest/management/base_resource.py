@@ -22,16 +22,8 @@ from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
 from rotest.common.utils import parse_config_file
 from rotest.common.utils import get_work_dir, get_class_fields
-from rotest.management.models.resource_data import ResourceData
 from rotest.common.constants import default_config, DEFAULT_SCHEMA_PATH
-
-try:
-    from django.db.models.fields.related_descriptors import \
-        ForwardManyToOneDescriptor
-
-except ImportError:
-    from django.db.models.fields.related import \
-        ReverseSingleRelatedObjectDescriptor as ForwardManyToOneDescriptor
+from rotest.management.models.resource_data import ResourceData, DataPointer
 
 
 class ResourceRequest(object):
@@ -171,11 +163,8 @@ class BaseResource(object):
             actual_kwargs['config'] = self.config
             actual_kwargs['base_work_dir'] = self.work_dir
             for key, value in six.iteritems(sub_request.kwargs):
-                if isinstance(value, ForwardManyToOneDescriptor):
-                    actual_kwargs[key] = getattr(self.data, value.field.name)
-
-                elif isinstance(value, DeferredAttribute):
-                    actual_kwargs[key] = getattr(self.data, value.field_name)
+                if isinstance(value, DataPointer):
+                    actual_kwargs[key] = value.unwrap_data_pointer(self.data)
 
             sub_resource = sub_class(**actual_kwargs)
 

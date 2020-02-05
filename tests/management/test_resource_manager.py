@@ -1316,7 +1316,7 @@ class TestResourceManagement(BaseResourceManagementTest):
             self.client.request_resources(requests)
 
     def test_lock_alternative_complex_resource(self):
-        """Lock complex resource with the default 'create_sub_resources'.
+        """Validate passing data to sub-resources from the current works.
 
         * Validates the DB initial state.
         * Requests an existing complex resource, using resource client.
@@ -1410,7 +1410,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.client.release_resources(list(resources.values()), dirty=True)
 
     def test_lock_alternative_complex_resource_with_service(self):
-        """Lock complex resource with the default 'create_sub_resources'.
+        """Validate passing data to sub-services from the current works.
 
         * Validates the DB initial state.
         * Requests an existing complex resource, using resource client.
@@ -1493,6 +1493,94 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.assertEqual(resources_num, 1, "Expected 1 locked "
                          "resource with name %r in DB, found %d"
                          % (self.FREE1_NAME, resources_num))
+
+        self.client.release_resources(list(resources.values()), dirty=True)
+
+    def test_data_pointer_propagation(self):
+        """Validate passing data from a sub-resource works.
+
+        * Validates the DB initial state.
+        * Requests an existing complex resource, using resource client.
+        * Validates that 1 resource returned.
+        * Validates the name of the returned resource.
+        * Validates the type of the returned resource.
+        * Validates the amount of sub-resources it has.
+        * Validates the resource and its subs were locked and initialized.
+        * Releases the locked resource, using resource client.
+        * Validates the above resource and it sub-resources are now available.
+        """
+        class AlterDemoComplexResource(BaseResource):
+            """Fake complex resource class, used in resource manager tests."""
+            DATA_CLASS = DemoComplexResourceData
+            service = DemoService.request(
+                                    name=DemoComplexResourceData.demo1.name)
+
+            def initialize(self):
+                """Turns on the initialization flag."""
+                super(AlterDemoComplexResource, self).initialize()
+                self.data.initialization_flag = True
+                self.data.save()
+
+        resources = DemoResourceData.objects.filter(name=self.FREE1_NAME)
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected 1 complex "
+                         "resource with name %r in DB, found %d"
+                         % (self.FREE1_NAME, resources_num))
+
+        resource, = resources
+        self.assertTrue(resource.is_available(), "Expected available "
+                        "complex resource with name %r in DB, found %d"
+                        % (self.FREE1_NAME, resources_num))
+
+        request = ResourceRequest('res1', AlterDemoComplexResource,
+                                  name=self.FREE1_NAME)
+
+        resources = self.client.request_resources(requests=[request])
+
+        resources_num = len(resources)
+        self.assertEqual(resources_num, 1, "Expected list with 1 "
+                         "resource in it but found %d" % resources_num)
+
+        resource, = resources.values()
+        self.assertEqual(resource.name, self.COMPLEX_NAME,
+                         "Expected resource with name %r but got %r"
+                         % (self.COMPLEX_NAME, resource.name))
+
+        self.assertIsInstance(resource, request.type,
+                              "Expected resource of type %r, but got %r"
+                              % (request.type.__name__,
+                                 resource.__class__.__name__))
+
+        self.assertEqual(len(list(resource.get_sub_resources())), 1,
+                         "Expected to have 1 sub-resources, found %r"
+                         % resource.get_sub_resources())
+
+        self.assertEqual(resource.demo1.name, resource.service.name,
+                         "Expected sub-service with name %r but got %r"
+                         % (resource.name, resource.service.name))
+
+        self.assertTrue(resource.data.initialization_flag,
+                        "Resource %r should have been initialized" %
+                        resource.name)
+
+        for sub_resource in resource.get_sub_resources():
+            self.assertFalse(sub_resource in AlterDemoComplexResource.__dict__,
+                             "Sub-resource %r is still a placeholder" %
+                             sub_resource.name)
+
+            self.assertIsInstance(sub_resource, DemoService,
+                                  "Expected sub-resource of type %r, got %r"
+                                  % (DemoResource.__name__,
+                                     sub_resource.__class__.__name__))
+
+        resources_data = request.type.DATA_CLASS.objects.filter(~Q(owner=""),
+                                                   name=self.COMPLEX_NAME)
+
+        resources_num = len(resources_data)
+        self.assertEqual(resources_num, 1, "Expected 1 locked "
+                         "resource with name %r in DB, found %d"
+                         % (self.COMPLEX_NAME, resources_num))
 
         self.client.release_resources(list(resources.values()), dirty=True)
 
