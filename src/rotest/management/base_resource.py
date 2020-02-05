@@ -16,7 +16,6 @@ from ipdbugger import debug
 from attrdict import AttrDict
 from future.utils import iteritems
 from future.builtins import zip, object
-from django.db.models.query_utils import DeferredAttribute
 
 from rotest.common import core_log
 from rotest.common.config import ROTEST_WORK_DIR
