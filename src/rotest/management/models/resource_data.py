@@ -81,13 +81,17 @@ class DataBase(ModelBase):
     """
     def __getattribute__(cls, key):
         if int(DJANGO_VERSION[0]) == 1 and int(DJANGO_VERSION[1]) < 10:
-            if '_meta' in vars(cls) and \
-                    key in (field.name for field in cls._meta.fields):
+            try:
+                field_pointer = super(DataBase, cls).__getattribute__(key)
 
-                field_pointer = DeferredAttribute(key, None)
+            except AttributeError:
+                if '_meta' in vars(cls) and \
+                        key in (field.name for field in cls._meta.fields):
 
-            else:
-                raise AttributeError(key)
+                    field_pointer = DeferredAttribute(key, None)
+
+                else:
+                    raise
 
         else:
             field_pointer = super(DataBase, cls).__getattribute__(key)

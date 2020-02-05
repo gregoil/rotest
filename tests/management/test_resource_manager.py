@@ -1518,10 +1518,12 @@ class TestResourceManagement(BaseResourceManagementTest):
                 """Turns on the initialization flag."""
                 super(AlterDemoComplexResource, self).initialize()
                 self.data.initialization_flag = True
+                self.data.demo1.save()
+                self.data.demo2.save()
                 self.data.save()
 
         resources = DemoComplexResourceData.objects.filter(
-                                                        name=self.COMPLEX_NAME)
+                                                       name=self.COMPLEX_NAME)
 
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected 1 complex "
