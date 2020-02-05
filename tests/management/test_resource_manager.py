@@ -1520,7 +1520,8 @@ class TestResourceManagement(BaseResourceManagementTest):
                 self.data.initialization_flag = True
                 self.data.save()
 
-        resources = DemoResourceData.objects.filter(name=self.COMPLEX_NAME)
+        resources = DemoComplexResourceData.objects.filter(
+                                                        name=self.COMPLEX_NAME)
 
         resources_num = len(resources)
         self.assertEqual(resources_num, 1, "Expected 1 complex "
@@ -1584,7 +1585,7 @@ class TestResourceManagement(BaseResourceManagementTest):
         self.client.release_resources(list(resources.values()), dirty=True)
 
     def test_lock_alternative_complex_service(self):
-        """Lock complex service with the default 'create_sub_resources'.
+        """Lock passing data using the DataPointer class.
 
         * Validates the DB initial state.
         * Requests an existing complex resource, using resource client.
