@@ -19,10 +19,55 @@ from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import models as auth_models
 from django.db.models.query_utils import DeferredAttribute
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+try:
+    from django.db.models.fields.related_descriptors import \
+        ForwardManyToOneDescriptor
+
+except ImportError:
+    from django.db.models.fields.related import \
+        ReverseSingleRelatedObjectDescriptor as ForwardManyToOneDescriptor
 
 from rotest.common.django_utils.fields import NameField
 from rotest.common.django_utils.common import get_fields
 from rotest.common.django_utils import get_sub_model, linked_unicode
+
+
+class DataPointer(object):
+    def __init__(self, field_name=None, field_ref=None, parent_pointer=None):
+        self.field_name = field_name
+        self.field_pointer = field_ref
+        self.parent_pointer = parent_pointer
+
+    def __getattr__(self, key):
+        if self.field_name is not None:
+            return DataPointer(field_name=key, parent_pointer=self)
+
+        try:
+            return getattr(self.field_pointer, key)
+
+        except AttributeError:
+            if hasattr(self.field_pointer, "field"):
+                sub_pointer = getattr(self.field_pointer.field.related_model,
+                                      key)
+
+                if isinstance(sub_pointer, DataPointer):
+                    sub_pointer.parent_pointer = self
+
+                return sub_pointer
+
+            raise
+
+    def unwrap_data_pointer(self, instance):
+        if self.parent_pointer:
+            instance = self.parent_pointer.unwrap_data_pointer(instance)
+
+        if self.field_name is not None:
+            return getattr(instance, self.field_name)
+
+        if hasattr(self.field_pointer, "field"):
+            return getattr(instance, self.field_pointer.field.name)
+
+        return getattr(instance, self.field_pointer.field_name)
 
 
 class DataBase(ModelBase):
@@ -34,14 +79,30 @@ class DataBase(ModelBase):
             DATA_CLASS = DemoResourceData
             demo1 = DemoService.request(name=DemoResourceData.name).
     """
-    if int(DJANGO_VERSION[0]) == 1 and int(DJANGO_VERSION[1]) < 10:
-        def __getattr__(cls, key):
-            if '_meta' in vars(cls) and \
-                    key in (field.name for field in cls._meta.fields):
+    def __getattribute__(cls, key):
+        if int(DJANGO_VERSION[0]) == 1 and int(DJANGO_VERSION[1]) < 10:
+            try:
+                field_pointer = super(DataBase, cls).__getattribute__(key)
 
-                return DeferredAttribute(key, None)
+            except AttributeError:
+                if '_meta' in vars(cls) and \
+                        key in (field.name for field in cls._meta.fields):
 
-            raise AttributeError(key)
+                    field_pointer = DeferredAttribute(key, None)
+
+                else:
+                    raise
+
+        else:
+            field_pointer = super(DataBase, cls).__getattribute__(key)
+
+        if field_pointer is not None and \
+                isinstance(field_pointer, (DeferredAttribute,
+                                           ForwardManyToOneDescriptor)):
+
+            return DataPointer(field_ref=field_pointer)
+
+        return field_pointer
 
 
 class ResourceData(six.with_metaclass(DataBase, models.Model)):
