@@ -367,7 +367,7 @@ class AbstractFlowComponent(AbstractTest):
 
     def list_blocks(self, _):
         """Print the hierarchy down starting from the current component."""
-        print(self.get_name())
+        print(self.data.name)
 
     def was_successful(self):
         """Indicate whether or not the component was successful.
