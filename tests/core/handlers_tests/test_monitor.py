@@ -5,10 +5,13 @@ import threading
 from future.builtins import next
 
 from rotest.core.case import request
+from rotest.core.flow_component import Pipe
 from rotest.management.models.ut_resources import DemoResource
+from rotest.core.utils.useful_blocks import StartMonitorBlock, StopMonitorBlock
 from rotest.core.result.monitor import AbstractMonitor, AbstractResourceMonitor
 
-from tests.core.utils import MockCase, MockTestSuite, BasicRotestUnitTest
+from tests.core.utils import (MockCase, MockTestSuite, BasicRotestUnitTest,
+                              MockBlock, MockFlow)
 
 COMMON_LIST = []
 RESOURCE_NAME = 'available_resource1'
@@ -24,7 +27,7 @@ class SuccessShortMonitor(AbstractMonitor):
 
 class SuccessLongMonitor(AbstractMonitor):
     """Monitor with cycle longer than the test."""
-    CYCLE = 5.0
+    CYCLE = 2.0
 
     def run_monitor(self, test):
         COMMON_LIST.append(threading.current_thread())
@@ -75,6 +78,19 @@ class NoResourceMonitor(AbstractResourceMonitor):
 
 
 class LongSuccessCase(MockCase):
+    """Test that waits a while and then passes."""
+    __test__ = False
+
+    resources = (request('test_resource', DemoResource, name=RESOURCE_NAME),)
+
+    WAIT_TIME = 0.5
+
+    def test_method(self):
+        """Wait a while and then pass."""
+        time.sleep(self.WAIT_TIME)
+
+
+class LongSuccessBlock(MockBlock):
     """Test that waits a while and then passes."""
     __test__ = False
 
@@ -268,3 +284,143 @@ class TestNoResourceMonitor(AbstractMonitorTest):
         self.assertEqual(cycle_nums, 0,
                          "Unexpected number of cycles, expected %d got %d" %
                          (0, cycle_nums))
+
+
+class TestManuallyStartStopMonitor(AbstractMonitorTest):
+    """Test StartMonitorBlock and StopMonitorBlock."""
+    __test__ = True
+    RESULT_OUTPUTS = []
+
+    def test_short_monitor(self):
+        """Check that a short cycle monitor runs more than once."""
+        class DemoFlow(MockFlow):
+            blocks = [
+                LongSuccessBlock,
+                StartMonitorBlock.params(monitor_class=SuccessShortMonitor),
+                LongSuccessBlock,
+                StopMonitorBlock,
+            ]
+        self._run_case(DemoFlow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        fail_nums = len(self.result.failures)
+        self.assertEqual(fail_nums, 0,
+                         "Unexpected number of failures, expected %d got %d" %
+                         (0, fail_nums))
+
+        cycle_nums = len(COMMON_LIST)
+        self.assertGreater(cycle_nums, 1,
+                           "Unexpected number of cycles, expected more than "
+                           "%d got %d" %
+                           (1, cycle_nums))
+
+        monitor_thread = COMMON_LIST[0]
+        self.assertFalse(monitor_thread.is_alive(),
+                         "Monitor thread is still alive after the test")
+
+    def test_long_monitor_stopped(self):
+        """Check that after calling stop the monitor won't run anymore."""
+        class DemoFlow(MockFlow):
+            blocks = [
+                LongSuccessBlock,
+                StartMonitorBlock.params(monitor_class=SuccessLongMonitor),
+                LongSuccessBlock,
+                StopMonitorBlock,  # Stop the monitor
+                LongSuccessBlock,
+                LongSuccessBlock,
+                LongSuccessBlock,
+                LongSuccessBlock,
+                LongSuccessBlock,
+            ]
+        self._run_case(DemoFlow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        fail_nums = len(self.result.failures)
+        self.assertEqual(fail_nums, 0,
+                         "Unexpected number of failures, expected %d got %d" %
+                         (0, fail_nums))
+
+        cycle_nums = len(COMMON_LIST)
+        self.assertEqual(cycle_nums, 1,
+                         "Unexpected number of cycles, expected %d got %d" %
+                         (1, cycle_nums))
+
+        monitor_thread = COMMON_LIST[0]
+        self.assertFalse(monitor_thread.is_alive(),
+                         "Monitor thread is still alive after the test")
+
+    def test_no_stop_monitor(self):
+        """Check the monitors automatically stops at the end of the test."""
+        class DemoFlow(MockFlow):
+            blocks = [
+                LongSuccessBlock,
+                StartMonitorBlock.params(monitor_class=SuccessShortMonitor),
+                LongSuccessBlock,
+            ]
+        self._run_case(DemoFlow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        fail_nums = len(self.result.failures)
+        self.assertEqual(fail_nums, 0,
+                         "Unexpected number of failures, expected %d got %d" %
+                         (0, fail_nums))
+
+        cycle_nums = len(COMMON_LIST)
+        self.assertGreater(cycle_nums, 1,
+                           "Unexpected number of cycles, expected more than "
+                           "%d got %d" %
+                           (1, cycle_nums))
+
+        monitor_thread = COMMON_LIST[0]
+        self.assertFalse(monitor_thread.is_alive(),
+                         "Monitor thread is still alive after the test")
+
+    def test_multiple_monitors(self):
+        """Check you can stop just a specific monitor."""
+        class DemoFlow(MockFlow):
+            blocks = [
+                LongSuccessBlock,
+                StartMonitorBlock.params(monitor_class=SuccessShortMonitor,
+                                         monitor_instance=Pipe('monitor1')),
+                StartMonitorBlock.params(monitor_class=SuccessShortMonitor,
+                                         monitor_instance=Pipe('monitor2')),
+                LongSuccessBlock,
+                StopMonitorBlock.params(monitor_instance=Pipe('monitor1')),
+                LongSuccessBlock,
+                LongSuccessBlock,
+                StopMonitorBlock.params(monitor_instance=Pipe('monitor2')),
+            ]
+        self._run_case(DemoFlow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        fail_nums = len(self.result.failures)
+        self.assertEqual(fail_nums, 0,
+                         "Unexpected number of failures, expected %d got %d" %
+                         (0, fail_nums))
+
+        self.assertEqual(len(set(COMMON_LIST)), 2,
+                         "Unexpected number of monitors ran, "
+                         "expected %d got %d" % (2, len(set(COMMON_LIST))))
+
+        monitor1_thread = COMMON_LIST[0]
+        monitor2_thread = (set(COMMON_LIST) - {monitor1_thread}).pop()
+        monitor1_cycles = COMMON_LIST.count(monitor1_thread)
+        monitor2_cycles = COMMON_LIST.count(monitor2_thread)
+        self.assertGreater(monitor2_cycles, monitor1_cycles * 2,
+                           "Expected unstopped monitor to run more than twice "
+                           "the times of the stopped one, got %d and %d" %
+                           (monitor2_cycles, monitor1_cycles))
+
+        self.assertFalse(monitor1_thread.is_alive(),
+                         "Monitor 1 thread is still alive after the test")
+
+        self.assertFalse(monitor2_thread.is_alive(),
+                         "Monitor 2 thread is still alive after the test")

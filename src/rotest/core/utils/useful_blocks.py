@@ -1,4 +1,5 @@
 """Module containing some common useful blocks."""
+# pylint: disable=no-self-use
 from cached_property import cached_property
 
 from rotest.core.result.result import get_result_handlers
@@ -65,22 +66,22 @@ class StartMonitorBlock(TestBlock):
                                                                 monitor_class))
 
         # Get main flow
-        self.main_flow = self
-        while not self.main_flow.is_main:
-            self.main_flow = self.main_flow.parent
+        main_flow = self
+        while not main_flow.is_main:
+            main_flow = main_flow.parent
 
         # Create and register monitor
         self.monitor_instance = monitor_class(stream=self.result.stream,
-                                              main_test=self.main_flow,
+                                              main_test=main_flow,
                                               descriptions=None)
 
         self.result.result_handlers.append(self.monitor_instance)
-        self.main_flow.addCleanup(self.remove_monitor)
+        main_flow.addCleanup(self.remove_monitor)
 
         # Simulate the normal beginning of monitor lifecycle
         self.monitor_instance.start_test_run()
-        self.monitor_instance.start_test(self.main_flow)
-        self.monitor_instance.setup_finished(self.main_flow)
+        self.monitor_instance.start_test(main_flow)
+        self.monitor_instance.setup_finished(main_flow)
 
 
 class StopMonitorBlock(TestBlock):
