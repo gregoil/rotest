@@ -305,9 +305,9 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
                         'Flow failed when it should have succeeded')
 
         cycle_nums = len(COMMON_LIST)
-        self.assertEquals(cycle_nums, 0,
-                          "Unexpected number of cycles, expected %d got %d" %
-                          (0, cycle_nums))
+        self.assertEqual(cycle_nums, 0,
+                         "Unexpected number of cycles, expected %d got %d" %
+                         (0, cycle_nums))
 
         monitor_thread = COMMON_LIST[0]
         self.assertFalse(monitor_thread.is_alive(),
