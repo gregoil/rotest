@@ -291,6 +291,28 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
     __test__ = True
     RESULT_OUTPUTS = []
 
+    def test_no_monitor_supplied(self):
+        """Check that a short cycle monitor runs more than once."""
+        class DemoFlow(MockFlow):
+            blocks = [
+                LongSuccessBlock,
+                StartMonitorBlock,
+                LongSuccessBlock,
+            ]
+        self._run_case(DemoFlow)
+
+        self.assertFalse(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        cycle_nums = len(COMMON_LIST)
+        self.assertEquals(cycle_nums, 0,
+                          "Unexpected number of cycles, expected %d got %d" %
+                          (0, cycle_nums))
+
+        monitor_thread = COMMON_LIST[0]
+        self.assertFalse(monitor_thread.is_alive(),
+                         "Monitor thread is still alive after the test")
+
     def test_short_monitor(self):
         """Check that a short cycle monitor runs more than once."""
         class DemoFlow(MockFlow):
@@ -303,7 +325,7 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
         self._run_case(DemoFlow)
 
         self.assertTrue(self.result.wasSuccessful(),
-                        'Case failed when it should have succeeded')
+                        'Flow failed when it should have succeeded')
 
         fail_nums = len(self.result.failures)
         self.assertEqual(fail_nums, 0,
@@ -337,7 +359,7 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
         self._run_case(DemoFlow)
 
         self.assertTrue(self.result.wasSuccessful(),
-                        'Case failed when it should have succeeded')
+                        'Flow failed when it should have succeeded')
 
         fail_nums = len(self.result.failures)
         self.assertEqual(fail_nums, 0,
@@ -364,7 +386,7 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
         self._run_case(DemoFlow)
 
         self.assertTrue(self.result.wasSuccessful(),
-                        'Case failed when it should have succeeded')
+                        'Flow failed when it should have succeeded')
 
         fail_nums = len(self.result.failures)
         self.assertEqual(fail_nums, 0,
@@ -399,7 +421,7 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
         self._run_case(DemoFlow)
 
         self.assertTrue(self.result.wasSuccessful(),
-                        'Case failed when it should have succeeded')
+                        'Flow failed when it should have succeeded')
 
         fail_nums = len(self.result.failures)
         self.assertEqual(fail_nums, 0,
