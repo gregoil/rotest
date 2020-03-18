@@ -302,16 +302,12 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
         self._run_case(DemoFlow)
 
         self.assertFalse(self.result.wasSuccessful(),
-                        'Flow failed when it should have succeeded')
+                        'Flow succeeded when it should have failed')
 
         cycle_nums = len(COMMON_LIST)
         self.assertEqual(cycle_nums, 0,
                          "Unexpected number of cycles, expected %d got %d" %
                          (0, cycle_nums))
-
-        monitor_thread = COMMON_LIST[0]
-        self.assertFalse(monitor_thread.is_alive(),
-                         "Monitor thread is still alive after the test")
 
     def test_short_monitor(self):
         """Check that a short cycle monitor runs more than once."""
