@@ -86,7 +86,7 @@ class StartMonitorBlock(TestBlock):
 class StopMonitorBlock(TestBlock):
     """Block that stops a manually started monitor and unregisters it."""
     monitor_instance = BlockInput()
-    
+
     mode = MODE_FINALLY
 
     def test_method(self):
