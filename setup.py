@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 
-__version__ = "8.1.1"
+__version__ = "8.2.0"
 
 result_handlers = [
     "db = rotest.core.result.handlers.db_handler:DBHandler",
@@ -74,6 +74,7 @@ setup(
         ],
         "rotest.result_handlers": result_handlers,
         "rotest.cli_server_actions": [],
+        "rotest.cli_client_actions": [],
         "rotest.cli_client_parsers": [],
     },
     packages=find_packages("src"),
