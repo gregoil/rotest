@@ -21,8 +21,15 @@ class StartMonitorBlock(TestBlock):
     handler, but only on the main flow containing this block.
     The monitor will stop automatically when the flow ends, but you can stop
     it manually if needed with the 'StopMonitorBlock'.
+
+    Attributes:
+        monitor_name (BlockInput): name of the monitor to start (optional).
+        monitor_class (BlockInput): class of the monitor to start (optional).
+            Either name or class of the monitor must be supplied.
+        monitor_instance (BlockOutput): the created monitor.
     """
-    monitor_name = BlockInput()
+    monitor_name = BlockInput(default=None)
+    monitor_class = BlockInput(default=None)
 
     monitor_instance = BlockOutput()
 
@@ -41,20 +48,28 @@ class StartMonitorBlock(TestBlock):
 
     def test_method(self):
         """Find and start the monitor with the given name."""
-        monitor_class = self.all_result_handlers.get(self.monitor_name)
-        if monitor_class is None:
-            raise RuntimeError("No such monitor {!r}".format(
+        if self.monitor_class:
+            monitor_class = self.monitor_class
+
+        else:
+            if not self.monitor_name:
+                raise RuntimeError("No monitor name nor class were supplied")
+
+            monitor_class = self.all_result_handlers.get(self.monitor_name)
+            if monitor_class is None:
+                raise RuntimeError("No such monitor {!r}".format(
                                                             self.monitor_name))
 
         if not issubclass(monitor_class, AbstractMonitor):
-            raise RuntimeError("{!r} output handler is not a monitor".format(
-                                                            self.monitor_name))
+            raise RuntimeError("{!r} is not a monitor subclass".format(
+                                                                monitor_class))
 
         # Get main flow
         self.main_flow = self
         while not self.main_flow.is_main:
             self.main_flow = self.main_flow.parent
 
+        # Create and register monitor
         self.monitor_instance = monitor_class(stream=self.result.stream,
                                               main_test=self.main_flow,
                                               descriptions=None)
@@ -71,6 +86,8 @@ class StartMonitorBlock(TestBlock):
 class StopMonitorBlock(TestBlock):
     """Block that stops a manually started monitor and unregisters it."""
     monitor_instance = BlockInput()
+    
+    mode = MODE_FINALLY
 
     def test_method(self):
         """Stop the manually started monitor."""
