@@ -292,7 +292,7 @@ class TestManuallyStartStopMonitor(AbstractMonitorTest):
     RESULT_OUTPUTS = []
 
     def test_no_monitor_supplied(self):
-        """Check that a short cycle monitor runs more than once."""
+        """Check that an error is raised if no monitor type is given."""
         class DemoFlow(MockFlow):
             blocks = [
                 LongSuccessBlock,

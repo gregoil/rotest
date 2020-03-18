@@ -33,6 +33,7 @@ class Result(TestResult):
 
         TestResult.__init__(self, stream, descriptions)
 
+        self.stream = stream
         self.main_test = main_test
 
         all_result_handlers = get_result_handlers()
