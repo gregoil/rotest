@@ -73,4 +73,4 @@ class ThreadedParent(BaseResource):
         """Return an iterable to the complex resource's sub-resources."""
         self.demo1 = ThreadedResource(data=self.data.demo1)
         self.demo2 = ThreadedResource(data=self.data.demo2)
-        return (self.demo1, self.demo2)
+        return {'demo1': self.demo1, 'demo2': self.demo2}

@@ -254,7 +254,7 @@ class BaseResource(object):
     def set_sub_resources(self):
         """Create and set the sub resources if needed."""
         self._sub_resources = self.create_sub_resources()
-        for resource in self.get_sub_resources().values():
+        for resource in self.get_sub_resources():
             resource.parent = self
 
     def _safe_execute(self, callbacks, *args, **kwargs):
