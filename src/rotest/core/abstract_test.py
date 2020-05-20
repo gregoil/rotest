@@ -197,7 +197,7 @@ class AbstractTest(unittest.TestCase):
                 new_requests.append(resource_request)
 
             request_name_to_unpack[resource_request.name] = \
-                                                        resource_request.unpack
+                                                    resource_request.do_unpack
 
         if len(new_requests) == 0:
             # No resources to request

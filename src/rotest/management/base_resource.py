@@ -44,7 +44,7 @@ class ResourceRequest(object):
         self.name = resource_name
         self.type = resource_class
         self.kwargs = kwargs
-        self.unpack = self.DONT_UNPACK
+        self.do_unpack = self.DONT_UNPACK
 
     def __eq__(self, oth):
         """Compare with another request."""
@@ -71,7 +71,7 @@ class ResourceRequest(object):
         Args:
             recursive (number): whether to also unpack sub-resources.
         """
-        self.unpack = self.RECURSIVE_UNPACK if recursive else self.UNPACK_ONCE
+        self.do_unpack = self.RECURSIVE_UNPACK if recursive else self.UNPACK_ONCE
         return self
 
 
