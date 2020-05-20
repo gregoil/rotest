@@ -35,12 +35,16 @@ class ResourceRequest(object):
             initialized even if their validation succeeds.
         kwargs (dict): requested resource arguments.
     """
+    DONT_UNPACK = 0
+    UNPACK_ONCE = 1
+    RECURSIVE_UNPACK = 2
 
     def __init__(self, resource_name=None, resource_class=None, **kwargs):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
         self.kwargs = kwargs
+        self.do_unpack = self.DONT_UNPACK
 
     def __eq__(self, oth):
         """Compare with another request."""
@@ -60,6 +64,17 @@ class ResourceRequest(object):
             config (dict): the configuration file being used.
         """
         return self.type
+
+    def unpack(self, recursive=False):
+        """Unpack the sub-resources into the test as well.
+
+        Args:
+            recursive (number): whether to also unpack sub-resources.
+        """
+        self.do_unpack = self.RECURSIVE_UNPACK if recursive \
+            else self.UNPACK_ONCE
+
+        return self
 
 
 class ExceptionCatchingThread(Thread):
@@ -152,9 +167,9 @@ class BaseResource(object):
         using the 'data' object.
 
         Returns:
-            iterable. sub-resources created.
+            dict. sub-resources created, name -> instance.
         """
-        sub_resources = []
+        sub_resources = {}
         for sub_name, sub_request in get_class_fields(self.__class__,
                                                       ResourceRequest):
             sub_class = sub_request.get_type(self.config)
@@ -168,7 +183,7 @@ class BaseResource(object):
             sub_resource = sub_class(**actual_kwargs)
 
             setattr(self, sub_name, sub_resource)
-            sub_resources.append(sub_resource)
+            sub_resources[sub_name] = sub_resource
 
         return sub_resources
 
@@ -228,13 +243,17 @@ class BaseResource(object):
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self.data)
 
+    def get_sub_resource_dict(self):
+        """Return the dict of all the resource's sub-resources by name."""
+        return self._sub_resources
+
     def get_sub_resources(self):
         """Return an iterable to the resource's sub-resources."""
-        return (sub_resource for sub_resource in self._sub_resources)
+        return (sub_resource for sub_resource in self._sub_resources.values())
 
     def set_sub_resources(self):
         """Create and set the sub resources if needed."""
-        self._sub_resources = tuple(self.create_sub_resources())
+        self._sub_resources = self.create_sub_resources()
         for resource in self.get_sub_resources():
             resource.parent = self
 
