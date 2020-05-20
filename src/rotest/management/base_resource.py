@@ -35,12 +35,14 @@ class ResourceRequest(object):
             initialized even if their validation succeeds.
         kwargs (dict): requested resource arguments.
     """
+    DONT_UNPACK, UNPACK_ONCE, RECURSIVE_UNPACK = 0, 1, 2
 
     def __init__(self, resource_name=None, resource_class=None, **kwargs):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
         self.kwargs = kwargs
+        self.unpack = DONT_UNPACK
 
     def __eq__(self, oth):
         """Compare with another request."""
@@ -60,6 +62,14 @@ class ResourceRequest(object):
             config (dict): the configuration file being used.
         """
         return self.type
+
+    def unpack(self, recursive=False):
+        """Unpack the sub-resources into the test as well.
+
+        Args:
+            recursive (number): whether to also unpack sub-resources.
+        """
+        self.unpack = RECURSIVE_UNPACK if recursive else UNPACK_ONCE
 
 
 class ExceptionCatchingThread(Thread):
