@@ -70,6 +70,7 @@ class ResourceRequest(object):
             recursive (number): whether to also unpack sub-resources.
         """
         self.unpack = RECURSIVE_UNPACK if recursive else UNPACK_ONCE
+        return self
 
 
 class ExceptionCatchingThread(Thread):
