@@ -71,7 +71,9 @@ class ResourceRequest(object):
         Args:
             recursive (number): whether to also unpack sub-resources.
         """
-        self.do_unpack = self.RECURSIVE_UNPACK if recursive else self.UNPACK_ONCE
+        self.do_unpack = self.RECURSIVE_UNPACK if recursive \
+            else self.UNPACK_ONCE
+
         return self
 
 
