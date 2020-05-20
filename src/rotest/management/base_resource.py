@@ -35,14 +35,16 @@ class ResourceRequest(object):
             initialized even if their validation succeeds.
         kwargs (dict): requested resource arguments.
     """
-    DONT_UNPACK, UNPACK_ONCE, RECURSIVE_UNPACK = 0, 1, 2
+    DONT_UNPACK = 0
+    UNPACK_ONCE = 1
+    RECURSIVE_UNPACK = 2
 
     def __init__(self, resource_name=None, resource_class=None, **kwargs):
         """Initialize the required parameters of resource request."""
         self.name = resource_name
         self.type = resource_class
         self.kwargs = kwargs
-        self.unpack = DONT_UNPACK
+        self.unpack = self.DONT_UNPACK
 
     def __eq__(self, oth):
         """Compare with another request."""
@@ -69,7 +71,7 @@ class ResourceRequest(object):
         Args:
             recursive (number): whether to also unpack sub-resources.
         """
-        self.unpack = RECURSIVE_UNPACK if recursive else UNPACK_ONCE
+        self.unpack = self.RECURSIVE_UNPACK if recursive else self.UNPACK_ONCE
         return self
 
 

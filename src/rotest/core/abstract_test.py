@@ -217,7 +217,6 @@ class AbstractTest(unittest.TestCase):
         for name, resource in iteritems(requested_resources):
             resource.override_logger(self.logger)
             unpack_value = request_name_to_unpack[name]
-            print("unpack value for", name, unpack_value)
             self.unpack_resource(resource, unpack_value)
 
         if isinstance(self.result, Result):
@@ -231,6 +230,7 @@ class AbstractTest(unittest.TestCase):
             unpack_order (number): level of unpacking (none, once, recursive).
         """
         if unpack_order != ResourceRequest.DONT_UNPACK:
+            self.logger.debug("unpacking %r", resource.name)
             sub_resources = resource.get_sub_resource_dict()
             self.add_resources(sub_resources)
             if unpack_order == ResourceRequest.RECURSIVE_UNPACK:
