@@ -186,6 +186,7 @@ class AbstractTest(unittest.TestCase):
                 even if the validation succeeds and skip_init is True.
         """
         new_requests = []
+        request_name_to_unpack = {}
 
         for resource_request in resources_to_request:
             if resource_request.name in self.all_resources:
@@ -194,6 +195,9 @@ class AbstractTest(unittest.TestCase):
 
             else:
                 new_requests.append(resource_request)
+
+            request_name_to_unpack[resource_request.name] = \
+                                                        resource_request.unpack
 
         if len(new_requests) == 0:
             # No resources to request
@@ -210,11 +214,28 @@ class AbstractTest(unittest.TestCase):
 
         self.add_resources(requested_resources)
         self.locked_resources.update(requested_resources)
-        for resource in itervalues(requested_resources):
+        for name, resource in iteritems(requested_resources):
             resource.override_logger(self.logger)
+            unpack_value = request_name_to_unpack[name]
+            print("unpack value for", name, unpack_value)
+            self.unpack_resource(resource, unpack_value)
 
         if isinstance(self.result, Result):
             self.result.updateResources(self)
+
+    def unpack_resource(self, resource, unpack_order):
+        """Unpack a resource - Add its sub-resources as requested resources.
+
+        Args:
+            resource (BaseResource): resource to unpack.
+            unpack_order (number): level of unpacking (none, once, recursive).
+        """
+        if unpack_order != ResourceRequest.DONT_UNPACK:
+            sub_resources = resource.get_sub_resource_dict()
+            self.add_resources(sub_resources)
+            if unpack_order == ResourceRequest.RECURSIVE_UNPACK:
+                for sub_resource in sub_resources.values():
+                    self.unpack_resource(sub_resource, unpack_order)
 
     def release_resources(self, resources=None, dirty=False,
                           force_release=True):
