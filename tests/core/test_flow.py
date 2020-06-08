@@ -5,11 +5,6 @@ from __future__ import absolute_import
 
 from future.builtins import object
 
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import Pipe, BlockInput, BlockOutput
