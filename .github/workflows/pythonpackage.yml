@@ -97,4 +97,11 @@ jobs:
         pip install tox
     - name: Tox
       run: |
+        export ROTEST_WORK_DIR=rotest_work_dir
         tox -v -e py${{ matrix.python-version }}-django${{ matrix.django-version }}
+    - name: Upload logs
+      if: failure()
+      uses: actions/upload-artifact@master
+      with:
+        name: logs
+        path: rotest_work_dir/core_logger

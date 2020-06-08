@@ -122,7 +122,8 @@ class DemoComplexResource(BaseResource):
         """Return an iterable to the complex resource's sub-resources."""
         self.demo1 = DemoResource(data=self.data.demo1)
         self.demo2 = DemoResource(data=self.data.demo2)
-        return (self.demo1, self.demo2)
+        return {'demo1': self.demo1,
+                'demo2': self.demo2}
 
     def initialize(self):
         """Turns on the initialization flag."""

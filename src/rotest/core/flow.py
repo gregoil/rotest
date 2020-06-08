@@ -169,7 +169,7 @@ class TestFlow(AbstractFlowComponent):
         Returns:
             str. test name.
         """
-        return cls.common.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
+        return cls.common.pop(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
 
     def _set_parameters(self, override_previous=True, validate_legality=False,
                         **parameters):

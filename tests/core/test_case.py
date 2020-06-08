@@ -295,6 +295,34 @@ class TestTestCase(BasicRotestUnitTest):
         self.assertIn('available_resource2', locked_names,
                       "Resource request using class field ignored kwargs")
 
+    def test_complex_resource_unpacking(self):
+        """Test a TestCase with all the ways to request resources.
+
+        * Way 1 - overriding 'resources'.
+        * Way 2 - declaring fields with BaseResource instance.
+        """
+        TempSuccessCase.resources = (request('test_resource',
+                                             DemoComplexResource),)
+
+        case = self._run_case(TempSuccessCase)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        self.assertFalse(hasattr(case, 'demo1'),
+                         "Resource unpacked though it shouldn't have")
+
+        TempSuccessCase.resources = (request('test_resource',
+                                             DemoComplexResource).unpack(),)
+
+        case = self._run_case(TempSuccessCase)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Case failed when it should have succeeded')
+
+        self.assertTrue(hasattr(case, 'demo1'),
+                        "Resource didn't unpacked though it should have")
+
     def test_complex_adaptive_resource_request(self):
         """Test a TestCase that requests a complex adaptive resources."""
         case = self._run_case(TempComplexAdaptiveResourceCase,

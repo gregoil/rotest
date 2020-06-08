@@ -104,7 +104,7 @@ class TestBlock(AbstractFlowComponent):
         Returns:
             str. test name.
         """
-        class_name = cls.common.get(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
+        class_name = cls.common.pop(cls.COMPONENT_NAME_PARAMETER, cls.__name__)
         method_name = cls.get_test_method_name()
         return '.'.join((class_name, method_name))
 
