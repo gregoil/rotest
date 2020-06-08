@@ -436,8 +436,7 @@ class AbstractFlowComponent(AbstractTest):
                         setattr(self, name, value)
 
             if validate_legality and not self._is_valid_input(name):
-                raise AttributeError("Unrecognized parameter %r passed to %r" %
-                                     (name, self.data.name))
+                self.logger.warning("Unrecognized parameter %r passed to %r", name, self.data.name)
 
     def _is_valid_input(self, parameter_name):
         """Check if the given parameter is a valid inputs for the component.

@@ -5,6 +5,11 @@ from __future__ import absolute_import
 
 from future.builtins import object
 
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
+
 from rotest.core.case import request
 from rotest.core.models.case_data import TestOutcome
 from rotest.core.flow_component import Pipe, BlockInput, BlockOutput
@@ -367,22 +372,26 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.validate_blocks(test_flow, successes=1)
 
-    def test_unknown_block_input_static_check(self):
-        """Test static check of unknown input to a block."""
-        MockFlow.blocks = (create_writer_block(inject_value='some_value'),
-                           create_reader_block(inject_value='some_value')
-                           .params(unknown=2))
+    def test_common_with_redundant_parameters(self):
+        """Check that test-flows' initial common data is injected at start."""
+        parameter_value = 'some_value2'
+        parameter_name = 'some_parameter2'
 
-        with self.assertRaises(AttributeError):
-            MockFlow()
+        class FlowWithCommon(MockFlow):
+            common = {parameter_name: parameter_value,
+                      "redundant_field": "redundant_value"}
 
-    def test_unknown_flow_input_static_check(self):
-        """Test static check of unknown input to a flow."""
-        MockFlow.blocks = (create_writer_block(inject_value='some_value'),
-                           create_reader_block(inject_value='some_value'))
+        FlowWithCommon.blocks = (create_reader_block(
+            inject_name=parameter_name,
+            inject_value=parameter_value),)
 
-        with self.assertRaises(AttributeError):
-            MockFlow.params(unknown=2)()
+        test_flow = FlowWithCommon()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.validate_blocks(test_flow, successes=1)
 
     def test_positive_unknown_subflow_input_static_check(self):
         """Test static check of unknown input to a subflow.
@@ -408,24 +417,6 @@ class TestTestFlow(BasicRotestUnitTest):
                         'Flow failed when it should have succeeded')
 
         self.validate_blocks(test_flow, successes=2)
-
-    def test_negative_unknown_subflow_input_static_check(self):
-        """Test static check of unknown input to a subflow.
-
-        In this case, the input is invalid in both of the sub-flows.
-        """
-        class SubFlow1(MockFlow):
-            blocks = [SuccessBlock]
-
-        class SubFlow2(MockFlow):
-            blocks = [SuccessBlock]
-
-        class MainFlow(MockFlow):
-            blocks = (SubFlow1,
-                      SubFlow2)
-
-        with self.assertRaises(AttributeError):
-            MainFlow.params(unknown=2)()
 
     def test_inputs_static_check(self):
         """Test static check of inputs validation of blocks.
