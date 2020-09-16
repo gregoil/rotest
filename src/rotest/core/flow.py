@@ -147,7 +147,11 @@ class TestFlow(AbstractFlowComponent):
         Raises:
             AttributeError: not all inputs were passed to the block.
         """
-        fields = [request.name for request in self.get_resource_requests()]
+        fields = []
+        for request in self.get_resource_requests():
+            fields.append(request.name)
+            fields.extend(request.unpack_sub_resources_names())
+
         fields.extend(extra_inputs)
         for block in self:
             block.validate_inputs(fields)

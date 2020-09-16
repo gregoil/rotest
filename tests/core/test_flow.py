@@ -11,7 +11,8 @@ from rotest.core.flow_component import Pipe, BlockInput, BlockOutput
 from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
-                                                   InitializeErrorResource)
+                                                   InitializeErrorResource,
+                                                   DemoNewStyleComplexResource)
 
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
@@ -124,6 +125,29 @@ class TestTestFlow(BasicRotestUnitTest):
 
         self.assertEqual(test_flow.data.exception_type, TestOutcome.SUCCESS,
                          'Flow data status should have been success')
+
+    def test_unpacking_resource(self):
+        """Make sure the block input validation considers unpacking."""
+        class UnpackingValidationBlock(MockBlock):
+            sub_res1 = BlockInput()
+
+            def test_method(self):
+                self.assertTrue(hasattr(self, 'sub_res1'))
+
+        class UnpackingFlow(MockFlow):
+            res = DemoNewStyleComplexResource.request().unpack()
+            blocks = [UnpackingValidationBlock]
+
+        test_flow = UnpackingFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.assertEqual(self.result.testsRun, 1,
+                         "Flow didn't run the correct number of blocks")
+
+        self.validate_blocks(test_flow, successes=1)
 
     def test_giant_flow(self):
         """See that a flow with a large amount of blocks and doesn't crash."""

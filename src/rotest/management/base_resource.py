@@ -76,6 +76,21 @@ class ResourceRequest(object):
 
         return self
 
+    def unpack_sub_resources_names(self):
+        """Get all sub resources' names."""
+        if self.do_unpack == self.DONT_UNPACK:
+            return
+
+        for name, _ in get_class_fields(self.type, ResourceRequest):
+            yield name
+
+        if self.do_unpack == self.RECURSIVE_UNPACK:
+            for _, sub_request in get_class_fields(self.type,
+                                                   ResourceRequest):
+
+                for name in sub_request.unpack_sub_resources_names():
+                    yield name
+
 
 class ExceptionCatchingThread(Thread):
     """A thread that saves traceback information if one occurs."""
