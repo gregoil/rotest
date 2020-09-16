@@ -12,7 +12,7 @@ from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
                                                    InitializeErrorResource,
-                                                   DemoComplexResource)
+                                                   DemoAdaptiveComplexResource)
 
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
@@ -129,13 +129,13 @@ class TestTestFlow(BasicRotestUnitTest):
     def test_unpacking_resource(self):
         """Make sure the block input validation considers unpacking."""
         class UnpackingValidationBlock(MockBlock):
-            demo1 = BlockInput()
+            sub_res1 = BlockInput()
 
             def test_method(self):
-                self.assertTrue(hasattr(self, 'demo1'))
+                self.assertTrue(hasattr(self, 'sub_res1'))
 
         class UnpackingFlow(MockFlow):
-            res = DemoComplexResource.request().unpack()
+            res = DemoAdaptiveComplexResource.request().unpack()
             blocks = [UnpackingValidationBlock]
 
         test_flow = UnpackingFlow()
