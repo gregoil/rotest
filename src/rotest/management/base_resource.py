@@ -77,7 +77,7 @@ class ResourceRequest(object):
         return self
 
     def unpack_sub_resources_names(self):
-        """."""
+        """Get all sub resources' names."""
         if self.do_unpack == self.DONT_UNPACK:
             return
 

@@ -127,7 +127,7 @@ class TestTestFlow(BasicRotestUnitTest):
                          'Flow data status should have been success')
 
     def test_unpacking_resource(self):
-        """."""
+        """Make sure the block input validation considers unpacking."""
         class UnpackingValidationBlock(MockBlock):
             demo1 = BlockInput()
 
