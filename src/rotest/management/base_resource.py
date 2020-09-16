@@ -81,11 +81,11 @@ class ResourceRequest(object):
         if self.do_unpack == self.DONT_UNPACK:
             return
 
-        for name, _ in get_class_fields(self.__class__, ResourceRequest):
+        for name, _ in get_class_fields(self.type, ResourceRequest):
             yield name
 
         if self.do_unpack == self.RECURSIVE_UNPACK:
-            for _, sub_request in get_class_fields(self.__class__,
+            for _, sub_request in get_class_fields(self.type,
                                                    ResourceRequest):
 
                 for name in sub_request.unpack_sub_resources_names():
