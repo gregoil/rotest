@@ -81,7 +81,9 @@ class ResourceRequest(object):
         if self.do_unpack == self.DONT_UNPACK:
             return
 
+        core_log.debug("$$$$ imma unpack now!")
         for name, _ in get_class_fields(self.type, ResourceRequest):
+            core_log.debug("$$$$ Unpacking %s for %s", name, self.type)
             yield name
 
         if self.do_unpack == self.RECURSIVE_UNPACK:
