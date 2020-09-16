@@ -195,3 +195,16 @@ class DemoAdaptiveComplexResource(BaseResource):
                                resource_classes={True: DemoResource,
                                                  False: DemoResource2},
                                data=DATA_CLASS.demo2)
+
+
+class DemoNewStyleComplexResource(BaseResource):
+    """Fake complex resource class, used in resource manager tests.
+
+    Attributes:
+        sub_res1 (DemoResource): sub resource pointer.
+        sub_res2 (DemoResource / DemoResource2): sub resource pointer.
+    """
+    DATA_CLASS = DemoComplexResourceData
+
+    sub_res1 = DemoResource.request(data=DATA_CLASS.demo1)
+    sub_res2 = DemoResource.request(data=DATA_CLASS.demo2)

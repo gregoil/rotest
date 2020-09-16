@@ -12,7 +12,7 @@ from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
                                                    InitializeErrorResource,
-                                                   DemoAdaptiveComplexResource)
+                                                   DemoNewStyleComplexResource)
 
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
@@ -135,7 +135,7 @@ class TestTestFlow(BasicRotestUnitTest):
                 self.assertTrue(hasattr(self, 'sub_res1'))
 
         class UnpackingFlow(MockFlow):
-            res = DemoAdaptiveComplexResource.request().unpack()
+            res = DemoNewStyleComplexResource.request().unpack()
             blocks = [UnpackingValidationBlock]
 
         test_flow = UnpackingFlow()
