@@ -13,7 +13,7 @@ from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
                                                    InitializeErrorResource,
                                                    DemoNewStyleComplexResource,
-                                        DemoNewStyleComplexResourceRecursive)
+                                                   DemoComplexServiceRecursive)
 
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
@@ -153,13 +153,13 @@ class TestTestFlow(BasicRotestUnitTest):
     def test_unpacking_resource_recursive(self):
         """Make sure the block input validation considers unpacking."""
         class UnpackingValidationBlock(MockBlock):
-            sub_res1 = BlockInput()
+            sub_service = BlockInput()
 
             def test_method(self):
-                self.assertTrue(hasattr(self, 'sub_res1'))
+                self.assertTrue(hasattr(self, 'sub_service'))
 
         class UnpackingFlow(MockFlow):
-            res = DemoNewStyleComplexResourceRecursive.request().unpack(True)
+            res = DemoComplexServiceRecursive.request().unpack(True)
             blocks = [UnpackingValidationBlock]
 
         test_flow = UnpackingFlow()
