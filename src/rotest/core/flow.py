@@ -150,7 +150,7 @@ class TestFlow(AbstractFlowComponent):
         fields = []
         for request in self.get_resource_requests():
             fields.append(request.name)
-            fields.extend(request.unpack_sub_resources_names())
+            fields.extend(request.unpack_sub_resources_names(request.do_unpack))
 
         fields.extend(extra_inputs)
         for block in self:
