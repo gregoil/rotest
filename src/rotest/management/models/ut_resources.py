@@ -208,3 +208,17 @@ class DemoNewStyleComplexResource(BaseResource):
 
     sub_res1 = DemoResource.request(data=DATA_CLASS.demo1)
     sub_res2 = DemoResource.request(data=DATA_CLASS.demo2)
+
+
+class DemoComplexService(BaseResource):
+    """Fake complex recursive resource class."""
+    DATA_CLASS = None
+
+    sub_service = DemoService.request()
+
+
+class DemoComplexServiceRecursive(BaseResource):
+    """Fake complex recursive resource class."""
+    DATA_CLASS = None
+
+    sub_complex_service = DemoComplexService.request()
