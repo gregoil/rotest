@@ -208,3 +208,14 @@ class DemoNewStyleComplexResource(BaseResource):
 
     sub_res1 = DemoResource.request(data=DATA_CLASS.demo1)
     sub_res2 = DemoResource.request(data=DATA_CLASS.demo2)
+
+
+class DemoNewStyleComplexResourceRecursive(BaseResource):
+    """Fake complex recursive resource class, used in resource manager tests.
+
+    Attributes:
+        sub_res (DemoNewStyleComplexResource): sub resource pointer.
+    """
+    DATA_CLASS = DemoComplexResourceData
+
+    sub_res = DemoNewStyleComplexResource.request(data=DATA_CLASS)

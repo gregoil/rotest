@@ -12,7 +12,8 @@ from rotest.core.block import MODE_CRITICAL, MODE_FINALLY, MODE_OPTIONAL
 from rotest.management.models.ut_models import DemoResourceData
 from rotest.management.models.ut_resources import (DemoResource,
                                                    InitializeErrorResource,
-                                                   DemoNewStyleComplexResource)
+                                                   DemoNewStyleComplexResource,
+                                        DemoNewStyleComplexResourceRecursive)
 
 from tests.core.utils import (FailureBlock, ErrorBlock, MockFlow,
                               SkipBlock, ExpectedFailureBlock,
@@ -136,6 +137,29 @@ class TestTestFlow(BasicRotestUnitTest):
 
         class UnpackingFlow(MockFlow):
             res = DemoNewStyleComplexResource.request().unpack()
+            blocks = [UnpackingValidationBlock]
+
+        test_flow = UnpackingFlow()
+        self.run_test(test_flow)
+
+        self.assertTrue(self.result.wasSuccessful(),
+                        'Flow failed when it should have succeeded')
+
+        self.assertEqual(self.result.testsRun, 1,
+                         "Flow didn't run the correct number of blocks")
+
+        self.validate_blocks(test_flow, successes=1)
+
+    def test_unpacking_resource_recursive(self):
+        """Make sure the block input validation considers unpacking."""
+        class UnpackingValidationBlock(MockBlock):
+            sub_res1 = BlockInput()
+
+            def test_method(self):
+                self.assertTrue(hasattr(self, 'sub_res1'))
+
+        class UnpackingFlow(MockFlow):
+            res = DemoNewStyleComplexResourceRecursive.request().unpack(True)
             blocks = [UnpackingValidationBlock]
 
         test_flow = UnpackingFlow()
