@@ -59,7 +59,7 @@ pluggy==0.12.0
 prompt-toolkit==1.0.16
 psutil==5.6.3
 ptyprocess==0.6.0
-py==1.8.0
+py==1.10.0
 pycodestyle==2.5.0
 pycparser==2.19
 pyfakefs==3.5.8
