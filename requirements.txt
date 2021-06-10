@@ -23,7 +23,7 @@ coverage==4.5.3
 cryptography==2.8
 daphne==1.4.2
 decorator==4.4.0
-Django==1.11.23
+Django==2.2.24
 docutils==0.14
 entrypoints==0.3
 enum34==1.1.6
