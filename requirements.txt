@@ -6,7 +6,7 @@ attrdict==2.0.1
 attrs==19.1.0
 autobahn==19.11.2
 Automat==0.8.0
-Babel==2.8.0
+Babel==2.9.1
 backports.functools-lru-cache==1.5
 backports.shutil-get-terminal-size==1.0.0
 basicstruct==1.0.3
