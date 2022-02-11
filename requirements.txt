@@ -88,7 +88,7 @@ statistics==1.0.3.5
 swaggapi==0.6.7
 termcolor==1.1.0
 traitlets==4.3.2
-Twisted==19.10.0
+Twisted==22.1.0
 txaio==18.8.1
 typing==3.7.4
 urllib3==1.25.3
