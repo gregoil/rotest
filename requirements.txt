@@ -11,7 +11,7 @@ backports.functools-lru-cache==1.5
 backports.shutil-get-terminal-size==1.0.0
 basicstruct==1.0.3
 cached-property==1.5.1
-certifi==2019.6.16
+certifi==2022.12.7
 cffi==1.13.2
 channels==1.1.8
 chardet==3.0.4
