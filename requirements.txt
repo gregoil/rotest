@@ -76,7 +76,7 @@ pytz==2019.1
 PyYAML==5.1.1
 requests==2.22.0
 scandir==1.10.0
-setuptools==44.0.0
+setuptools==65.5.1
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.12.0
